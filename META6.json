@@ -3,11 +3,14 @@
     "auth": "github:fitteia",
     "authors"       : [ "Pedro Sebastião" ],
     "version"       : "0.00.1",
+    "repo-type"     : "git",
+    "source-url"    : "git://github.com/fitteia/OneFit-Engine.git",
+    "license"       : "GPL-3.0",
     "build-depends": [
     ],
     "depends": [
     ],
-    "description": "fitteia's OneFit Engine without a GUI",
+    "description": "fitteia's OneFit Engine",
     "name": "OneFit-Engine",
     "provides": {
 	"OneFit::Engine": "lib/OneFit/Engine.rakumod"
