@@ -21,7 +21,7 @@ use Test;
 my %*SUB-MAIN-OPTS = :named-anywhere, ;
 
 multi MAIN (Bool :h(:help($))) {
-    say OneFit::Engine.new.resources<C/makefile>.slurp;
+    say OneFit::Engine.new.resources<C/makefile>.IO.path;
     #    say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
 
 #    my $p= shell "onefite", :err;
