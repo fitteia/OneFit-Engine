@@ -1,0 +1,23 @@
+Mon Jul  7 20:21:18 1997  Pedro Jose Oliveira Sebastiao  <pedros@lince.cii.fc.ul.pt>
+
+	* libgfit.4.01.a created.
+
+Thu Mar  7 14:55:53 1996  Pedro Jose Oliveira Sebastiao  <pedros@lince.cii.fc.ul.pt>
+
+	* fitutil.c (gfitn_error): Gfitn error message added. 
+
+	* gfitn.c (decode_funcao): Check sucess in finding programed function names.
+
+
+Fri Feb  9 16:19:12 1996  Pedro Jose Oliveira Sebastiao  <pedros@lince.cii.fc.ul.pt>
+
+	* $(HOME)/tar/gfit.4.0.tar.gz: remaked.
+
+	* actpar: remaked.
+
+	* fitenv: remaked.
+
+	* libutil.a: recompiled.
+
+	* libgfit.4.0.a: recompiled.
+

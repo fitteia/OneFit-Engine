@@ -1,0 +1,5 @@
+OneFit INSTALL
+
+prompt>make ROOT=/your/path/ DIST=linux_distribution install
+
+Where linux_distribution can be: debian, mandrake9.2, redhat9.0, knoppix3.3

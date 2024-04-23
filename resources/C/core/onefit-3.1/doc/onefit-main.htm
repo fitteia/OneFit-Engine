@@ -1,0 +1,109 @@
+<html>
+<!-- $Id: gfitn-main.htm,v 1.5 1999/01/07 14:05:37 pedros Exp $ -->
+<head>
+<TITLE>OneFit Main Help</TITLE>
+</head>
+<body>
+
+<img src="../images/onefit-logo-text.gif">
+<p>
+(C) 1990-2004, <a href="http://lince.cii.fc.ul.pt/~pedros">Pedro Sebastião</a>
+</p>
+<h1>OneFit: Main Menu</h1>
+<hr>
+
+This is your OneFit help.
+<p>
+The idea behind this package is to provide the user with a more or
+less user-friendly environment suitable to perform model fitting to
+any kind of data. 
+<p>
+I choosed to organise this help file in the following way:
+<ul type=disk>
+      <li> <a href="#foreword">Foreword</a>
+      <li> <a href="#gen-int">General introduction</a>
+      <li> <a href="#tutorial">Tutorial</a>
+      <li> <a href="onefit-FAQ.htm">FAQ</a>
+      <li> <a href="onefit-cmd-options.htm">GFITN Command line options</a>
+      <li> <a href="#interfaces">User Interfaces to GFITN</a>
+      <li> <a href="../examples">Examples</a>
+</ul>
+
+<h2><a name="foreword">Foreword</a></h2>
+<p>
+OneFit  results of several years of experience in model fitting to Nuclear Magnetic Relaxation experimental results. In spite of being a particular field, the fact that in most cases the exact model is not known and that different theoretical models have to be tried in the analysis of the experimental results, made me realise that the accumulated experience could be useful to others. OneFit is an evolution of former GFITN package.
+</p><p>
+OneFit brings, perhaps, noting new to field of numerical analysis,
+function minimization, and model fitting, but, I think, it makes life
+easier for those who have to deal with not-so-simple non-linear
+functions in model fitting. OneFit integrates the compilling,
+numerical, and graphical facilities provided by specialized software
+packages, each one optimized for a particular task. OneFit uses the <a href="http://gcc.gnu.org/">gcc</a>
+compiler (OneFit kernel), <a href="http://borex.princeton.edu/~kmccarty/">CERNLIB</a> (OneFit minimization routines),
+<a href="http://www.cpan.org/">perl/perl-Tk</a> (OneFit GUI), <a href="http://plasma-gate.weizmann.ac.il/Xmgr/">Xmgr</a>/<a href="http://plasma-gate.weizmann.ac.il/Grace/">Grace</a> (graphics), <a href="http://www.imagemagick.org/">ImageMagick</a>
+(convert/display different image formats), your favorite spread-sheet
+editor to process data files, to mention the main packages.
+</p><p>
+I hope you find it useful. Remember, however, that <strong>I decline all responsability in whataver happens in result of the use of OneFit</strong>.
+<h2><a name="gen-int">General Introduction</a></h2>
+Model fitting is almost like an artistic activity since is demands
+much more than some numerical routines to perform the task of find
+some general set of parameters which brings the theoretical models in
+a close match to the experimental results.
+<br />
+In fact in order to interpret some experimental results one needs a
+theoretical model which we can write as a linear sum of different
+partial equations: y = a1*f1(p1,..pm,x1,..xn) +
+a2*f2(p1,..,pm,x1,..,xn) + ... +al*fl(p1,..,pm,x1,..,xn) where we can
+identify a1,a2,a3,...al as linear parameters of the model (not very difficult
+to estimated), p1,..,pm non-linear parameters to be estimated (a
+more difficult task) and x1,..,xn a point in n-folder space of
+independent variables. In order to solve the problem of finding the
+a1,..al,p1,..,pm values we need to have at least m+l+1 points in the n-folder.
+space.
+
+<p>
+A normal user will need to have an easy way of change the scale of his
+problem, that is to change the value of m+l of the parameter's space
+an also the n-folder space where he's working. OneFit helps the user on this task.
+</p>
+<p> Before going into the Tutorial let me just tell you a few words on
+the OneFit/GFITN kernel.  I call it kernel because the user has to link his
+C-source file with the necessary implementation of functions f1,..fl
+with some libraries containing the envelope which makes everything
+easier. This envelope deals with the Chi-square minimization,
+graphics, input/output, etc. The Chi-square minimization is done by
+calling a <a href="http://wwwinfo.cern.ch/asd/index.html">CERN</a> Library routine called minuit.
+
+<p>
+<h2><a name="tutorial">Tutorial</a></h2>
+ Let's suppose the user has some experimental results which he wants
+to interpret in terms of some theoretical function
+f(x)=a1+a2*exp(-b*x). We first note that he's working in a one dimension
+space of independent variables x, and in a 3-folder parameter
+space. Therefore, he needs at least 4 values of x. Now the user has to
+decide how to analyse the expression of y. He can think on y as an
+expression with 3 non-linear parameters a1,a2,b or as the linear sum
+of functions f1=1 and f2=exp(-b*x) where a1,a2 are two linear
+parameters and b is a non-linear parameter. There two ways of looking
+at expression f(x) represent two different ways of programming the model
+fit to the experimental results.
+<p> 
+<ul>
+<li>Just one function:
+</li>
+</ul>
+I will continue to work on this tutorial...ask me to be faster...
+<br><hr>
+
+<h2><a name="interfaces">User Interfaces to OneFit</a></h2>
+OneFit kernel processes several files (datafiles, parameter files (in case of non-linear functions), output files, setup files log files. The user can do this by hand, for example if one wants to call onefit from within another programme (It may happens, you know!). Another, easier way is to interact with OneFit using the xonefit GUI interface. xonefit is a perl/Tk script which, I hope is self-evident on ist use.
+
+The files associated with one particular fitting session together with the OneFit kernel and the user fitting model are called the Fitting Environment. 
+
+
+<p>
+<hr>
+$Id: gfitn-main.htm,v 1.5 1999/01/07 14:05:37 pedros Exp $.
+</body> 
+</html>

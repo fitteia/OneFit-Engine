@@ -1,0 +1,256 @@
+#!/usr/bin/perl
+#     
+#     This program is free software; you can redistribute it and/or
+#     modify it under the terms of the GNU General Public License
+#     as published by the Free Software Foundation; either version 2
+#     of the License, or (at your option) any later version.
+#     
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#     
+#     You should have received a copy of the GNU General Public License along
+#     with this program; if not, write to the Free Software Foundation, Inc.,
+#     59 Temple Place, Suite 330, Boston, MA 02111-1307, USA.
+#
+#
+# Pedro J. O. Sebastiao, Dec. 2003
+#
+#$Id: pcop,v 1.21 2005/03/21 12:31:31 pedros Exp $
+
+use Getopt::Long;
+use Math::Trig;
+
+help() unless (@ARGV);
+
+$opt_b=1;
+$opt_e=1e20;
+$opt_F="%g";
+$opt_h="";
+$opt_nt="";
+$opt_p="";
+$opt_nb="";
+$opt_ntb="";
+$opt_create="";
+$opt_footer="";
+$opt_header="";
+
+GetOptions("header=s","footer=s","comment=s","clean","p=s","b=i","e=i","h","F=s","nt","nb","ntb","create|C=s");
+if($opt_h){
+  help();
+}
+
+if($opt_header){
+    if($opt_header =~ /HeaderFile=(.+)/){
+	open(HFile,"<$1") || die "can't open $1 $!\n";
+	$opt_header="";
+	while(<HFile>) {
+	    $opt_header .= $_;
+	}
+	close(HFile);
+    }
+    else {
+	$opt_header =~ s/\\n/\n/g;
+    }
+}
+if($opt_footer){
+    if($opt_footer =~ /FooterFile=(.+)/){
+	open(FFile,"<$1") || die "can't open $1 $!\n";
+	$opt_footer="";
+	while(<FFile>) {
+	    $opt_footer .= $_;
+	}
+	close(FFile);
+    }
+    else {
+	$opt_footer =~ s/\\n/\n/g;
+    }
+}
+
+unless ($opt_create){
+  my $file_in = shift @ARGV;
+  if ($file_in =~ /^-|\.$/){
+    open (FILEIN,"<-");
+  }
+  else{
+    open (FILEIN,"<$file_in") || die "can't open $file_in$!\n";
+  }
+}
+
+my $file_out = shift @ARGV;
+
+if ($file_out =~ /^-|\.$/){
+  open (FILEOUT,">-") || die "can't open $file_out $!\n";
+}
+else {
+  open (FILEOUT,">$file_out");
+}
+
+if($opt_p){
+  open (XMGROUT,">/tmp/XMGROUT.tmp") || die "can't open /tmp/XMGROUT.tmp file!\n";
+#  open (XMGROUT,">lixo");
+} 
+
+my @cmd=();
+
+foreach $i (0..$#ARGV){
+  $cmd[$i]=$ARGV[$i];
+  $cmd[$i] =~ s/c(\d+)/\$c[$1-1]/g;
+  $cmd[$i] =~ s/lnb/\$ln/g;
+#  print "$cmd[$i]\n";
+}
+
+if ($opt_create){
+  create();
+}
+else{
+  process();
+}
+if($opt_p =~ /nxy/){
+    system("xmgrace -nxy /tmp/XMGROUT.tmp &");
+}
+elsif($opt_p =~ /\S+/){
+    system("xmgrace -settype $opt_p /tmp/XMGROUT.tmp &");
+}
+
+exit;
+
+sub help {
+print STDERR <<EOF;
+usage: pcop [-clean][-p=xmgrace_data_type][-b=?] [-e=?] [-nt[b]] [-GEF] Ifname Ofname columns...
+       pcop [-GEF] [-C=i:s:f] Ofname columns...
+           options:
+              -clean: remove comment lines
+              -comment= : tell pcop which characters define comment lines (default is #)
+              -header= : header text or HeaderFile=filename
+              -footer= : footer text or FooterFile=filename
+              -p=nxy,xydy,xydxdx,xydydy,xydxdy : xmgr data types
+              -b=lnb1 : begin calculation at line lnb1
+              -e=lnb2 : end calculation at line lnb2
+	      -nt :  remove lines above lnb1
+              -nb :  remove lines below lnb2
+              -ntb: remove lines above (lnb1) and below (lnb2)
+              -F=x: define the format (ex: %10.4e %10.4g) 
+	      -C="i:s:f"   : Create file with first column varies from 
+	             i to f in steps of s. i,f,s may be perl expressions. c1 is i.
+           Ifname : input file name
+                    use . for standard input
+           Ofname : output file name
+                    use . for standard output
+           columns:
+               constant
+               lnb : useful line number
+               c#
+               perl script referring to columns ci (ex: "sin(c1)", or "sin(c2)+lnb**2") 
+
+
+	   examples:
+	       pcop --footer="this is this file footer\\n\\nwith several lines which will not be considered comment lines" --header="#pcop generated file with (x,sin(x)) points\\n#\\n" -p nxy outfile.txt -C 0:1:360 "sin(c1/45*atan2(1,1))"
+	       pcop -b 3 -p nxy outfile.txt outfile2.txt c1 c2 "cos(c1/45*atan2(1,1))" "(cos(c1/45*atan2(1,1))*cos(c1/45*atan2(1,1))-c2*c2)*exp(-0.006*c1)"
+	       pcop -e 183 -nb -p nxy outfile.txt . c1 c2 "cos(lnb/45*atan2(1,1))" "(cos(lnb/45*atan2(1,1))*cos(lnb/45*atan2(1,1))-c2*c2)*exp(-0.006*lnb)"> another_outfile.txt
+	       pcop --header="#this header has numbers\\n\@another strange line\\n" -C header.txt 0:1:10 "c1*2"
+	       pcop --header="HeaderFile=header.txt" outfile2.txt outfile3.txt c1 c3
+	       pcop --clean -b 6 -F "%10.4g" outfile3.txt outfile4.txt c2 c1 
+	       pcop --clean --comment="@" -b 6 -F "%10.4g" outfile3.txt outfile4.txt c2 c1 
+	       pcop -b 6 outfile3.txt . c2 c1 | pcop -b 6 -nt --clean . outfile5.txt c2 c1
+EOF
+exit();
+}
+
+sub create {
+#    print "$opt_header";
+    print FILEOUT "$opt_header";
+    my ($i,$s,$f)=split(':',$opt_create);
+#    my ($i,$s,$f)=split(':',$cmd[0]);
+#    print eval("$i"), "\n" ,eval("$f"),"\n",eval("$s"),"\n";
+    my $n=0;
+    for($k=eval($i);$k<=eval($f);$k += eval($s)){
+	$n++;
+	my $out=sprintf($opt_F,$k);
+	print FILEOUT $out . " ";
+	print XMGROUT $out . " " if($opt_p);
+	$c[0]=$k;
+	foreach $icmd (1..$#cmd){
+	    $c[$icmd]=eval($cmd[$icmd]);
+	}
+	foreach $icmd (1..$#cmd){
+	    my $out=sprintf($opt_F,$c[$icmd]);
+	    print FILEOUT $out . " ";
+	    print XMGROUT $out . " " if($opt_p);
+	} 
+	print  FILEOUT "\n";
+	print  XMGROUT "\n" if($opt_p);
+    }
+    print FILEOUT "$opt_footer";
+}
+
+sub process {
+  my $i=0;
+  $ln=0;
+  print FILEOUT "$opt_header";
+  while(<FILEIN>){
+    $i++;
+    my $line = $_;
+    if($i>=$opt_b and $i<=$opt_e and $line !~ /^[\s|\t]*[\#|$opt_comment]/){
+	if($line =~ /\d+/){
+	    $line =~ s/^[ |\t]+//;
+	    my @c=split /[\s|\t]+/,$line;
+	    foreach $j (0..$#cmd){
+		my $out=sprintf($opt_F,eval($cmd[$j]));
+		print FILEOUT $out . " ";
+		print XMGROUT $out . " " if($opt_p);
+	    }
+	    print FILEOUT "\n";
+	    print XMGROUT "\n" if($opt_p);
+	    $ln++;
+	}
+	else{
+	    print FILEOUT "#$line" unless($opt_clean);
+	}
+    }
+    if($i>=$opt_b and $i<=$opt_e and $line =~ /^[\s|\t]*[\#|$opt_comment]/){
+	print FILEOUT "$line" unless($opt_clean);
+    }
+   else{
+	if ($i<$opt_b){
+	    if($line =~ /\s*[\#|$opt_comment]/){
+#    if($line =~ /\s*[\#\@\&a-df-zA-DF-Z_\(\)\[\]]/){
+#      $line =~ s/\s+(.*)/$1/;
+		print FILEOUT $line unless($opt_clean);
+		if($opt_p){
+		    print XMGROUT $line unless($opt_clean);
+		}
+	    }
+	    else {
+		if($opt_p){
+		    print XMGROUT $line unless ($opt_nt or $opt_ntb);
+		}
+		print FILEOUT $line unless ($opt_nt or $opt_ntb);
+	    }
+	}
+	if  ($i>$opt_e){
+	    if($line =~ /\s*[\#|$opt_comment]/){
+#    if($line =~ /\s*[\#\@\&a-df-zA-DF-Z_\(\)\[\]]/){
+#      $line =~ s/\s+(.*)/$1/;
+		print FILEOUT $line unless($opt_clean);
+		if($opt_p){
+		    print XMGROUT $line unless($opt_clean);
+		}
+	    }
+	    else {
+		if($opt_p){
+		    print XMGROUT $line unless ($opt_nb or $opt_ntb);
+		}
+		print FILEOUT $line unless ($opt_nb or $opt_ntb);
+	    }
+	}
+    }
+  }
+#  if($opt_p){
+#    print XMGROUT "&\n";
+#  }
+  print FILEOUT "$opt_footer";
+  close(FILEOUT);
+  close(XMGROUT);
+}

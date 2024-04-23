@@ -1,0 +1,98 @@
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c gfitn.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c funcoes.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c readdat.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c loadpar.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c fsn.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c gchi2_vn.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c funcsn.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c lfit1n.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c usage.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c gfitoutp.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c pp3d.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c gchi2out.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c gfit_out.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c plot.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c mygnus.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c xmgr.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c fitutil.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c ludcmp.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c lubksb.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c gamma.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c integra.c
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c getopt.c 
+cc -DLINUX -march=i686 -O2 -Dbool=char -DHAS_BOOL -I/usr/lib/perl/5.8/CORE -Wall -c getopt1.c 
+ar -rvs  libonefit-4.0.0.a gfitn.o funcoes.o readdat.o loadpar.o fsn.o	gchi2_vn.o funcsn.o lfit1n.o usage.o gfitoutp.o pp3d.o gchi2out.o gfit_out.o plot.o mygnus.o xmgr.o
+a - gfitn.o
+a - funcoes.o
+a - readdat.o
+a - loadpar.o
+a - fsn.o
+a - gchi2_vn.o
+a - funcsn.o
+a - lfit1n.o
+a - usage.o
+a - gfitoutp.o
+a - pp3d.o
+a - gchi2out.o
+a - gfit_out.o
+a - plot.o
+a - mygnus.o
+a - xmgr.o
+ar -rvs libonefit-util-4.0.0.a fitutil.o ludcmp.o lubksb.o gamma.o integra.o getopt.o getopt1.o
+a - fitutil.o
+a - ludcmp.o
+a - lubksb.o
+a - gamma.o
+a - integra.o
+a - getopt.o
+a - getopt1.o
+make -C modelos
+make[1]: Entering directory `/home/lfx/OneFit/src/onefit-3.0/modelos'
+gcc -march=i686  -DLINUX -O2 -c dif_phase.c
+gcc -march=i686  -DLINUX -O2 -c dimer.c
+gcc -march=i686  -DLINUX -O2 -c fij.c
+gcc -march=i686  -DLINUX -O2 -c lor.c
+gcc -march=i686  -DLINUX -O2 -c odf.c
+gcc -march=i686  -DLINUX -O2 -c rot.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfsa7.c
+gcc -march=i686  -DLINUX -O2 -c sdvilf5.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfjwn11_2.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfn11_1.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfn11_2.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfn11_201.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfsa11.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfsa5.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfsa5Dll0.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfsa11_0.c
+gcc -march=i686  -DLINUX -O2 -c sdvilfsa13_0.c
+gcc -march=i686  -DLINUX -O2 -c t1rodelta.c
+gcc -march=i686  -DLINUX -O2 -c t1torrey.c
+gcc -march=i686  -DLINUX -O2 -c t1_rot_vold.c
+gfortran -c t1vold_new.f
+gfortran -c t1vold_abc.f
+gcc -march=i686  -DLINUX -O2 -I /home/lfx/OneFit/include -c Ftotal.c
+ar -rvs libonefit-modelos-4.0.0.a dif_phase.o dimer.o fij.o lor.o odf.o rot.o sdvilfsa7.o sdvilf5.o sdvilfjwn11_2.o sdvilfn11_1.o sdvilfn11_2.o sdvilfn11_201.o sdvilfsa11.o sdvilfsa5.o sdvilfsa5Dll0.o sdvilfsa11_0.o sdvilfsa13_0.o t1rodelta.o t1torrey.o t1_rot_vold.o t1vold_new.o t1vold_abc.o Ftotal.o
+a - dif_phase.o
+a - dimer.o
+a - fij.o
+a - lor.o
+a - odf.o
+a - rot.o
+a - sdvilfsa7.o
+a - sdvilf5.o
+a - sdvilfjwn11_2.o
+a - sdvilfn11_1.o
+a - sdvilfn11_2.o
+a - sdvilfn11_201.o
+a - sdvilfsa11.o
+a - sdvilfsa5.o
+a - sdvilfsa5Dll0.o
+a - sdvilfsa11_0.o
+a - sdvilfsa13_0.o
+a - t1rodelta.o
+a - t1torrey.o
+a - t1_rot_vold.o
+a - t1vold_new.o
+a - t1vold_abc.o
+a - Ftotal.o
+make[1]: Leaving directory `/home/lfx/OneFit/src/onefit-3.0/modelos'

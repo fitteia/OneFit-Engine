@@ -1,0 +1,8 @@
+Fri Feb  9 16:12:24 1996  Pedro Jose Oliveira Sebastiao  <pedros@lince.cii.fc.ul.pt>
+
+	* makefile (FLAGS): -m486 -O2
+
+	* /home/pedros/lib/libmodelos.a: recompiled.
+
+	* makefile: Lines included for models sdvilf SA l/d=11,13 Dll/DT=0
+

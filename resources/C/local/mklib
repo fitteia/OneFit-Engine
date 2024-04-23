@@ -1,0 +1,9 @@
+#!/bin/bash
+
+swig -perl5 UserLib.i
+gcc -c `perl -MConfig -e 'print join(" ", @Config{qw(ccflags optimize cccdlflags)}, "-I$Config{archlib}/CORE")'` *.c -I/home/lfx/OneFit/include
+gcc -shared `perl -MConfig -e 'print $Config{lddlflags}'` *.o -o UserLib.so /home/lfx/OneFit/lib/libonefit-modelos-4.0.0.a /home/lfx/OneFit/lib/libonefit-util-4.0.0.a
+rm UserLib_wrap.o UserLib_wrap.c
+ar -rvs libuserlib.a *.o
+
+

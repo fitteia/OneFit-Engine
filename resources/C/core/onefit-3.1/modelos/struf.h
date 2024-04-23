@@ -1,0 +1,22 @@
+int	r_status();
+int	r_n_par();
+int	r_pstatus();
+char	*r_name();
+char	*r_pname();
+double	r_plow();
+double	r_phigh();
+double	r_pstep();
+double	r_pval();
+double	r_pmin();
+void	w_status();
+void	w_name();
+void	w_n_par();
+void	w_f_ptr();
+void	w_pname();
+void	w_pstatus();
+void	w_plow();
+void	w_phigh();
+void	w_pstep();
+void	w_pval();
+void	w_pmin();
+

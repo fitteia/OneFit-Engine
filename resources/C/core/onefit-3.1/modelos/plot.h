@@ -1,0 +1,39 @@
+/******************************************************************************/
+/*				PLOT.H     				      */
+/******************************************************************************/
+void	caxis();
+void	cbox();
+void	cconnect();
+void	ccontour();
+void	cdefgrid();
+void	cdevice();
+void	cdraw();
+void	cerase();
+void	cerrorbar();
+void	cgdraw();
+void	cgrelocate();
+void	cgrid();
+void	chistogram();
+void	cline();
+void	cpage();
+void	cplt3d();
+void	cpoint();
+void	cpoints();
+void	crelocate();
+void	csetangle();
+void	csetexpand();
+void	csetlim();
+void	csetloc();
+void	csetltype();
+void	csetlweight();
+void	csetphysical();
+void	ctclose();
+void	cticksize();
+void	ctidle();
+void	ctsetup();
+void	cvfield();
+void	cwindow();
+void	cplot();
+void	cxlog();
+void	cylog();
+void	cloglog();

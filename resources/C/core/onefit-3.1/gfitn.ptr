@@ -1,0 +1,15 @@
+x0 0x4fb8 0 # x^0
+x1 0x4fc8 0 # x^1
+x2 0x4fd8 0 # x^2
+x3 0x4fe8 0 # x^3
+x4 0x4ff8 0 # x^4
+x5 0x5018 0 # x^5
+x6 0x5038 0 # x^6
+xn 0x5058 0 # x^par[1]
+exp 0x5078 1 # exp(par[1]*x)
+rotn 0x1e38 1 # rot reor normalizadas
+odf_k123 0x1eb8 1 # odf_k123
+sdn11_2 0x1fb8 1 # sd vilfan lsd=11 Dll/Dperp=2
+lor 0x20c8 1 # lorentziana
+dimer 0x2148 1 # dimerizacao
+total 0x24d8 1 # soma de todas as contribuicoes

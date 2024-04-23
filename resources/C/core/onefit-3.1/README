@@ -1,0 +1,54 @@
+Hello,
+
+The OneFit is a general purpose fitting program/library that is supposed to
+help any user who needs to perform a fit of some numerical model to a
+an ensemble of experimental data points (eventually in n dimensions).
+
+The OneFit kernel provides an interface to the CERN-LIB MINUIT routine
+which performs the non-linear fitting using several methods.
+
+The OneFit package contains:
+- the GFITN kernel
+- xonefit (a GUI which replaces fitenv X-window terminals)
+- cop (which helps to perform simple line and column operations in data files)
+- pcop an useful perl script
+- excel to txt and txt to excel converters
+- several models for NMR T1 relaxation
+- several examples on how to use the program
+
+Perhaps the best way to star using this program is to copy the
+examples to one directory of your own and to change the files to suit
+your needs. If some problems arrive try to contact the author or
+someone else who has used this environment before.
+
+WARNING: This program is not bullet-proof and the user is fully
+responsible for any use or misuse of it. The author will not be held
+responsible for any damage directly or indirectly caused by the use of
+this software. The CERN-LIB has its own copyright terms which should
+be read prior to the used of this package (http://www.cern.ch).
+
+WARNING: This library uses some NUMERICAL RECIPES routines which in
+certain conditions my restrict the use of OneFit. To avoid problems I advise
+the aquisition of the book (http://www.nr.com). It will certainly do you no 
+harm to know more about the numerical routines therein. You may even want to 
+replace some of them by equivalent ones from Netlib. (I would appreciate 
+some help on that).
+
+In order to compile and work with OneFit you need previously to install:
+1- gcc (or another C compiler)
+2- Perl (see CPAN)
+    a- perl/Tk
+    b- Spreadsheet JMCNAMARA Spreadsheet-WriteExcel-0.42.tar.gz  
+    c- Spreadsheet KWITKNR   Spreadsheet-ParseExcel-0.2602.tar.gz 
+
+3- CERN libs libmath and libpack (http://wwwasd.web.cern.ch/wwwasd/cernlib/version.html)(debian-> http://borex.princeton.edu/~kmccarty/)
+4- gnumeric (or equivalent)
+5- grace (xmgrace/xmgr) (http://plasma-gate.weizmann.ac.il/Grace/)
+6- wget (http://www.gnu.org/software/wget/wget.html)
+7- ImageMagic (display,convert) (http://www.imagemagick.org/)
+
+IMPORTANT
+
+1- OneFit demands the setting of an environment variable ONEFITROOT with the path to OneFit directory
+
+2- Make a link in your ~/bin directory to ONEFITROOT/OneFit/bin/pcop if pcop dosen't exis in your system

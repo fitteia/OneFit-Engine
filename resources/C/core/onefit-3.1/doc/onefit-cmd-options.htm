@@ -1,0 +1,151 @@
+<html>
+<!-- $Id: gfitn-cmd-options.htm,v 1.4 1998/12/31 18:22:15 pedros Exp $ -->
+<head>
+<TITLE>OneFit/GFITN Command Line Options</TITLE>
+</head>
+<body>
+
+<h1>OneFit: Command Line Options</h1>
+<hr>
+
+<pre>
+usage: gfitn [-@options_file] [-short_options] [--long_options=] datafiles [-short_options] [--long_options=] datafiles ...
+short options: -FGOPgdo@ntpzleh
+long  options: autox_scale, autox, autoy_scale, autoy, fit, nofit,plot
+               noplot, label, nolabel, errors, device, Outdev, xlabel
+               ylabel, xscale, yscale, point_type, ptype, gph, num_gph_points
+               num, Function, Parameter, Par, xm, xM, ym, yM, Gnuplot
+               Gnu, xy, xyz, xyt, xmgr, grbatch, xmgr_par_file, PERL_file
+
+--grbatch=image_format_type (eps,jpg,png,tif,ps,pdf,pnm,pgm,pcx,wmf
+-F, --Function=<function>
+-P, --Parameter=, --Par=<parfile>
+-G, --Gnuplot=, --Gnu=<gnuplot file> (default: gfitn.gnu)
+-d, --device=<screen or printer type> (default: gnuplot default)
+-O, --Outdev=<graphic output file> (default: none)
+-o <output file> (default: gfitn.out)
+-g <to plot graphics on device> (default: yes)
+-p, --plot <to generate graphics files> (default: yes)
+-f, --fit <to fit> (default: yes)
+-n[fpg] <no fit or plot or graphic>
+-t <xyt type of data files> (default: xy)
+-z <xyz type of data files> (not implemented)
+-e, --errors (not implemented)
+-l <list compliled fitting function names>
+-h <help>
+</pre>
+
+<p><hr>
+The -@ option allows the user to pass options to gfitn through an options file like this:<br>
+#--device=hpdj<br>
+#--Outdev=| lpr -P lince<br>
+#--device=postscript<br>
+#--Outdev=| lpr<br>
+#--device=postscript<br>
+#--Outdev=| lpr -P lps3<br>
+--xyt<br>
+--autox<br>
+--autoy<br>
+--nolabel<br>
+--xscale=log lin<br>
+--yscale=logT1 lin<br>
+--ptype=point errbar<br>
+#--num=200<br>
+
+# freq graphs<br>
+--xm=10 0<br>
+--xM=4e8 180<br>
+--ym=0.001 0 <br>
+--yM=1000 2<br>
+
+#opcoes malucas<br>
+#--ym=0.001<br>
+#--yM=300<br>
+#--ptype=errbar<br>
+
+
+# ang graphs<br>
+#--xm=0<br>
+#--xM=180<br>
+#--ym=0<br>
+#--yM=2<br>
+#--xscale=lin<br>
+#--yscale=lin<br>
+#--ptype=errbar<br>
+--gph=my_file.gph
+
+<p>
+The # is used as a comment character and the rest of the line is omitted.
+
+<p>
+One should note the following:
+<ul type=disk>
+<li><a name="xy">--xy</a> <br>
+    takes no arguments<br>
+    expects that the user data file has the following format:<br>
+    <pre>
+###############################################
+# comment line
+#
+# more comment lines
+
+x1 y1 ey1
+x2 y2 ey2
+.  .  .
+.  .  .
+# comment line
+##############################################
+</pre>
+
+<li>--xyt<br>
+     takes no arguments <br>
+     expects that the user data file has the following format:<br>
+    <pre>
+###############################################
+# comment line
+#
+# more comment lines
+   t
+x1 y1 ey1
+x2 y2 ey2
+.  .  .
+.  .  .
+# comment line
+##############################################
+</pre>
+<p>
+Please note that the first non-comment line will have to contain one number which will be passed to <a href="onefit-main.htm">user functions as the value t</a>.
+
+<li>The xscale,yscale can have the following values:
+<ul>
+<li>lin
+<li>log
+<li>logT1 
+<li>inv
+</ul>
+--yscale=logT1 means the log(1/y)<br>
+--yscale=inv means 1/y<br>
+
+<li>--ptype can be:
+<ul>
+<li>point
+<li>errbar
+</ul> 
+errbar means
+that points are plotted with error bars. When using xmgr gfitn forces
+the use of errbar so is pointless to define it as point.
+
+<li>--gph allows the user to choose the names of the files containing the theoretical curves
+</ul>
+
+<p>
+In all cases each option can take more than one argument but never
+less than the number of data files being fitted at the same time <a
+href="onefit-FAQ.htm">(see FAQ)</a>.
+
+<p>
+<hr>
+$Id: gfitn-cmd-options.htm,v 1.4 1998/12/31 18:22:15 pedros Exp $
+
+</body>
+</html>
