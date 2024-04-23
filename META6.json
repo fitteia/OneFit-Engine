@@ -1,24 +1,36 @@
 {
-    "meta-version": 0,
-    "auth": "github:fitteia",
-    "authors"       : [ "Pedro Sebastião" ],
-    "version"       : "0.00.1",
-    "repo-type"     : "git",
-    "source-url"    : "git://github.com/fitteia/OneFit-Engine.git",
-    "license"       : "GPL-3.0",
-    "build-depends": [
-    ],
-    "depends": [
-    ],
-    "description": "fitteia's OneFit Engine",
-    "name": "OneFit-Engine",
-    "provides": {
-	"OneFit::Engine": "lib/OneFit/Engine.rakumod",
-	"OneFit::Engine::Grammars": "lib/OneFit/Engine/Grammars.rakumod"
-    },
-    "resources": [
-    ],
-    "test-depends": [
-    ],
-    "version": "0.0.1"
+  "auth": "github:fitteia",
+  "authors": [
+    "Pedro Sebastião"
+  ],
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "description": "fitteia's OneFit Engine",
+  "license": "GPL-3.0",
+  "meta-version": 0,
+  "name": "OneFit-Engine",
+  "provides": {
+    "OneFit": "lib/OneFit.rakumod",
+    "OneFit::Engine::Agr": "lib/OneFit/Engine/Agr.rakumod",
+    "OneFit::Engine::Axis": "lib/OneFit/Engine/Axis.rakumod",
+    "OneFit::Engine::Block": "lib/OneFit/Engine/Block.rakumod",
+    "OneFit::Engine::CodeC": "lib/OneFit/Engine/CodeC.rakumod",
+    "OneFit::Engine::Function": "lib/OneFit/Engine/Function.rakumod",
+    "OneFit::Engine::Grammars": "lib/OneFit/Engine/Grammars.rakumod",
+    "OneFit::Engine::Graph": "lib/OneFit/Engine/Graph.rakumod",
+    "OneFit::Engine::Parameters": "lib/OneFit/Engine/Parameters.rakumod",
+    "OneFit::Engine::Parfile": "lib/OneFit/Engine/Parfile.rakumod",
+    "OneFit::Engine::Stpfile": "lib/OneFit/Engine/Stpfile.rakumod",
+    "OneFit::Engine::Title": "lib/OneFit/Engine/Title.rakumod"
+  },
+  "repo-type": "git",
+  "resources": [
+    "C/makefile"
+  ],
+  "source-url": "git://github.com/fitteia/OneFit-Engine.git",
+  "test-depends": [
+  ],
+  "version": "0.0.1"
 }
