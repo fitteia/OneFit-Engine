@@ -17,7 +17,6 @@
 	"OneFit::Engine::Grammars": "lib/OneFit/Engine/Grammars.rakumod"
     },
     "resources": [
-	"C"
     ],
     "test-depends": [
     ],
