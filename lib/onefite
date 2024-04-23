@@ -1,0 +1,345 @@
+#!/Users/pedros/.rakubrew/versions/moar-2023.09/bin/perl6
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use lib '/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE';
+
+our constant OFE-PATH="/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE";
+
+use OFE;
+use OFEGrammars;
+use OFEParameters;
+use OFEParfile;
+use OFEStpfile;
+use MONKEY-SEE-NO-EVAL;
+use MONKEY;
+use Test;
+
+my %*SUB-MAIN-OPTS = :named-anywhere, ;
+
+
+multi MAIN ('help') { 
+    say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
+
+    my $p= shell "onefite", :err;
+    say $p.err.slurp(:close);
+    say qq:to/EOT/;
+    <function> syntax alternatives:
+    \"y(x,a,b,c)=a + b*x + c*pow(x,2.0)\"
+    \"y(t,A,lambda: 0.1)=A*exp(-lambda*t)\" 0.1 is the initial value to start mimimization
+    \"y (t,A,B=2,lambda)=A * (1 - B*exp(-lambda*t) )\" B is fixed with value 2
+    \"y( t,A, lambda: [0;0.5])=A*exp(-lambda*t)\" [lambda is limited to range 0 to 0.
+    \"R1(f:[0;1e9], A, tau[0;1e-9])=A*tau/(1+pow(2*pi*f*tau,2.0)\" f is limite to positive values up to 1e9 and tau also
+    \"y[-1;1](x:[0;1],a,b,c)=a + b*x + c*x*x\" theoretical curves generated for x is limited to range 0 to 1; in the plot y axis will be limited to range -1 to 1
+    \"f(x,p1: 2, p2=0.3, p3[5;10]) :[-5;5]=p1*exp(-p2*x)*sin(2*pi*x/p3)\" p1 is inmitialized to 1, p2 is fixed to 2 p3 will be in the range 5 to 10
+EOT
+}
+
+    multi MAIN ('convert',
+	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
+	    $output-file, #= name of the converted file (.sav or .json)
+	   ) {
+    my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile);
+    exit;
+}
+
+multi MAIN  ('create',
+	     Str  $function,
+	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
+	     Str  :data-label(:$data-labels),
+	     Str  :$tags,
+	     Bool :$autox,
+	     Bool :$autoy,
+	     Bool :$autoxy,
+	     Bool :$linlog,
+	     Bool :$loglin,
+	     Bool :$loglog,
+	     Bool :$global,
+	     Str  :save-to(:$to), # write fit settings to json or sav file"
+	     Str  :$work-folder = '.',
+             Int  :Num(:$npts) = +100
+	    ){
+    use JSON::Fast;
+    
+    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
+    %e<FitType>="Global" if $global;
+    %e<Num>=$npts;
+    my $engine = OFE::Engine.new.path("$work-folder").set(%e);
+    $engine.blocks(
+	:read,
+	:fit,
+	:export,
+	:autox($autox),
+	:autoy($autoy),
+	:logx($loglin or $loglog),
+	:logy($linlog or $loglog));
+    $engine.parameters(:read).functions(:read).stp.code(:write,:compile);
+    %e=$engine.h;
+    %e<par-tables>:delete;
+    if $to.defined { $engine.set(%e).save($to) }
+    else { say to-json(%e, :sorted-keys) }
+    exit;
+}
+
+multi MAIN  ('random',
+	     Str  $function, 
+	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
+	     Str  :data-label(:$data-labels),
+	     Str  :$tags,
+	     Str  :$zip-to,
+	     Bool :$no-plot,
+	     Bool :$autox,
+	     Bool :$autoy,
+	     Bool :$autoxy,
+	     Bool :$linlog,
+	     Bool :$loglin,
+	     Bool :$loglog,
+	     Bool :$global,
+	     Str  :$save-to, # write fit settings to json or sav file 
+	     Str  :$work-folder = '.',
+	     Int  :Num(:$npts) = +100
+	    ){
+    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
+    %e<FitType>="Global" if $global;
+    %e<Num>=$npts;
+    for %e.kv -> $k, $v {
+	if all($k.contains("Pval"), %e{$k.subst('val','max')}.Bool, %e{$k.subst('val','min')}.Bool) {
+	    $k ~~ /Pval $<i>=(\d+)/;
+	    %e{$k}= (%e{$k.subst('val','min')}.Real .. %e{$k.subst('val','max')}.Real).rand;
+	    %e{'F' ~ $<i>.Str}= "Fix";
+	}
+    }
+    my $name = ".";
+    if $zip-to.Bool {
+	$name = $zip-to.subst(/\.zip/,'',:g);
+	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	"$work-folder/$name".IO.mkdir;
+	for @data-files { $_.IO.move("$work-folder/$name/$_") };
+    }
+    my $engine = OFE::Engine.new.path("$work-folder").set(%e);
+    $engine.fit(
+	:no-plot($no-plot),
+	:autox($autox or $autoxy),
+	:autoy($autoy or $autoxy),
+	:logx($loglin or $loglog),
+	:logy($linlog or $loglog)
+    );
+    $engine.save($save-to) if $save-to.defined;
+    zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
+#    shell "pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+    exit;
+}
+
+multi MAIN  ('fit',
+	     Str  $function, 
+	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
+	     Str  :data-label(:$data-labels),
+	     Str  :$tags,
+	     Str  :$zip-to,
+	     Bool :$no-plot,
+	     Bool :$autox,
+	     Bool :$autoy,
+	     Bool :$autoxy,
+	     Bool :$linlog,
+	     Bool :$loglin,
+	     Bool :$loglog,
+	     Bool :$global,
+	     Str  :$save-to, # write fit settings to json or sav file 
+	     Str  :$work-folder = '.',
+	     Int  :Num(:$npts) = +100
+	    ){
+    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
+    %e<FitType>="Global" if $global;
+    %e<Num>=$npts;
+    my $name = ".";
+    if $zip-to.Bool {
+	$name = $zip-to.subst(/\.zip/,'',:g);
+	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	"$work-folder/$name".IO.mkdir;
+	for @data-files { $_.IO.move("$work-folder/$name/$_") };
+    }
+    my $engine = OFE::Engine.new.path("$work-folder/$name").set(%e);
+    $engine.fit(
+	:no-plot($no-plot),
+	:autox($autox or $autoxy),
+	:autoy($autoy or $autoxy),
+	:logx($loglin or $loglog),
+	:logy($linlog or $loglog)
+    );
+    $engine.save($save-to) if $save-to.defined;
+    zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
+#    shell "pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+    exit;
+}
+
+multi MAIN  ('fit',
+	     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the (.sav or .json) to compile
+	     Bool :$no-plot,
+	     Bool :$autox,
+	     Bool :$autoy,
+	     Bool :$autoxy,
+	     Bool :$linlog,
+	     Bool :$loglin,
+	     Bool :$loglog,
+	     Str  :save-to(:$to), # write fit settings to json or sav file 	     
+	     Str  :$work-folder = '.'
+	    ){
+	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
+	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	    "$work-folder/$name".IO.mkdir;
+	    $input-file.IO.move("$work-folder/$name/$input-file");
+	    my $engine = OFE::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+#	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
+	    $engine.fit(
+		:no-plot($no-plot),
+		:autox($autox or $autoxy),
+		:autoy($autoy or $autoxy),
+		:logx($loglin or $loglog),
+		:logy($linlog or $loglog)
+	    );
+	    $engine.save($to) if $to.defined;
+	    zip-fit($engine,$work-folder,$name);
+#	    shell "pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+	    exit;
+}
+
+
+multi MAIN  ('plot',
+	     Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the (.sav or .json) to compile
+	     Bool :$autox,
+	     Bool :$autoy,
+	     Bool :$autoxy,
+	     Bool :$linlog,
+	     Bool :$loglin,
+	     Bool :$loglog,
+	     Str  :$work-folder = '.'
+	    ){
+	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
+	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	    "$work-folder/$name".IO.mkdir;
+	    $input-file.IO.move("$work-folder/$name/$input-file");
+	    my $engine = OFE::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+#	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
+	    $engine.plot(
+		:autox($autox or $autoxy),
+		:autoy($autoy or $autoxy)
+		:logx($loglin or $loglog),
+		:logy($linlog or $loglog)
+	    );
+	    zip-fit($engine,$work-folder,$name);
+#	    shell "pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+	    exit;
+}
+
+multi MAIN ('start-engine',
+	    Bool :$no-plot,
+	    Bool :q(:$quiet)=False, # Don't show log messages
+	    Str :$work-folder = '.'
+	   ){
+    my $supplier = Supplier.new;
+    $supplier.Supply.tap: -> $f {
+	start {
+	    my $cmd = "plot";
+	    $f ~~ /$<cmd>=(__fit__|__plot__|__fit\-only__)* $<file>=(\S+)/;
+	    my $file = $<file>;
+	    $cmd = $<cmd>.subst('__','',:g);
+	    my $name = $file.subst(/\.sav|\.json/,'',:g);
+	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	    "$work-folder/$name".IO.mkdir;
+	    $f.IO.move("$work-folder/$name/$file");
+	    my $engine = OFE::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
+	    if $cmd ~~ /plot/ {
+		my $time = now;
+		say "start plotting $file";
+		$engine.plot;
+		say "finished plotting $file:", now - $time;
+	    }
+	    elsif $cmd ~~ /only/ {
+		my $time = now;
+		say "start fitting $file";
+		$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
+		say "finished fitting $file:", now - $time;
+	    }
+	    else {
+		my $time = now;
+		say "start fitting $file";
+		$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
+		say "finished fitting $file:", now - $time;
+	    }
+	    zip-fit($engine,$work-folder,$name);
+	}
+    }
+    
+    while True {
+	my @files = dir('.').grep(*.f).grep(/\.sav|\.json/).words;
+	for @files -> $file {
+	    if now - $file.IO.changed > 1 { 
+		$supplier.emit($file);
+		sleep 1;
+	    }
+	    else {
+		sleep 1;
+	    }
+	}
+    }
+    
+}
+
+multi MAIN ('test','list') {
+    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
+    dir($test-path).grep(*.f).grep(/rakutest/).map( { .subst("$test-path/","",:g).say });
+}	    
+
+multi MAIN ('test',
+	    *@arr
+	   ){
+    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
+
+    if @arr.elems > 0 {
+	my $fho = open :w, 'tests.log';
+	@arr.race.map(
+	    {
+		my $test = "$_.rakutest" unless .contains(/rakutest/);
+		say "testing....$test"; run "raku", "$test-path/$test" , :err<fho>
+	    }
+	);
+	$fho.close;
+	"tests.log".IO.slurp.say;
+    }
+    else {
+	my $proc = run "prove6", "--lib", "$test-path","--err=ignore";
+    }
+    exit;
+}
+
+sub parse-function ($function, @data-files, $data-labels) {
+    my %e = OFEGrammars::Function.parse-me($function);
+    %e<FitType SelectedDataSet T Num> = <Individual 1 dum 100>;
+    for (1 .. @data-files.elems) {
+	my @lines=@data-files[$_-1].IO.lines;
+	my $label = "dum";
+	my $dum=$_;
+	$dum = @lines.head if @lines.head.words.elems < 2;
+	if $data-labels.defined {
+	    my $dum-parse = OFEGrammars::Label.parse($data-labels);
+	    $label = $dum-parse<name>.Str;
+	    %e<T> = $label;
+	    %e<SelectedDataSet> = @data-files[0].subst(".dat","");
+	    if $dum-parse<values> > 0 { $dum = $dum-parse<values>[$_-1].Str.join(' ') }
+	}
+	%e<Dados>     ~=  "# DATA $label = $dum\n# TAG = { @data-files[$_-1].subst(".dat","") }\n" ~ @lines.skip.join("\n");
+	%e<Tags>.push: @data-files[$_-1].subst(".dat","");
+    }
+    return %e;
+}
+
+sub zip-fit ($engine,$work-folder,$name) {
+    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+    my $excluded =  { "$work-folder/$name/" <<~<< <AuxCode.* onefit-user *.h *.c *.o *_ gnu* *.stp> }().join(' ') ;
+    "$name.zip".IO(:e).unlink;
+    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+    shell "zip -q -r $name.zip $work-folder/$name -x $excluded";
+}
