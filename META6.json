@@ -13,11 +13,11 @@
     "description": "fitteia's OneFit Engine",
     "name": "OneFit-Engine",
     "provides": {
-	"OneFit::Engine": "lib/OneFit/Engine.rakumod"
+	"OneFit::Engine": "lib/OneFit/Engine.rakumod",
 	"OneFit::Engine::Grammars": "lib/OneFit/Engine/Grammars.rakumod"
     },
     "resources": [
-	"resources/C"
+	"C"
     ],
     "test-depends": [
     ],
