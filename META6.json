@@ -27,7 +27,6 @@
   },
   "repo-type": "git",
   "resources": [
-    "C/makefile"
   ],
   "source-url": "git://github.com/fitteia/OneFit-Engine.git",
   "test-depends": [
