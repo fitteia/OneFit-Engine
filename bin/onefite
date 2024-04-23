@@ -1,4 +1,4 @@
-#!/Users/pedros/.rakubrew/versions/moar-2023.09/bin/perl6
+#!/usr/bin/env raku
 
 my $time = BEGIN { now }
 END { say "Total execution time (s): " , now - INIT now }
@@ -9,24 +9,39 @@ use lib '/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod
 
 our constant OFE-PATH="/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE";
 
-use OFE;
-use OFEGrammars;
-use OFEParameters;
-use OFEParfile;
-use OFEStpfile;
+use OneFit;
+use OneFit::Engine::Grammars;
+use OneFit::Engine::Parameters;
+use OneFit::Engine::Parfile;
+use OneFit::Engine::Stpfile;
 use MONKEY-SEE-NO-EVAL;
 use MONKEY;
 use Test;
 
 my %*SUB-MAIN-OPTS = :named-anywhere, ;
 
+multi MAIN (Bool :h(:help($))) {
+    say OneFit::Engine.new.resources<C/makefile>.slurp;
+    #    say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
 
-multi MAIN ('help') { 
-    say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
-
-    my $p= shell "onefite", :err;
-    say $p.err.slurp(:close);
-    say qq:to/EOT/;
+#    my $p= shell "onefite", :err;
+#    say $p.err.slurp(:close);
+    note qq:to/END_USAGE/;
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite help
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite convert <input-file> <output-file>
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite fit <input-file> [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--save-to|--to=<Str>] [--work-folder=<Str>]
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--work-folder=<Str>]
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite test list
+    /opt/homebrew/Cellar/rakudo/2024.02/share/perl6/site/bin/onefite test [<arr> ...]
+    
+    <input-file>     name of the file to be converted (.sav or .json)
+    <output-file>    name of the converted file (.sav or .json)
+    
+    
     <function> syntax alternatives:
     \"y(x,a,b,c)=a + b*x + c*pow(x,2.0)\"
     \"y(t,A,lambda: 0.1)=A*exp(-lambda*t)\" 0.1 is the initial value to start mimimization
@@ -35,14 +50,14 @@ multi MAIN ('help') {
     \"R1(f:[0;1e9], A, tau[0;1e-9])=A*tau/(1+pow(2*pi*f*tau,2.0)\" f is limite to positive values up to 1e9 and tau also
     \"y[-1;1](x:[0;1],a,b,c)=a + b*x + c*x*x\" theoretical curves generated for x is limited to range 0 to 1; in the plot y axis will be limited to range -1 to 1
     \"f(x,p1: 2, p2=0.3, p3[5;10]) :[-5;5]=p1*exp(-p2*x)*sin(2*pi*x/p3)\" p1 is inmitialized to 1, p2 is fixed to 2 p3 will be in the range 5 to 10
-EOT
+    END_USAGE
 }
 
-    multi MAIN ('convert',
+multi MAIN ('convert',
 	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
 	    $output-file, #= name of the converted file (.sav or .json)
 	   ) {
-    my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile);
+    my $eng = OneFit::Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile);
     exit;
 }
 
@@ -67,7 +82,7 @@ multi MAIN  ('create',
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
-    my $engine = OFE::Engine.new.path("$work-folder").set(%e);
+    my $engine = OneFit::Engine.new.path("$work-folder").set(%e);
     $engine.blocks(
 	:read,
 	:fit,
@@ -119,7 +134,7 @@ multi MAIN  ('random',
 	"$work-folder/$name".IO.mkdir;
 	for @data-files { $_.IO.move("$work-folder/$name/$_") };
     }
-    my $engine = OFE::Engine.new.path("$work-folder").set(%e);
+    my $engine = OneFit::Engine.new.path("$work-folder").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
 	:autox($autox or $autoxy),
@@ -161,7 +176,7 @@ multi MAIN  ('fit',
 	"$work-folder/$name".IO.mkdir;
 	for @data-files { $_.IO.move("$work-folder/$name/$_") };
     }
-    my $engine = OFE::Engine.new.path("$work-folder/$name").set(%e);
+    my $engine = OneFit::Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
 	:autox($autox or $autoxy),
@@ -191,7 +206,7 @@ multi MAIN  ('fit',
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $input-file.IO.move("$work-folder/$name/$input-file");
-	    my $engine = OFE::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+	    my $engine = OneFit::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
 	    $engine.fit(
 		:no-plot($no-plot),
@@ -221,8 +236,8 @@ multi MAIN  ('plot',
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $input-file.IO.move("$work-folder/$name/$input-file");
-	    my $engine = OFE::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
-#	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
+	    my $engine = OneFit::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+#	    my $engine = OneFit::Engine.new.path("$work-folder").read($input-file);
 	    $engine.plot(
 		:autox($autox or $autoxy),
 		:autoy($autoy or $autoxy)
@@ -250,7 +265,7 @@ multi MAIN ('start-engine',
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $f.IO.move("$work-folder/$name/$file");
-	    my $engine = OFE::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
+	    my $engine = OneFit::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
 	    if $cmd ~~ /plot/ {
 		my $time = now;
 		say "start plotting $file";
@@ -316,7 +331,7 @@ multi MAIN ('test',
 }
 
 sub parse-function ($function, @data-files, $data-labels) {
-    my %e = OFEGrammars::Function.parse-me($function);
+    my %e = OneFit::Engine::Grammars::Function.parse-me($function);
     %e<FitType SelectedDataSet T Num> = <Individual 1 dum 100>;
     for (1 .. @data-files.elems) {
 	my @lines=@data-files[$_-1].IO.lines;
@@ -324,7 +339,7 @@ sub parse-function ($function, @data-files, $data-labels) {
 	my $dum=$_;
 	$dum = @lines.head if @lines.head.words.elems < 2;
 	if $data-labels.defined {
-	    my $dum-parse = OFEGrammars::Label.parse($data-labels);
+	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
 	    $label = $dum-parse<name>.Str;
 	    %e<T> = $label;
 	    %e<SelectedDataSet> = @data-files[0].subst(".dat","");

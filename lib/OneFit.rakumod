@@ -1,12 +1,12 @@
-unit module OFE;
+unit module OneFit;
 
-use OFEParameters;
-use OFEAxis;
-use OFETitle;
-use OFEBlock;
-use OFEFunction;
-use OFECodeC;
-use OFEStpfile;
+use OneFit::Engine::Parameters;
+use OneFit::Engine::Axis;
+use OneFit::Engine::Title;
+use OneFit::Engine::Block;
+use OneFit::Engine::Function;
+use OneFit::Engine::CodeC;
+use OneFit::Engine::Stpfile;
 
 use MONKEY-SEE-NO-EVAL;
 use MONKEY;
@@ -21,6 +21,8 @@ class Engine is export {
     
     use JSON::Fast;
 
+    method resources () { %?RESOURCES }
+    
     method path ($folder) { $!path = $folder; self }
     
     method read ($file, Bool :$h) {

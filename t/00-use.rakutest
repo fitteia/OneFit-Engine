@@ -2,4 +2,4 @@ use Test;
 
 plan 1;
 
-use-ok "OneFit-Engine";
+use-ok "OneFit";
