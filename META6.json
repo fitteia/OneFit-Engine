@@ -1,0 +1,17 @@
+{
+  "auth": "",
+  "build-depends": [
+  ],
+  "depends": [
+  ],
+  "description": "A brand new and very nice module",
+  "name": "OneFit-Engine",
+  "provides": {
+    "OneFit-Engine": "lib/OneFit-Engine.rakumod"
+  },
+  "resources": [
+  ],
+  "test-depends": [
+  ],
+  "version": "0.0.1"
+}
