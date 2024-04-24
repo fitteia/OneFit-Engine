@@ -6,13 +6,6 @@ END { say "Total execution time (s): " , now - INIT now }
 say "Compile time: ", now - $time;
 
 use OneFit;
-use OFEParameters;
-use OFEOutput;
-use OFELog;
-use OFEParfile;
-use OFEStpfile;
-use MONKEY-SEE-NO-EVAL;
-use MONKEY;
 use Test;
 
 my $test-path=$*CWD;
