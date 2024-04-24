@@ -24,7 +24,7 @@ plan 5;
 subtest '1',{
     plan 2;
     $time = now;
-    $eng = OneFit::Engine.new.read("$test-path/1/test1.sav").blocks(:r,:q).functions :r;
+    $eng = OneFit::Engine.Engine.new.read("$test-path/1/test1.sav").blocks(:r,:q).functions :r;
     is OneFit::Engine::Stpfile.new.update($eng).get[0], "$test-path/1/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
 
     $time = now;

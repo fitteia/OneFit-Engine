@@ -107,7 +107,7 @@ class Engine is export {
 				take OneFit::Engine::Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet)).path($!path);
 			    }
 			    if none($fit,$plot) {
-				take OneFit::Engine::Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet)).path($!path);
+				take OneFit::Engine::Block.Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet)).path($!path);
 			    }
 			}
 			else {
