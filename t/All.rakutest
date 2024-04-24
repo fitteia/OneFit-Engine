@@ -7,10 +7,8 @@ say "Compile time: ", now - $time;
 
 use OneFit;
 use OneFit::Engine::Parameters;
-use OneFit::Engine::Output;
-use OneFit::Engine::Log;
-use OneFit::Engine::Parfile;
-use OneFit::Engine::Stpfile;
+use OneFit::Engine::Parfiles;
+use OneFit::Engine::Stpfiles;
 use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
