@@ -6,11 +6,10 @@ END { say "Total execution time (s): " , now - INIT now }
 say "Compile time: ", now - $time;
 
 use OneFit;
-use OneFit::Engine::Parfile;
+use OneFit::Engine::Parfiles;
 use Test;
 
-my $test-path=OFE-PATH;
-$test-path=$test-path.subst("rakumod/OFE","t");
+my $test-path=$*CWD;
 
 my class OutputCapture {
     has @!lines;
@@ -22,8 +21,8 @@ my class OutputCapture {
 
 plan 5;
 $time = now;
-my $eng = OneFit::Engine.new.read("$test-path/2/test2.sav").blocks(:r).parameters :r;
-my $parfile = OneFit::Engine::Parfile.new;
+my $eng = Engine.new.read("$test-path/2/test2.sav").blocks(:r).parameters :r;
+my $parfile = Parfile.new;
 is $parfile.write($eng.par-selected.table).get.join("\n"), "$test-path/2/test2.par".IO.slurp, "parameters: create parfile works! ({ now -$time } s)" ;
 
 $time = now;
@@ -34,11 +33,11 @@ is $parfile.write($eng.par-selected.table,:fix-none).get.join("\n"), "$test-path
 
 $time = now;
 #dir('.', :test(/\.par/)).race.map({ $_.unlink if $_.IO.f; say $_});
-$eng = OneFit::Engine.new.read("$test-path/7/test7.sav").blocks(:r).parameters: :r;
+$eng = Engine.new.read("$test-path/7/test7.sav").blocks(:r).parameters: :r;
 is $parfile.write($eng.par-selected.table,:fix-none,:No<1>).get.join("\n"), "$test-path/7/fit1.par".IO.slurp, "parameters: fix none! ({ now -$time } s)" ;;
 
 $time = now;
-$eng = OneFit::Engine.new.read("$test-path/8/test8.sav").fit;
+$eng = Engine.new.read("$test-path/8/test8.sav").fit;
 is "fit.out".IO.slurp, "$test-path/8/fit.out".IO.slurp, "parameters: reads from output! ({ now -$time } s)" ;;
 
 $time = now;
