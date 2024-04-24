@@ -1,4 +1,4 @@
-unit module OneFit::Engine::Block;
+unit module OneFit::Engine::Blocks;
 
 use OneFit::Engine::Graph;
 use OneFit::Engine::Title;
