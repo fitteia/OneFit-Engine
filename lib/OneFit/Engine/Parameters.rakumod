@@ -33,7 +33,7 @@ class Parameters {
     method from-output (Str :$file, Bool :$a , Str :$path) {
 	$!path = $path if $path.Bool;
 	my $filename = ($file.defined) ?? $file !! "fit.out";
-	my $m = Output.parse-made("$!path/$filename".IO.slurp).hash;
+	my $m = OneFit::Engine::Grammars::Output.parse-made("$!path/$filename".IO.slurp).hash;
 	@!p.map( {if $_<name> {$_<value> = $m{$_<name>.subst(/\s+/,'')} if $m{$_<name>}.defined  } } );
 	($a.Bool) ?? @!p !! self;
     }
@@ -41,7 +41,7 @@ class Parameters {
 	$!path = $path if $path.Bool;
 	my $filename = ($file.Bool) ?? $file !! "fit.log";
 	my @str = "$!path/$filename".IO.slurp( enc=>"latin1" ).split("MINOS");
-	my $e = Log.parse(@str.pop);
+	my $e = OneFit::Engine::Grammars::Log.parse(@str.pop);
 	my @par;
 	for $e<line> {
 	    my %h = 'no'   => $_<number>>>.Str[0],
