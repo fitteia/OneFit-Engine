@@ -96,15 +96,15 @@ class Engine is export {
 		for @arr[1 ..^ @arr.elems].hyper {
 		    $_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
 		    if $All {
-			take OneFit::Engine::Block.new.read('# DATA ' ~ $_,:quiet($quiet)).No($i++).path($!path);
+			take OneFit::Engine::Block::Block.new.read('# DATA ' ~ $_,:quiet($quiet)).No($i++).path($!path);
 		    }
 		    else {
 			if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
 			    if $fit.defined {
-				take OneFit::Engine::Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet)).path($!path);
+				take OneFit::Engine::Block::Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet)).path($!path);
 			    }
 			    if $plot.defined {
-				take OneFit::Engine::Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet)).path($!path);
+				take OneFit::Engine::Block::Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet)).path($!path);
 			    }
 			    if none($fit,$plot) {
 				take OneFit::Engine::Block::Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet)).path($!path);
@@ -163,7 +163,7 @@ class Engine is export {
 #		{<Cor Traco> <<~>> $i}().map: { %!engine{$_} = $fillarr(%!engine{$_}) };
 
 		my $function = @fstrings[$i];
-		@!Functions[$i] = OneFit::Engine::Function.new.No(1+$i);
+		@!Functions[$i] = OneFit::Engine::Function::Function.new.No(1+$i);
 		@!Functions[$i].decode($function,%!engine);
 		for @!blocks {
 		    .Graph.gph = "fit-curves-{.No+1}";
