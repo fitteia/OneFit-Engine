@@ -300,7 +300,7 @@ multi MAIN ('start-engine',
 
 multi MAIN ('test','list') {
     my $test-path=OFE-PATH ~ "/t";
-    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
+#    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
     dir($test-path).grep(*.f).grep(/rakutest/).map( { .subst("$test-path/","",:g).say });
 }	    
 
