@@ -9,6 +9,8 @@ use OneFit;
 use OneFit::Engine::Parfiles;
 use Test;
 
+our constant OFE-PATH="%OFE-PATH%";
+
 my $test-path=$*CWD;
 
 my class OutputCapture {

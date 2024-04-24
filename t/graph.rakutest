@@ -10,6 +10,9 @@ use Test;
 
 my $test-path=$*CWD;
 
+
+our constant OFE-PATH="%OFE-PATH%";
+
 my class OutputCapture {
     has @!lines;
     

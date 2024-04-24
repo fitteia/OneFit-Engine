@@ -4,8 +4,6 @@ unit module OneFit::Engine::Parameters;
 use OneFit::Engine::Grammars;
 use OneFit::Engine::Parfiles;
 
-our constant OFE-PATH="%OFE-PATH%";
-
 class Parameters {
     has @!p;
     has $!np;
