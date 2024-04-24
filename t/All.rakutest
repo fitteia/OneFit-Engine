@@ -85,18 +85,18 @@ subtest 'stpfile', {
     plan 5;
     $time = now;
     $eng = OneFit::Engine.new.read("$test-path/1/test1.sav").blocks(:r).functions :r;
-    is OneFit::Engine::Stpfiles::Stpfile.new.update($eng).get[0], "$test-path/1/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    is OneFit::Engine::Stpfiles::Stpfile.new.read($eng).get[0], "$test-path/1/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
     $time = now;
     $eng = OneFit::Engine.new.read("$test-path/2/test2.sav").blocks(:r).functions :r;
-    is OneFit::Engine::Stpfiles::Stpfile.new.update($eng).get[0], "$test-path/2/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    is OneFit::Engine::Stpfiles::Stpfile.new.read($eng).get[0], "$test-path/2/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
     $time = now;
     $eng = OneFit::Engine.new.read("$test-path/4/test4.sav").blocks(:r).functions :r;
-    is OneFit::Engine::Stpfiles::Stpfile.new.update($eng).get[0], "$test-path/4/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    is OneFit::Engine::Stpfiles::Stpfile.new.read($eng).get[0], "$test-path/4/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
     $time = now;
     $eng = OneFit::Engine.new.read("$test-path/5/test5.sav").blocks(:r).functions :r;
-    is OneFit::Engine::Stpfiles::Stpfile.new.update($eng).get[0], "$test-path/5/fitenv1.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    is OneFit::Engine::Stpfiles::Stpfile.new.read($eng).get[0], "$test-path/5/fitenv1.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
     $time = now;
     $eng = OneFit::Engine.new.read("$test-path/5/test5.sav").blocks(:r).functions :r;
-    is OneFit::Engine::Stpfiles::Stpfile.new.update($eng).get[1], "$test-path/5/fitenv2.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    is OneFit::Engine::Stpfiles::Stpfile.new.read($eng).get[1], "$test-path/5/fitenv2.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
 }
 
