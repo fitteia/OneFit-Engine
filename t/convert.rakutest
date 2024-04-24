@@ -8,7 +8,9 @@ say "Compile time: ", now - $time;
 use OneFit;
 use Test;
 
-my $test-path=$*CWD;
+
+our constant OFE-PATH="%OFE-PATH%";
+my $test-path=OFE-PATH ~ "/t";
 my $eng = OneFit::Engine.new.read("$test-path/1/test1.sav");
 
 

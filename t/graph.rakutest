@@ -8,10 +8,9 @@ say "Compile time: ", now - $time;
 use OneFit;
 use Test;
 
-my $test-path=$*CWD ~ "/t";
-
-
 our constant OFE-PATH="%OFE-PATH%";
+
+my $test-path=OFE-PATH ~ "/t";
 
 my class OutputCapture {
     has @!lines;

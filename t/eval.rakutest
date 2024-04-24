@@ -8,6 +8,7 @@ say "Compile time: ", now - $time;
 use OneFit;
 use Test;
 
+our constant OFE-PATH="%OFE-PATH%";
 
 my class OutputCapture {
     has @!lines;
@@ -16,7 +17,7 @@ my class OutputCapture {
     method captured () { @!lines.join }
 }
 
-my $test-path=$*CWD;
+my $test-path=OFE-PATH ~ "/t";
 my $eng = OneFit::Engine.new.read("$test-path/6/NMR-spectrum.sav");
 
 plan 3;
