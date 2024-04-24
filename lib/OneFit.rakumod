@@ -3,7 +3,7 @@ unit module OneFit;
 use OneFit::Engine::Parameters;
 use OneFit::Engine::Axis;
 use OneFit::Engine::Title;
-use OneFit::Engine::Block;
+use OneFit::Engine::Blocks;
 use OneFit::Engine::Function;
 use OneFit::Engine::CodeC;
 use OneFit::Engine::Stpfile;
@@ -96,18 +96,18 @@ class Engine is export {
 		for @arr[1 ..^ @arr.elems].hyper {
 		    $_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
 		    if $All {
-			take OneFit::Engine::Block::Block.new.read('# DATA ' ~ $_,:quiet($quiet)).No($i++).path($!path);
+			take OneFit::Engine::Blocks::Block.new.read('# DATA ' ~ $_,:quiet($quiet)).No($i++).path($!path);
 		    }
 		    else {
 			if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
 			    if $fit.defined {
-				take OneFit::Engine::Block::Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet)).path($!path);
+				take OneFit::Engine::Blocks::Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet)).path($!path);
 			    }
 			    if $plot.defined {
-				take OneFit::Engine::Block::Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet)).path($!path);
+				take OneFit::Engine::Blocks::Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet)).path($!path);
 			    }
 			    if none($fit,$plot) {
-				take OneFit::Engine::Block::Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet)).path($!path);
+				take OneFit::Engine::Blocks::Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet)).path($!path);
 			    }
 			}
 			else {
