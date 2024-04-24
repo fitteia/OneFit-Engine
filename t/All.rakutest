@@ -37,7 +37,7 @@ subtest 'compile', {
     $time = now;
     my $output = do {
 	my $*OUT = OutputCapture.new;
-	$eng.blocks(:r).functions(:r).cwrite.cc;
+	$eng.blocks(:r).functions(:r).code(:w,:c);
 	$*OUT.captured;
     }
     is $output, "C code extracted compiled OK!\n", "compile works! ({ now - $time } sec)";
