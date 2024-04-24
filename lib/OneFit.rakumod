@@ -216,7 +216,7 @@ class Engine is export {
 	    for (1 .. @!blocks.elems).race -> $i {
 		my $parameters;
 		if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
-		else { $parameters = Parameters.new.path($!path) }
+		else { $parameters = Parameters::Parameters.new.path($!path) }
 
 		$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 		$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
@@ -230,7 +230,7 @@ class Engine is export {
 	else {
 	    my $parameters;
 	    if @!blocks.head.parameters.defined { $parameters = @!blocks.head.parameters }
-	    else { $parameters = Parameters.new.path($!path) }
+	    else { $parameters = Parameters::Parameters.new.path($!path) }
 
 	    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 	    $parameters.from-output(path => $!path) if $from-output.Bool;
