@@ -207,7 +207,7 @@ class Block is export {
     }
     method write-agr (:$path) {
 	$!path = $path if $path.defined;
-	my $agr = OneFit::Engine::Agr::template.new;
+	my $agr = OneFit::Engine::Agrs::template.new;
 	$!Graph.rminf.autoposxy($agr);
 	my $TXT = $agr.head(
 	    $!Graph.Title.h<title>,
