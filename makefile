@@ -15,8 +15,8 @@ set:
 	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" etc/OFE/default/makefile
 
 install: set
-	make -C src install
-	make -C src clean
+	make -C C install
+	make -C C clean
 
 clean:
-	make -C src clean
+	make -C C clean
