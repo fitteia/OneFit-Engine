@@ -43,22 +43,22 @@ subtest '2',{
 subtest '3',{
     plan 1;
     $time = now;
-    $eng = OneFit::Engine.new.read("$test-path/4/test4.sav").blocks(:r,:q).functions :r;
-    is OneFit::Engine::Stpfile::Stpfile.new.update($eng).arr[0], "$test-path/4/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    $eng = Engine.new.read("$test-path/4/test4.sav").blocks(:r,:q).functions :r;
+    is Stpfile.new.update($eng).arr[0], "$test-path/4/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
 }
 
 subtest '4', {
     plan 1;
     $time = now;
-    $eng = OneFit::Engine.new.read("$test-path/5/test5.sav").blocks(:r,:q).functions :r;
-    is OneFit::Engine::Stpfile::Stpfile.new.update($eng).get[0], "$test-path/5/fitenv1.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    $eng = Engine.new.read("$test-path/5/test5.sav").blocks(:r,:q).functions :r;
+    is Stpfile.new.update($eng).get[0], "$test-path/5/fitenv1.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
 }
 
 subtest '5',{
     plan 1;
     $time = now;
-    $eng = OneFit::Engine.new.read("$test-path/5/test5.sav").blocks(:r).functions :r;
-    is OneFit::Engine::Stpfile::Stpfile.new.update($eng).get[1], "$test-path/5/fitenv2.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    $eng = Engine.new.read("$test-path/5/test5.sav").blocks(:r).functions :r;
+    is Stpfile.new.update($eng).get[1], "$test-path/5/fitenv2.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
 }
 
 
