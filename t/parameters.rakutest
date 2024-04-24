@@ -11,7 +11,7 @@ use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
 
-my $test-path=$*CWD ~ "/t";
+my $test-path=OFE-PATH ~ "/t";
 
 my class OutputCapture {
     has @!lines;
