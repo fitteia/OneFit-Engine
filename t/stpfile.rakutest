@@ -9,7 +9,7 @@ use OneFit;
 use OneFit::Engine::Stpfiles;
 use Test;
 
-my $test-path=$*CWD;
+my $test-path=$*CWD ~ "/t";
 my $eng = OneFit::Engine.new.read("$test-path/1/test1.sav");
 
 
