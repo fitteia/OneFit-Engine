@@ -1,4 +1,4 @@
-unit module OneFit::Engine::Axis;
+unit module OneFit::Engine::Axes;
 
 class Axis is export {
     has %!axis = %(

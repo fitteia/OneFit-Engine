@@ -1,9 +1,9 @@
 unit module OneFit::Engine::Blocks;
 
-use OneFit::Engine::Graph;
-use OneFit::Engine::Title;
-use OneFit::Engine::Axis;
-use OneFit::Engine::Agr;
+use OneFit::Engine::Graphs;
+use OneFit::Engine::Titles;
+use OneFit::Engine::Axes;
+use OneFit::Engine::Agrs;
 
 
 class Block is export {

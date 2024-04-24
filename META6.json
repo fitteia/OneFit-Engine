@@ -13,17 +13,17 @@
   "name": "OneFit-Engine",
   "provides": {
     "OneFit": "lib/OneFit.rakumod",
-    "OneFit::Engine::Agr": "lib/OneFit/Engine/Agr.rakumod",
-    "OneFit::Engine::Axis": "lib/OneFit/Engine/Axis.rakumod",
+    "OneFit::Engine::Agrs": "lib/OneFit/Engine/Agrs.rakumod",
+    "OneFit::Engine::Axes": "lib/OneFit/Engine/Axes.rakumod",
     "OneFit::Engine::Blocks": "lib/OneFit/Engine/Blocks.rakumod",
     "OneFit::Engine::CodeC": "lib/OneFit/Engine/CodeC.rakumod",
-    "OneFit::Engine::Function": "lib/OneFit/Engine/Function.rakumod",
+    "OneFit::Engine::Functions": "lib/OneFit/Engine/Functions.rakumod",
     "OneFit::Engine::Grammars": "lib/OneFit/Engine/Grammars.rakumod",
-    "OneFit::Engine::Graph": "lib/OneFit/Engine/Graph.rakumod",
+    "OneFit::Engine::Graphs": "lib/OneFit/Engine/Graphs.rakumod",
     "OneFit::Engine::Parameters": "lib/OneFit/Engine/Parameters.rakumod",
-    "OneFit::Engine::Parfile": "lib/OneFit/Engine/Parfile.rakumod",
-    "OneFit::Engine::Stpfile": "lib/OneFit/Engine/Stpfile.rakumod",
-    "OneFit::Engine::Title": "lib/OneFit/Engine/Title.rakumod"
+    "OneFit::Engine::Parfiles": "lib/OneFit/Engine/Parfiles.rakumod",
+    "OneFit::Engine::Stpfiles": "lib/OneFit/Engine/Stpfiles.rakumod",
+    "OneFit::Engine::Titles": "lib/OneFit/Engine/Titles.rakumod"
   },
   "repo-type": "git",
   "resources": [

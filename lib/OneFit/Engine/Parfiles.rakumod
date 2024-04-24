@@ -1,4 +1,4 @@
-unit module OneFit::Engine::Parfile;
+unit module OneFit::Engine::Parfiles;
 
 class Parfile is export {
     has $!table;

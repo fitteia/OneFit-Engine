@@ -1,7 +1,7 @@
-unit module OneFit::Engine::Graph;
+unit module OneFit::Engine::Graphs;
 
-use OneFit::Engine::Title;
-use OneFit::Engine::Axis;
+use OneFit::Engine::Titles;
+use OneFit::Engine::Axes;
 
 
 class Graph is export {

@@ -1,4 +1,4 @@
-unit module OneFit::Engine::Function;
+unit module OneFit::Engine::Functions;
 
 use OneFit::Engine::Parameters;
 use OneFit::Engine::CodeC;
