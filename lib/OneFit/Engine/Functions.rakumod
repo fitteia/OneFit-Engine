@@ -61,7 +61,7 @@ class Function is export {
     
     method write-c (:$path, :$name, :$x,:$y, :$t, :$AuxDeclar) {
 	$!path = $path if $path.defined;
-	my $template = CodeC::template.new;
+	my $template = template.new;
 	my $TXT = $template.head;
 	my %Eq-names = (1 .. @!dif-eqs.elems).map({ @!parameters[$_].subst('0','') => $_ - 1 }) if $!IS-NODE1;
 
