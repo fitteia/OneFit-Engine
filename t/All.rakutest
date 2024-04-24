@@ -13,7 +13,8 @@ use OneFit::Engine::Parfile;
 use OneFit::Engine::Stpfile;
 use Test;
 
-my $test-path=$*CWD;
+our constant OFE-PATH="%OFE-PATH%";
+my $test-path=OFE-PATH ~"/t";
 my $eng = OFE::Engine.new.read("$test-path/1/test1.sav");
 
 
