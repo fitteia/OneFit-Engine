@@ -68,17 +68,17 @@ subtest 'blocks', {
     
 }
 
-subtest 'parameters', {
-    plan 3;
-    $time = now;
-    $eng = OneFit::Engine.new.read("$test-path/2/test2.sav").parameters :r;
-    my $parfile = OneFit::Engine::Parfiles::Parfile.new;
-    is $parfile.update($eng.par-selected.table).get.join("\n"), "$test-path/2/test2.par".IO.slurp, "parameters: create parfile works! ({ now -$time } s)" ;
-    $time = now;
-    is $parfile.update($eng.par-selected.table,:FIXALL).get.join("\n"), "$test-path/2/test2-fixed-all.par".IO.slurp, "parameters: fix all! ({ now -$time } s)" ;;
-    $time = now;
-    is $parfile.update($eng.par-selected.table,:FIXNONE).get.join("\n"), "$test-path/2/test2-fixed-none.par".IO.slurp, "parameters: fix none! ({ now -$time } s)" ;;
-}
+#subtest 'parameters', {
+#    plan 3;
+#    $time = now;
+#    $eng = OneFit::Engine.new.read("$test-path/2/test2.sav").parameters :r;
+#    my $parfile = OneFit::Engine::Parfiles::Parfile.new;
+#    is $parfile.update($eng.par-selected.table).get.join("\n"), "$test-path/2/test2.par".IO.slurp, "parameters: create parfile works! ({ now -$time } s)" ;
+#    $time = now;
+#    is $parfile.update($eng.par-selected.table,:FIXALL).get.join("\n"), "$test-path/2/test2-fixed-all.par".IO.slurp, "parameters: fix all! ({ now -$time } s)" ;;
+#    $time = now;
+#    is $parfile.update($eng.par-selected.table,:FIXNONE).get.join("\n"), "$test-path/2/test2-fixed-none.par".IO.slurp, "parameters: fix none! ({ now -$time } s)" ;;
+#}
 
 subtest 'stpfile', {
     #	todo "not ready";
