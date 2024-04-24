@@ -1,5 +1,16 @@
 use Test;
 
-plan 1;
+plan 12;
 
 use-ok "OneFit";
+use-ok "OneFit::Engine::Agr";
+use-ok "OneFit::Engine::Axis";
+use-ok "OneFit::Engine::Block";
+use-ok "OneFit::Engine::CodeC";
+use-ok "OneFit::Engine::Function";
+use-ok "OneFit::Engine::Grammars";
+use-ok "OneFit::Engine::Graph";
+use-ok "OneFit::Engine::Parameters";
+use-ok "OneFit::Engine::Parfile";
+use-ok "OneFit::Engine::Stpfile";
+use-ok "OneFit::Engine::Title";
