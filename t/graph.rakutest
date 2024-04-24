@@ -20,7 +20,7 @@ my class OutputCapture {
 
 plan 1;
 $time = now;
-my $eng = OneFit::Engine.new.read("$test-path/2/test2.sav");
+my $eng = Engine.new.read("$test-path/2/test2.sav");
 $eng.blocks(:r).functions(:r).parameters(:r).code(:w,:c).agr;
 
 #$eng.blocks.a.map({ say .Tag;  say to-json( Hash.new($eng.blocks.a[0].parameters.a), :sorted-keys); say to-json(.Graph.Title.h,:sorted-keys); say to-json(.Graph.Curves,:sorted-keys) });
