@@ -122,11 +122,8 @@ class Block is export {
 #		say self.No;
 		repeat while $i < @!Data.elems {
 		    %c<1 2 3> = @!Data[$i].words;
-		    #		    take $i;
 		    my $condition = $fit ??  $!fcond !! $!pcond;
 		    take $i if  $p5.call('myeval',%c,$condition).Bool;
-		    #		    take  $i if &::('myEVAL')(%c, $fit ??  $!fcond !! $!pcond);
-#		    take $i if _::myEVAL(%c, $fit ??  $!fcond !! $!pcond);
 		    $i += ($fit and $!fcond.Bool) ?? $!fstep !! $!pstep;
 		}
 	    }

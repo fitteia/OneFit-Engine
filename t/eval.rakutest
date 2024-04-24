@@ -1,0 +1,46 @@
+#!/usr/bin/env raku
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use OneFit;
+use Test;
+
+
+my class OutputCapture {
+    has @!lines;
+    
+    method print (\s) { @!lines.append(s) }
+    method captured () { @!lines.join }
+}
+
+my $test-path=$*CWD;
+my $eng = OneFit::Engine.new.read("$test-path/6/NMR-spectrum.sav");
+
+plan 3;
+
+
+$time = now;
+my $dados= $eng.h<Dados>.subst("c1>0,1","c1>0.5 and c1<200,1");
+is $eng.blocks(:r,from=>$dados).a[0].export(:fit).Export-data[0], "122.105 462.25 0.5", "reset fit range works! ({ now - $time } sec)";
+
+$time = now;
+$eng.read("$test-path/6/NMR-spectrum.sav");
+$dados = $eng.h<Dados>.subst("c1>0,1","c1>0.5 and c1<500,1");
+$eng.blocks(:r,from=>$dados).a[0].export(:fit);
+
+is "data1.dat".IO.slurp, "$test-path/6/data-fit-selected.dat".IO.slurp, "eval in block.select range works! ({ now -$time } s)";
+
+
+$time = now;
+$eng.blocks(:r).a[0].E(ey=>"0.001",:ex<0.01>).export(:fit);
+is "data1.dat".IO.slurp, "$test-path/6/data-fit.dat".IO.slurp, "eval in block.select works! ({ now -$time } s)";
+
+
+
+
+
+  
+

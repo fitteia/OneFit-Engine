@@ -1,0 +1,15 @@
+--num=720 720 720 720 720 720 720 720 720 720 720 720 720
+--xmgr_par_file=fit1.agr-par fit2.agr-par fit3.agr-par fit4.agr-par fit5.agr-par fit6.agr-par fit7.agr-par fit8.agr-par fit9.agr-par fit10.agr-par fit11.agr-par fit12.agr-par fit13.agr-par
+--xyt
+--gph=fit-curves-1 fit-curves-2 fit-curves-3 fit-curves-4 fit-curves-5 fit-curves-6 fit-curves-7 fit-curves-8 fit-curves-9 fit-curves-10 fit-curves-11 fit-curves-12 fit-curves-13
+--xm=56 56 56 56 56 56 56 56 56 56 56 56 56
+--xM=500 500 500 500 500 500 500 500 500 500 500 500 500
+--xscale=lin lin lin lin lin lin lin lin lin lin lin lin lin
+--Function=userfitf0(t0,S0,P0,E0,I0,Id0,R0,D0,Ned0,NTd0,NT0,Ii0,Iicu0,NDd0,tsim,dsim,tTps12,Tps12,tTps1,Tps1,dps,tTps2,Tps2,dps2,k1,k2,td2,Td2,td3,Td3,kint,tki,kiint,tkki,kiiint,Trint,Trint2,kicu,kiicu,kiiicu,Tricu,tTricu,Tricu2)
+--Parameter=fit.par
+--PERL_file=gfitn.pl
+-nf
+-np
+-nD
+-ofit.out
+--xmgrace

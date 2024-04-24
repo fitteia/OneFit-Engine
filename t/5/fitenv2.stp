@@ -1,0 +1,15 @@
+--num=100
+--xmgr_par_file=fit2.agr-par
+--xyt
+--gph=fit-curves-2
+--xm=0.0005
+--xM=10
+--xscale=log
+--Function=userfitf0(Minf)+userfitf1(Minf,M0,T11,c)+userfitf2(Minf,M0,c,T12)
+--Parameter=fit2.par
+--PERL_file=gfitn.pl
+-nf
+-np
+-nD
+-ofit2.out
+--xmgrace

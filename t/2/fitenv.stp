@@ -1,0 +1,15 @@
+--num=100 100 100 100 100 100 100 100
+--xmgr_par_file=fit1.agr-par fit2.agr-par fit3.agr-par fit4.agr-par fit5.agr-par fit6.agr-par fit7.agr-par fit8.agr-par
+--xyt
+--gph=fit-curves-1 fit-curves-2 fit-curves-3 fit-curves-4 fit-curves-5 fit-curves-6 fit-curves-7 fit-curves-8
+--xm=10000 10000 10000 10000 10000 10000 10000 10000
+--xM=1e+09 1e+09 1e+09 1e+09 1e+09 1e+09 1e+09 1e+09
+--xscale=log log log log log log log log
+--Function=userfitf0(T1e,T2e,S1,d1,chigh,clow,gH,gS,N,NP)+userfitf1(T1e,T2e,chigh,clow,gH,gS,N,NP,S2,d2)+userfitf2()
+--Parameter=fit.par
+--PERL_file=gfitn.pl
+-nf
+-np
+-nD
+-ofit.out
+--xmgrace

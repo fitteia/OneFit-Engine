@@ -1,0 +1,192 @@
+#!/Users/pedros/.rakubrew/versions/moar-2023.09/bin/perl6
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use lib '/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE';
+
+our constant OFE-PATH="/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE";
+
+
+use OFE;
+use OFEParameters;
+use OFEOutput;
+use OFELog;
+use OFEParfile;
+use OFEStpfile;
+use MONKEY-SEE-NO-EVAL;
+use MONKEY;
+use Test;
+
+my %*SUB-MAIN-OPTS = :named-anywhere, ;
+
+multi MAIN ('help') { 
+    say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
+
+}
+multi MAIN ('convert',
+	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
+	    $output-file, #= name of the converted file (.sav or .json)
+	   ) {
+    my $eng = Engine.new;
+    $eng.read($input-file).save($output-file);
+    exit;
+}
+
+multi MAIN  ('compile',
+	     $input-file #= name of the (.sav or .json) to compile
+	    ){
+    OFE::Engine.new.read($input-file).functions(:r).cwrite.cc;
+    exit;
+}
+
+multi MAIN ('test',
+	    :$All
+	   ){
+    my $test-path=OFE-PATH;
+    $test-path=$test-path.subst("rakumod/OFE","t");
+    my $eng = OFE::Engine.new.read("$test-path/1/test1.sav");
+
+    use Test;
+
+    my class OutputCapture {
+	has @!lines;
+
+	method print (\s) { @!lines.append(s) }
+	method captured () { @!lines.join }
+    }
+    
+    plan 5;
+
+    subtest 'convert', {
+	plan 1;
+	$time = now;
+	$eng.save("test1.json");
+	is "test1.json".IO.slurp, "$test-path/1/test1.json".IO.slurp, "convert sav to json works! ({ now - $time } sec)";;
+    }
+
+    subtest 'compile', {
+	plan 1;
+	$time = now;
+	my $output = do {
+	    my $*OUT = OutputCapture.new;
+	    $eng.functions(:r).cwrite.cc;
+	    $*OUT.captured;
+	}
+	is $output, "C code extracted compiled OK!\n", "compile works! ({ now - $time } sec)";
+    }
+
+    subtest 'blocks', {
+	plan 16;
+	
+	dir('.', :test(/\.dat/)).race.map({ $_.unlink if $_.IO.f });
+	$eng.blocks(:r) :export;
+	
+	for (1 .. 13).race {
+	    $time = now; 
+	    is "data{$_}.dat".IO.slurp, "$test-path/1/data{$_}.dat".IO.slurp, "data: read and export {$_} works! ({ now -$time } s)";
+	}
+
+	$time = now; 
+	OFE::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a)[2].export;
+	is "data3.dat".IO.slurp, "$test-path/3/data3-constant-err.dat".IO.slurp, "data: e_y is constnat works! ({ now -$time } s)";
+
+	$time = now; 
+	OFE::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a)[2].E(:ey<1>).export;
+	is "data3.dat".IO.slurp, "$test-path/3/data3-err-1.dat".IO.slurp, "data: set e_y to 1 works! ({ now -$time } s)";
+
+	$time = now; 
+	OFE::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a)[2].E(ey=>"0.001",:ex<0.01>).export;
+	is "data3.dat".IO.slurp, "$test-path/3/data3.dat".IO.slurp, "data: e_x propagates to e_y works! ({ now -$time } s)";
+	
+    }
+
+    subtest 'parameters', {
+	plan 3;
+	$time = now;
+	$eng = OFE::Engine.new.read("$test-path/2/test2.sav").parameters :r;
+	my $parfile = OFEParfile::Parfile.new;
+	is $parfile.update($eng.par-selected.table).get.join("\n"), "$test-path/2/test2.par".IO.slurp, "parameters: create parfile works! ({ now -$time } s)" ;
+	$time = now;
+	is $parfile.update($eng.par-selected.table,:FIXALL).get.join("\n"), "$test-path/2/test2-fixed-all.par".IO.slurp, "parameters: fix all! ({ now -$time } s)" ;;
+	$time = now;
+	is $parfile.update($eng.par-selected.table,:FIXNONE).get.join("\n"), "$test-path/2/test2-fixed-none.par".IO.slurp, "parameters: fix none! ({ now -$time } s)" ;;
+    }
+
+    subtest 'stpfile', {
+#	todo "not ready";
+	plan 5;
+	$time = now;
+	$eng = OFE::Engine.new.read("$test-path/1/test1.sav").blocks(:r).functions :r;
+	is OFEStpfile::Stpfile.new.update($eng).get[0], "$test-path/1/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+	$time = now;
+	$eng = OFE::Engine.new.read("$test-path/2/test2.sav").blocks(:r).functions :r;
+	is OFEStpfile::Stpfile.new.update($eng).get[0], "$test-path/2/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+	$time = now;
+	$eng = OFE::Engine.new.read("$test-path/4/test4.sav").blocks(:r).functions :r;
+	is OFEStpfile::Stpfile.new.update($eng).get[0], "$test-path/4/fitenv.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+	$time = now;
+	$eng = OFE::Engine.new.read("$test-path/5/test5.sav").blocks(:r).functions :r;
+	is OFEStpfile::Stpfile.new.update($eng).get[0], "$test-path/5/fitenv1.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+	$time = now;
+	$eng = OFE::Engine.new.read("$test-path/5/test5.sav").blocks(:r).functions :r;
+	is OFEStpfile::Stpfile.new.update($eng).get[1], "$test-path/5/fitenv2.stp".IO.slurp, "stpfile: create works! ({ now -$time } s)";
+    }
+    
+}
+
+multi MAIN ('test1',
+	    $input-file, #= name of the file to be converted (.sav or .json)
+	   ) {
+    my $eng = OFE::Engine.new;
+    $eng.read($input-file);
+    $eng.initialize;
+    my $i=0;
+    for $eng.blocks(:a) {
+	.export;
+#	say .No;
+    }
+    $eng.blocks(:a)[0].E(ey=>"0.001",:ex<0.01>).Data.join("\n");
+#    $eng.read-blocks(:fit,:a)[0];
+#    $eng.read-blocks(:plot,:a)[0];
+    if dir('.', :test(/\.dat/)).map({ $_ if $_.IO.f }) { shell 'rm *.dat' and say "done rm \*.dat" } 
+
+    $eng.blocks(:a)>>.export;
+#    for $eng.self.kv { .say }
+
+    my $m = OFEOutput::Output.parse-made("lixo.out".IO.slurp);
+#    for $m.list -> $pair { say $pair.kv if ($pair.key eq "T") }
+    my @str = "fit.log".IO.slurp( enc=>"latin1" ).split("MINOS");
+    my $txt = @str.pop;
+    my $e = OFELog::Log.parse($txt);
+    $eng.functions>>.formula;
+#    my $parameters = OFE::Parameter.new;
+#    $parameters.from-engine($eng);
+#    $parameters.from-output;
+#    $parameters.from-log;
+#    say $eng.functions>>.formula;
+#    say $eng.functions>>.parameters;
+    $eng.parameters(:r,:to-json).say;
+#    say $eng.parameters(:say);
+    $eng.parameters(:from-output);
+#    say $eng.parameters;
+    $eng.parameters(:from-log);
+#    say $eng.parameters;
+#    say $eng.parameters;
+    #    say $eng.self<par-table>;
+    my $parfile = OFEParfile::Parfile.new;
+    $parfile.update($eng.par-selected.table);
+#    $parfile.update($eng.par-selected.table,:FIXALL);
+    #    say $parfile.table;
+    my $stpfile = OFEStpfile::Stpfile.new.update($eng);
+    $eng.save("lixo-3.json");
+    exit;
+}
+
+our sub myeval(%c,$str) {
+    	EVAL $str;
+}
+
+

@@ -5,9 +5,7 @@ END { say "Total execution time (s): " , now - INIT now }
 
 say "Compile time: ", now - $time;
 
-use lib '/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE';
-
-our constant OFE-PATH="/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE";
+our constant OFE-PATH="%OFE-PATH%";
 
 use OneFit;
 use OneFit::Engine::Grammars;
@@ -21,7 +19,7 @@ use Test;
 my %*SUB-MAIN-OPTS = :named-anywhere, ;
 
 multi MAIN (Bool :h(:help($))) {
-        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
+#        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
 
 #    my $p= shell "onefite", :err;
 #    say $p.err.slurp(:close);
@@ -303,6 +301,7 @@ multi MAIN ('start-engine',
 }
 
 multi MAIN ('test','list') {
+    my $test-path=OFE-PATH ~ "/t";
     my $test-path=OFE-PATH.subst("rakumod/OFE","t");
     dir($test-path).grep(*.f).grep(/rakutest/).map( { .subst("$test-path/","",:g).say });
 }	    
@@ -310,7 +309,8 @@ multi MAIN ('test','list') {
 multi MAIN ('test',
 	    *@arr
 	   ){
-    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
+    my $test-path=OFE-PATH ~ "/t";
+#    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
 
     if @arr.elems > 0 {
 	my $fho = open :w, 'tests.log';

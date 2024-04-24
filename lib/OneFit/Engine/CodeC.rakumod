@@ -209,7 +209,8 @@ END
     }
     
     method compile (Bool :$quiet) {
-	my $path = ::('OFE-PATH').subst("rakumod/OFE","");
+#	my $path = ::('OFE-PATH').subst("rakumod/OFE","");
+	my $path = ::('OFE-PATH');
 	"$!path/compile.log".IO(:e).unlink;
 	my $fho = open :a, "$!path/compile.log";
 	my $proc = shell "cd $!path; make ROOT=$path -f $path/etc/OFE/default/makefile gfitn", :out($fho), :err($fho);

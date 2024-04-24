@@ -1,0 +1,43 @@
+#!/Users/pedros/.rakubrew/versions/moar-2023.09/bin/perl6
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use lib '/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE';
+
+our constant OFE-PATH="/Users/pedros/CeFEMA-psebastiao/fitteia/Development/OFE/onefite/rakumod/OFE";
+
+
+use OFE;
+use OFEParameters;
+use OFEOutput;
+use OFELog;
+use OFEParfile;
+use OFEStpfile;
+use MONKEY-SEE-NO-EVAL;
+use MONKEY;
+use Test;
+
+my $test-path=OFE-PATH;
+$test-path=$test-path.subst("rakumod/OFE","t");
+my $eng = OFE::Engine.new.read("$test-path/6/NMR-spectrum.sav");
+
+my class OutputCapture {
+    has @!lines;
+    
+    method print (\s) { @!lines.append(s) }
+    method captured () { @!lines.join }
+}
+
+
+plan 2;
+$time = now;
+$eng.blocks(:r).functions(:r).C(:w,:c).agr;
+is "fit1.agr-par".IO.lines.tail.contains("s6 legend"), True, "agr test! ({ now - $time } sec)";
+
+$time = now;
+$eng = OFE::Engine.new.read("$test-path/2/test2.sav");
+$eng.blocks(:r).functions(:r).C(:w,:c).agr;
+is "fit1.agr-par".IO.lines.tail.contains("s4 legend"), True, "agr test! ({ now - $time } sec)";

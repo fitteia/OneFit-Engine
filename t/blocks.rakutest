@@ -1,0 +1,56 @@
+#!/usr/bin/env raku
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use OneFit;
+use Test;
+
+my $test-path=$*CWD;
+my $eng = OFE::Engine.new.read("$test-path/1/test1.sav");
+
+
+my class OutputCapture {
+    has @!lines;
+    
+    method print (\s) { @!lines.append(s) }
+    method captured () { @!lines.join }
+}
+
+plan 4;
+
+subtest 'check data files', {
+    plan 13;
+    dir('.', :test(/\.dat/)).race.map({ $_.unlink if $_.IO.f });
+    $eng.blocks(:r,:quiet) :export;
+     for (1 .. 13).race {
+	$time = now; 
+	is "data{$_}.dat".IO.slurp, "$test-path/1/data{$_}.dat".IO.slurp, "data: read and export {$_} works! ({ now -$time } s)";
+     }
+}
+
+subtest 'data err 1', {
+    plan 1;
+    $time = now; 
+    OneFit::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].export;
+    is "data3.dat".IO.slurp, "$test-path/3/data3-constant-err.dat".IO.slurp, "data: e_y is constant works! ({ now -$time } s)";
+}
+
+subtest 'data set err', {
+    plan 1;
+    $time = now; 
+    OneFit::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].E(:ey<1>).export;
+    is "data3.dat".IO.slurp, "$test-path/3/data3-err-1.dat".IO.slurp, "data: set e_y to 1 works! ({ now -$time } s)";
+}
+
+subtest 'data set ex and ey', {
+    plan 1;
+    $time = now; 
+    OneFit::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].E(ey=>"0.001",:ex<0.01>).export;
+    is "data3.dat".IO.slurp, "$test-path/3/data3.dat".IO.slurp, "data: e_x propagates to e_y works! ({ now -$time } s)";
+}
+
+
+
