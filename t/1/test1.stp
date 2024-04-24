@@ -1,0 +1,15 @@
+--num=720 
+--xmgr_par_file=
+--xyt
+--gph=
+--xm=56 56 56 56 56 56 56 56 56 56 56 56 56
+--xM=500 500 500 500 500 500 500 500 500 500 500 500 500
+--xscale=
+--Function=userfitf0(t0,S0,P0,E0,I0,Id0,R0,D0,Ned0,NTd0,NT0,Ii0,Iicu0,NDd0,h,tsim,dsim,tTps12,Tps12,tTps1,Tps1,dps,tTps2,Tps2,dps2,k1,k2,td2,Td2,td3,Td3,kint,tki,kiint,tkki,kiiint,Trint,Trint2,kicu,kiicu,kiiicu,Tricu,tTricu,Tricu2)
+--Parameter=fit.par
+--PERL_file=gfitn.pl
+-fn
+-np
+-nD
+-ofit.out
+--xmgrace

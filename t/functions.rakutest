@@ -1,0 +1,29 @@
+#!/usr/bin/env raku
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use OneFit;
+use Test;
+
+my $test-path=$*CWD;
+my $eng = OneFit::Engine.new.read("$test-path/6/NMR-spectrum.sav").functions(:read,:and-rtna);
+
+my class OutputCapture {
+    has @!lines;
+    
+    method print (\s) { @!lines.append(s) }
+    method captured () { @!lines.join }
+}
+
+
+plan 2;
+$time = now;
+
+is ($eng[0].label,$eng[0].posx,$eng[0].posy), <a 0 100>, "functions label pos x,y works! ({ now - $time } sec)";
+is ($eng[4].label,$eng[4].posx,$eng[4].posy), <e 0 500>, "functions label pos x,y works! ({ now - $time } sec)";
+
+
+

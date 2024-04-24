@@ -1,0 +1,9 @@
+#!/bin/bash
+git stash
+git pull
+pv=`perl -MConfig -e 'print $Config{archlib}' | awk -F'/' '{print $NF}'`
+if [ $1 = "set" ]; then
+    make ROOT=$PWD RAKU=/usr/bin/raku PERLVERSION=$pv set
+else
+    make ROOT=$PWD RAKU=/usr/bin/raku PERLVERSION=$pv install
+fi;

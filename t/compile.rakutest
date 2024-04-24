@@ -1,0 +1,38 @@
+#!/usr/bin/env raku
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use OneFit;
+use Test;
+
+my $test-path=$*CWD;
+
+my class OutputCapture {
+    has @!lines;
+    
+    method print (\s) { @!lines.append(s) }
+    method captured () { @!lines.join }
+}
+
+plan 2;
+$time = now;
+my $eng = OneFit::Engine.new.read("$test-path/1/test1.sav");
+my $output = do {
+    my $*OUT = OutputCapture.new;
+    $eng.blocks(:r,:q).functions(:r).code(:w,:c);
+    $*OUT.captured;
+}
+is $output, "C code extracted compiled OK!\n", "compile works! ({ now - $time } sec)";
+
+$time = now;
+$eng = OneFit::Engine.new.read("$test-path/2/test2.sav");
+my $output = do {
+    my $*OUT = OutputCapture.new;
+    $eng.blocks(:r,:q).functions(:r).code: :w, :c;
+    $*OUT.captured;
+}
+is $output, "C code extracted compiled OK!\n", "compile works! ({ now - $time } sec)";
+
