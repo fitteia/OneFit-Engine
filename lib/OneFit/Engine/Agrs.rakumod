@@ -1,4 +1,4 @@
-unit module OneFit::Engine::Agr;
+unit module OneFit::Engine::Agrs;
 
 class template is export {
     has $.view_xmin is rw = 0.183247;

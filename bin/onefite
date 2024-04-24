@@ -10,10 +10,8 @@ our constant OFE-PATH="%OFE-PATH%";
 use OneFit;
 use OneFit::Engine::Grammars;
 use OneFit::Engine::Parameters;
-use OneFit::Engine::Parfile;
-use OneFit::Engine::Stpfile;
-use MONKEY-SEE-NO-EVAL;
-use MONKEY;
+use OneFit::Engine::Parfiles;
+use OneFit::Engine::Stpfiles;
 use Test;
 
 my %*SUB-MAIN-OPTS = :named-anywhere, ;
@@ -54,7 +52,7 @@ multi MAIN ('convert',
 	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
 	    $output-file, #= name of the converted file (.sav or .json)
 	   ) {
-    my $eng = OneFit::Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile);
+    my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile);
     exit;
 }
 
@@ -79,7 +77,7 @@ multi MAIN  ('create',
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
-    my $engine = OneFit::Engine.new.path("$work-folder").set(%e);
+    my $engine = Engine.new.path("$work-folder").set(%e);
     $engine.blocks(
 	:read,
 	:fit,
@@ -131,7 +129,7 @@ multi MAIN  ('random',
 	"$work-folder/$name".IO.mkdir;
 	for @data-files { $_.IO.move("$work-folder/$name/$_") };
     }
-    my $engine = OneFit::Engine.new.path("$work-folder").set(%e);
+    my $engine = Engine.new.path("$work-folder").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
 	:autox($autox or $autoxy),
@@ -173,7 +171,7 @@ multi MAIN  ('fit',
 	"$work-folder/$name".IO.mkdir;
 	for @data-files { $_.IO.move("$work-folder/$name/$_") };
     }
-    my $engine = OneFit::Engine.new.path("$work-folder/$name").set(%e);
+    my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
 	:autox($autox or $autoxy),
@@ -203,7 +201,7 @@ multi MAIN  ('fit',
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $input-file.IO.move("$work-folder/$name/$input-file");
-	    my $engine = OneFit::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
 	    $engine.fit(
 		:no-plot($no-plot),
@@ -233,8 +231,8 @@ multi MAIN  ('plot',
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $input-file.IO.move("$work-folder/$name/$input-file");
-	    my $engine = OneFit::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
-#	    my $engine = OneFit::Engine.new.path("$work-folder").read($input-file);
+	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+#	    my $engine = Engine.new.path("$work-folder").read($input-file);
 	    $engine.plot(
 		:autox($autox or $autoxy),
 		:autoy($autoy or $autoxy)
@@ -262,7 +260,7 @@ multi MAIN ('start-engine',
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $f.IO.move("$work-folder/$name/$file");
-	    my $engine = OneFit::Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
+	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
 	    if $cmd ~~ /plot/ {
 		my $time = now;
 		say "start plotting $file";
@@ -330,7 +328,7 @@ multi MAIN ('test',
 }
 
 sub parse-function ($function, @data-files, $data-labels) {
-    my %e = OneFit::Engine::Grammars::Function.parse-me($function);
+    my %e = Grammars::Function.parse-me($function);
     %e<FitType SelectedDataSet T Num> = <Individual 1 dum 100>;
     for (1 .. @data-files.elems) {
 	my @lines=@data-files[$_-1].IO.lines;
@@ -338,7 +336,7 @@ sub parse-function ($function, @data-files, $data-labels) {
 	my $dum=$_;
 	$dum = @lines.head if @lines.head.words.elems < 2;
 	if $data-labels.defined {
-	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
+	    my $dum-parse = Grammars::Label.parse($data-labels);
 	    $label = $dum-parse<name>.Str;
 	    %e<T> = $label;
 	    %e<SelectedDataSet> = @data-files[0].subst(".dat","");

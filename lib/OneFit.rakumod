@@ -1,12 +1,12 @@
 unit module OneFit;
 
 use OneFit::Engine::Parameters;
-use OneFit::Engine::Axis;
-use OneFit::Engine::Title;
+use OneFit::Engine::Axes;
+use OneFit::Engine::Titles;
 use OneFit::Engine::Blocks;
-use OneFit::Engine::Function;
+use OneFit::Engine::Functions;
 use OneFit::Engine::CodeC;
-use OneFit::Engine::Stpfile;
+use OneFit::Engine::Stpfiles;
 
 class Engine is export {
     has %!engine;
@@ -96,18 +96,18 @@ class Engine is export {
 		for @arr[1 ..^ @arr.elems].hyper {
 		    $_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
 		    if $All {
-			take OneFit::Engine::Blocks::Block.new.read('# DATA ' ~ $_,:quiet($quiet)).No($i++).path($!path);
+			take Block.new.read('# DATA ' ~ $_,:quiet($quiet)).No($i++).path($!path);
 		    }
 		    else {
 			if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
 			    if $fit.defined {
-				take OneFit::Engine::Blocks::Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet)).path($!path);
+				take Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet)).path($!path);
 			    }
 			    if $plot.defined {
-				take OneFit::Engine::Blocks::Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet)).path($!path);
+				take Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet)).path($!path);
 			    }
 			    if none($fit,$plot) {
-				take OneFit::Engine::Blocks::Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet)).path($!path);
+				take Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet)).path($!path);
 			    }
 			}
 			else {
@@ -163,7 +163,7 @@ class Engine is export {
 #		{<Cor Traco> <<~>> $i}().map: { %!engine{$_} = $fillarr(%!engine{$_}) };
 
 		my $function = @fstrings[$i];
-		@!Functions[$i] = OneFit::Engine::Function::Function.new.No(1+$i);
+		@!Functions[$i] = Function.new.No(1+$i);
 		@!Functions[$i].decode($function,%!engine);
 		for @!blocks {
 		    .Graph.gph = "fit-curves-{.No+1}";
@@ -185,7 +185,7 @@ class Engine is export {
     }
 
     method code (Bool :w(:write($w)), Bool :c(:compile($c)), Bool :$quiet) {
-	my $code = OneFit::Engine::CodeC::Code.new.path($!path);
+	my $code = Code.new.path($!path);
 	$code.cwrite(%!engine,@!blocks,@!Functions) if $w;
 	$code.compile(:quiet($quiet)) if $c;
 	self
@@ -216,7 +216,7 @@ class Engine is export {
 	    for (1 .. @!blocks.elems).race -> $i {
 		my $parameters;
 		if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
-		else { $parameters = OneFit::Engine::Parameters::Parameters.new.path($!path) }
+		else { $parameters = Parameters.new.path($!path) }
 
 		$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 		$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
@@ -230,7 +230,7 @@ class Engine is export {
 	else {
 	    my $parameters;
 	    if @!blocks.head.parameters.defined { $parameters = @!blocks.head.parameters }
-	    else { $parameters = OneFit::Engine::Parameters::Parameters.new.path($!path) }
+	    else { $parameters = Parameters.new.path($!path) }
 
 	    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 	    $parameters.from-output(path => $!path) if $from-output.Bool;
@@ -248,7 +248,7 @@ class Engine is export {
 
      method stp () {
 	 dir($!path, :test(/\.stp/)).race.map({ $_.unlink if $_.IO.f });
-	 OneFit::Engine::Stpfile::Stpfile.new.update(self, path => $!path);
+	 Stpfile.new.update(self, path => $!path);
 	 self
      }
 

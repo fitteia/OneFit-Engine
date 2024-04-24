@@ -1,4 +1,4 @@
-unit module OneFit::Engine::Stpfile;
+unit module OneFit::Engine::Stpfiles;
 
 class Stpfile is export {
     has @!stp;

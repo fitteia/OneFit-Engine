@@ -1,4 +1,4 @@
-unit module OneFit::Engine::Title;
+unit module OneFit::Engine::Titles;
 
 class Title is export {
     has %!title = %(
