@@ -3,6 +3,7 @@ unit module OneFit::Engine::Graphs;
 use OneFit::Engine::Titles;
 use OneFit::Engine::Axes;
 
+our constant OFE-PATH="%OFE-PATH%";
 
 class Graph is export {
     has $.Title is rw = Title.new.read('# TITLE "" 0.0 0.0');
