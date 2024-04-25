@@ -1,9 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 git stash
 git pull
+bindir="$PWD/../bin"
 pv=`perl -MConfig -e 'print $Config{archlib}' | awk -F'/' '{print $NF}'`
+arch=`arch`
+
 if [ $1 = "set" ]; then
-    make ROOT=$PWD RAKU=/usr/bin/raku PERLVERSION=$pv set
+    echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
+    make ROOT=$PWD BINDIR=$BINDIR ARCH=$arch PERLVERSION=$pv set
 else
-    make ROOT=$PWD RAKU=/usr/bin/raku PERLVERSION=$pv install
+    echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
+    make ROOT=$PWD BINDIR=$bindir ARCH=$arch PERLVERSION=$pv install
 fi;
