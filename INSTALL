@@ -8,8 +8,8 @@ root="$PWD"
 if [ $1 = "set" ]; then
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
     make MROOT=$root ARCH=$arch PERLVERSION=$pv set
-    zef -v install ./ --test
 else
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
     make MROOT=$root ARCH=$arch PERLVERSION=$pv install
 fi;
+    zef -v install ./
