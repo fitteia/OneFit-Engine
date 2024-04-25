@@ -24,9 +24,9 @@ my class OutputCapture {
 plan 2;
 $time = now;
 $eng.fit;
-is "fit1.agr-par".IO.lines.tail.contains("s6 legend"), True, "agr test! ({ now - $time } sec)";
+is "/tmp/fit1.agr-par".IO.lines.tail.contains("s6 legend"), True, "agr test! ({ now - $time } sec)";
 
 $time = now;
-$eng = Engine.new.read("$test-path/2/test2.sav");
-$eng.fit;
-is "fit1.agr-par".IO.lines.tail.contains("s4 legend"), True, "agr test! ({ now - $time } sec)";
+$eng = Engine.new.path("/tmp").read("$test-path/2/test2.sav").fit;
+
+is "/tmp/fit1.agr-par".IO.lines.tail.contains("s4 legend"), True, "agr test! ({ now - $time } sec)";
