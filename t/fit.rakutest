@@ -23,7 +23,7 @@ my class OutputCapture {
 plan 2;
 
 dir('.', :test(/\.par|c|out|agr|agr\-par|log/)).race.map({ $_.unlink if $_.IO.f });
-my $eng = OneFit::Engine.new.read("$test-path/7/test7.sav")
+my $eng = OneFit::Engine.new.path("/tmp").read("$test-path/7/test7.sav")
 		     .blocks(:r,:e)
 		     .parameters(:r)
 		     .functions(:r)

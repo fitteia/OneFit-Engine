@@ -12,7 +12,7 @@ our constant OFE-PATH="%OFE-PATH%";
 
 my $test-path=OFE-PATH ~ "/t";
 
-my $eng = OneFit::Engine.new.read("$test-path/6/NMR-spectrum.sav").functions(:read,:and-rtna);
+my $eng = OneFit::Engine.new.path("/tmp").read("$test-path/6/NMR-spectrum.sav").functions(:read,:and-rtna);
 
 my class OutputCapture {
     has @!lines;

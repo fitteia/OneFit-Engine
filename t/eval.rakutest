@@ -18,7 +18,7 @@ my class OutputCapture {
 }
 
 my $test-path=OFE-PATH ~ "/t";
-my $eng = OneFit::Engine.new.read("$test-path/6/NMR-spectrum.sav");
+my $eng = OneFit::Engine.new.path("/tmp").read("$test-path/6/NMR-spectrum.sav");
 
 plan 3;
 
