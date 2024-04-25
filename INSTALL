@@ -3,13 +3,13 @@ git stash
 git pull
 pv=`perl -MConfig -e 'print $Config{archlib}' | awk -F'/' '{print $NF}'`
 arch=`arch`
-root="$PWD/kernel"
+root="$PWD"
 
 if [ $1 = "set" ]; then
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
-    make ROOT=$root ARCH=$arch PERLVERSION=$pv set
+    make MROOT=$root ARCH=$arch PERLVERSION=$pv set
     zef -v install ./ --test
 else
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
-    make ROOT=$root ARCH=$arch PERLVERSION=$pv install
+    make MROOT=$root ARCH=$arch PERLVERSION=$pv install
 fi;
