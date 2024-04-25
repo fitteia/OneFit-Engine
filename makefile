@@ -17,8 +17,8 @@ set:
 	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" $(MROOT)/etc/OFE/default/makefile
 
 install: set
-	make -C $(ROOT)/C ROOT=$(ROOT) install
-	make -C $(ROOT)/C ROOT=$(ROOT) clean
-
+	make -C $(ROOT)/C ROOT=$(ROOT) BINDIR=$(BINDIR) install
+	make -C $(ROOT)/C ROOT=$(ROOT) BINDIR=$(BINDIR) clean
+	echo $(HOME)
 clean:
 	make -C $(RROT)/C ROOT=$(ROOT) clean
