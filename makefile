@@ -3,20 +3,20 @@ RAKU=/usr/bin
 ARCH=x86_64
 OS=LINUX
 PERLVERSION=5.36
+BINDIR=$(ROOT)/bin
 
 help:
-	echo "run make ARCH=<x86_64|aarch64> ROOT=<path> RAKU=<path/raku> install"
-	echo "Example: make ARCH=aarch64 ROOT=./ RAKU=/usr/bin/raku install"	
+	echo "run make ARCH=<x86_64|aarch64> ROOT=<path>  install"
+	echo "Example: make ARCH=aarch64 ROOT=./ install"	
 
 set: 	
-	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(ROOT)@" bin/onefite
-#	sed -i'' -e "/#!/ s@#!.*@#!$(RAKU)@ ; /use lib/ s@.*@use lib \'$(ROOT)/rakumod/OFE\';@ ; /constant OFE-PATH\s*=/ s@.*@constant OFE-PATH = \"$(ROOT)/rakumod/OFE\";@" bin/onefite
-	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(ROOT)@" t/*.rakutest
-	sed -i'' -e "/x86_64/ s@x86_64@$(ARCH)@" etc/OFE/default/makefile
-	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" etc/OFE/default/makefile
+	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(ROOT)@" $(BINDIR)/onefite
+	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(ROOT)@" $(ROOT)/t/*.rakutest
+	sed -i'' -e "/x86_64/ s@x86_64@$(ARCH)@" $(ROOT)/etc/OFE/default/makefile
+	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" $(ROOT)/etc/OFE/default/makefile
 
 install: set
-	make -C C install
+	make -C C BINDIR=$(BINDIR) install
 	make -C C clean
 
 clean:
