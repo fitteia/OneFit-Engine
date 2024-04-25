@@ -31,7 +31,7 @@ my $eng = OneFit::Engine.new.path("/tmp").read("$test-path/7/test7.sav")
 		     .code(:w,:c);
 $time = now;
 for (1 .. $eng.blocks.a.elems).race {
-    shell "./onefit-user -@fitenv$_.stp -f data$_.dat <fit$_.par >fit$_.log 2>&1";
+    shell "/tmp/onefit-user -@fitenv$_.stp -f data$_.dat <fit$_.par >fit$_.log 2>&1";
 }
 is "/tmp/fit1.log".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit1.log".IO.slurp(enc => 'utf8-c8'), "individual fit 1: OK! ({ now -$time } s)";
 
