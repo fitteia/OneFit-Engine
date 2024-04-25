@@ -12,7 +12,7 @@ help:
 set: 	
 	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(MROOT)@" $(MROOT)/bin/onefite
 	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(MROOT)@" $(MROOT)/t/*.rakutest
-	sed -i'' -e "/x86_64/ s@x86_64@$(ARCH)@" $(MROOT)/etc/OFE/default/makefile
+	sed -i'' -e "/x86_64/ s@x86_64@$(ARCH)@" $(ROOT)/etc/OFE/default/makefile
 	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" $(MROOT)/etc/OFE/default/makefile
 
 install: set
