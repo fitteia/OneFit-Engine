@@ -10,7 +10,7 @@ help:
 	echo "Example: make ARCH=aarch64 ROOT=./ install"	
 
 set: 	
-	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(ROOT)@" $(BINDIR)/onefite
+	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(ROOT)@" $(ROOT)/bin/onefite
 	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(ROOT)@" $(ROOT)/t/*.rakutest
 	sed -i'' -e "/x86_64/ s@x86_64@$(ARCH)@" $(ROOT)/etc/OFE/default/makefile
 	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" $(ROOT)/etc/OFE/default/makefile
