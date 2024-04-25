@@ -19,6 +19,6 @@ set:
 install: set
 	make -C $(ROOT)/C ROOT=$(ROOT) BINDIR=$(BINDIR) install
 	make -C $(ROOT)/C ROOT=$(ROOT) BINDIR=$(BINDIR) clean
-	echo $(HOME)
+
 clean:
 	make -C $(RROT)/C ROOT=$(ROOT) clean

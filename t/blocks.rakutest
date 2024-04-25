@@ -10,7 +10,7 @@ use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
 my $test-path=OFE-PATH ~ "/t";
-my $eng = Engine.new.read("$test-path/1/test1.sav");
+my $eng = Engine.new.path("/tmp").read("$test-path/1/test1.sav");
 
 
 my class OutputCapture {
@@ -35,21 +35,21 @@ subtest 'check data files', {
 subtest 'data err 1', {
     plan 1;
     $time = now; 
-    OneFit::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].export;
+    OneFit::Engine.new.path("/tmp").read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].export;
     is "data3.dat".IO.slurp, "$test-path/3/data3-constant-err.dat".IO.slurp, "data: e_y is constant works! ({ now -$time } s)";
 }
 
 subtest 'data set err', {
     plan 1;
     $time = now; 
-    OneFit::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].E(:ey<1>).export;
+    OneFit::Engine.new.path("/tmp").read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].E(:ey<1>).export;
     is "data3.dat".IO.slurp, "$test-path/3/data3-err-1.dat".IO.slurp, "data: set e_y to 1 works! ({ now -$time } s)";
 }
 
 subtest 'data set ex and ey', {
     plan 1;
     $time = now; 
-    OneFit::Engine.new.read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].E(ey=>"0.001",:ex<0.01>).export;
+    OneFit::Engine.new.path("/tmp").read("$test-path/3/test3.sav").blocks(:r,:a,:q)[2].E(ey=>"0.001",:ex<0.01>).export;
     is "data3.dat".IO.slurp, "$test-path/3/data3.dat".IO.slurp, "data: e_x propagates to e_y works! ({ now -$time } s)";
 }
 
