@@ -4,7 +4,7 @@ ARCH=x86_64
 OS=LINUX
 PERLVERSION=5.36
 ROOT=$(MROOT)
-BINDIR=$(ROOT)/../bin
+BINDIR=$(HOME)/bin
 
 help:
 	echo "run make ARCH=<x86_64|aarch64> ROOT=<path>  install"
