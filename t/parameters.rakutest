@@ -40,7 +40,7 @@ is $parfile.write($eng.par-selected.table,:fix-none,:No<1>).get.join("\n"), "$te
 
 $time = now;
 $eng = Engine.new.path("/tmp").read("$test-path/8/test8.sav").fit;
-is "fit.out".IO.slurp, "$test-path/8/fit.out".IO.slurp, "parameters: reads from output! ({ now -$time } s)" ;;
+is "/tmp/fit.out".IO.slurp, "$test-path/8/fit.out".IO.slurp, "parameters: reads from output! ({ now -$time } s)" ;;
 
 $time = now;
 
