@@ -28,5 +28,5 @@ $eng.blocks(:r).functions(:r).parameters(:r).code(:w,:c).agr;
 #$eng.blocks.a.map({ say .Tag;  say to-json( Hash.new($eng.blocks.a[0].parameters.a), :sorted-keys); say to-json(.Graph.Title.h,:sorted-keys); say to-json(.Graph.Curves,:sorted-keys) });
 
 
-is "fit1.agr-par".IO.lines.tail.contains("s4 legend"), True, "agr test! ({ now - $time } sec)";
+is "/tmp/fit1.agr-par".IO.lines.tail.contains("s4 legend"), True, "agr test! ({ now - $time } sec)";
 
