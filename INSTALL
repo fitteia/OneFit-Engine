@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 git stash
 git pull
-bindir="$PWD/../bin"
 pv=`perl -MConfig -e 'print $Config{archlib}' | awk -F'/' '{print $NF}'`
 arch=`arch`
+root="$PWD/kernel"
 
 if [ $1 = "set" ]; then
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
-    make ROOT=$PWD BINDIR=$BINDIR ARCH=$arch PERLVERSION=$pv set
-    zef install ./ --test
+    make ROOT=$root ARCH=$arch PERLVERSION=$pv set
+    zef -v install ./ --test
 else
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
-    make ROOT=$PWD BINDIR=$bindir ARCH=$arch PERLVERSION=$pv install
+    make ROOT=$root ARCH=$arch PERLVERSION=$pv install
 fi;
