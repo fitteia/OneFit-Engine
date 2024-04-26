@@ -40,9 +40,9 @@ multi MAIN (Bool :$dpkg, # to install required debian packages
 	    if $line.contains("vi /etc/ImageMagick-6") {
 		say "ATTENTION: edit /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
 		my @policy-file="/etc/ImageMagick-6/policy.xml".IO.lines;
-		my $new-policy = @policy-file[0 .. @policy-file.elems-8].join("\n");
+		my $new-policy = @policy-file[0 .. @policy-file.elems-9,@policy-file.elems-1].join("\n");
 		"/tmp/policy.xml".IO.spurt($new-policy);
-		shell "sudo mv /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
+		shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
 	    }
 	    else { shell $_ unless all($_.contains("curl"),"/tmp/{$_.split('/').tail}".IO.e) }
 	}
