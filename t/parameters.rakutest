@@ -11,6 +11,7 @@ use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
 
+my $workfolder="/tmp/OneFit-Engine-test";
 my $test-path=OFE-PATH ~ "/t";
 
 my class OutputCapture {
@@ -23,7 +24,7 @@ my class OutputCapture {
 
 plan 5;
 $time = now;
-my $eng = Engine.new.path("/tmp").read("$test-path/2/test2.sav").blocks(:r).parameters :r;
+my $eng = Engine.new.path("$workfolder").read("$test-path/2/test2.sav").blocks(:r).parameters :r;
 my $parfile = Parfile.new;
 is $parfile.write($eng.par-selected.table).get.join("\n"), "$test-path/2/test2.par".IO.slurp, "parameters: create parfile works! ({ now -$time } s)" ;
 
@@ -39,8 +40,8 @@ $eng = Engine.new.read("$test-path/7/test7.sav").blocks(:r).parameters: :r;
 is $parfile.write($eng.par-selected.table,:fix-none,:No<1>).get.join("\n"), "$test-path/7/fit1.par".IO.slurp, "parameters: fix none! ({ now -$time } s)" ;;
 
 $time = now;
-$eng = Engine.new.path("/tmp").read("$test-path/8/test8.sav").fit;
-is "/tmp/fit.out".IO.slurp, "$test-path/8/fit.out".IO.slurp, "parameters: reads from output! ({ now -$time } s)" ;;
+$eng = Engine.new.path("$workfolder").read("$test-path/8/test8.sav").fit;
+is "$workfolder/fit.out".IO.slurp, "$test-path/8/fit.out".IO.slurp, "parameters: reads from output! ({ now -$time } s)" ;;
 
 $time = now;
 

@@ -9,6 +9,7 @@ use OneFit;
 use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
+my $workfolder="/tmp/OneFit-Engine-test";
 
 my $test-path=OFE-PATH ~ "/t";
 
@@ -23,7 +24,7 @@ my class OutputCapture {
 plan 2;
 
 dir('.', :test(/\.par|c|out|agr|agr\-par|log/)).race.map({ $_.unlink if $_.IO.f });
-my $eng = OneFit::Engine.new.path("/tmp").read("$test-path/7/test7.sav")
+my $eng = OneFit::Engine.new.path("$workfolder").read("$test-path/7/test7.sav")
 		     .blocks(:r,:e)
 		     .parameters(:r)
 		     .functions(:r)
@@ -31,19 +32,19 @@ my $eng = OneFit::Engine.new.path("/tmp").read("$test-path/7/test7.sav")
 		     .code(:w,:c);
 $time = now;
 for (1 .. $eng.blocks.a.elems).race {
-    shell "cd /tmp; ./onefit-user -@fitenv$_.stp -f data$_.dat <fit$_.par >fit$_.log 2>&1";
+    shell "cd $workfolder; ./onefit-user -@fitenv$_.stp -f data$_.dat <fit$_.par >fit$_.log 2>&1";
 }
-is "/tmp/fit1.log".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit1.log".IO.slurp(enc => 'utf8-c8'), "individual fit 1: OK! ({ now -$time } s)";
+is "$workfolder/fit1.log".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit1.log".IO.slurp(enc => 'utf8-c8'), "individual fit 1: OK! ({ now -$time } s)";
 
 $time = now;
 $eng.parameters(:r,:from-output).agr;
 for (1 .. $eng.blocks.a.elems).race {
-    shell "cd /tmp; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+    shell "cd $workfolder; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
 }
 for (1 .. $eng.blocks.a.elems).race {
-    shell "cd /tmp ; cp fit-residues-$_.res-tmp fit-residues-$_.res" ;
+    shell "cd $workfolder ; cp fit-residues-$_.res-tmp fit-residues-$_.res" ;
 }
-is "/tmp/fit40.log".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit40.log".IO.slurp(enc => 'utf8-c8'), "individual plot 40: OK! ({ now -$time } s)" ;
+is "$workfolder/fit40.log".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit40.log".IO.slurp(enc => 'utf8-c8'), "individual plot 40: OK! ({ now -$time } s)" ;
 
 
 

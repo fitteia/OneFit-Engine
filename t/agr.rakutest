@@ -9,8 +9,9 @@ use OneFit;
 use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
+my $workfolder="/tmp/OneFit-Engine-test";
 my $test-path=OFE-PATH ~ "/t";
-my $eng = OneFit::Engine.new.path("/tmp").read("$test-path/6/NMR-spectrum.sav");
+my $eng = OneFit::Engine.new.path("$workfolder").read("$test-path/6/NMR-spectrum.sav");
 
 
 my class OutputCapture {
@@ -24,9 +25,9 @@ my class OutputCapture {
 plan 2;
 $time = now;
 $eng.fit;
-is "/tmp/fit1.agr-par".IO.lines.tail.contains("s6 legend"), True, "agr test! ({ now - $time } sec)";
+is "$workfolder/fit1.agr-par".IO.lines.tail.contains("s6 legend"), True, "agr test! ({ now - $time } sec)";
 
 $time = now;
-$eng = Engine.new.path("/tmp").read("$test-path/2/test2.sav").fit;
+$eng = Engine.new.path("$workfolder").read("$test-path/2/test2.sav").fit;
 
-is "/tmp/fit1.agr-par".IO.lines.tail.contains("s4 legend"), True, "agr test! ({ now - $time } sec)";
+is "$workfolder/fit1.agr-par".IO.lines.tail.contains("s4 legend"), True, "agr test! ({ now - $time } sec)";
