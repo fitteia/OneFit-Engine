@@ -10,7 +10,8 @@ use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
 my $test-path=OFE-PATH ~ "/t";
-
+my $workfolder="/tmp/OneFit-Engine-test";
+		   
 my class OutputCapture {
     has @!lines;
     
@@ -20,7 +21,7 @@ my class OutputCapture {
 
 plan 2;
 $time = now;
-my $eng = OneFit::Engine.new.path("/tmp").read("$test-path/1/test1.sav");
+my $eng = OneFit::Engine.new.path("$workfolder").read("$test-path/1/test1.sav");
 my $output = do {
     my $*OUT = OutputCapture.new;
     $eng.blocks(:r,:q).functions(:r).code(:w,:c);
@@ -29,7 +30,7 @@ my $output = do {
 is $output, "C code extracted compiled OK!\n", "compile works! ({ now - $time } sec)";
 
 $time = now;
-$eng = OneFit::Engine.new.path("/tmp").read("$test-path/2/test2.sav");
+$eng = OneFit::Engine.new.path("$workfolder").read("$test-path/2/test2.sav");
 my $output = do {
     my $*OUT = OutputCapture.new;
     $eng.blocks(:r,:q).functions(:r).code: :w, :c;

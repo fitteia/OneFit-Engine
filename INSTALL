@@ -1,9 +1,28 @@
 #!/usr/bin/env bash
+
 git stash
 git pull
 pv=`perl -MConfig -e 'print $Config{archlib}' | awk -F'/' '{print $NF}'`
 arch=`arch`
 root="$PWD"
+
+if [ $1 = "--dpkg" ]; then
+    sudo apt install libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl
+	    
+    cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base-dev_20061220+dfsg3-4.4_all.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base_20061220+dfsg3-4.4_all.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
+
+    sudo dpkg -i cernlib-base_20061220+dfsg3-4.4_all.deb 
+    sudo dpkg -i cernlib-base-dev_20061220+dfsg3-4.4_all.deb 
+    sudo dpkg -i libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
+    sudo dpkg -i libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb 
+    sudo dpkg -i libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
+    sudo dpkg -i libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
+    sudo apt install --fix-broken 
+    sudo dpkg -i libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
+    sudo dpkg -i libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb 
+    sudo dpkg -i libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb 
+fi
+
 
 if [ $1 = "set" ]; then
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
@@ -18,3 +37,4 @@ if [ $1 = "--/test" ]; then
 else
     sudo zef -v --install-to=site install ./
 fi
+
