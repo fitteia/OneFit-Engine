@@ -9,8 +9,9 @@ multi MAIN (Bool :h(:help($))) {
     note qq:to/END_HELP/;
     Usage:
     ./INSTALL [-h|--help]
-    ./INSTALL [--dpkg] [-c|--compile] [-t|--test] [--image] [-i|--install]
+    ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [--image] [-i|--install]
     --dpkg    # to install required debian packages
+    --cpu     # cpu defaults to amd64
     --compile # to comlipe and install the OneFit engine core
     --test    # to run raku module tests
     --image   # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formatys
@@ -20,7 +21,8 @@ multi MAIN (Bool :h(:help($))) {
 END_HELP
 }
 
-multi MAIN (Str :$dpkg = "amd64", # to install required debian packages [amd64|arm64|...]
+multi MAIN (Bool :$dpkg, # to install required debian packages 
+	    Str  :$cpu = "amd64" # [amd64|arm64|...]
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
 	    Bool :$image = False, # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formats
@@ -34,7 +36,7 @@ multi MAIN (Str :$dpkg = "amd64", # to install required debian packages [amd64|a
     
     if $dpkg {
 	for cmds().lines {
-	    my $line = $_.subst("amd64",$dpkg,:g);
+	    my $line = $_.subst("amd64",$cpu,:g);
 	    if $line.contains("vi /etc/ImageMagick-6") {
 		say "edit /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
 		shell($line) if $image
