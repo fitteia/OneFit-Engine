@@ -12,7 +12,7 @@ else
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
     make MROOT=$root ARCH=$arch PERLVERSION=$pv install
 fi;
-echo $1
+
 if [ $1 = "--/test" ]; then
     sudo zef -v --/test --install-to=site install ./ 
 else
