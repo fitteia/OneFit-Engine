@@ -24,7 +24,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 		say "ATTENTION: edit /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
 		my @policy-file="/etc/ImageMagick-6/policy.xml".IO.lines;
 		@policy-file.map({ "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) });
-		say @policy-file.join("\n";
+		say @policy-file.join("\n");
 		"/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
 #		shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
 	    }
