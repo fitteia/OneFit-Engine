@@ -3,13 +3,29 @@
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
-multi MAIN (Bool :$dpkg = False,
-	    Bool :c(:$compile) = True,
-	    Bool :t(:$test) = True,
-	    Bool :$image = False,
-	    Bool :i(:$install) = True
-	   ){
+multi MAIN ('help') { MAIN :h }
 
+multi MAIN (Bool :h(:help($))) {
+    note qq:to/END_HELP/;
+    Usage:
+    ./INSTALL [-h|--help]
+    ./INSTALL [--dpkg] [-c|--compile] [-t|--test] [--image] [-i|--install]
+    --dpkg    # to install required debian packages
+    --compile # to comlipe and install the OneFit engine core
+    --test    # to run raku module tests
+    --image   # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formatys
+    --install # to install OneFit-Engine as a raku modules available to all users
+    negated options:
+    ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile
+END_HELP
+}
+
+multi MAIN (Bool :$dpkg = False, # to install required debian packages
+	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
+	    Bool :t(:$test) = True, # to run raku module tests
+	    Bool :$image = False, # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formats
+	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
+	   ){
     shell "git stash";
     shell "git pull";
     my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
