@@ -13,7 +13,6 @@ else
     make MROOT=$root ARCH=$arch PERLVERSION=$pv install
 fi;
 echo $1
-
 if [ $1 = "--/test" ]; then
     zef -v --/test install ./ 
 else
