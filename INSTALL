@@ -86,15 +86,15 @@ cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libm
 cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb
 cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
 
-cd /tmp && sudo apt install cernlib-base_20061220+dfsg3-4.4_all.deb 
-cd /tmp && sudo apt install cernlib-base-dev_20061220+dfsg3-4.4_all.deb 
-cd /tmp && sudo apt install libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb 
+cd /tmp && sudo apt install ./cernlib-base_20061220+dfsg3-4.4_all.deb 
+cd /tmp && sudo apt install ./cernlib-base-dev_20061220+dfsg3-4.4_all.deb 
+cd /tmp && sudo apt install ./libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
+cd /tmp && sudo apt install ./libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb 
+cd /tmp && sudo apt install ./libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
+cd /tmp && sudo apt install ./libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
+cd /tmp && sudo apt install ./libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
+cd /tmp && sudo apt install ./libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb 
+cd /tmp && sudo apt install ./libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb 
 
 vi /etc/ImageMagick-6/policy.xml
 END_CMDS
