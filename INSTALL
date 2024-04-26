@@ -1,40 +1,53 @@
-#!/usr/bin/env bash
+#!/usr/bin/env raku
 
-git stash
-git pull
-pv=`perl -MConfig -e 'print $Config{archlib}' | awk -F'/' '{print $NF}'`
-arch=`arch`
-root="$PWD"
 
-if [ $1 = "--dpkg" ]; then
-    sudo apt install libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl
+my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
+
+multi MAIN (Bool :$dpkg,
+	    Bool :c(:$compile) = True,
+	    Bool :t(:$test) = True,
+	   ){
+
+    shell "git stash";
+    shell "git pull";
+    my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
+    my $arch= shell("arch",:out).out.lines(:close).head;
+    my $root=$*CWD;
+    
+    if $dpkg {
+	for cmds().lines { shell $_ }
+    }
+    
+#    say "install source in $*CWD and binaries, with perl version: $pv";
+#    run "make MROOT=$root ARCH=$arch PERLVERSION=$pv set";
+
+    if $compile.Bool {
+	say "install source in $*CWD and binaries with perl version: $pv";
+	shell "/usr/bin/env make MROOT=$root ARCH=$arch PERLVERSION=$pv install";
+    }
+    if $test.Bool {
+	"/tmp/OneFit-Engine-test".IO.mkdir;
+	shell "/usr/bin/env sudo zef -v install ./";
+	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
+    }
+    else { shell "/usr/bin/env sudo zef -v --/test --install-to=site install ./" }
+}
+
+sub cmds () {
+    qq:to/END_CMDS/;
+sudo apt install libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl
 	    
-    cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base-dev_20061220+dfsg3-4.4_all.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base_20061220+dfsg3-4.4_all.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
+cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base-dev_20061220+dfsg3-4.4_all.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base_20061220+dfsg3-4.4_all.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
 
-    sudo dpkg -i cernlib-base_20061220+dfsg3-4.4_all.deb 
-    sudo dpkg -i cernlib-base-dev_20061220+dfsg3-4.4_all.deb 
-    sudo dpkg -i libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
-    sudo dpkg -i libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb 
-    sudo dpkg -i libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
-    sudo dpkg -i libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
-    sudo apt install --fix-broken 
-    sudo dpkg -i libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
-    sudo dpkg -i libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb 
-    sudo dpkg -i libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb 
-fi
-
-
-if [ $1 = "set" ]; then
-    echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
-    make MROOT=$root ARCH=$arch PERLVERSION=$pv set
-else
-    echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
-    make MROOT=$root ARCH=$arch PERLVERSION=$pv install
-fi;
-
-if [ $1 = "--/test" ]; then
-    sudo zef -v --/test --install-to=site install ./ 
-else
-    sudo zef -v --install-to=site install ./
-fi
-
+sudo dpkg -i cernlib-base_20061220+dfsg3-4.4_all.deb 
+sudo dpkg -i cernlib-base-dev_20061220+dfsg3-4.4_all.deb 
+sudo dpkg -i libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
+sudo dpkg -i libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb 
+sudo dpkg -i libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
+sudo dpkg -i libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
+sudo apt install --fix-broken 
+sudo dpkg -i libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
+sudo dpkg -i libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb 
+sudo dpkg -i libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb 
+END_CMDS
+}
