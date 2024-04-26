@@ -36,8 +36,7 @@ multi MAIN (Bool :$dpkg, # to install required debian packages
     
     if $dpkg {
 	for cmds().lines {
-	    my $line = $_.subst("amd64",$cpun
-				,:g);
+	    my $line = $_.subst("amd64",$cpu),:g);
 	    if $line.contains("vi /etc/ImageMagick-6") {
 		say "edit /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
 		shell($line) if $image
