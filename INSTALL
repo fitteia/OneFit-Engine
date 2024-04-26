@@ -10,7 +10,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 	    Bool :t(:$test) = True, # to run raku module tests
 	    Bool :$image = False, # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formats
 	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
-	   ) is default {
+	   ){
     shell "git stash";
     shell "git pull";
     my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
