@@ -12,4 +12,9 @@ else
     echo "install source in $PWD and binaries in $bindir, with perl version: $pv" 
     make MROOT=$root ARCH=$arch PERLVERSION=$pv install
 fi;
+
+if [ $1 = "--/test" ]; then
+    zef -v --/test install ./ 
+else
     zef -v install ./
+fi
