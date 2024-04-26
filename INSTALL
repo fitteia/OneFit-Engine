@@ -3,9 +3,11 @@
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
-multi MAIN (Bool :$dpkg,
+multi MAIN (Bool :$dpkg = False,
 	    Bool :c(:$compile) = True,
 	    Bool :t(:$test) = True,
+	    Bool :$image = False,
+	    Bool :i(:$install) = True
 	   ){
 
     shell "git stash";
@@ -15,9 +17,15 @@ multi MAIN (Bool :$dpkg,
     my $root=$*CWD;
     
     if $dpkg {
-	for cmds().lines { shell $_ }
+	for cmds().lines {
+	    if $_.contains("vi /etc/ImageMagick-6") {
+		say "edit /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
+		shell($_) if $image
+	    }
+	    else { shell $_ }
+	}
     }
-    
+
 #    say "install source in $*CWD and binaries, with perl version: $pv";
 #    run "make MROOT=$root ARCH=$arch PERLVERSION=$pv set";
 
@@ -27,10 +35,10 @@ multi MAIN (Bool :$dpkg,
     }
     if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
-	shell "/usr/bin/env sudo zef -v install ./";
+	shell "/usr/bin/env sudo zef -v install ./" if $install ;
 	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
-    else { shell "/usr/bin/env sudo zef -v --/test --install-to=site install ./" }
+    else { shell "/usr/bin/env sudo zef -v --/test --install-to=site install ./" if $install }
 }
 
 sub cmds () {
@@ -45,9 +53,10 @@ cd /tmp && sudo dpkg -i libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb
 cd /tmp && sudo dpkg -i libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb 
 cd /tmp && sudo dpkg -i libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
 cd /tmp && sudo dpkg -i libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
-sudo apt install --fix-broken 
 cd /tmp && sudo dpkg -i libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
 cd /tmp && sudo dpkg -i libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb 
 cd /tmp && sudo dpkg -i libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb 
+
+vi /etc/ImageMagick-6/policy.xml
 END_CMDS
 }
