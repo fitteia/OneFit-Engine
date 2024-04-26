@@ -35,8 +35,8 @@ multi MAIN (Bool :$dpkg,
 
 sub cmds () {
     qq:to/END_CMDS/;
-sudo apt install libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl liblapack3
-	    
+sudo apt install libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl liblapack3 libblas3
+
 cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base-dev_20061220+dfsg3-4.4_all.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base_20061220+dfsg3-4.4_all.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
 
 cd /tmp && sudo dpkg -i cernlib-base_20061220+dfsg3-4.4_all.deb 
