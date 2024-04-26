@@ -14,7 +14,7 @@ else
 fi;
 echo $1
 if [ $1 = "--/test" ]; then
-    zef -v --/test --install-to=site install ./ 
+    sudo zef -v --/test --install-to=site install ./ 
 else
-    zef -v --install-to=site install ./
+    sudo zef -v --install-to=site install ./
 fi
