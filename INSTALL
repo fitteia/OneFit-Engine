@@ -38,10 +38,9 @@ multi MAIN (Bool :$dpkg, # to install required debian packages
 	for cmds().lines {
 	    my $line = $_.subst("amd64",$cpu,:g);
 	    if $line.contains("vi /etc/ImageMagick-6") {
-		say "edit /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
-		shell($line) if $image
+		say "ATTENTION: edit /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
 	    }
-	    else { say $_; shell $_ unless all($_.contains("curl"),"/tmp/{$_.split('/').tail}".IO.e) }
+	    else { shell $_ unless all($_.contains("curl"),"/tmp/{$_.split('/').tail}".IO.e) }
 	}
     }
 
