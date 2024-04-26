@@ -22,7 +22,7 @@ END_HELP
 }
 
 multi MAIN (Bool :$dpkg, # to install required debian packages 
-	    Str  :$cpu = "amd64" # [amd64|arm64|...]
+	    Str  :$cpu = "amd64", # [amd64|arm64|...]
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
 	    Bool :$image = False, # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formats
