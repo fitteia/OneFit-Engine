@@ -3,25 +3,8 @@
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
-multi MAIN ('help') { MAIN :h }
 
-multi MAIN (Bool :h(:help($))) {
-    note qq:to/END_HELP/;
-    Usage:
-    ./INSTALL [-h|--help]
-    ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [--image] [-i|--install]
-    --dpkg    # to install required debian packages
-    --cpu     # cpu defaults to amd64
-    --compile # to comlipe and install the OneFit engine core
-    --test    # to run raku module tests
-    --image   # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formatys
-    --install # to install OneFit-Engine as a raku modules available to all users
-    negated options:
-    ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile
-END_HELP
-}
-
-multi MAIN (Bool :$dpkg, # to install required debian packages 
+multi MAIN (Bool :$dpkg = False, # to install required debian packages 
 	    Str  :$cpu = "amd64", # [amd64|arm64|...]
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
@@ -74,6 +57,24 @@ multi MAIN (Bool :$dpkg, # to install required debian packages
 	else { shell "/usr/bin/env sudo zef -v --/test --install-to=site install ./" }
 
     }
+}
+
+multi MAIN ('help') { MAIN :h }
+
+multi MAIN (Bool :h(:help($))) {
+    note qq:to/END_HELP/;
+    Usage:
+    ./INSTALL [-h|--help]
+    ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [--image] [-i|--install]
+    --dpkg    # to install required debian packages
+    --cpu     # cpu defaults to amd64
+    --compile # to comlipe and install the OneFit engine core
+    --test    # to run raku module tests
+    --image   # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formatys
+    --install # to install OneFit-Engine as a raku modules available to all users
+    negated options:
+    ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile
+END_HELP
 }
 
 sub cmds () {
