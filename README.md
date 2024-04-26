@@ -14,7 +14,9 @@ git clone https://github.com/fitteia/OneFit-Engine.git
 
 cd $HOME/OneFit-Engine $$ .INSTALL help
 cd $HOME/OneFit-Engine $$ .INSTALL --dpkg --image
+
 for subsequent updates
+sudo zef uninstall OneFit-Engine
 cd $HOME/OneFit-Engine $$ .INSTALL --/test
 
 
