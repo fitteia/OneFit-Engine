@@ -106,6 +106,15 @@ vi /etc/ImageMagick-6/policy.xml
 END_CMDS
 }
 
-sub cernpkgs () {
-    <cernlib-base_20061220+dfsg3-4.4_all.deb cernlib-base-dev_20061220+dfsg3-4.4_all.deb libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb>
+sub cernpkgs ($cpu) {
+    <cernlib-base_20061220+dfsg3-4.4_all.deb cernlib-base-dev_20061220+dfsg3-4.4_all.deb libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb>.subst("amd64",$spu,:g)
+}
+
+sub aptpkgs () {
+<libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl liblapack3 libblas3 libblas-dev libatlas-base-dev libatlas3-base>
+}
+
+sub apt-installed () {
+    my @pkgs-installed = shell("apt list --installed",:out).out.lines(:close).map({ $_ = $_.split("/"),head });
+    say @pkgs-installed;
 }
