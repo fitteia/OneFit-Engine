@@ -48,8 +48,8 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 	shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv install";
     }
     if $install.Bool {
-	my @previous = shell("zef locate OneFit-Engine",:out).out.lines(:close);
-	for @previous.lines {
+	my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close).lines;
+	for @previous {
 	    if $_.Bool {
 		do {
 		    my $yesno;
