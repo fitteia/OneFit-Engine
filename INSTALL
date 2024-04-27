@@ -15,7 +15,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 		"aarch64" => "arm64"
 		);
     say %cpus;
-    say  $cpu = shell("uname -a",:out).out.slurp(:close).words.tail(2).head;
+    say  %cpus{shell("uname -a",:out).out.slurp(:close).words.tail(2).head};
     shell "git stash";
     shell "git pull";
     my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
