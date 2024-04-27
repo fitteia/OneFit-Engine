@@ -21,11 +21,13 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
     if so @apt-install {
 	run "sudo", "apt", "install" , @apt-install; 
     }
-    my @cernlib-install = apt-not-installed(cernpkgs($cpu));
+    my @cern-pkgs = cernpkgs($cpu);
+    my @cernlib-install = apt-not-installed(@cern-pkgs);
     if so @cernlib-install {
 	for @cernlib-install {
-	    shell "cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/$_";
-	    run "sudo", "apt", "install" , "/tmp/$_"; 
+	    my $pkg = @cern-pkgs.grep($_);
+	    shell "cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/$pkg";
+	    run "sudo", "apt", "install" , "/tmp/$pkg"; 
 	}	
     }
     
