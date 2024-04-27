@@ -136,7 +136,6 @@ sub apt-not-installed (@pkgs) {
     my @a=shell("apt list --installed",:out).out.lines(:close);
     @a.map({ $_ = $_.split("/").head });
     gather for @pkgs {
-	say $_;
 	my $pkg = $_.split("_").head;
 	take $pkg unless grep($pkg,@a)
     }
