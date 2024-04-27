@@ -3,12 +3,13 @@
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
-
-multi MAIN (Bool :$dpkg = True, # to install required debian packages 
+multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	    Str  :$cpu = "amd64", # [amd64|arm64|...]
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
 	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
+	    Bool :p(:$inline-perl5) = True, # attempt to install raku module Inline::Perl5
+	    Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
 	   ){
     shell "git stash";
     shell "git pull";
@@ -16,31 +17,11 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
-    my @apt-install = apt-not-installed(aptpkgs());
-    if so @apt-install {
-	run "sudo", "apt", "install" , @apt-install; 
-    }
-    my @cern-pkgs = cernpkgs($cpu);
-    my @cernlib-install = apt-not-installed(@cern-pkgs);
-    if so @cernlib-install {
-	for @cernlib-install {
-	    my $pkg = @cern-pkgs.grep(/$_"_"/) ;
-	    shell "cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/$pkg";
-	    run "sudo", "apt", "install" , "/tmp/$pkg"; 
-	}	
-    }
+    install-apt-packages($cpu) if $dpkg.Bool;
 
-    my $inline-perl5 = shell("zef locate Inline::Perl5",:out).out.slurp(:close);
-    shell("sudo zef install Inline::Perl5 --install-to=site") unless $inline-perl5.lines.head.contains("Inline::Perl5"); 
+    install-Inline-Perl5() if $inline-perl5.Bool;
 
-    say "ATTENTION: editting /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
-    my @policy-file="/etc/ImageMagick-6/policy.xml".IO.lines;
-    @policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~~ /'<!--'/ });
-    "/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
-    shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
-
-#    say "install source in $*CWD and binaries, with perl version: $pv";
-#    run "make MROOT=$root ARCH=$arch PERLVERSION=$pv set";
+    enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool;
 
     if $compile.Bool {
 	say "install source in $*CWD and binaries with perl version: $pv";
@@ -73,12 +54,14 @@ multi MAIN (Bool :h(:help($))) {
     note qq:to/END_HELP/;
     Usage:
     ./INSTALL [-h|--help]
-    ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install]
-    --dpkg    # to install required debian packages
-    --cpu     # cpu defaults to amd64
-    --compile # to comlipe and install the OneFit engine core
-    --test    # to run raku module tests
-    --install # to install OneFit-Engine as a raku modules available to all users
+    ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]
+    --dpkg         # to install required debian packages
+    --cpu          # cpu defaults to amd64
+    --compile      # to comlipe and install the OneFit engine core
+    --test         # to run raku module tests
+    --install      # to install OneFit-Engine as a raku modules available to all users
+    --inline-perl5 # to install raku module Inline::Perl5
+    --enable-gs    # enable ghostsript in ImageMagick-6 policy.xml
     negated options:
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile
 END_HELP
@@ -121,11 +104,40 @@ sub aptpkgs () {
     libatlas3-base>
 }
 
-sub apt-not-installed (@pkgs) {
-    my @a=shell("apt list --installed",:out).out.lines(:close);
+sub apt-pkgs-not-installed (@pkgs) {
+    my @a=shell("apt list --installed",:out,:err).out.lines(:close);
     @a.map({ $_ = $_.split("/").head });
     gather for @pkgs {
 	my $pkg = $_.split("_").head;
 	take $pkg unless grep($pkg,@a)
     }
+}
+
+sub install-apt-packages ($cpu) {
+    my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
+    if so @apt-install {
+	run "sudo", "apt", "install" , @apt-pkgs-to-install; 
+    }
+    my @required-cern-pkgs = cernpkgs($cpu);
+    my @cernlib-pkgs-to-install = apt-pkgs-not-installed(@required-cern-pkgs);
+    if so @cernlib-pkgs-to-install {
+	for @cernlib-pkgs-to-install {
+	    my $pkg = @required-cern-pkgs.grep(/$_"_"/) ;
+	    shell "cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/$pkg";
+	    run "sudo", "apt", "install" , "/tmp/$pkg"; 
+	}	
+    }
+}
+
+sub install-Inline-Perl5 () {
+    my $inline-perl5 = shell("zef locate Inline::Perl5",:out).out.slurp(:close);
+    shell("sudo zef install Inline::Perl5 --install-to=site") unless $inline-perl5.lines.head.contains("Inline::Perl5"); 
+}
+
+sub enable-ghostscript-in-ImageMagick-policy () {
+#    say "ATTENTION: editting /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
+    my @policy-file="/etc/ImageMagick-6/policy.xml".IO.lines;
+    @policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~~ /'<!--'/ });
+    "/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
+    shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
 }
