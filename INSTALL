@@ -116,5 +116,5 @@ sub aptpkgs () {
 }
 
 sub apt-installed () {
-    shell("apt list --installed",:out).out.lines(:close).map({ $_ = $_.split("/"),head })
+    shell("apt list --installed",:out).out.lines(:close).map({ $_ = $_.split("/").head })
 }
