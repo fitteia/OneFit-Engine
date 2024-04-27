@@ -13,9 +13,9 @@ mkdir ~/bin ~/Downloads
 
 git clone https://github.com/fitteia/OneFit-Engine.git
 
-cd $HOME/OneFit-Engine && ./INSTALL help
-Usage:
-    ./INSTALL [-h|--help]
+cd $HOME/OneFit-Engine && ./INSTALL help \
+Usage:\
+    ./INSTALL [-h|--help]\
     ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]
     --dpkg         # to install required debian packages
     --cpu          # cpu defaults to amd64
