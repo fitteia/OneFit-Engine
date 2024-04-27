@@ -24,7 +24,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
     my @cernlib-install = apt-not-installed(cernpkgs($cpu));
     if so @cernlib-install {
 	for @cernlib-install {
-	    run "curl", "--output=/tmp", "-O", "http://ftp.de.debian.org/debian/pool/main/c/cernlib/$_";
+	    run "curl", "--output", "/tmp", "-O", "http://ftp.de.debian.org/debian/pool/main/c/cernlib/$_";
 	    run "sudo", "apt", "install" , "tmp/$_"; 
 	}	
     }
