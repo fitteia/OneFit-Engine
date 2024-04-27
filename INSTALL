@@ -138,8 +138,8 @@ sub install-apt-packages ($cpu) {
 }
 
 sub install-Inline-Perl5 () {
-    my $inline-perl5 = shell("zef locate Inline::Perl5",:out).out.slurp(:close);
-    shell("sudo zef install Inline::Perl5 --install-to=site") unless $inline-perl5.lines.head.contains("Inline::Perl5"); 
+    my $locate-inline-perl5 = shell("zef locate Inline::Perl5",:out).out.slurp(:close);
+    shell("sudo zef install Inline::Perl5 --install-to=site") unless $locate-inline-perl5.lines.head.contains("Inline::Perl5"); 
 }
 
 sub enable-ghostscript-in-ImageMagick-policy () {
