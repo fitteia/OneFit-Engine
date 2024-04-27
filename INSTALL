@@ -117,6 +117,6 @@ sub aptpkgs () {
 
 sub apt-not-installed (@pkgs) {
     my @a=shell("sudo apt list --installed",:out).out.lines(:close);
-    @a.map({ $_ = $_.split("/").head })
+    @a.map({ $_ = $_.split("/").head });
     gather for @pkgs.split("_").head { take $_ unless $_ ~~ any @a }
 }
