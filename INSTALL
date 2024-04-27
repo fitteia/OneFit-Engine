@@ -45,7 +45,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 
     if $compile.Bool {
 	say "install source in $*CWD and binaries with perl version: $pv";
-	shell "/usr/bin/env make MROOT=$root ARCH=$arch PERLVERSION=$pv install";
+	shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv install";
     }
     if $install.Bool {
 	my @previous = shell("zef locate OneFit-Engine",:out).out.lines(:close);
@@ -60,10 +60,10 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 	} 
 	if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
-	shell "/usr/bin/env sudo zef -v install ./";
+	shell "sudo zef -v install ./";
 	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
 	}
-	else { shell "/usr/bin/env sudo zef -v --/test --install-to=site install ./" }
+	else { shell "sudo zef -v --/test --install-to=site install ./" }
 
     }
 }
