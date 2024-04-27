@@ -30,23 +30,15 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 	    run "sudo", "apt", "install" , "/tmp/$pkg"; 
 	}	
     }
-    
-    exit;
-    if $dpkg {
-	for cmds().lines {
-	    my $line = $_.subst("amd64",$cpu,:g);
-	    if $line.contains("vi /etc/ImageMagick-6") {
-		say "ATTENTION: edit /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
-		my @policy-file="/etc/ImageMagick-6/policy.xml".IO.lines;
-		@policy-file.map( {
-		    $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">));
-		});
-		"/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
-		shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
-	    }
-	    else { shell $_ unless all($_.contains("curl"),"/tmp/{$_.split('/').tail}".IO.e) }
-	}
-    }
+
+    my $inline-perl5 = shell("zef locate Inline::Perl5",:out).out.slurp(:close);
+    shell("sudo zef install Inline::Perl5 --install-to=site") unless $inline-perl5.lines.head.contains("Inline::Perl5"); 
+
+    say "ATTENTION: editting /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
+    my @policy-file="/etc/ImageMagick-6/policy.xml".IO.lines;
+    @policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~ /\<!--/ });
+    "/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
+    shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
 
 #    say "install source in $*CWD and binaries, with perl version: $pv";
 #    run "make MROOT=$root ARCH=$arch PERLVERSION=$pv set";
@@ -56,7 +48,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 	shell "/usr/bin/env make MROOT=$root ARCH=$arch PERLVERSION=$pv install";
     }
     if $install.Bool {
-	my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close);
+	my @previous = shell("zef locate OneFit-Engine",:out).out.lines(:close);
 	for @previous.lines {
 	    if $_.Bool {
 		do {
