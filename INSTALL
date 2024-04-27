@@ -22,12 +22,12 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 	run "sudo", "apt", "install" , @apt-install; 
     }
     my @cern-pkgs = cernpkgs($cpu);
-    say @cern-pkgs;
     my @cernlib-install = apt-not-installed(@cern-pkgs);
     if so @cernlib-install {
 	for @cernlib-install {
 	    say $_;
 	    my $pkg = @cern-pkgs.grep($_);
+	    say $pkg;
 	    shell "cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/$pkg";
 	    run "sudo", "apt", "install" , "/tmp/$pkg"; 
 	}	
