@@ -17,7 +17,11 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
-    say "not installed: ", apt-not-installed(aptpkgs());
+    my @apt-install = apt-not-installed(aptpkgs());
+    if so @apt-install {
+	run "sudo", "apt", "install" , @apt-install; 
+    }
+    
     exit;
     if $dpkg {
 	for cmds().lines {
@@ -119,7 +123,6 @@ sub aptpkgs () {
 sub apt-not-installed (@pkgs) {
     my @a=shell("apt list --installed",:out).out.lines(:close);
     @a.map({ $_ = $_.split("/").head });
-    say @a;
     gather for @pkgs {
 	say $_;
 	my $pkg = $_.split("_").head;
