@@ -4,7 +4,7 @@
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 multi MAIN (Bool :$dpkg = True, # to install required debian packages
-	    Str  :$cpu = "amd64", # [amd64|arm64|...]
+	    Str  :$cpu = "amd64" is rw, # [amd64|arm64|...]
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
 	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
@@ -15,6 +15,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 		"aarch64" => "arm64"
 		);
     say %cpus;
+    say  shell("uname -a",:out).out.slurp(:close).words.tail(2).head;
     shell "git stash";
     shell "git pull";
     my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
