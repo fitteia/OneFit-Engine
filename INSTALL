@@ -115,7 +115,7 @@ sub apt-pkgs-not-installed (@pkgs) {
 
 sub install-apt-packages ($cpu) {
     my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
-    if so @apt-install {
+    if so @apt-pkgs-to-install {
 	run "sudo", "apt", "install" , @apt-pkgs-to-install; 
     }
     my @required-cern-pkgs = cernpkgs($cpu);
