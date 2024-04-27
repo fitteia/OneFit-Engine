@@ -8,7 +8,6 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	    Str  :$cpu = "amd64", # [amd64|arm64|...]
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
-	    Bool :$image = False, # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formats
 	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
 	   ){
     shell "git stash";
@@ -74,51 +73,52 @@ multi MAIN (Bool :h(:help($))) {
     note qq:to/END_HELP/;
     Usage:
     ./INSTALL [-h|--help]
-    ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [--image] [-i|--install]
+    ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install]
     --dpkg    # to install required debian packages
     --cpu     # cpu defaults to amd64
     --compile # to comlipe and install the OneFit engine core
     --test    # to run raku module tests
-    --image   # to edit the /etc/ImageMagick-6/policy.xml file to enable ghostscript formatys
     --install # to install OneFit-Engine as a raku modules available to all users
     negated options:
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile
 END_HELP
 }
 
-sub cmds () {
-    qq:to/END_CMDS/;
-sudo apt install libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl liblapack3 libblas3 libblas-dev libatlas-base-dev libatlas3-base
-
-cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base-dev_20061220+dfsg3-4.4_all.deb
-cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/cernlib-base_20061220+dfsg3-4.4_all.deb
-cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb
-cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb
-cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb
-cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb
-cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb
-cd /tmp && sudo curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
-
-cd /tmp && sudo apt install ./cernlib-base_20061220+dfsg3-4.4_all.deb 
-cd /tmp && sudo apt install ./cernlib-base-dev_20061220+dfsg3-4.4_all.deb 
-cd /tmp && sudo apt install ./libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install ./libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install ./libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install ./libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install ./libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb 
-cd /tmp && sudo apt install ./libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb 
-
-vi /etc/ImageMagick-6/policy.xml
-END_CMDS
-}
-
 sub cernpkgs ($cpu) {
-    my @a = <cernlib-base_20061220+dfsg3-4.4_all.deb cernlib-base-dev_20061220+dfsg3-4.4_all.deb libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb>;
+    my @a = <cernlib-base_20061220+dfsg3-4.4_all.deb
+	     cernlib-base-dev_20061220+dfsg3-4.4_all.deb
+	     libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb
+	     libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb
+	     libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb
+	     libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb
+	     libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
+	     libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb>;
     @a.map( { .subst("amd64",$cpu) })
 }
 
 sub aptpkgs () {
-<libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl liblapack3 libblas3 libblas-dev libatlas-base-dev libatlas3-base>
+    <libperl-dev
+    swig
+    gcc
+    dpkg-dev
+    libgfortran5
+    cfortran
+    gfortran
+    grace
+    imagemagick
+    texlive-font-utils
+    ghostscript
+    libcgi-pm-perl
+    zip
+    pdftk
+    sudo
+    raku
+    curl
+    liblapack3
+    libblas3
+    libblas-dev
+    libatlas-base-dev
+    libatlas3-base>
 }
 
 sub apt-not-installed (@pkgs) {
