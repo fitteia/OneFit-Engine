@@ -16,7 +16,8 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
     my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
-    
+
+    say apt-installed();
     if $dpkg {
 	for cmds().lines {
 	    my $line = $_.subst("amd64",$cpu,:g);
@@ -115,6 +116,5 @@ sub aptpkgs () {
 }
 
 sub apt-installed () {
-    my @pkgs-installed = shell("apt list --installed",:out).out.lines(:close).map({ $_ = $_.split("/"),head });
-    say @pkgs-installed;
+    shell("apt list --installed",:out).out.lines(:close).map({ $_ = $_.split("/"),head })
 }
