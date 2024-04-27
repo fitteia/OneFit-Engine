@@ -11,6 +11,8 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	    Bool :p(:$inline-perl5) = True, # attempt to install raku module Inline::Perl5
 	    Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
 	   ){
+    my %cpus<x86_64 aarch64>=<amd64 arm64>;
+    say %cpus;
     shell "git stash";
     shell "git pull";
     my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
