@@ -17,7 +17,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
-    say apt-installed();
+    say "not installed: ", apt-not-installed(@pkgs);
     if $dpkg {
 	for cmds().lines {
 	    my $line = $_.subst("amd64",$cpu,:g);
@@ -115,7 +115,8 @@ sub aptpkgs () {
 <libperl-dev swig gcc dpkg-dev libgfortran5 cfortran gfortran grace imagemagick texlive-font-utils ghostscript libcgi-pm-perl zip pdftk sudo raku curl liblapack3 libblas3 libblas-dev libatlas-base-dev libatlas3-base>
 }
 
-sub apt-installed () {
+sub apt-not-installed (@pkgs) {
     my @a=shell("sudo apt list --installed",:out).out.lines(:close);
     @a.map({ $_ = $_.split("/").head })
+    gather for @pkgs.split("_").head { take $_ unless $_ ~~ any @a }
 }
