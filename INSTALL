@@ -87,7 +87,8 @@ sub cernpkgs ($cpu) {
 
 sub aptpkgs () {
     <libperl-dev
-    libc6	
+    libc6
+    libgcc	
     swig
     gcc
     dpkg-dev
