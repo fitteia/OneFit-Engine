@@ -125,7 +125,7 @@ END_CMDS
 
 sub cernpkgs ($cpu) {
     my @a = <cernlib-base_20061220+dfsg3-4.4_all.deb cernlib-base-dev_20061220+dfsg3-4.4_all.deb libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb>;
-    @a.map( { .subst("amd64",$cpu) })
+    @a.map( { say .subst("amd64",$cpu) })
 }
 
 sub aptpkgs () {
