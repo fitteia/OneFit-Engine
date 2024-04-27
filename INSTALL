@@ -17,7 +17,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
-    say "not installed: ", apt-not-installed(@pkgs);
+    say "not installed: ", apt-not-installed(aptpkgs());
     if $dpkg {
 	for cmds().lines {
 	    my $line = $_.subst("amd64",$cpu,:g);
