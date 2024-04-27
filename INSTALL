@@ -4,7 +4,7 @@
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 multi MAIN (Bool :$dpkg = True, # to install required debian packages
-	    Str  :$cpu is copy, # [amd64|arm64|...]
+	    Str  :$cpu is copy, # [amd64|arm64| defaults to "uname -a" detection 
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
 	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
@@ -63,7 +63,7 @@ multi MAIN (Bool :h(:help($))) {
     ./INSTALL [-h|--help]
     ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]
     --dpkg         # to install required debian packages
-    --cpu          # cpu defaults to amd64
+    --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
     --compile      # to comlipe and install the OneFit engine core
     --test         # to run raku module tests
     --install      # to install OneFit-Engine as a raku modules available to all users
