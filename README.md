@@ -1,4 +1,4 @@
-# OneFit_Engine
+# OneFit Engine
 The OneFit Engine (onefite) is fitteia's internal fitting core, made available from the command line through an SSH connection. onefite is intended to run in a virtual machine, either locally or remotely, facilitating the embedding of fitteia's fitting core in user-defined environments and enabling the personalization of graphical user interfaces.
 
 The copyright will be defined at the end of the devolopment process
