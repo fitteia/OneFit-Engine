@@ -22,7 +22,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
 	run "sudo", "apt", "install" , @apt-install; 
     }
     my @cern-pkgs = cernpkgs($cpu);
-    say @cer-pkgs;
+    say @cern-pkgs;
     my @cernlib-install = apt-not-installed(@cern-pkgs);
     if so @cernlib-install {
 	for @cernlib-install {
