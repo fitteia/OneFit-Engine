@@ -7,8 +7,9 @@ Fresh instalation
 For Debian "bookworm"
 
 In one user account:
+su -
+apt install raku git sudo
 mkdir ~/bin ~/Downloads
-zef install Inline::Perl5
 
 git clone https://github.com/fitteia/OneFit-Engine.git
 
