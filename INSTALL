@@ -18,6 +18,7 @@ multi MAIN (Bool :$dpkg = False, # to install required debian packages
     my $root=$*CWD;
 
     say "not installed: ", apt-not-installed(aptpkgs());
+    exit;
     if $dpkg {
 	for cmds().lines {
 	    my $line = $_.subst("amd64",$cpu,:g);
