@@ -48,10 +48,16 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	} 
 	if $test.Bool {
 	    "/tmp/OneFit-Engine-test".IO.mkdir;
-	    shell "sudo zef -v install { '--install-to=site ' if $to-site } install ./";
+	    my $cmd = shell("sudo zef -v { '--install-to=site ' if $to-site } install ./", :out).out.slurp(:close);
+	    say $cmd, $cmd.lines.tail;
 	    shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
 	}
-	else { shell "sudo zef -v --/test { '--install-to=site ' if $to-site } install ./" }
+	else {
+	    my $cmd = shell("sudo zef -v --/test { '--install-to=site ' if $to-site } install ./", :out).out.slurp(:close);
+	    say $cmd, $cmd.lines.tail;
+	    shell "sudo zef -v --/test { '--install-to=site ' if $to-site } install ./";
+	    ;
+	}
     }
 }
 
