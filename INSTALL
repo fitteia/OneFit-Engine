@@ -52,14 +52,14 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	    shell("sudo zef -v { '--install-to=site ' if $to-site } install ./";
 	    my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 	    $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin" if $onefite-bin.IO.e;
+	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
 	    shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
 	}
 	else {
 	    shell("sudo zef -v --/test { '--install-to=site ' if $to-site } install ./";
 	    my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 	    $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin" if $onefite-bin.IO.e;
+	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
 	    ;
 	}
     }
