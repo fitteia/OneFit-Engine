@@ -32,37 +32,9 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
     enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool;
 
-    if $compile {
-	say "install source in $*CWD and binaries with perl version: $pv";
-	shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
-    }
-    if $install {
-	my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close).lines;
-	for @previous {
-	    if $_.Bool {
-		do {
-		    my $yesno;
-		    $yesno = prompt "$_ located, do you wish to remove it [y|n]?";
-		    shell "sudo zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
-		} unless $_.contains("Nothing located");
-	    }
-	} 
-	if $test.Bool {
-	    "/tmp/OneFit-Engine-test".IO.mkdir;
-	    shell("sudo zef -v { '--install-to=site ' if $to-site } install ./");
-	    my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
-	    $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
-	    shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
-	}
-	else {
-	    shell("sudo zef -v --/test { '--install-to=site ' if $to-site } install ./");
-	    my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
-	    $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
-	    ;
-	}
-    }
+    compile() if $compile;
+
+    install() if $install;
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -159,4 +131,37 @@ sub enable-ghostscript-in-ImageMagick-policy () {
     @policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~~ /'<!--'/ });
     "/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
     shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
+}
+
+sub compile () {
+    say "install source in $*CWD and binaries with perl version: $pv";
+    shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
+}
+
+sub install () {
+    my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close).lines;
+    for @previous {
+	if $_.Bool {
+	    do {
+		my $yesno;
+		$yesno = prompt "$_ located, do you wish to remove it [y|n]?";
+		shell "sudo zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
+	    } unless $_.contains("Nothing located");
+	}
+    } 
+    if $test.Bool {
+	"/tmp/OneFit-Engine-test".IO.mkdir;
+	shell("sudo zef -v { '--install-to=site ' if $to-site } install ./");
+	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
+	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
+	shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
+	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
+    }
+    else {
+	shell("sudo zef -v --/test { '--install-to=site ' if $to-site } install ./");
+	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
+	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
+	shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
+    }
+
 }
