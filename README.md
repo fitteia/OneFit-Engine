@@ -14,16 +14,17 @@ mkdir ~/bin ~/Downloads\
 git clone https://github.com/fitteia/OneFit-Engine.git
 
 cd $HOME/OneFit-Engine && ./INSTALL help \
-Usage:\
+Usage:
     ./INSTALL [-h|--help]\
     ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]\
     --dpkg         # to install required debian packages\
-    --cpu          # cpu defaults to amd64\
-    --compile      # to comlipe and install the OneFit engine core\
-    --test         # to run raku module tests\
+    --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"\
+    --compile      # to comlipe and install the OneFit engine core (use [-/c|--no-c|--/compile|--no-compile] to skip compiling)\
+    --test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)\
     --install      # to install OneFit-Engine as a raku modules available to all users\
     --inline-perl5 # to install raku module Inline::Perl5\
     --enable-gs    # enable ghostsript in ImageMagick-6 policy.xml\
+    --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise \
     negated options:\
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile\
 
