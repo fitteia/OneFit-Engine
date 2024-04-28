@@ -131,7 +131,7 @@ sub install-apt-packages ($cpu) {
     my @cernlib-pkgs-to-install = apt-pkgs-not-installed(@required-cern-pkgs);
     if so @cernlib-pkgs-to-install {
 	my @pkgs-to-install = gather for @cernlib-pkgs-to-install {
-	    take @required-cern-pkgs.grep(/$_"_"/)
+	    take $_ if @required-cern-pkgs.grep(/$_"_"/)
 	}
 	my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/" <<~<< @pkgs-to-install;
 say @pkgs-to-download;
