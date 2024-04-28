@@ -10,7 +10,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
 	    Bool :p(:$inline-perl5) = True, # attempt to install raku module Inline::Perl5
 	    Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
-            Bool :to-site = True, # install raku module to site (use --/to-site to install-to user)
+            Bool :$to-site = True, # install raku module to site (use --/to-site to install-to user)
 	   ){
     my %cpus = ("x86_64"  => "amd64",
 		"aarch64" => "arm64"
