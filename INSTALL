@@ -26,6 +26,8 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
+    say dir($bindir);
+
     install-apt-packages($cpu) if $dpkg.Bool;
 
     install-Inline-Perl5() if $inline-perl5.Bool;
@@ -137,7 +139,6 @@ sub enable-ghostscript-in-ImageMagick-policy () {
 sub compile (:$root,:$arch,:$bindir,:$pv) {
     say "install source in $*CWD and binaries with perl version: $pv";
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
-    say dir($bindir);
 }
 
 sub install (:$test,:$to-site) {
