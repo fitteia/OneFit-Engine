@@ -34,7 +34,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
     compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
-    install( :test($test) ) if $install;
+    install( :test($test),:to-site($to-site) ) if $install;
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -138,7 +138,7 @@ sub compile (:$root,:$arch,:$bindir,:$pv) {
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
 }
 
-sub install (:$test) {
+sub install (:$test,:$to-site) {
     my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close).lines;
     for @previous {
 	if $_.Bool {
