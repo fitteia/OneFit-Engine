@@ -49,14 +49,12 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	if $test.Bool {
 	    "/tmp/OneFit-Engine-test".IO.mkdir;
 	    my $cmd = shell("sudo zef -v { '--install-to=site ' if $to-site } install ./", :out).out.slurp(:close);
-	    say $cmd, shell("sudo cd /usr/local/bin { '&& rm onefite' if '/usr/local/bin/onefite'.IO.e } && ln -s  { $cmd.lines.tail ~ '/onefite' }",:out).out.slurp(:close);
+	    say $cmd, shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  { $cmd.lines.tail ~ '/onefite' }",:out).out.slurp(:close);
 	    shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
 	}
 	else {
 	    my $cmd = shell("sudo zef -v --/test { '--install-to=site ' if $to-site } install ./", :out).out.slurp(:close);
-	    say $cmd;
-	    say "sudo cd /usr/local/bin { '&& rm onefite' if '/usr/local/bin/onefite'.IO.e } && ln -s  { $cmd.lines.tail ~ '/onefite' }";
-	    
+	    say $cmd, shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  { $cmd.lines.tail ~ '/onefite' }",:out).out.slurp(:close);
 	    ;
 	}
     }
