@@ -40,7 +40,7 @@ $time = now;
 for (1 .. $eng.blocks.a.elems).race {
     shell "cd $workfolder; ./onefit-user -@fitenv$_.stp -f data$_.dat <fit$_.par >fit$_.log 2>&1";
 }
-my $log = "$workfolder/fit1.log-$cpu"
+my $log = "$workfolder/fit1.log-$cpu";
 is $log.IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit1.log".IO.slurp(enc => 'utf8-c8'), "individual fit 1: OK! ({ now -$time } s)";
 
 $time = now;
@@ -51,7 +51,7 @@ for (1 .. $eng.blocks.a.elems).race {
 for (1 .. $eng.blocks.a.elems).race {
     shell "cd $workfolder ; cp fit-residues-$_.res-tmp fit-residues-$_.res" ;
 }
-my $log = "$workfolder/fit40.log-$cpu"
+my $log = "$workfolder/fit40.log-$cpu";
 is $log.IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit40.log".IO.slurp(enc => 'utf8-c8'), "individual plot 40: OK! ({ now -$time } s)" ;
 
 
