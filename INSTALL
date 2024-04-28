@@ -32,7 +32,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
     enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool;
 
-    compile( bindir => $bindir, pv => $pv) if $compile;
+    compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
     install() if $install;
 }
@@ -133,11 +133,10 @@ sub enable-ghostscript-in-ImageMagick-policy () {
     shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
 }
 
-sub compile (:$bindir,:$pv) {
+sub compile (:$root,:$arch,:$bindir,:$pv) {
     say "install source in $*CWD and binaries with perl version: $pv";
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
 }
-
 
 sub install () {
     my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close).lines;
