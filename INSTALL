@@ -54,7 +54,9 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	}
 	else {
 	    my $cmd = shell("sudo zef -v --/test { '--install-to=site ' if $to-site } install ./", :out).out.slurp(:close);
-	    say $cmd, shell("sudo cd /usr/local/bin { '&& rm onefite' if '/usr/local/bin/onefite'.IO.e } && ln -s  { $cmd.lines.tail ~ '/onefite' }",:out).out.slurp(:close);
+	    say $cmd;
+	    say "sudo cd /usr/local/bin { '&& rm onefite' if '/usr/local/bin/onefite'.IO.e } && ln -s  { $cmd.lines.tail ~ '/onefite' }";
+	    
 	    ;
 	}
     }
