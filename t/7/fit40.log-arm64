@@ -24,6 +24,8 @@ userfitf2 Minf,M0,c,T12
 Gfitn1:decode fnames=userfitf2 with args arg=Minf  arg=M0  arg=c  arg=T12 
 gfitn:Cfunc=userfitf2
 Fitting 1 data curves
+gfitn: warning: skipping data line 33 -> .
+Line format dosen't match x y ey
 Gfitn warning: 32 data points read from data40.dat
 Data file: data40.dat
 Adjusting FPar=3 non-linear parameters
