@@ -134,9 +134,9 @@ sub install-apt-packages ($cpu) {
 	    take @required-cern-pkgs.grep(/$_"_"/)
 	}
 	my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/"<<~<< @pkgs-to-install;
-
-	shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
-	run "cd /tmp && sudo", "apt", "install" , @pkgs-to-install; 
+say @pkgs-to-download;
+#	shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
+#	run "cd /tmp && sudo", "apt", "install" , @pkgs-to-install; 
     }
 }
 
