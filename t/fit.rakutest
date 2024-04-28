@@ -10,7 +10,7 @@ use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
 my $workfolder="/tmp/OneFit-Engine-test";
-$workfolder.IO(:d).mkdir;
+$workfolder.IO.mkdir unless $workfolder.IO.d;
 
 my $test-path=OFE-PATH ~ "/t";
 
