@@ -1,0 +1,328 @@
+OneFit, version 3.1.
+Thank you for using OneFit. Every constructive criticism is welcome.
+
+OneFit is free software with ABSOLUTLY NO WARRANTY.
+
+It provides a way of performing non-linear data fitting of user
+defined functions compiled with the OneFit kernel program.
+
+OneFit accesses non-linear fitting parameters through their names
+independently of their order in the parameter file.
+You may find it usefull to use X1fit (OneFit GUI) to manage OneFit
+
+Copyright (C) 1990-2024, Pedro José Oliveira Sebastião
+
+9 functions in memory during the gfitn run.
+12 functions in memory during the gfitn run.
+userfitf0 Minf 
+Gfitn1:decode fnames=userfitf0 with args arg=Minf 
+gfitn:Cfunc=userfitf0
+userfitf1 Minf,M0,T11,c 
+Gfitn1:decode fnames=userfitf1 with args arg=Minf  arg=M0  arg=T11  arg=c 
+gfitn:Cfunc=userfitf1
+userfitf2 Minf,M0,c,T12 
+Gfitn1:decode fnames=userfitf2 with args arg=Minf  arg=M0  arg=c  arg=T12 
+gfitn:Cfunc=userfitf2
+Fitting 1 data curves
+gfitn: warning: skipping data line 21 -> .
+Line format dosen't match x y ey
+Gfitn warning: 20 data points read from data1.dat
+Data file: data1.dat
+Adjusting FPar=3 non-linear parameters
+Par. no. 1 is free
+Par. no. 2 is free
+Par. no. 3 is free
+ ***************************************************************************
+  MINUIT RELEASE 96.03  INITIALIZED.   DIMENSIONS 100/ 50  EPSMAC=  0.89E-15
+ ***************************************************************************
+                          MINUIT DATA BLOCK NO.   1
+ ***************************************************************************
+ 0123456789/123456789/123456789/123456789/123456789
+ ******************************************************************************
+
+ PARAMETER DEFINITIONS:
+    NO.   NAME         VALUE      STEP SIZE      LIMITS
+     1 'n.tot.par '    6.0000      constant
+     2 'Minf      '   0.47938      0.47938E-01    -3.0000       3.0000    
+     3 'M0        '  -0.81701      0.81701E-01    -3.0000       3.0000    
+     4 'T11       '   0.41974E-01  0.41974E-02    0.10000E-02  0.50000    
+     5 'c         '    1.0000      0.10000         no limits
+     6 'T12       '    1.0000      0.10000         no limits
+    ***************************************************************************
+
+ MINUIT: FIRST CALL TO USER FUNCTION, WITH IFLAG=1
+
+ FCN=  0.1317537E-01 FROM PARAMETR  STATUS=RESET          2 CALLS        2 TOTAL
+                     EDM= unknown      STRATEGY= 1      NO ERROR MATRIX       
+
+  EXT PARAMETER               CURRENT GUESS      PHYSICAL LIMITS       
+  NO.   NAME        VALUE          ERROR       NEGATIVE      POSITIVE  
+   1  n.tot.par     6.0000       constant   
+   2  Minf         0.47938       0.47938E-01   -3.0000        3.0000    
+   3  M0          -0.81701       0.81701E-01   -3.0000        3.0000    
+   4  T11          0.41974E-01   0.41974E-02   0.10000E-02   0.50000    
+   5  c             1.0000       0.10000    
+   6  T12           1.0000       0.10000    
+ **********
+ **    1 **FIX    5.000    
+ **********
+ **********
+ **    2 **FIX    6.000    
+ **********
+ **********
+ **    3 **SET ERR    1.000    
+ **********
+ **********
+ **    4 **SIMP 
+ **********
+ START SIMPLEX MINIMIZATION.    CONVERGENCE WHEN EDM .LT.  0.10E+00
+
+ FCN=  0.1317537E-01 FROM SIMPLEX   STATUS=UNCHANGED      9 CALLS       12 TOTAL
+                     EDM=  0.22E-02    STRATEGY= 1      NO ERROR MATRIX       
+
+  EXT PARAMETER               CURRENT GUESS      PHYSICAL LIMITS       
+  NO.   NAME        VALUE          ERROR       NEGATIVE      POSITIVE  
+   1  n.tot.par     6.0000       constant   
+   2  Minf         0.47938       0.47938E-01   -3.0000        3.0000    
+   3  M0          -0.81701       0.81701E-01   -3.0000        3.0000    
+   4  T11          0.41974E-01   0.41974E-02   0.10000E-02   0.50000    
+   5  c             1.0000         fixed    
+   6  T12           1.0000         fixed    
+ SIMPLEX MINIMIZATION HAS CONVERGED.
+
+ FCN=  0.1317537E-01 FROM SIMPLEX   STATUS=UNCHANGED     13 CALLS       16 TOTAL
+                     EDM=  0.73E-03    STRATEGY= 1      NO ERROR MATRIX       
+
+  EXT PARAMETER               CURRENT GUESS      PHYSICAL LIMITS       
+  NO.   NAME        VALUE          ERROR       NEGATIVE      POSITIVE  
+   1  n.tot.par     6.0000       constant   
+   2  Minf         0.47938       0.47938E-01   -3.0000        3.0000    
+   3  M0          -0.81701       0.81701E-01   -3.0000        3.0000    
+   4  T11          0.41974E-01   0.41974E-02   0.10000E-02   0.50000    
+   5  c             1.0000         fixed    
+   6  T12           1.0000         fixed    
+ **********
+ **    5 **SCAN 
+ **********
+1SCAN OF PARAMETER NO.  2,  Minf      
+   460.0000     ..................................................................
+                  . *                                 .                          .
+   440.0000     ...                                   .                          .
+                  .                                   .                          .
+   420.0000     ...                                   .                          .
+                  .  *                                .                          .
+   400.0000     ...                                   .                          .
+                  .                                   .                          .
+   380.0000     ...    *                              .                          .
+                  .                                   .                          .
+   360.0000     ...                                   .                          .
+                  .                                   .                          .
+   340.0000     ...     *                             .                          .
+                  .                                   .                          .
+   320.0000     ...                                   .                          .
+                  .       *                           .                          .
+   300.0000     ...                                   .                          .
+                  .                                   .                          .
+   280.0000     ...        *                          .                          .
+                  .                                   .                          .
+   260.0000     ...                                   .                          .
+                  .          *                        .                          .
+   240.0000     ...                                   .                        * .
+                  .                                   .                          .
+   220.0000     ...           *                       .                          .
+                  .                                   .                       *  .
+   200.0000     ...                                   .                          .
+                  .             *                     .                          .
+   180.0000     ...                                   .                     *    .
+                  .              *                    .                          .
+   160.0000     ...                                   .                    *     .
+                  .                                   .                          .
+   140.0000     ...                *                  .                          .
+                  .                                   .                  *       .
+   120.0000     ...                 *                 .                          .
+                  .                                   .                 *        .
+   100.0000     ...                   *               .                          .
+                  .                                   .               *          .
+   80.00000     ...                    *              .              *           .
+                  .                      *            .                          .
+   60.00000     ...                                   .            *             .
+                  .                       *           .           *              .
+   40.00000     ...                         *         .                          .
+                  .                          *        .         *                .
+   20.00000     ...                            *      .        *                 .
+                  .                             *     .     **                   .
+   0.000000     .................................*.**.&*.**.......................
+                  .                                   .                          .
+  -20.00000     ..................................................................
+                  /         /         /         /         /         /         /   
+            -3.100    -2.100    -1.100    -.1000    0.9000     1.900     2.900    
+                         ONE COLUMN=0.1000000       Overprint character is &   
+1SCAN OF PARAMETER NO.  3,  M0        
+   66.00000     ..................................................................
+                  .                      .                                     * .
+   62.00000     ...                      .                                       .
+                  .                      .                                       .
+   58.00000     ...                      .                                    *  .
+                  .                      .                                       .
+   54.00000     ...                      .                                  *    .
+                  .                      .                                       .
+   50.00000     ...                      .                                 *     .
+                  .                      .                                       .
+   46.00000     ...                      .                               *       .
+                  .                      .                                       .
+   42.00000     ...                      .                                       .
+                  .                      .                              *        .
+   38.00000     ...                      .                                       .
+                  .                      .                            *          .
+   34.00000     ...                      .                           *           .
+                  .                      .                                       .
+   30.00000     ...                      .                         *             .
+                  .                      .                                       .
+   26.00000     ...                      .                        *              .
+                  .                      .                                       .
+   22.00000     ...                      .                      *                .
+                  . *                    .                     *                 .
+   18.00000     ...  *                   .                   *                   .
+                  .                      .                                       .
+   14.00000     ...    *                 .                  *                    .
+                  .     *                .                *                      .
+   10.00000     ...       *              .               *                       .
+                  .        *             .             *                         .
+   6.000000     ...          *           .            *                          .
+                  .           * *        .         **                            .
+   2.000000     ...              * *     .       *                               .
+                  ..................*.**.&*.**.**.................................
+  -2.000000     ...                      .                                       .
+  -4.000000     ..................................................................
+                  /         /         /         /         /         /         /   
+            -3.100    -2.100    -1.100    -.1000    0.9000     1.900     2.900    
+                         ONE COLUMN=0.1000000       Overprint character is &   
+1SCAN OF PARAMETER NO.  4,  T11       
+   7.800000     .......................................................
+                  .    .                                           * *.
+   7.400000     ...*   .                                          *   .
+                  .    .                                         *    .
+   7.000000     ...    .                                      * *     .
+                  .    .                                     *        .
+   6.600000     ...    .                                   **         .
+                  .    .                                 *            .
+   6.200000     ...    .                                *             .
+                  .    .                               *              .
+   5.800000     ...    .                              *               .
+                  .    .                            *                 .
+   5.400000     ...    .                           *                  .
+                  .    .                          *                   .
+   5.000000     ...    .                         *                    .
+                  .    .                       *                      .
+   4.600000     ...    .                      *                       .
+                  .    .                     *                        .
+   4.200000     ...    .                    *                         .
+                  .    .                  *                           .
+   3.800000     ...    .                 *                            .
+                  .    .                *                             .
+   3.400000     ...    .               *                              .
+                  .    .                                              .
+   3.000000     ...    .             *                                .
+                  .    .            *                                 .
+   2.600000     ...    .           *                                  .
+                  .    .                                              .
+   2.200000     ...    .          *                                   .
+                  .    .        *                                     .
+   1.800000     ...    .                                              .
+                  . *  .       *                                      .
+   1.400000     ...    .      *                                       .
+                  .    .                                              .
+   1.000000     ...    .     *                                        .
+                  .    .   *                                          .
+  0.6000000     ...    .                                              .
+                  .    .  *                                           .
+  0.2000000     ...  * . *                                            .
+                  ....*&*..............................................
+ -0.2000000     .......................................................
+                  /         /         /         /         /         /  
+             0.000    0.1000    0.2000    0.3000    0.4000    0.5000    
+                         ONE COLUMN=0.1000000E-01   Overprint character is &   
+
+ FCN=  0.1317537E-01 FROM SCAn      STATUS=NO CHANGE    123 CALLS      139 TOTAL
+                     EDM=  0.73E-03    STRATEGY= 1      NO ERROR MATRIX       
+
+  EXT PARAMETER               CURRENT GUESS      PHYSICAL LIMITS       
+  NO.   NAME        VALUE          ERROR       NEGATIVE      POSITIVE  
+   1  n.tot.par     6.0000       constant   
+   2  Minf         0.47938       0.47938E-01   -3.0000        3.0000    
+   3  M0          -0.81701       0.81701E-01   -3.0000        3.0000    
+   4  T11          0.41974E-01   0.41974E-02   0.10000E-02   0.50000    
+   5  c             1.0000         fixed    
+   6  T12           1.0000         fixed    
+ **********
+ **    6 **MIN 
+ **********
+ START MIGRAD MINIMIZATION.  STRATEGY 1.  CONVERGENCE WHEN EDM .LT. 0.10E-03
+
+ FCN=  0.1317537E-01 FROM MIGRAD    STATUS=INITIATE      12 CALLS      151 TOTAL
+                     EDM= unknown      STRATEGY= 1      NO ERROR MATRIX       
+
+  EXT PARAMETER               CURRENT GUESS       STEP         FIRST   
+  NO.   NAME        VALUE          ERROR          SIZE      DERIVATIVE 
+   1  n.tot.par     6.0000       constant   
+   2  Minf         0.47938       0.47938E-01   0.25900E-02  -0.14053E-01
+   3  M0          -0.81701       0.81701E-01   0.60381E-02   0.25722E-02
+   4  T11          0.41974E-01   0.41974E-02   0.40853E-02   0.67110E-03
+   5  c             1.0000         fixed    
+   6  T12           1.0000         fixed    
+
+ MIGRAD MINIMIZATION HAS CONVERGED.
+
+ MIGRAD WILL VERIFY CONVERGENCE AND ERROR MATRIX.
+ COVARIANCE MATRIX CALCULATED SUCCESSFULLY
+
+ FCN=  0.1317521E-01 FROM MIGRAD    STATUS=CONVERGED     36 CALLS      175 TOTAL
+                     EDM=  0.12E-05    STRATEGY= 1      ERROR MATRIX ACCURATE 
+
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME        VALUE          ERROR          SIZE      DERIVATIVE 
+   1  n.tot.par     6.0000       constant   
+   2  Minf         0.47943       0.38503       0.26985E-04  -0.21783E-04
+   3  M0          -0.81709       0.91735       0.80694E-04  -0.19495E-02
+   4  T11          0.41972E-01   0.62792E-01   0.12349E-03   0.31684E-02
+   5  c             1.0000         fixed    
+   6  T12           1.0000         fixed    
+
+ EXTERNAL ERROR MATRIX.    NDIM=  50    NPAR=  3    ERR DEF=  1.00    
+  0.149E+00 0.221E+00-0.144E-01
+  0.221E+00 0.871E+00 0.886E-02
+ -0.144E-01 0.886E-02 0.425E-02
+
+ PARAMETER  CORRELATION COEFFICIENTS
+       NO.  GLOBAL     2     3     4
+        2  0.90701  1.000 0.614-0.571
+        3  0.86154  0.614 1.000 0.146
+        4  0.84944 -0.571 0.146 1.000
+ **********
+ **    7 **MINOS 
+ **********
+ EIGENVALUES OF SECOND-DERIVATIVE MATRIX:
+        -0.3419E+00  0.2342E+01
+ MINUIT WARNING IN MIGRAD  
+ ============== MATRIX FORCED POS-DEF BY ADDING  0.34424     TO DIAGONAL.
+
+ MINUIT TASK: 0123456789/123456789/123456789/123456789/123456789
+
+ FCN=  0.1317521E-01 FROM MINOS     STATUS=SUCCESSFUL   624 CALLS      799 TOTAL
+                     EDM=  0.12E-05    STRATEGY= 1      ERROR MATRIX ACCURATE 
+
+  EXT PARAMETER                  PARABOLIC         MINOS ERRORS        
+  NO.   NAME        VALUE          ERROR      NEGATIVE      POSITIVE   
+   1  n.tot.par     6.0000       constant   
+   2  Minf         0.47943       0.38503      -0.49277       0.35361    
+   3  M0          -0.81709       0.91735       -1.1505       0.92629    
+   4  T11          0.41972E-01   0.62792E-01  -0.33920E-01   0.23359    
+   5  c             1.0000         fixed    
+   6  T12           1.0000         fixed    
+ **********
+ **    8 **EXIT 
+ **********
+
+ CALL TO USER FUNCTION WITH IFLAG = 3
+
+ ..........MINUIT TERMINATED BY MINUIT COMMAND: EXIT                 
