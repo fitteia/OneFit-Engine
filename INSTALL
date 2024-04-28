@@ -48,10 +48,10 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	} 
 	if $test.Bool {
 	    "/tmp/OneFit-Engine-test".IO.mkdir;
-	    shell "sudo zef -v install " ~ { $to-site ?? "--install-to=site ./" !! "./"}();
+	    shell "sudo zef -v install { \"--install-to=site \" if $to-site } ./";
 	    shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
 	}
-	else { shell "sudo zef -v --/test " ~ { $to-site ?? "--install-to=site ./" !! "./"}() }
+	else { shell "sudo zef -v --/test { \"--install-to=site \" if $to-site } ./" }
 
     }
 }
@@ -133,9 +133,7 @@ sub install-apt-packages ($cpu) {
 	my @pkgs-to-install = gather for @cernlib-pkgs-to-install {
 	    take @required-cern-pkgs.grep(/$_"_"/).head if  @required-cern-pkgs.grep(/$_"_"/);
 	}
-	say @pkgs-to-install;
 	my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/" <<~<< @pkgs-to-install;
-	say @pkgs-to-download;
 	shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
 	shell "cd /tmp && sudo apt install ./" ~ @pkgs-to-install.join(" ./"); 
     }
