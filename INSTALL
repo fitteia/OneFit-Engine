@@ -35,6 +35,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
     install( :test($test),:to-site($to-site) ) if $install;
+    
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -136,6 +137,7 @@ sub enable-ghostscript-in-ImageMagick-policy () {
 sub compile (:$root,:$arch,:$bindir,:$pv) {
     say "install source in $*CWD and binaries with perl version: $pv";
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
+    say dir($bindir).lines;
 }
 
 sub install (:$test,:$to-site) {
@@ -163,6 +165,4 @@ sub install (:$test,:$to-site) {
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
     }
-    say dir($bindir).lines;
-
 }
