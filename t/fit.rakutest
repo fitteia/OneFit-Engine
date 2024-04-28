@@ -12,7 +12,6 @@ our constant OFE-PATH="%OFE-PATH%";
 my $workfolder="/tmp/OneFit-Engine-test";
 $workfolder.IO.mkdir unless $workfolder.IO.d;
 
-
 my $test-path=OFE-PATH ~ "/t";
 
 my class OutputCapture {
