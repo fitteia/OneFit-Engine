@@ -135,7 +135,7 @@ sub install-apt-packages ($cpu) {
 	}
 	say @pkgs-to-install;
 	my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/" <<~<< @pkgs-to-install;
-	say @pks-to-download;
+	say @pkgs-to-download;
 	shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
 	shell "cd /tmp && sudo apt install " ~ @pkgs-to-install.join(" "); 
     }
