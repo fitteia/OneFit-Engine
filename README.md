@@ -9,7 +9,7 @@ For Debian "bookworm"
 In one user account:\
 su -\
 apt install raku git sudo\
-mkdir ~/bin ~/Downloads\
+mkdir $HOME/.local && cd $HOME/.local
 
 git clone https://github.com/fitteia/OneFit-Engine.git
 
@@ -25,6 +25,7 @@ Usage:
     --inline-perl5 # to install raku module Inline::Perl5\
     --enable-gs    # enable ghostsript in ImageMagick-6 policy.xml\
     --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise \
+    --bindir       # defaults to $*CWD/../bin (use --bindir=/$HOME/bin to set another folder for binaries)
     negated options:\
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile\
 
