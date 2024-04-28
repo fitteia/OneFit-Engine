@@ -137,7 +137,7 @@ sub enable-ghostscript-in-ImageMagick-policy () {
 sub compile (:$root,:$arch,:$bindir,:$pv) {
     say "install source in $*CWD and binaries with perl version: $pv";
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
-    say dir($bindir).lines;
+    say $bindir;
 }
 
 sub install (:$test,:$to-site) {
