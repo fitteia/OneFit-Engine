@@ -52,7 +52,7 @@ for (1 .. $eng.blocks.a.elems).race {
 }
 is "$workfolder/fit40.log".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit40.log-$cpu".IO.slurp(enc => 'utf8-c8'), "individual plot 40: OK! ({ now -$time } s)" ;
 
-is is "$workfolder/fit19.out".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit19.out".IO.slurp(enc => 'utf8-c8'), "individual plot 19 output: OK! ({ now -$time } s)" ;
+is "$workfolder/fit19.out".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit19.out".IO.slurp(enc => 'utf8-c8'), "individual plot 19 output: OK! ({ now -$time } s)" ;
 
 
 
