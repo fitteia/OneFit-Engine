@@ -57,7 +57,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
 multi MAIN ('help') { MAIN :h }
 
-multi MAIN (Bool :h(:help($))) {
+multi MAIN (Bool :h(:$help)) {
     note qq:to/END_HELP/;
 Usage:
     ./INSTALL [-h|--help]
