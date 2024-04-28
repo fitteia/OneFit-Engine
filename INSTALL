@@ -48,10 +48,10 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	} 
 	if $test.Bool {
 	    "/tmp/OneFit-Engine-test".IO.mkdir;
-	    say "sudo zef -v install" ~ { $to-site ?? "--install-to=site ./" !! "./"}();
+	    shell "sudo zef -v install " ~ { $to-site ?? "--install-to=site ./" !! "./"}();
 	    shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
 	}
-	else { say "sudo zef -v --/test" ~ { $to-site ?? "--install-to=site ./" !! "./"}() }
+	else { shell "sudo zef -v --/test " ~ { $to-site ?? "--install-to=site ./" !! "./"}() }
 
     }
 }
@@ -60,16 +60,17 @@ multi MAIN ('help') { MAIN :h }
 
 multi MAIN (Bool :h(:help($))) {
     note qq:to/END_HELP/;
-    Usage:
+Usage:
     ./INSTALL [-h|--help]
     ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]
     --dpkg         # to install required debian packages
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
-    --compile      # to comlipe and install the OneFit engine core
-    --test         # to run raku module tests
+    --compile      # to comlipe and install the OneFit engine core (use [-/c|--no-c|--/compile|--no-compile] to skip compiling)
+    --test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)
     --install      # to install OneFit-Engine as a raku modules available to all users
     --inline-perl5 # to install raku module Inline::Perl5
     --enable-gs    # enable ghostsript in ImageMagick-6 policy.xml
+    --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise 
     negated options:
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile
 END_HELP
@@ -129,11 +130,13 @@ sub install-apt-packages ($cpu) {
     my @required-cern-pkgs = cernpkgs($cpu);
     my @cernlib-pkgs-to-install = apt-pkgs-not-installed(@required-cern-pkgs);
     if so @cernlib-pkgs-to-install {
-	for @cernlib-pkgs-to-install {
-	    my $pkg = @required-cern-pkgs.grep(/$_"_"/) ;
-	    shell "cd /tmp && curl -O http://ftp.de.debian.org/debian/pool/main/c/cernlib/$pkg";
-	    run "sudo", "apt", "install" , "/tmp/$pkg"; 
-	}	
+	my @pkgs-to-install = gather for @cernlib-pkgs-to-install {
+	    take @required-cern-pkgs.grep(/$_"_"/)
+	}
+	my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/"<<~<< @pkgs-to-install;
+
+	shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
+	run "cd /tmp && sudo", "apt", "install" , @pkgs-to-install; 
     }
 }
 
