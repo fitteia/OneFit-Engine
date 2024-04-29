@@ -166,6 +166,6 @@ sub install (:$test,:$to-site) {
     }
 
     my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
-    say @binaries.splice(1,@binaries.elems-1);
+    say @binaries.splice(1,@binaries.elems-2);
 
 }
