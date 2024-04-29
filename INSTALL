@@ -167,7 +167,7 @@ sub install (:$test,:$to-site, :$bindir) {
 
     my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
     for @binaries.splice(1,@binaries.elems-2) {
-	shell "cd /usr/local/bin { { '&& ls' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
+	shell "cd /usr/local/bin { { '&& rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
     }
 
 }
