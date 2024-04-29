@@ -26,8 +26,6 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
-    say dir($bindir);
-
     install-apt-packages($cpu) if $dpkg.Bool;
 
     install-Inline-Perl5() if $inline-perl5.Bool;
@@ -37,7 +35,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
     install( :test($test),:to-site($to-site) ) if $install;
-    
+
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -166,4 +164,8 @@ sub install (:$test,:$to-site) {
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
     }
+
+    my @binaries = "$*CWD/C/core/onefite-3.1/makefile".IO.lines.grep(/install cop/).words;
+    say @binaries.splice(1,@binaries.elems-1);
+
 }
