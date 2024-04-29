@@ -166,11 +166,11 @@ sub install (:$test,:$to-site, :$bindir) {
     }
 
     my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
-    for @binaries.splice(1,@binaries.elems-2) {
-	my $file-to-link = "$bindir/$_";
-	my $rm = "&& sudo rm -v $_";
-	say $_, $_.IO.l;
-	say "cd /usr/local/bin { '&& ls' ~ $_ if $_.IO.l } && sudo ln -s $file-to-link" if $file-to-link.IO.f;
+    for @binaries.splice(1,@binaries.elems-2) -> $f {
+	my $file-to-link = "$bindir/$f";
+	my $rm = "&& sudo rm -v $f";
+	say $f, $f.IO.l;
+	say "cd /usr/local/bin { '&& ls' ~ $_ if $f.IO.l } && sudo ln -s $file-to-link" if $file-to-link.IO.f;
     }
 
 }
