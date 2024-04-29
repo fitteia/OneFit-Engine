@@ -169,7 +169,7 @@ sub install (:$test,:$to-site, :$bindir) {
     for @binaries.splice(1,@binaries.elems-2) {
 	my $file-to-link = "$bindir/$_";
 	my $rm = "&& sudo rm -v $_";
-	shell("cd /usr/local/bin { '&& ls' ~ $_ if $_.IO.e } && sudo ln -s $file-to-link") if $file-to-link.IO.f;
+	say "cd /usr/local/bin { '&& ls' ~ $_ if $_.IO.e } && sudo ln -s $file-to-link" if $file-to-link.IO.f;
     }
 
 }
