@@ -34,7 +34,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
     compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
-    install( :test($test),:to-site($to-site) ) if $install;
+    install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
 }
 
@@ -139,7 +139,7 @@ sub compile (:$root,:$arch,:$bindir,:$pv) {
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
 }
 
-sub install (:$test,:$to-site) {
+sub install (:$test,:$to-site, :$bindir) {
     my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close).lines;
     for @previous {
 	if $_.Bool {
@@ -166,6 +166,9 @@ sub install (:$test,:$to-site) {
     }
 
     my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
-    say @binaries.splice(1,@binaries.elems-2);
+    for @binaries.splice(1,@binaries.elems-2) {
+	my $file-to-link = "$bindir/$_";
+	shell "cd /usr/local/bin { && rm $_ if $_IO.f } { && ln -s $file-to-link if $file-to-link.IO.f }";
+    }
 
 }
