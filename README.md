@@ -29,6 +29,6 @@ Usage:
     negated options:\
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile\
 
-cd $HOME/OneFit-Engine && git stash && git pull && ./INSTALL
+cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
 
 
