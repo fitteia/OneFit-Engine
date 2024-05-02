@@ -328,7 +328,7 @@ multi MAIN ('test',
 }
 
 sub parse-function ($function, @data-files, $data-labels) {
-    my %e = Grammars::Function.parse-me($function);
+    my %e = OneFit::Engine::Grammars::Function.parse-me($function);
     %e<FitType SelectedDataSet T Num> = <Individual 1 dum 100>;
     for (1 .. @data-files.elems) {
 	my @lines=@data-files[$_-1].IO.lines;
@@ -336,7 +336,7 @@ sub parse-function ($function, @data-files, $data-labels) {
 	my $dum=$_;
 	$dum = @lines.head if @lines.head.words.elems < 2;
 	if $data-labels.defined {
-	    my $dum-parse = Grammars::Label.parse($data-labels);
+	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
 	    $label = $dum-parse<name>.Str;
 	    %e<T> = $label;
 	    %e<SelectedDataSet> = @data-files[0].subst(".dat","");
