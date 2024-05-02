@@ -136,6 +136,7 @@ class Engine is export {
 	if $export.Bool { @!blocks.race.map( { .export(path => $!path, :fit($fit),:plot($plot)) }) }
 	if $array.Bool  { return @!blocks }
 	else { return self }
+	
     }
     method a () { @!blocks }
     method arr () { @!blocks }
