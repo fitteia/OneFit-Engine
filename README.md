@@ -6,7 +6,7 @@ The copyright will be defined at the end of the devolopment process
 Fresh instalation
 For Debian "bookworm"
 
-In one user account:\
+Create a user account (ex: ofe):\
 su -\
 apt install raku git sudo\
 mkdir $HOME/.local && cd $HOME/.local
