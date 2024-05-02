@@ -128,6 +128,7 @@ class Engine is export {
 		.Graph.Xaxis.type("Logarithmic") if $logx;
 		.Graph.Yaxis.type("Logarithmic") if $logy;
 		say %!engine<Xmin>;
+
 		.Graph.Xaxis.scale( min => %!engine<Xmin>.split('\,')[.No], max => %!engine<Xmax>.split('\,')[.No], nt => 5 ) if all(%!engine<Xmin Xmax>)>>.defined and .Graph.Xaxis.auto;
 		.Graph.Yaxis.scale( :min(%!engine<Ymin>.split('\,')[.No]), :max(%!engine<Ymax>.split('\,')[.No]), :nt(5) ) if all(%!engine<Ymin Ymax>)>>.defined and .Graph.Yaxis.auto;
 		.Graph.Xaxis.scale( min => .X.min, max => .X.max, nt => 5 , :auto($autox) );
