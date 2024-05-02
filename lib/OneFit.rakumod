@@ -129,8 +129,8 @@ class Engine is export {
 		.Graph.Yaxis.type("Logarithmic") if $logy;
 		.Graph.Xaxis.scale( min => %!engine<Xmin>.split('\,')[.No], max => %!engine<Xmax>.split('\,')[.No], nt => 5 ) if all(%!engine<Xmin Xmax>)>>.defined and .Graph.Xaxis.auto;
 		.Graph.Yaxis.scale( :min(%!engine<Ymin>.split('\,')[.No]), :max(%!engine<Ymax>.split('\,')[.No]), :nt(5) ) if all(%!engine<Ymin Ymax>)>>.defined and .Graph.Yaxis.auto;
-		.Graph.Xaxis.scale( min => .X.min, max => .X.max, nt => 5 , :$auto ) if $autox;
-		.Graph.Yaxis.scale( :min(.Y.min), :max(.Y.max), :nt(5), :$auto ) if $autoy;
+		.Graph.Xaxis.scale( min => .X.min, max => .X.max, nt => 5 , auto => True) if $autox;
+		.Graph.Yaxis.scale( :min(.Y.min), :max(.Y.max), :nt(5), auto => True) if $autoy;
 	    }
 	} 
 	if $export.Bool { @!blocks.race.map( { .export(path => $!path, :fit($fit),:plot($plot)) }) }
