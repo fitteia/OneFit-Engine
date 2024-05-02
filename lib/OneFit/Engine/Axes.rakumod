@@ -35,6 +35,31 @@ class Axis is export {
 	}
 	self
     }
+    method scale (:$min,:$max,:$nt, Bool :$auto) {
+	# algorithm from chatGPT
+	if %!axis<type> eq "Normal" {
+	    %!axis<step> = ($max-$min)/$nt; # unrouded step 
+	    my $mag  = 10**(floor(log10(%!axis<step>)));
+	    %!axis<step> = (2,5,10).grep( { $_*$mag >= %!axis<step> } )[0] * $mag; # rounded step
+	    if $auto {
+		%!axis<min>  = floor(($min-%!axis<step>/4)/%!axis<step>)*%!axis<step>;
+		%!axis<max>  = ceiling(($max+%!axis<step>/4)/%!axis<step>)*%!axis<step>;
+	    }
+	    %!axis<precision>=abs(log10(%!axis<step>).floor) if log10(%!axis<step>).floor < 0;
+	}
+	else {
+	    %!axis<step> = 10;
+	    %!axis<ticks> = 9;
+	    if $auto {
+		%!axis<min>  = 0.9*$min;
+		%!axis<max>  = 1.1*$max;
+	    }
+	    %!axis<precision> = 0;
+	    %!axis<format>    = "power";
+
+	}
+	self
+    }
     method auto-scale (:$min,:$max,:$nt) {
 	# algorithm from chatGPT
 	if %!axis<type> eq "Normal" {
