@@ -41,7 +41,7 @@ class Axis is export {
 	    %!axis<step> = ($max-$min)/$nt; # unrouded step 
 	    my $mag  = 10**(floor(log10(%!axis<step>)));
 	    %!axis<step> = (2,5,10).grep( { $_*$mag >= %!axis<step> } )[0] * $mag; # rounded step
-	    %!axis<min max>=($min, $max>);
+	    %!axis<min max>=($min, $max);
 	    if $auto.Bool {
 		%!axis<min>  = floor(($min-%!axis<step>/4)/%!axis<step>)*%!axis<step>;
 		%!axis<max>  = ceiling(($max+%!axis<step>/4)/%!axis<step>)*%!axis<step>;
