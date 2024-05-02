@@ -32,3 +32,6 @@ Usage:
 cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
 
 
+Examples:
+
+Examples of onefite use can e found in the examples folder. Go to each folder and run "bash RUN.me". Tipically the output will go to /tmp folder.
