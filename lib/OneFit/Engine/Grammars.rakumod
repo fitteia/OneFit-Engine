@@ -94,7 +94,7 @@ grammar Function is Number {
 	%res<Xmin> = $m<X><par><range>.Bool ??  $m<X><par><range><min>.Str !! 0;
 	%res<Xmax> = $m<X><par><range>.Bool ??  $m<X><par><range><max>.Str !! 10;
 	%res<Function> = $m<expression>.Str;
-	say %res<Xmin>;
+	say %res<Xmin>, %res<Xmax>;
 	my $i=0;
 	for $m<pars><par> -> $par {
 	    %res{"Pval" ~ $i} = 1;
