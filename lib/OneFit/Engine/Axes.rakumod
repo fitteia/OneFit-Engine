@@ -59,7 +59,6 @@ class Axis is export {
 	    %!axis<precision> = 0;
 	    %!axis<format>    = "power";
 	}
-	say %!axis<min max>;
 	self
     }
     method auto-scale (:$min,:$max,:$nt) {
