@@ -127,10 +127,10 @@ class Engine is export {
 		.Graph.path: $!path;
 		.Graph.Xaxis.type("Logarithmic") if $logx;
 		.Graph.Yaxis.type("Logarithmic") if $logy;
-		.Graph.Xaxis.auto-scale( min => %!engine<Xmin>.split('\,')[.No], max => %!engine<Xmax>.split('\,')[.No], nt => 5 ) if all(%!engine<Xmin Xmax>)>>.defined and .Graph.Xaxis.auto;
-		.Graph.Yaxis.auto-scale( :min(%!engine<Ymin>.split('\,')[.No]), :max(%!engine<Ymax>.split('\,')[.No]), :nt(5) ) if all(%!engine<Ymin Ymax>)>>.defined and .Graph.Yaxis.auto;
-		.Graph.Xaxis.auto-scale( min => .X.min, max => .X.max, nt => 5 ) if $autox;
-		.Graph.Yaxis.auto-scale( :min(.Y.min), :max(.Y.max), :nt(5) ) if $autoy;
+		.Graph.Xaxis.scale( min => %!engine<Xmin>.split('\,')[.No], max => %!engine<Xmax>.split('\,')[.No], nt => 5 ) if all(%!engine<Xmin Xmax>)>>.defined and .Graph.Xaxis.auto;
+		.Graph.Yaxis.scale( :min(%!engine<Ymin>.split('\,')[.No]), :max(%!engine<Ymax>.split('\,')[.No]), :nt(5) ) if all(%!engine<Ymin Ymax>)>>.defined and .Graph.Yaxis.auto;
+		.Graph.Xaxis.scale( min => .X.min, max => .X.max, nt => 5 , :auto($autox) );
+		.Graph.Yaxis.scale( :min(.Y.min), :max(.Y.max), :nt(5), :auto($autoy) );
 	    }
 	} 
 	if $export.Bool { @!blocks.race.map( { .export(path => $!path, :fit($fit),:plot($plot)) }) }
