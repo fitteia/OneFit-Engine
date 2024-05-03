@@ -227,7 +227,8 @@ class Engine is export {
 		if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all) }
 		else {$parameters.parfile.write($parameters.a, No => $i) }
 		self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
-		say $parameters.output{"chi2\[$i\]"};
+		@!blocks[$i-1].chi2=$parameters.output{"chi2\[1\]"} if $parameters.output{"chi2\[1\]"};
+		say @!blocks[$i-1].chi2 if @!blocks[$i-1].chi2.defined
 	    }
 	}
 	else {
