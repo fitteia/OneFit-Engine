@@ -241,6 +241,7 @@ class Engine is export {
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
 	    @!par-tables[0]= $parameters;
 	    for @!blocks {
+		say $parameters.output;
 		.parameters = $parameters;
 		.chi2 = $parameters.output{'chi2['~ .No ~']'} if $parameters.output{'chi2[' ~ .No ~ ']'};
 		say .chi2 if .chi2.defined		
