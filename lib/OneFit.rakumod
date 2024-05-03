@@ -240,10 +240,10 @@ class Engine is export {
 	    $parameters.from-output(path => $!path) if $from-output.Bool;
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
 	    @!par-tables[0]= $parameters;
-	    for @!blocks {
-		.parameters = $parameters;
-		.chi2 = $parameters.output{'chi2['~ .No ~']'} if $parameters.output{'chi2[' .No ~ ']'};
-		say .chi2 if .chi2.defined		
+	    for @!blocks -> $b {
+		$b.parameters = $parameters;
+		$b.chi2 = $parameters.output{'chi2['~ $b.No ~']'} if $parameters.output{'chi2[' $b.No ~ ']'};
+		say $b.chi2 if $b.chi2.defined		
 	    }
 	    if $fix-all.Bool { $parameters.parfile.write($parameters.a, path => $!path, :fix-all) }
 	    else { $parameters.parfile.write($parameters.a, path => $!path) }
