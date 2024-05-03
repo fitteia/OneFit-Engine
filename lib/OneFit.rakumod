@@ -227,7 +227,7 @@ class Engine is export {
 		if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all) }
 		else {$parameters.parfile.write($parameters.a, No => $i) }
 		self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
-#		say $parameters.output;
+		say $parameters.output;
 	    }
 	}
 	else {
