@@ -9,7 +9,7 @@ class Parameters {
     has $!np;
     has $!parfile;
     has $!path = '.';
-    has %.output;
+    has $.output;
 
     method path ($folder) { $!path = $folder; self }
     
@@ -35,7 +35,7 @@ class Parameters {
 	$!path = $path if $path.Bool;
 	my $filename = ($file.defined) ?? $file !! "fit.out";
 	my $m = OneFit::Engine::Grammars::Output.parse-made("$!path/$filename".IO.slurp).hash;
-	%.output=$m;
+	$.output=$m;
 	@!p.map( {if $_<name> {$_<value> = $m{$_<name>.subst(/\s+/,'')} if $m{$_<name>}.defined  } } );
 	($a.Bool) ?? @!p !! self;
     }
