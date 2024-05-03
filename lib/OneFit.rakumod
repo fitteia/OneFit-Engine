@@ -241,9 +241,8 @@ class Engine is export {
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
 	    @!par-tables[0]= $parameters;
 	    for @!blocks {
-		say $parameters.output;
 		.parameters = $parameters;
-		.chi2 = $parameters.output{'chi2['~ .No ~']'} if $parameters.output{'chi2[' ~ .No ~ ']'};
+		.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
 		say .chi2 if .chi2.defined		
 	    }
 	    if $fix-all.Bool { $parameters.parfile.write($parameters.a, path => $!path, :fix-all) }
