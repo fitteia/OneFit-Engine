@@ -362,21 +362,19 @@ class Engine is export {
 	self
     }
 
-    
-    
+     method results () {
+	 if (%!engine<FitType> ~~ /Individual/) {
+	     my $sfield = { sprintf("%-12s",$^a) };
+	     say $sfield("# TAG");
+	     for @!blocks {
+		 
+	     }
+	 }
+	 else {
+	     
+	 }
+	 self
+     }
     
 }
 
-method results (%e) {
-    if (%e<FitType> ~~ /Individual/) {
-	my $sfield = { sprintf("%-12s",$^a) };
-	say $sfield("# TAG");
-	for %e.blocks {
-	    
-	}
-    }
-    else {
-
-    }
-    self
-}
