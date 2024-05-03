@@ -368,7 +368,7 @@ class Engine is export {
 }
 
 method results () {
-    if %!engine<FitType> ~~ /Individual/ {
+    if (%!engine<FitType> ~~ /Individual/) {
 	my $sfield = { sprintf("%-12s",$^a) };
 	say $sfield("# TAG");
 	for @!blocks {
