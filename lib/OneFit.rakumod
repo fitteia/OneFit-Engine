@@ -366,7 +366,7 @@ class Engine is export {
 	 if (%!engine<FitType> ~~ /Individual/) {
 	     my $sfield = { sprintf("%-12s",$^a) };
 	     my $line = $sfield("# TAG");
-	     my @a=("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
+	     my @a= @!blocks[0].T.words.elems) > 1 ?? ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) ) !! (%!enigine<T>);
 	     say @a.map({ $_ = $sfield($_)});
 	     for @!blocks {
 	     }
