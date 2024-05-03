@@ -228,7 +228,6 @@ class Engine is export {
 		else {$parameters.parfile.write($parameters.a, No => $i) }
 		self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
 		@!blocks[$i-1].chi2=$parameters.output{"chi2\[1\]"} if $parameters.output{"chi2\[1\]"};
-		say @!blocks[$i-1].chi2 if @!blocks[$i-1].chi2.defined
 	    }
 	}
 	else {
@@ -243,7 +242,6 @@ class Engine is export {
 	    for @!blocks {
 		.parameters = $parameters;
 		.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
-		say .chi2 if .chi2.defined		
 	    }
 	    if $fix-all.Bool { $parameters.parfile.write($parameters.a, path => $!path, :fix-all) }
 	    else { $parameters.parfile.write($parameters.a, path => $!path) }
