@@ -53,7 +53,7 @@ class Engine is export {
 	    $sav.save($fh);
 	    $fh.close;
 	}
-	self.results();
+	self.results(%!engine);
 	self
     }
 
@@ -367,8 +367,8 @@ class Engine is export {
     
 }
 
-method results () {
-    if (%!engine<FitType> ~~ /Individual/) {
+method results (%e) {
+    if (%e<FitType> ~~ /Individual/) {
 	my $sfield = { sprintf("%-12s",$^a) };
 	say $sfield("# TAG");
 	for @!blocks {
