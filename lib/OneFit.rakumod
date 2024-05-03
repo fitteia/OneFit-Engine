@@ -53,7 +53,7 @@ class Engine is export {
 	    $sav.save($fh);
 	    $fh.close;
 	}
-	self.results(%!engine);
+	self.results();
 	self
     }
 
