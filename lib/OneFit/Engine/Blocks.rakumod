@@ -22,7 +22,8 @@ class Block is export {
     has $!fstep=1;
     has $!fcond=1; # must return .Bool = True by default
     has $!path = '.';
-
+    has $.Chi2 is rw;
+    
     method path ($folder) { $!path = $folder; self }
     
     method read (Str $txt,
