@@ -317,7 +317,7 @@ class Engine is export {
 		 shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
 	     }  unless $no-plot;
 	 }
-	 self!results();
+	 my $TXT = self!results();
 	 %!engine<results> = $TXT;
 	 say $TXT unless $quiet;
 	 self
