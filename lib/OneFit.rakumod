@@ -367,7 +367,7 @@ class Engine is export {
 	     my $sfield = { sprintf("%-12s",$^a) };
 	     my $nfield = {
 		$^a ??
-		sprintf( { (abs($^b) > 1e6 or abs($^b) < 1e-3) ?? "%10.2e" !! "%-10g" }($^a), $^a) 
+		sprintf( { (abs($^b) > 1e6 or abs($^b) < 1e-3) ?? "%11.2e" !! "%-11g" }($^a), $^a) 
 		!! $^a
 	     }; 
 	     my @fields = ($sfield("# TAG"));
