@@ -369,6 +369,7 @@ class Engine is export {
 	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	     say @a.map({ $_ = $sfield($_)});
 	     for @!blocks {
+		 say @!par-tables[@!blocks.No]<name>;
 	     }
 	 }
 	 else {
