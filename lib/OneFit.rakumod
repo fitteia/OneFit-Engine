@@ -371,7 +371,7 @@ class Engine is export {
 	 my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	 @fields.push: @a.Slip;
 	 for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1 err" ).Slip }
-	 my $TXT = @fields.join($fmt);
+	 my $TXT = @fields.join($fmt) ~ "\n";
 	 for @!blocks {
 	     my @line-fields;
 	     my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
@@ -382,7 +382,7 @@ class Engine is export {
 		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 else { @line-fields.push: .<value err>.Slip  }
 	     }
-	     $TXT ~= @line-fields.join($fmt);
+	     $TXT ~= @line-fields.join($fmt) ~"\n";
 	 }
 	 return $TXT;
      }
