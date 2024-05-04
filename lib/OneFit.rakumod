@@ -367,7 +367,7 @@ class Engine is export {
 	 @fields.push: "chi2";
 	 my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	 @fields.push: @a.Slip;
-	 @fields.push: (@!par-tables.head.a>>.<name>).Slip;
+	 for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1 err" ).Slip }
 	 say @fields.join(", ");
 	 for @!blocks {
 	     my @line-fields;
@@ -376,8 +376,8 @@ class Engine is export {
 	     @line-fields.push: .chi2;
 	     @line-fields.push: .T.words;
 	     for @!par-tables[$i].a {
-		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: .<value> }
-		 else { @line-fields.push: .<value> ~ "\x0B1" ~ .<err> }
+		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, " ").Slip }
+		 else { @line-fields.push: .<value err>.Slip  }
 	     }
 	     say @line-fields.join(", ");
 	 }
