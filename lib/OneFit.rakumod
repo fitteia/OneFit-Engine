@@ -375,7 +375,9 @@ class Engine is export {
 	     @line-fields.push: .Tag;
 	     @line-fields.push: .chi2;
 	     @line-fields.push: .T.words;
-	     @line-fields.push: (@!par-tables[$i].a>>.<value>).Slip;
+	     for @!par-tables[$i].a {
+		 @line-fields.push( .<value> ~ "\x0xB1" .<err> ) unless .<err> eq "fixed";
+	     }
 	     say @line-fields.join(", ");
 	 }
 	 self
