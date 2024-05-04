@@ -383,7 +383,7 @@ class Engine is export {
 		 @line-fields.push: $nfield( .chi2 );
 		 for @!par-tables[$i].a { @line-fields.push: $nfield( .<value> )}
 	     }
-	     say @line-fields.jooin(" ");
+	     say @line-fields.join(" ");
 	     
 	 }
 	 else {
