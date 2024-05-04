@@ -395,6 +395,7 @@ class Engine is export {
 		 @line-fields.push: .T.words;
 		 @line-fields.push: (@!par-tables[0].a>>.<value>).Slip;
 		 say @line-fields.join(", ");
+		 
 	     }
 	 }
 	 self
