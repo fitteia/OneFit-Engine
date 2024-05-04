@@ -376,8 +376,8 @@ class Engine is export {
 	     @fields.push: @a.Slip;
 	     @fields.push: (@!par-tables.head.a>>.<name>).Slip;
 	     say @fields.join(", ");
-	     my @line-fields;
 	     for @!blocks {
+		 my @line-fields;
 		 my $i = .No;
 		 @line-fields.push: .Tag;
 		 @line-fields.push: .chi2;
