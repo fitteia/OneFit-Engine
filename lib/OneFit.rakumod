@@ -362,13 +362,13 @@ class Engine is export {
 	self
     }
 
-     method results () {
+     method results (:$fmt = ', ') {
 	 my @fields = ("# TAG");
 	 @fields.push: "chi2";
 	 my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	 @fields.push: @a.Slip;
 	 for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1 err" ).Slip }
-	 say @fields.join(", ");
+	 say @fields.join($fmt);
 	 for @!blocks {
 	     my @line-fields;
 	     my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
@@ -379,7 +379,7 @@ class Engine is export {
 		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 else { @line-fields.push: .<value err>.Slip  }
 	     }
-	     say @line-fields.join(", ");
+	     say @line-fields.join($fmt);
 	 }
 	 self
      }
