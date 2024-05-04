@@ -381,7 +381,7 @@ class Engine is export {
 		 my $i = .No;
 		 @line-fields.push: .Tag;
 		 @line-fields.push: .chi2;
-		 @line-fields.push @!par-tables[$i].a >>.<value>;
+		 @line-fields.push: @!par-tables[$i].a >>.<value>;
 	     }
 	     say @line-fields.join(" ");
 	     
