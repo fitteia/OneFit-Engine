@@ -53,7 +53,7 @@ class Engine is export {
 	    $sav.save($fh);
 	    $fh.close;
 	}
-	self.results(:fmt(" "));
+	self.results();
 	self
     }
 
@@ -317,6 +317,9 @@ class Engine is export {
 		 shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
 	     }  unless $no-plot;
 	 }
+	 self!results();
+	 %!engine<results>$TXT;
+	 say $TXT unless $quiet;
 	 self
      }
 
@@ -362,13 +365,13 @@ class Engine is export {
 	self
     }
 
-     method results (:$fmt = ', ') {
+     method !results (:$fmt = ', ') {
 	 my @fields = ("# TAG");
 	 @fields.push: "chi2";
 	 my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	 @fields.push: @a.Slip;
 	 for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1 err" ).Slip }
-	 say @fields.join($fmt);
+	 my $TXT = @fields.join($fmt);
 	 for @!blocks {
 	     my @line-fields;
 	     my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
@@ -379,9 +382,9 @@ class Engine is export {
 		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 else { @line-fields.push: .<value err>.Slip  }
 	     }
-	     say @line-fields.join($fmt);
+	     $TXT ~= @line-fields.join($fmt);
 	 }
-	 self
+	 return $TXT;
      }
     
 }
