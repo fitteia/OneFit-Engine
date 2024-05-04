@@ -370,18 +370,18 @@ class Engine is export {
 		sprintf( { (abs($^b) > 1e6 or abs($^b) < 1e-3) ?? "%10.2e" !! "%-12g" }($^a), $^a) 
 		!! $^a
 	     }; 
-	     my @fields = ($sfield("# TAG"));
-	     @fields.push: $sfield("chi2");
+	     my @fields = ("# TAG");
+	     @fields.push: "chi2";
 	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
-	     @fields.push: @a.map({ $_ = $sfield($_)});
-	     for @!par-tables.head.a { @fields.push:  $sfield( .<name> ) }
-	     say @fields.join(" ");
+	     @fields.push: @a;
+	     @fields.push: @!par-tables.head.a>>.<name>;
+	     say @fields.join(", ");
 	     my @line-fields;
 	     for @!blocks {
 		 my $i = .No;
-		 @line-fields.push: $sfield( .Tag  );
-		 @line-fields.push: $nfield( .chi2 );
-		 for @!par-tables[$i].a { @line-fields.push: $nfield( .<value> )}
+		 @line-fields.push: .Tag;
+		 @line-fields.push: .chi2;
+		 @line-fields.push @!par-tables[$i].a >>.<value>;
 	     }
 	     say @line-fields.join(" ");
 	     
