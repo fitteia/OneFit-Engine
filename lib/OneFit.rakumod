@@ -318,7 +318,7 @@ class Engine is export {
 	     }  unless $no-plot;
 	 }
 	 self!results();
-	 %!engine<results>$TXT;
+	 %!engine<results> = $TXT;
 	 say $TXT unless $quiet;
 	 self
      }
