@@ -363,39 +363,20 @@ class Engine is export {
     }
 
      method results () {
-	 if (%!engine<FitType> ~~ /Individual/) {
-	     my @fields = ("# TAG");
-	     @fields.push: "chi2";
-	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
-	     @fields.push: @a.Slip;
-	     @fields.push: (@!par-tables.head.a>>.<name>).Slip;
-	     say @fields.join(", ");
-	     for @!blocks {
-		 my @line-fields;
-		 my $i = .No;
-		 @line-fields.push: .Tag;
-		 @line-fields.push: .chi2;
-		 @line-fields.push: .T.words;
-		 @line-fields.push: (@!par-tables[$i].a>>.<value>).Slip;
-		 say @line-fields.join(", ");
-	     }
-	 }
-	 else {
-	     my @fields = ("# TAG");
-	     @fields.push: "chi2";
-	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
-	     @fields.push: @a.Slip;
-	     @fields.push: (@!par-tables.head.a>>.<name>).Slip;
-	     say @fields.join(", ");
-	     for @!blocks {
-		 my @line-fields;
-		 my $i = .No;
-		 @line-fields.push: .Tag;
-		 @line-fields.push: .chi2;
-		 @line-fields.push: .T.words;
-		 FIRST { @line-fields.push: (@!par-tables[0].a>>.<value>).Slip; }
-		 say @line-fields.join(", ");
-	     }
+	 my @fields = ("# TAG");
+	 @fields.push: "chi2";
+	 my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
+	 @fields.push: @a.Slip;
+	 @fields.push: (@!par-tables.head.a>>.<name>).Slip;
+	 say @fields.join(", ");
+	 for @!blocks {
+	     my @line-fields;
+	     my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
+	     @line-fields.push: .Tag;
+	     @line-fields.push: .chi2;
+	     @line-fields.push: .T.words;
+	     @line-fields.push: (@!par-tables[$i].a>>.<value>).Slip;
+	     say @line-fields.join(", ");
 	 }
 	 self
      }
