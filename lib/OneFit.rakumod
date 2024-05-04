@@ -365,12 +365,11 @@ class Engine is export {
      method results () {
 	 if (%!engine<FitType> ~~ /Individual/) {
 	     my $sfield = { sprintf("%-12s",$^a) };
-	     my $line = $sfield("# TAG");
+	     my @fields = ($sfield("# TAG"));
 	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
-	     say @a.map({ $_ = $sfield($_)});
-	     for @!par-tables.head.a {
-		 say .<name>
-	     }
+	     @fields.push: @a.map({ $_ = $sfield($_)});
+	     @!par-tables.head.a>>.<name>
+	     say @fields.join(" ");
 	 }
 	 else {
 	     
