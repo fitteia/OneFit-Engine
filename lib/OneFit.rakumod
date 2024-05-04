@@ -378,6 +378,7 @@ class Engine is export {
 	     for @!par-tables[$i].a {
 		 if <err> eq "fixed" { @line-fields.push: .<value> }
 		 else { @line-fields.push: .<value> ~ "\x0xB1" ~ .<err> }
+	     }
 	     say @line-fields.join(", ");
 	 }
 	 self
