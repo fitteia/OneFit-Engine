@@ -380,8 +380,8 @@ class Engine is export {
 		 my @line-fields;
 		 my $i = .No;
 		 @line-fields.push: .Tag;
-		 @line-fields.push: .T.words;
 		 @line-fields.push: .chi2;
+		 @line-fields.push: .T.words;
 		 @line-fields.push: (@!par-tables[$i].a>>.<value>).Slip;
 		 say @line-fields.join(", ");
 	     }
