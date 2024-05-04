@@ -382,9 +382,8 @@ class Engine is export {
 		 @line-fields.push: .Tag;
 		 @line-fields.push: .chi2;
 		 @line-fields.push: (@!par-tables[$i].a>>.<value>).Slip;
+		 say @line-fields.join(", ");
 	     }
-	     say @line-fields.join(", ");
-	     
 	 }
 	 else {
 	     
