@@ -364,12 +364,6 @@ class Engine is export {
 
      method results () {
 	 if (%!engine<FitType> ~~ /Individual/) {
-	     my $sfield = { sprintf("%-12s",$^a) };
-	     my $nfield = {
-		$^a ??
-		sprintf( { (abs($^b) > 1e6 or abs($^b) < 1e-3) ?? "%10.2e" !! "%-12g" }($^a), $^a) 
-		!! $^a
-	     }; 
 	     my @fields = ("# TAG");
 	     @fields.push: "chi2";
 	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
@@ -387,7 +381,21 @@ class Engine is export {
 	     }
 	 }
 	 else {
-	     
+	     my @fields = ("# TAG");
+	     @fields.push: "chi2";
+	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
+	     @fields.push: @a.Slip;
+	     @fields.push: (@!par-tables.head.a>>.<name>).Slip;
+	     say @fields.join(", ");
+	     for @!blocks {
+		 my @line-fields;
+		 my $i = .No;
+		 @line-fields.push: .Tag;
+		 @line-fields.push: .chi2;
+		 @line-fields.push: .T.words;
+		 @line-fields.push: (@!par-tables[$i].a>>.<value>).Slip;
+		 say @line-fields.join(", ");
+	     }
 	 }
 	 self
      }
