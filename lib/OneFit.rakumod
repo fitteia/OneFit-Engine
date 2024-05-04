@@ -376,7 +376,7 @@ class Engine is export {
 	     @line-fields.push: .chi2;
 	     @line-fields.push: .T.words;
 	     for @!par-tables[$i].a {
-		 if <err> eq any(<fixed constant>) { @line-fields.push: .<value> }
+		 if so <err> ~~ /fixed|constant/ { @line-fields.push: .<value> }
 		 else { @line-fields.push: .<value> ~ "\x0B1" ~ .<err> }
 	     }
 	     say @line-fields.join(", ");
