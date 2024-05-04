@@ -370,7 +370,6 @@ class Engine is export {
 	     @fields.push: @a.map({ $_ = $sfield($_)});
 	     @!par-tables.head.a>>.<name>
 	     say @fields.join(" ");
-	     
 	 }
 	 else {
 	     
