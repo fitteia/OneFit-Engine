@@ -317,7 +317,7 @@ class Engine is export {
 	     }  unless $no-plot;
 	 }
 	 my $TXT = self!results();
-	 %!engine<results> = $TXT;
+	 %!engine<fit-results> = $TXT;
 	 say $TXT unless $quiet;
 	 self
      }
