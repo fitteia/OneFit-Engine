@@ -368,7 +368,7 @@ class Engine is export {
 	     my $line = $sfield("# TAG");
 	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	     say @a.map({ $_ = $sfield($_)});
-	     for @!par-tables[ .No ].a[0] {
+	     for @!par-tables.head.a.head {
 		 say .<name>
 	     }
 	 }
