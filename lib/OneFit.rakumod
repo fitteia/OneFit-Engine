@@ -373,17 +373,17 @@ class Engine is export {
 	     my @fields = ("# TAG");
 	     @fields.push: "chi2";
 	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
-	     @fields.push: @a;
-	     @fields.push: @!par-tables.head.a>>.<name>;
+	     @fields.push: @a.Slip;
+	     @fields.push: (@!par-tables.head.a>>.<name>).Slip;
 	     say @fields.join(", ");
 	     my @line-fields;
 	     for @!blocks {
 		 my $i = .No;
 		 @line-fields.push: .Tag;
 		 @line-fields.push: .chi2;
-		 @line-fields.push: @!par-tables[$i].a>>.<value>;
+		 @line-fields.push: (@!par-tables[$i].a>>.<value>).Slip;
 	     }
-	     say @line-fields.join(" ");
+	     say @line-fields.join(", ");
 	     
 	 }
 	 else {
