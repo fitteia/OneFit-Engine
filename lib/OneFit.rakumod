@@ -393,7 +393,7 @@ class Engine is export {
 		 @line-fields.push: .Tag;
 		 @line-fields.push: .chi2;
 		 @line-fields.push: .T.words;
-		 @line-fields.push: (@!par-tables[0].a>>.<value>).Slip;
+		 FIRST { @line-fields.push: (@!par-tables[0].a>>.<value>).Slip; }
 		 say @line-fields.join(", ");
 	     }
 	 }
