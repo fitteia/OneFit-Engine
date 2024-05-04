@@ -384,6 +384,7 @@ class Engine is export {
 		 for @!par-tables[$i].a { @line-fields.push: $nfield( .<value> )}
 	     }
 	     say @line-fields.jooin(" ");
+	     
 	 }
 	 else {
 	     
