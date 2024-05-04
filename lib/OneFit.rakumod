@@ -318,6 +318,7 @@ class Engine is export {
 	 }
 	 my $TXT = self!results();
 	 %!engine<fit-results> = $TXT;
+	 %!engine<SimulFitOutput> = self!results(fmt => " ");
 	 say $TXT unless $quiet;
 	 self
      }
