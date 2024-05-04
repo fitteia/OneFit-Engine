@@ -363,13 +363,14 @@ class Engine is export {
     }
 
      method results () {
+	 say @!par-tables>;
 	 if (%!engine<FitType> ~~ /Individual/) {
 	     my $sfield = { sprintf("%-12s",$^a) };
 	     my $line = $sfield("# TAG");
 	     my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	     say @a.map({ $_ = $sfield($_)});
 	     for @!blocks {
-		 say @!par-tables[.No].a >.<name>;
+		 say "ola"«ß
 	     }
 	 }
 	 else {
