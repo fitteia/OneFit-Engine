@@ -131,7 +131,7 @@ grammar Data is Number {
     token TOP { [ \h* '#' \h* 'DATA' \h* <data> \h* '=' \h* [ <number> \h* ]+ | \h* '#' \h* 'TAG' \h* '=' \h* <tag> \h*  | <matrix> | \n]+ }
     token data   { <key> }
     token tag    { <key> }
-    token key>    { [ \w | '_' | '-' | '(' | ')' | ',' | '[' | ']' | '.' | '+']+ }
+    token key    { [ \w | '_' | '-' | '(' | ')' | ',' | '[' | ']' | '.' | '+']+ }
     token matrix { [ \h* [<number> \h*]+ \n]+ }
 
     method parse-me ($input) {
