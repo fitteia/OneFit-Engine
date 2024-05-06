@@ -128,9 +128,10 @@ grammar Label is Number {
 }
 
 grammar Data is Number {
-    token TOP {  <.ws> [ [ [ <number> <.ws> ]+ | <data> | <tag> | \n ] <.ws> ] }
+    token TOP {  <.ws> [ [ [ <numbers> | <data> | <tag> | \n ] <.ws> ] }
     token data { '#' <.ws> 'DATA' <.ws> <label> '=' <.ws> [ <number> <.ws> ]+ \n* }
     token tag  { '#' <.ws> 'TAG' <.ws> '=' <.ws> <word> <.ws> \n* }
     token label { \w+ }
     token word  { \w+ }
+    token numbers { [ <number> <.ws> ]+ \n*}
 }
