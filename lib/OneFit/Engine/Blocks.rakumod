@@ -131,7 +131,7 @@ class Block is export {
 	    @!Export-data = @!Data[@selection];
 	}
 	else { @!Export-data = @!Data }
-	say @!Data;
+	say @!Export-data;
 	self
     }
     
