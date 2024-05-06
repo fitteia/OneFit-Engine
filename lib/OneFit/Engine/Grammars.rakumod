@@ -117,7 +117,6 @@ grammar Function is Number {
 	}
 	return %res;
     }
-
 }
 
 grammar Label is Number {
