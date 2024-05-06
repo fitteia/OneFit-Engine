@@ -128,16 +128,16 @@ grammar Label is Number {
 }
 
 grammar Data is Number {
-    token TOP { [ <data> | <tag> | <matrix> | \n]+ }
-    token data   { \h* '#' \h* 'DATA' \h* <key> \h* '=' \h* [ <number> \h* ]+ }
-    token tag    { \h* '#' \h* 'TAG' \h* '=' \h* <key> \h* }
-    token key    { [ \w | '_' | '-' | '(' | ')' | ',' | '[' | ']' | '.' | '+']+ }
+    token TOP { [ \h* '#' \h* 'DATA' \h* <data> \h* '=' \h* [ <number> \h* ]+ | \h* '#' \h* 'TAG' \h* '=' \h* <tag> \h*  | <matrix> | \n]+ }
+    token data   { <key> }
+    token tag    { <key> }
+    token key>    { [ \w | '_' | '-' | '(' | ')' | ',' | '[' | ']' | '.' | '+']+ }
     token matrix { [ \h* [<number> \h*]+ \n]+ }
 
     method parse-me ($input) {
 	my $m= self.parse($input);
 	say $m;
-	say $m<key>.Str;
+	say $m<data>;
 	my %res;
 #	%res<data>=$m<data><key>.Str;
 #	%res<tag>=$m<tag><key>.Str;
