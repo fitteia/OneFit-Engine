@@ -127,3 +127,10 @@ grammar Label is Number {
     token sep    { ',' | ';' }
 }
 
+grammar Data is Number {
+    token {  <.ws> [ <number> | <DATA> | <TAG> | \n ]+ <.ws> }
+    token DATA { '#' <.ws> DATA <.ws> <label> '=' <.ws> [ <number> <.ws>]+ }
+    token TAG  { '#' <.ws> TAG <.ws> '=' <.ws> <word> }
+    token label { <word> }
+    token word  { \w+ }
+}
