@@ -131,7 +131,6 @@ class Block is export {
 	    @!Export-data = @!Data[@selection];
 	}
 	else { @!Export-data = @!Data }
-	say @!Export-data;
 	self
     }
     
@@ -155,10 +154,6 @@ class Block is export {
 	}
 
 	self.E(:ex-to-ey) if ($ex>=0 or any(@!E>>.contains('%')));
-	for (0..^@!Data.elems).hyper -> $b {
-	    say ([Z] @!X,@!Y,@!E)[$b;*].join: " "
-	}
-
 	self
     }
     method X () { @!X }
