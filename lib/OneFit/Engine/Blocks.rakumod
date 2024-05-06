@@ -205,6 +205,7 @@ class Block is export {
 #	    for (0 ..^ @!X.elems) -> $i { @!Data[$b] = "@!X[$i] @!Y[$i] @!E[$i]" }
 	    @!Data[$b]=([Z] @!X,@!Y,@!E)[$b;*].join: " "
 	}
+	say @!Data;
 	self;
     }
     method write-agr (:$path) {
