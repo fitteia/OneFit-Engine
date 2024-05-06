@@ -350,6 +350,7 @@ sub parse-function ($function, @data-files, $data-labels) {
 	else {
 	    %e<Dados> ~= "# DATA $label = $dum\n" unless @lines.grep(/DATA/);
 	    %e<Dados> ~= "# TAG = { @data-files[$_-1].subst(".dat","") }\n" unless @lines.grep(/TAG/);
+	    
 	    %e<Dados> ~= @lines.join("\n");
 	}
 	say %e<Dados>;
