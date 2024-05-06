@@ -154,7 +154,7 @@ class Block is export {
 	    }
 	}
 
-	self.E(:ex-to-ey) if ($ex>0 or any(@!E>>.contains('%')));
+	self.E(:ex-to-ey) if ($ex>=0 or any(@!E>>.contains('%')));
 	for (0..^@!Data.elems).hyper -> $b {
 	    say ([Z] @!X,@!Y,@!E)[$b;*].join: " "
 	}
