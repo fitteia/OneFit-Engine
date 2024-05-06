@@ -138,6 +138,7 @@ grammar Data is Number {
 	my $m= self.parse($input);
 	say $m;
 	say $m<data>.Str;
+	say $m<data><key>.Str;
 	my %res;
 #	%res<data>=$m<data><key>.Str;
 #	%res<tag>=$m<tag><key>.Str;
