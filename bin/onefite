@@ -343,6 +343,7 @@ sub parse-function ($function, @data-files, $data-labels) {
 	    if $dum-parse<values> > 0 { $dum = $dum-parse<values>[$_-1].Str.join(' ') }
 	}
 	%e<Dados>     ~=  "# DATA $label = $dum\n# TAG = { @data-files[$_-1].subst(".dat","") }\n" ~ @lines.skip.join("\n");
+	say %e<Dados>;
 	%e<Tags>.push: @data-files[$_-1].subst(".dat","");
     }
     return %e;
