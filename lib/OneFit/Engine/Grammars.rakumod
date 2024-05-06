@@ -133,5 +133,13 @@ grammar Data is Number {
     token tag    { [ \h* '#' \h* 'TAG' \h* '=' \h* <key> \h* ]+ }
     token key    { [ \w | '_' | '-' | '(' | ')' | ',' | '[' | ']' | '.' | '+']+ }
     token matrix { [ \h* [<number> \h*]+ \n]+ }
+
+    method parse-me ($input) {
+	my $m= self.parse($input);
+	my %res;
+	%res<data>=$m<data><key>.Str;
+	%res<tag>=$m<tag><key>.Str;
+	return %res
+    }
 }
 
