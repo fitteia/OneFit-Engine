@@ -137,6 +137,7 @@ grammar Data is Number {
     method parse-me ($input) {
 	my $m= self.parse($input);
 	say $m<data>.Str;
+	say $m<key>;
 	my %res;
 	%res<data>=$m<data><key>.Str;
 	%res<tag>=$m<tag><key>.Str;
