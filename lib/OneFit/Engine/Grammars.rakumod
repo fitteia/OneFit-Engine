@@ -133,5 +133,5 @@ grammar Data is Number {
     token tag  { '#' <.ws> 'TAG' <.ws> '=' <.ws> <word> <.ws> \n* }
     token label { \w+ }
     token word  { \w+ }
-    token numbers { [ <number> <.ws> ]+ \n*}
+    token numbers { [ <number> <.ws> ]+ }
 }
