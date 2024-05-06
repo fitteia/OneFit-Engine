@@ -333,7 +333,7 @@ sub parse-function ($function, @data-files, $data-labels) {
     for (1 .. @data-files.elems) {
 	my $m = OneFit::Engine::Grammars::Data.parse(@data-files[$_-1].IO.slurp);
 	say $m;
-	say $m<label>;
+	say $m<data>;
 	say $m<word>;
 	my @lines=@data-files[$_-1].IO.lines;
 	my $label = "dum";
