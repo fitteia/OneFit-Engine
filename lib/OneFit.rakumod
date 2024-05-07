@@ -367,6 +367,7 @@ class Engine is export {
 
      method !results (:$fmt = ', ') {
 	 my @fields = ("# TAG");
+	 @fields.push: "Npts";
 	 @fields.push: "chi2";
 	 my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	 @fields.push: @a.Slip;
@@ -376,6 +377,7 @@ class Engine is export {
 	     my @line-fields;
 	     my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
 	     @line-fields.push: .Tag;
+	     @line-fields.push: .X.elems;
 	     @line-fields.push: .chi2;
 	     @line-fields.push: .T.words;
 	     for @!par-tables[$i].a {
