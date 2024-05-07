@@ -6,10 +6,12 @@ my $json-file = "example_02.json";
 my $description = qq:to/END_DESCRIPTION/;
 onefite command line: Example 01
 
-1) creates /tmp/example_02 folder
-2) creates file /tmp/example_02/lixo.txt with random data
+   1) creates /tmp/example_02 folder
+   2) creates file /tmp/example_02/lixo.txt with random data
 
-runs: onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file --data-labels=\" a = 1 -0.0831355\"
+   runs: onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file
+
+   runs: onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file --data-labels=\" a = 1 -0.0831355\"
 END_DESCRIPTION
 
 say $description;
@@ -19,5 +21,7 @@ $folder.IO.mkdir;
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)}),
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)})
 			     ).join("\n");
+shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file";
+
 shell "onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file --data-labels=\"a = 1 -0.0831355\"";
 say "lookup for more output in $folder";
