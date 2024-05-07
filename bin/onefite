@@ -337,6 +337,7 @@ sub parse-function ($function, @data-files, $data-labels) {
 	$dum = @lines.head if @lines.head.words.elems < 2;
 	if @lines.grep(/DATA/) {
 	    %e<T> = @lines.grep(/DATA/).split("=").words[0].split("DATA").words[1];
+	    say %e<T>;
 	}
 	if $data-labels.defined {
 	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
