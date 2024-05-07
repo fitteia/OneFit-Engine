@@ -329,7 +329,8 @@ multi MAIN ('test',
 
 sub parse-function ($function, @data-files, $data-labels) {
     my %e = OneFit::Engine::Grammars::Function.parse-me($function);
-    %e<FitType SelectedDataSet T Num> = <Individual 1 dum 100>;
+    %e<FitType T Num> = <Individual dum 100>;
+    %e<SelectedDataSet> = @data-files[0].subst(".dat","");
     for (1 .. @data-files.elems) {
 	my @lines=@data-files[$_-1].IO.lines;
 	my $label = "dum";
@@ -343,20 +344,12 @@ sub parse-function ($function, @data-files, $data-labels) {
 	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
 	    $label = $dum-parse<name>.Str;
 	    %e<T> = $label;
-	    %e<SelectedDataSet> = @data-files[0].subst(".dat","");
 	    if $dum-parse<values> > 0 { $dum = $dum-parse<values>[$_-1].Str.join(' ') }
 	}
-	if @lines.head.words.elems < 2 { 
-	    %e<Dados> ~= "# DATA $label = $dum\n" unless @lines.grep(/DATA/);
-	    %e<Dados> ~= "# TAG = { @data-files[$_-1].subst(".dat","") }\n" unless @lines.grep(/TAG/);
-	    %e<Dados> ~= @lines.skip.join("\n");
-	}
-	else {
-	    %e<Dados> ~= "# DATA $label = $dum\n" unless @lines.grep(/DATA/);
-	    %e<Dados> ~= "# TAG = { @data-files[$_-1].subst(".dat","") }\n" unless @lines.grep(/TAG/);
-	    
-	    %e<Dados> ~= @lines.join("\n");
-	}
+	%e<Dados> ~= "# DATA $label = $dum\n" unless @lines.grep(/DATA/);
+	%e<Dados> ~= "# TAG = { @data-files[$_-1].subst(".dat","") }\n" unless @lines.grep(/TAG/);
+	%e<Dados> ~= @lines.join("\n");
+
 	say %e<Dados>;
 	%e<Tags>.push: @data-files[$_-1].subst(".dat","");
     }
