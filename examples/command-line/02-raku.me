@@ -11,11 +11,11 @@ onefite command line: Example 01
    1) creates /tmp/example_02 folder
    2) creates file /tmp/example_02/lixo.txt with random data
 
-   runs: onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file
+   runs: onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file
 
    reads the value of \"a\" from the fit results and keeps it in variable \$a and uses it to set the next fit using a static value in a second independent variable defined as \"a\"
 
-   runs: onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file --data-labels=\" a = 1 \$a\"
+   runs: onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file --data-labels=\" a = 1 \$a\"
 END_DESCRIPTION
 
 say $description;
@@ -25,11 +25,11 @@ $folder.IO.mkdir;
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)}),
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)})
 			     ).join("\n");
-shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file";
+shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
 
       my %e = from-json("$folder/$json-file".IO.slurp);
       say %e<results>;
       say %e<results>.split("\n").tail.split(',')[3];
 
-shell "onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file --data-labels=\"a = 1 -1\"";
+shell "onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=/folder/$json-file --data-labels=\"a = 1 -1\"";
 say "lookup for more output in $folder";
