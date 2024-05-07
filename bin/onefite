@@ -343,7 +343,7 @@ sub parse-function ($function, @data-files, $data-labels) {
 	say $data-labels;
 	if $data-labels.defined {
 	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
-	    say $m;
+	    say $dum-parse;
 	    $label = $dum-parse<name>.Str;
 	    %e<T> = $label;
 	    say $label;
