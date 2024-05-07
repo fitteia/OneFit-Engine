@@ -48,7 +48,9 @@ class Block is export {
 
 	for $txt.lines -> $line {
 	    if $line.contains("DATA")  {
+		say $line
 		$!T = $line.split("=")[1].subst(/^\s*/,"");
+		say $!T;
 	    }
 	    elsif $line.contains("TAG") {
 		$!Tag = $line.split("=")[1].subst(/^\s*/,"");
