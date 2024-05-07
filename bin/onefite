@@ -336,6 +336,9 @@ sub parse-function ($function, @data-files, $data-labels) {
 	my $dum=$_;
 	$dum = @lines.head if @lines.head.words.elems < 2;
 	if @lines.grep(/DATA/) {
+	    say @lines.grep(/DATA/);
+	    say @lines.grep(/DATA/).split("=");
+	    say @lines.grep(/DATA/).split("=").words[0].split("DATA").words[1];
 	    %e<T> = @lines.grep(/DATA/).split("=").words[0].split("DATA").words[1];
 	    say %e<T>;
 	}
