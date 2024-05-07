@@ -338,7 +338,12 @@ sub parse-function ($function, @data-files, $data-labels) {
 	$dum = @lines.head if @lines.head.words.elems < 2;
 	if @lines.grep(/DATA/) {
 	    $label = @lines.grep(/DATA/).split("=")[0].split("DATA")[1].words[0];
+	    $dum = @lines.grep(/DATA/).split("=")[1];
 	    %e<T> = $label;
+	    skip @lines;
+	}
+	if @lines.grep(/TAG/) {
+	    skip @lines;
 	}
 	if $data-labels.defined {
 	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
@@ -347,12 +352,8 @@ sub parse-function ($function, @data-files, $data-labels) {
 	    say %e<T>;
 	    if $dum-parse<values> > 0 { $dum = $dum-parse<values>[$_-1].Str.join(' ') }
 	}
-	%e<Dados> = @lines.grep(/DATA/).defined
-		     ?? @lines.grep(/DATA/)
-		     !! "# DATA $label = $dum\n";
-	%e<Dados> ~= @lines.grep(/TAG/).defined
-		      ?? @lines.grep(/TAG/)
-		      !! "# TAG = { @data-files[$_-1].subst(".dat","") }\n";
+	%e<Dados> ~= "# DATA $label = $dum\n";
+	%e<Dados> ~= "# TAG = { @data-files[$_-1].subst(".dat","") }\n";
 	%e<Dados> ~= @lines.join("\n");
 
 	say %e<Dados>;
