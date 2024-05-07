@@ -1,5 +1,7 @@
 #!/usr/bin/env raku
 
+use JSON::Fast;
+
 my $folder = "/tmp/example_02";
 my $json-file = "example_02.json";
 
@@ -23,5 +25,7 @@ $folder.IO.mkdir;
 			     ).join("\n");
 shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file";
 
-shell "onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file --data-labels=\"a = 1 -0.0831355\"";
+my $a = from-json($json-file.IO.slurp).lines.tail.split(',')[3];
+
+shell "onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file --data-labels=\"a = 1 $a\"";
 say "lookup for more output in $folder";
