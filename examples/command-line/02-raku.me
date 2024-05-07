@@ -29,7 +29,7 @@ shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --s
       my %e = from-json("$folder/$json-file".IO.slurp);
       say %e<fit-results>;
       say %e<fit-results>.split("\n");
-      say %e<fit-results>.split("\n").tail.words;
+      say %e<fit-results>.split("\n")[1].words[3];
       
       
 
