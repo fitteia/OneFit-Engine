@@ -27,7 +27,7 @@ $folder.IO.mkdir;
 			     ).join("\n");
 shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file";
 
-      my %e = from-json($json-file.IO.slurp);
+      my %e = from-json("$folder/$json-file".IO.slurp);
       say %e<results>;
       say %e<results>.split("\n").tail.split(',')[3];
 
