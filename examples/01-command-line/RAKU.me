@@ -1,4 +1,18 @@
 #!/usr/bin/env raku
+
+my $description = qq:to/END_DESCRIPTION/;
+run onefite from the command line: Example 01
+
+creates a file lixo.txt with data
+1 1
+2 2
+3 3
+4 4 
+
+runs: onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=/tmp --save-to=lixo.json
+
+END_DESCRIPTION
 "lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
-shell "onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=/tmp --save-to=lixo.json"
-say "lookup for the output in /tmp";
+shell "onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=/tmp --save-to=lixo.json";
+say $description;
+say "lookup for more output in /tmp";
