@@ -337,23 +337,19 @@ sub parse-function ($function, @data-files, $data-labels) {
 	my $dum=$_;
 	$dum = @lines.head if @lines.head.words.elems < 2;
 	if @lines.grep(/DATA/) {
-	    %e<T> = @lines.grep(/DATA/).split("=")[0].split("DATA")[1].words[0];
-	    say %e<T>;
+	    $label = @lines.grep(/DATA/).split("=")[0].split("DATA")[1].words[0];
+	    %e<T> = $label;
 	}
-	say $data-labels;
 	if $data-labels.defined {
 	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
-	    say $dum-parse;
 	    $label = $dum-parse<name>.Str;
 	    %e<T> = $label;
-	    say $label;
 	    if $dum-parse<values> > 0 { $dum = $dum-parse<values>[$_-1].Str.join(' ') }
 	}
 	%e<Dados> ~= "# DATA $label = $dum\n" unless @lines.grep(/DATA/);
 	%e<Dados> ~= "# TAG = { @data-files[$_-1].subst(".dat","") }\n" unless @lines.grep(/TAG/);
 	%e<Dados> ~= @lines.join("\n");
 
-	say %e<Dados>;
 	%e<Tags>.push: @data-files[$_-1].subst(".dat","");
     }
     return %e;
