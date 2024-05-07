@@ -12,7 +12,7 @@ creates a file lixo.txt with data
 runs: onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=/tmp --save-to=lixo.json
 
 END_DESCRIPTION
+say $description;
 "lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
 shell "onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=/tmp --save-to=lixo.json";
-say $description;
 say "lookup for more output in /tmp";

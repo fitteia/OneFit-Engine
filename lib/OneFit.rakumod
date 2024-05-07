@@ -370,7 +370,7 @@ class Engine is export {
 	 @fields.push: "chi2";
 	 my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	 @fields.push: @a.Slip;
-	 for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1 err" ).Slip }
+	 for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1" ~ "err" ).Slip }
 	 my $TXT = @fields.join($fmt) ~ "\n";
 	 for @!blocks {
 	     my @line-fields;
