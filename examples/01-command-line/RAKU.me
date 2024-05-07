@@ -3,16 +3,20 @@
 my $description = qq:to/END_DESCRIPTION/;
 onefite command line: Example 01
 
-creates a file lixo.txt with data
+1) creates /tmp/example_01 folder
+2) creates file /tmp/exaxmple_01/lixo.txt with data
 1 1
 2 2
 3 3
 4 4 
 
-runs: onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=/tmp --save-to=lixo.json
+runs: onefite fit \"y(x,a,b)=a+b*x\" /tmp/example_01/lixo.txt --work-folder=/tmp/example_01 --save-to=example_01.json
+
+
 
 END_DESCRIPTION
 say $description;
-"lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
+"/tmp/example_01".IO.rmdir;
+"/tmp/example_01/lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
 shell "onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=/tmp --save-to=lixo.json";
-say "lookup for more output in /tmp";
+say "lookup for more output in /tmp/example_01";
