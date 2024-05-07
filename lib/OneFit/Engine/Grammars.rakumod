@@ -121,7 +121,7 @@ grammar Function is Number {
 
 grammar Label is Number {
     token TOP    { <.ws> <name> <.ws> <attrib>? <.ws> <values>? <.ws> [ <sep> <.ws> <values> ]* }
-    token values { [ <number> <.ws> ] }
+    token values { [ <number> <.ws> ]+ }
     token name   { \w+ }
     token attrib    { ':' | '=' }
     token sep    { ',' | ';' }
