@@ -127,19 +127,3 @@ grammar Label is Number {
     token sep    { ',' | ';' }
 }
 
-grammar Data is Number {
-    token TOP { [ \h* '#' \h* 'DATA' \h* <data> \h* '=' \h* [ <number> \h* ]+ | \h* '#' \h* 'TAG' \h* '=' \h* <tag> \h*  | <matrix> | \n]+ }
-    token data   { <key> }
-    token tag    { <key> }
-    token key    { [ \w | '_' | '-' | '(' | ')' | ',' | '[' | ']' | '.' | '+']+ }
-    token matrix { [ \h* [<number> \h*]+ \n]+ }
-
-    method parse-me ($input) {
-	my $m= self.parse($input);
-	my %res;
-	%res<data>=$m<data>.Str;
-	%res<tag>=$m<tag>.Str;
-	return %res
-    }
-}
-

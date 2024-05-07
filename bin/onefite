@@ -332,13 +332,13 @@ sub parse-function ($function, @data-files, $data-labels) {
     %e<FitType SelectedDataSet T Num> = <Individual 1 dum 100>;
     for (1 .. @data-files.elems) {
 	my %m = OneFit::Engine::Grammars::Data.parse-me(@data-files[$_-1].IO.slurp);
-	say %m;
-#	say $m<data>;
-#	say $m<tag>;
 	my @lines=@data-files[$_-1].IO.lines;
 	my $label = "dum";
 	my $dum=$_;
 	$dum = @lines.head if @lines.head.words.elems < 2;
+	if @lines.grep(/DATA/) {
+	    %e<T> = @lines.grep(/DATA/).split("=").words[0].split("DATA").words[1];
+	}
 	if $data-labels.defined {
 	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
 	    $label = $dum-parse<name>.Str;
