@@ -355,9 +355,6 @@ sub parse-function ($function, @data-files, $data-labels) {
 	%e<Dados> ~= "# DATA $label = $dum\n";
 	%e<Dados> ~= "# TAG = { @data-files[$_-1].subst(".dat","") }\n";
 	%e<Dados> ~= @lines.join("\n");
-
-	say %e<Dados>;
-	say %e<T>;
 	%e<Tags>.push: @data-files[$_-1].subst(".dat","");
     }
     return %e;
