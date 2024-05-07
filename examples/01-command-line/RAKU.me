@@ -16,7 +16,8 @@ runs: onefite fit \"y(x,a,b)=a+b*x\" /tmp/example_01/lixo.txt --work-folder=/tmp
 
 END_DESCRIPTION
 say $description;
-</tmp/example_01>.map({ if .IO.e { .IO.rmdir; .IO.mkdir } });
+</tmp/example_01>.map({ .IO.rmdir if .IO.e });
+"/tmp/example_01".IO.mkdir;
 "/tmp/example_01/lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
 shell "onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=/tmp --save-to=lixo.json";
 say "lookup for more output in /tmp/example_01";
