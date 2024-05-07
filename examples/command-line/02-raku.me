@@ -26,10 +26,10 @@ $folder.IO.mkdir;
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)})
 			     ).join("\n");
 shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
-
+      say "$folder/$json-file";
       my %e = from-json("$folder/$json-file".IO.slurp);
       say %e<fit-results>;
       say %e<fit-results>.split("\n").tail.split(',')[3];
 
-shell "onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=/folder/$json-file --data-labels=\"a = 1 -1\"";
+#shell "onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=/folder/$json-file --data-labels=\"a = 1 -1\"";
 say "lookup for more output in $folder";
