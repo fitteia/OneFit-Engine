@@ -19,5 +19,5 @@ $folder.IO.mkdir;
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)}),
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)})
 			     ).join("\n");
-shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file";
+shell "onefite fit \"y(x,b)=dum_1+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file";
 say "lookup for more output in $folder";
