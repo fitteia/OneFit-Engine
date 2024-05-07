@@ -340,10 +340,10 @@ sub parse-function ($function, @data-files, $data-labels) {
 	    $label = @lines.grep(/DATA/).split("=")[0].split("DATA")[1].words[0];
 	    $dum = @lines.grep(/DATA/).split("=")[1];
 	    %e<T> = $label;
-	    skip @lines;
+	    shift @lines;
 	}
 	if @lines.grep(/TAG/) {
-	    skip @lines;
+	    shift @lines;
 	}
 	if $data-labels.defined {
 	    my $dum-parse = OneFit::Engine::Grammars::Label.parse($data-labels);
