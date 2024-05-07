@@ -382,7 +382,7 @@ class Engine is export {
 		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 else { @line-fields.push: .<value err>.Slip  }
 	     }
-	     $TXT ~= @line-fields.join($fmt) ~"\n";
+	     $TXT ~= @line-fields.join($fmt) ~ "\n";
 	 }
 	 return $TXT;
      }
