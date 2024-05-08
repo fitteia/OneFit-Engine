@@ -24,10 +24,21 @@ $folder.IO.mkdir;
 my @x = [-5..5].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)});
 my @y = gather for @x { take 4 + 0.3*$_ - 0.5*$_**2 }
 "$folder/lixo.txt".IO.spurt: (@x Z @y).join("\n");
-shell "onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file --autoy";
 
-#my $a = from-json("$folder/$json-file".IO.slurp)<fit-results>.split("\n")[1].split(",")[4];
+shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file ";
 
-#shell "cd $folder && onefite fit \"y(x,a,b,c)=a_2+b*x\" lixo.txt --save-to=$json-file --data-labels=\"a = 1 $a\"";
+shell "cd $folder && mv fit-curves-1.pdf 1.pdf";
+
+shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autoy";	
+
+shell "cd $folder && mv fit-curves-1.pdf 2.pdf";
+
+shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autoy --autoy";
+
+shell "cd $folder && mv fit-curves-1.pdf 3.pdf";
+
+shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a=5,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file ";	
+
+shell "cd $folder && pdftk fit-curves-1.pdf 1.pdf 2.pdf 3.pdf cat output All.pdf";
 
 say "lookup for more output in $folder";
