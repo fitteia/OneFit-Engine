@@ -1,0 +1,32 @@
+#!/usr/bin/env raku
+
+use JSON::Fast;
+
+my $folder = "$*HOME/public_html/example_04";
+my $json-file = "example_04.json";
+
+my $description = qq:to/END_DESCRIPTION/;
+onefite command line: Example 04
+
+   1) creates $folder folder
+   2) creates files $folder/lixo.txt and $folder/lixo1.txt with random data
+
+   runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a \+ b*x \+ ( (flag==2) ? c*pow(x,2.0)\ : 0.0 )" lixo.txt lixo1.txt --save-to=$json-file --data-labels="flag=1,2"
+
+END_DESCRIPTION
+
+say $description;
+($folder).map({ .IO.rmdir if .IO.e });
+$folder.IO.mkdir;
+
+my @x = [-5..5].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)});
+my @y = gather for @x { take -3 + 3*$_ }
+"$folder/lixo.txt".IO.spurt: (@x Z @y).join("\n");
+
+@x = [-5..5].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)});
+@y = gather for @x { take 4 + 0.3*$_ - 0.5*$_**2 }
+"$folder/lixo1.txt".IO.spurt: (@x Z @y).join("\n");
+
+shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c) = a \+ b*x \+ ( (flag==2) ? c*pow(x,2.0) : 0.0 )\" lixo.txt lixo1.txt --save-to=$json-file --data-labels="flag=1,2";
+
+say "lookup for more output in $folder";
