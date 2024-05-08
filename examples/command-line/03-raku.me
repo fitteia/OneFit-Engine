@@ -11,7 +11,7 @@ onefite command line: Example 03
    1) creates $folder folder
    2) creates file $folder/lixo.txt with random data
 
-   runs: onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file
+   runs: onefite fit \"y:[-10;10](x[-10;10],a,b,c)=a+b*x+c*pow(x,2.0]\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file
 
    reads the value of \"a\" from the fit results and keeps it in variable \$a and uses it to set the next fit using a static value in a second independent variable defined as \"a\"
 
