@@ -33,7 +33,7 @@ shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0
 
 shell "cd $folder && mv fit-curves-1.pdf 2.pdf";
 
-shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autoy --autoy";
+shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autox --autoy";
 
 shell "cd $folder && mv fit-curves-1.pdf 3.pdf";
 
