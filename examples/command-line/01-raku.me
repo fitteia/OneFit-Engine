@@ -13,12 +13,12 @@ onefite command line: Example 01
 3 3
 4 4 
 
-runs: onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file
+runs: onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file
 END_DESCRIPTION
 
 say $description;
 ($folder).map({ .IO.rmdir if .IO.e });
 $folder.IO.mkdir;
 "$folder/lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
-shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$json-file";
+shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
 say "lookup for more output in $folder";
