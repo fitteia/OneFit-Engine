@@ -181,7 +181,9 @@ multi MAIN  ('fit',
     );
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
-#    shell "pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+
+    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+
     exit;
 }
 
@@ -212,7 +214,7 @@ multi MAIN  ('fit',
 	    );
 	    $engine.save($to) if $to.defined;
 	    zip-fit($engine,$work-folder,$name);
-#	    shell "pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 	    exit;
 }
 
@@ -240,7 +242,7 @@ multi MAIN  ('plot',
 		:logy($linlog or $loglog)
 	    );
 	    zip-fit($engine,$work-folder,$name);
-#	    shell "pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 	    exit;
 }
 
