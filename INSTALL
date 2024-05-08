@@ -4,6 +4,7 @@
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 multi MAIN (Bool :$dpkg = True, # to install required debian packages
+            Bool :w(:$web-server= = True, # to run tasksel install web-server
 	    Str  :$cpu is copy, # [amd64|arm64| defaults to "uname -a" detection 
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
@@ -26,6 +27,8 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
+    install-web-server if $web-server;
+    
     install-apt-packages($cpu) if $dpkg.Bool;
 
     install-Inline-Perl5() if $inline-perl5.Bool;
@@ -46,6 +49,7 @@ Usage:
     ./INSTALL [-h|--help]
     ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]
     --dpkg         # to install required debian packages
+    --web-server   # to run tasksel install web-server
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
     --compile      # to comlipe and install the OneFit engine core (use [-/c|--no-c|--/compile|--no-compile] to skip compiling)
     --test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)
@@ -121,6 +125,13 @@ sub install-apt-packages ($cpu) {
 	shell "cd /tmp && sudo apt install ./" ~ @pkgs-to-install.join(" ./"); 
     }
 }
+
+sub install-web-server () {
+    my $installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web-server/).words[0] eq "i";
+    say $installed;
+    #    shell "sudo tasksel install web-server" unless $installed;
+}
+
 
 sub install-Inline-Perl5 () {
     shell("sudo zef install Inline::Perl5 --install-to=site") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
