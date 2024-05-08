@@ -127,7 +127,7 @@ sub install-apt-packages ($cpu) {
 }
 
 sub install-web-server () {
-    my $installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
+    my $installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/mate\-desktop/).words[0] eq "i";
     say $installed;
     exit;
     #    shell "sudo tasksel install web-server" unless $installed;
