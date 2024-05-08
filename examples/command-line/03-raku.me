@@ -22,7 +22,7 @@ say $description;
 ($folder).map({ .IO.rmdir if .IO.e });
 $folder.IO.mkdir;
 my @x = [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)});
-my @y = @x.map: 0.1 + 0.3*$_ - 0.5*$_**2;
+my @y = gather for @x { take 0.1 + 0.3*$_ - 0.5*$_**2 }
 "$folder/lixo.txt".IO.spurt: (@x Z @y).join("\n");
 shell "onefite fit \"y(x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
 
