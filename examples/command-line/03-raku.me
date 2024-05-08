@@ -2,11 +2,11 @@
 
 use JSON::Fast;
 
-my $folder = "$*HOME/public_html/example_02";
-my $json-file = "example_02.json";
+my $folder = "$*HOME/public_html/example_03";
+my $json-file = "example_03.json";
 
 my $description = qq:to/END_DESCRIPTION/;
-onefite command line: Example 02
+onefite command line: Example 03
 
    1) creates $folder folder
    2) creates file $folder/lixo.txt with random data
@@ -21,14 +21,13 @@ END_DESCRIPTION
 say $description;
 ($folder).map({ .IO.rmdir if .IO.e });
 $folder.IO.mkdir;
-"$folder/lixo.txt".IO.spurt: ([Z]
-			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)}),
-			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)})
-			     ).join("\n");
-shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
+my @x = [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)});
+my @y = @x.map: 0.1 + 0.3*$_ - 0.5*$_**2;
+"$folder/lixo.txt".IO.spurt: (@x Z @y).join("\n");
+shell "onefite fit \"y(x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
 
-my $a = from-json("$folder/$json-file".IO.slurp)<fit-results>.split("\n")[1].split(",")[4];
+#my $a = from-json("$folder/$json-file".IO.slurp)<fit-results>.split("\n")[1].split(",")[4];
 
-shell "cd $folder && onefite fit \"y(x,b)=a_2+b*x\" lixo.txt --save-to=$json-file --data-labels=\"a = 1 $a\"";
+#shell "cd $folder && onefite fit \"y(x,a,b,c)=a_2+b*x\" lixo.txt --save-to=$json-file --data-labels=\"a = 1 $a\"";
 
 say "lookup for more output in $folder";
