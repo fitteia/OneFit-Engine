@@ -27,6 +27,6 @@ my @y = gather for @x { take -3 + 3*$_ }
 @y = gather for @x { take 4 + 0.3*$_ - 0.5*$_**2 }
 "$folder/lixo1.txt".IO.spurt: (@x Z @y).join("\n");
 
-shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c) = a \+ b*x \+ ( (flag==2) ? c*pow(x,2.0) : 0.0 )\" lixo.txt lixo1.txt --save-to=$json-file --data-labels=\"flag=1,2\";
+shell "cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c) = a \+ b*x \+ ( (flag==2) ? c*pow(x,2.0) : 0.0 )\" lixo.txt lixo1.txt --save-to=$json-file --data-labels=\"flag=1,2\"";
 
 say "lookup for more output in $folder";
