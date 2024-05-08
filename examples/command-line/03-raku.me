@@ -24,7 +24,7 @@ $folder.IO.mkdir;
 my @x = [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)});
 my @y = gather for @x { take 0.1 + 0.3*$_ - 0.5*$_**2 }
 "$folder/lixo.txt".IO.spurt: (@x Z @y).join("\n");
-shell "onefite fit \"y(x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
+shell "onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
 
 #my $a = from-json("$folder/$json-file".IO.slurp)<fit-results>.split("\n")[1].split(",")[4];
 
