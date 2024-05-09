@@ -10,10 +10,7 @@ onefite command line: Example 03
 
    1) creates $folder folder
    2) creates file $folder/lixo.txt with random data
-   3) runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file 
-   4) runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autoy
-   5) runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autox --autoy
-   6) runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a=5,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file
+   3) runs: cd $folder && onefite fit \"y:[-1.2;1.1](t[1e-3;10],M0,T1)=M0*(1-2*exp(-t/T1))\" lixo.txt --save-to=$json-file --loglin
 
       check file $folder/All.pdf
 END_DESCRIPTION
@@ -26,5 +23,10 @@ my @y = gather for @x { take 1-2*exp(-10**$_/0.1) }
 "$folder/lixo.txt".IO.spurt: (@x Z @y).join("\n");
 
 shell "cd $folder && onefite fit \"y:[-1.2;1.1](t[1e-3;10],M0,T1)=M0*(1-2*exp(-t/T1))\" lixo.txt --save-to=$json-file --loglin";
-      
+
+shell "cd $folder && mv fit-curves-1.pdf 1.pdf";
+
+shell "cd $folder && onefite fit \"y:[-1.2;1.1](t[1e-3;10],M0:1,T1:1)=M0*(1-2*exp(-t/T1))\" lixo.txt --save-to=$json-file --loglin";
+
+shell "cd $folder && pdftk 1.pdf fit-curves-1.pdf cat output All.pdf && rm 1.pdf ";
 say "lookup for more output in $folder";
