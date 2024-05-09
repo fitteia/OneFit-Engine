@@ -131,7 +131,9 @@ sub install-apt-packages ($cpu) {
 sub install-web-server () {
     my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
     do {
-	shell "sudo tasksel install web-server && sudo a2enmod userdir && sudo systemctl restart apache2";
+	shell "sudo tasksel install web-server";
+	shell "sudo a2enmod userdir";
+	shell "sudo systemctl restart apache2";
 	"$*HOME/public_html".IO.mkdir unless "$*HOME/public_html".IO.d;
 	shell "chmod 711 $*HOME && chmod 755 $*HOME/public_html";
     } unless $is-installed;
