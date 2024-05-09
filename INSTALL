@@ -127,12 +127,12 @@ sub install-apt-packages ($cpu) {
 }
 
 sub install-web-server () {
-    my $installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
+    my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
     do {
 	shell "sudo tasksel install web-server && sudo a2enmod userdir && systemctl restart apache2";
 	"$*HOME/public_html".IO.mkdir unless "$*HOME/public_html".IO.d;
 	shell "chmod 711 $*HOME && chmod 755 $*HOME/public_html";
-    } unless $installed;
+    } unless $is-installed;
 }
 
 
@@ -180,8 +180,10 @@ sub install (:$test,:$to-site, :$bindir) {
     }
 
     my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
-    for @binaries.splice(1,@binaries.elems-2).push('pcop') {
-	shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
+    if $to-site {
+	for @binaries.splice(1,@binaries.elems-2).push('pcop') {
+	    shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
+	}
     }
 
 }

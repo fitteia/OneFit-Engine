@@ -10,14 +10,10 @@ onefite command line: Example 03
 
    1) creates $folder folder
    2) creates file $folder/lixo.txt with random data
-
-      runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file 
-
-      runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autoy
-
-      runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autox --autoy
-
-      runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a=5,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file
+   3) runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file 
+   4) runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autoy
+   5) runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file --autox --autoy
+   6) runs: cd $folder && onefite fit \"y:[-10;10](x[-11;11],a=5,b,c)=a+b*x+c*pow(x,2.0)\" lixo.txt --save-to=$json-file
 
       check file $folder/All.pdf
 END_DESCRIPTION
