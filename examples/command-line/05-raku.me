@@ -11,6 +11,7 @@ onefite command line: Example 03
    1) creates $folder folder
    2) creates file $folder/lixo.txt with random data
    3) runs: cd $folder && onefite fit \"y:[-1.2;1.1](t[1e-3;10],M0,T1)=M0*(1-2*exp(-t/T1))\" lixo.txt --save-to=$json-file --loglin
+   4) runs: cd $folder && onefite fit \"y:[-1.2;1.1](t[1e-3;10],M0=1,T1=0.2)=M0*(1-2*exp(-t/T1))\" lixo.txt --save-to=$json-file --loglin
 
       check file $folder/All.pdf
 END_DESCRIPTION
