@@ -112,7 +112,7 @@ sub apt-pkgs-not-installed (@pkgs) {
 }
 
 sub install-apt-packages ($cpu) {
-    say @aptpkgs();
+    say aptpkgs();
     my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
     if so @apt-pkgs-to-install {
 	run "sudo", "apt", "install" , @apt-pkgs-to-install; 
