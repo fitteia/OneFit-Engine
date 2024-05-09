@@ -381,7 +381,7 @@ class Engine is export {
 	     @line-fields.push: .chi2;
 	     @line-fields.push: .T.words;
 	     for @!par-tables[$i].a {
-		 if so .<err> ~~ /fixed|constant|''/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
+		 if so .<err> ~~ /fixed|constant|""/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 else { @line-fields.push: .<value err>.Slip  }
 	     }
 	     $TXT ~= @line-fields.join($fmt) ~ "\n";
