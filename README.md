@@ -7,17 +7,18 @@ Fresh instalation
 For Debian "bookworm"
 
 Create a user account (ex: ofe):\
-su -\
-apt install raku git sudo\
-mkdir $HOME/.local && cd $HOME/.local
+prompt> su -\
+prompt> apt install raku git sudo\
+prompt> mkdir $HOME/.local && cd $HOME/.local
 
-git clone https://github.com/fitteia/OneFit-Engine.git
+prompt> git clone https://github.com/fitteia/OneFit-Engine.git
 
-cd $HOME/.local/OneFit-Engine && ./INSTALL help \
+prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL help \
 Usage:
     ./INSTALL [-h|--help]\
     ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]\
     --dpkg         # to install required debian packages\
+    --web-server   # to run tasksel install web-server
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"\
     --compile      # to comlipe and install the OneFit engine core (use [-/c|--no-c|--/compile|--no-compile] to skip compiling)\
     --test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)\
@@ -29,9 +30,19 @@ Usage:
     negated options:\
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile\
 
-cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
+prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
 
 
 Examples:
 
-Examples of onefite use can e found in the examples folder. Go to each folder and run "bash RUN.me". Tipically the output will go to /tmp folder.
+Examples of onefite use can e found in the examples folder.
+
+prompt> cd $HOME/public_html && raku xx-RUN.me"
+
+Tipically the output will go to example_xx folder.
+
+prompt> ip -4 -br address
+
+to get the IP address
+
+Use a browser to access the hhtp://<IP>/~ofe/ folder.
