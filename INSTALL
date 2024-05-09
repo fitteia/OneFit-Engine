@@ -97,7 +97,8 @@ sub aptpkgs () {
     libblas3
     libblas-dev
     libatlas-base-dev
-    libatlas3-base>
+    libatlas3-base
+    tasksel>
 }
 
 sub apt-pkgs-not-installed (@pkgs) {
