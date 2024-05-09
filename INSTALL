@@ -27,9 +27,9 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
-    install-web-server if $web-server;
-    
     install-apt-packages($cpu) if $dpkg.Bool;
+
+    install-web-server if $web-server;
 
     install-Inline-Perl5() if $inline-perl5.Bool;
 
@@ -112,7 +112,6 @@ sub apt-pkgs-not-installed (@pkgs) {
 }
 
 sub install-apt-packages ($cpu) {
-    say aptpkgs();
     my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
     if so @apt-pkgs-to-install {
 	run "sudo", "apt", "install" , @apt-pkgs-to-install; 
