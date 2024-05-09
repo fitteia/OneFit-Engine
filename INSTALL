@@ -131,6 +131,7 @@ sub install-apt-packages ($cpu) {
 sub install-web-server () {
     my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
     do {
+	say "Select and install Wer-server and SSH-server";
 	shell "sudo tasksel";
 	shell "sudo a2enmod userdir";
 	shell "sudo systemctl restart apache2";
