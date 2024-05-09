@@ -22,10 +22,9 @@ say $description;
 ($folder).map({ .IO.rmdir if .IO.e });
 $folder.IO.mkdir;
 my @x = [-3,-2.75,-2.5...1].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)});
-my @y = gather for @x { take (1-2*exp(-10**$_/0.1 }
+my @y = gather for @x { take 1-2*exp(-10**$_/0.1 }
 "$folder/lixo.txt".IO.spurt: (@x Z @y).join("\n");
 
 shell "cd $folder && onefite fit \"y:[-1.2;1.1](t[1e-3;10],M0,T1)=M0*(1-2*exp(-t/T1)\" lixo.txt --save-to=$json-file ";
-
       
 say "lookup for more output in $folder";
