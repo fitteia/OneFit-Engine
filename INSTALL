@@ -101,6 +101,7 @@ sub aptpkgs () {
     tasksel>
 }
 
+
 sub apt-pkgs-not-installed (@pkgs) {
     my @a=shell("apt list --installed",:out,:err).out.lines(:close);
     @a.map({ $_ = $_.split("/").head });
