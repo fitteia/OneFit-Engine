@@ -41,8 +41,8 @@ prompt> cd $HOME/public_html && raku xx-RUN.me"
 
 Tipically the output will go to example_xx folder.
 
-prompt> ip -4 -br address
+prompt> ip -4 -br add
 
 to get the IP address
 
-Use a browser to access the hhtp://<IP>/~ofe/ folder.
+Use a browser to access the http://<IP>/~ofe/ folder.
