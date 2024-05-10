@@ -45,4 +45,4 @@ prompt> ip -4 -br add
 
 to get the IP address
 
-Use a browser to access the http://<IP>/~ofe/ folder.
+Use a browser to access the http://\<IP\>/~ofe/ folder.
