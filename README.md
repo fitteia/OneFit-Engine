@@ -9,6 +9,8 @@ For Debian "bookworm"
 Create a user account (ex: ofe):\
 prompt> su -\
 prompt> apt install raku git sudo\
+prompt> usermod -a -G sudo ofe \
+prompt> exit \
 prompt> mkdir $HOME/.local && cd $HOME/.local
 
 prompt> git clone https://github.com/fitteia/OneFit-Engine.git
