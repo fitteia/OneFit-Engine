@@ -3,6 +3,8 @@
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
+our $SUDO = "sudo";
+
 multi MAIN (Bool :$dpkg = True, # to install required debian packages
             Bool :w(:$web-server) = True, # to run tasksel install web-server
 	    Str  :$cpu is copy, # [amd64|arm64| defaults to "uname -a" detection 
@@ -27,7 +29,6 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
-    our $SUDO = "sudo";
     $SUDO = "" unless $to-site;
     
     install-apt-packages($cpu) if $dpkg.Bool;
