@@ -169,7 +169,7 @@ sub install (:$test,:$to-site, :$bindir) {
 	    do {
 		my $yesno;
 		$yesno = prompt "$_ located, do you wish to remove it [y|n]?";
-		shell "sudo zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
+		shell "$SUDO zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
 	    } unless $_.contains("Nothing located");
 	}
     } 
