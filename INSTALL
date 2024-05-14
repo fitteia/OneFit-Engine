@@ -11,6 +11,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
 	    Bool :t(:$test) = True, # to run raku module tests
 	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
+	    Bool :u(:$uninstall) = False, # to uninstall OneFit-Engine module					   
 	    Bool :p(:$inline-perl5) = True, # attempt to install raku module Inline::Perl5
 	    Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
 	    Bool :$to-site = True, # install raku module to site (use --/to-site to install-to user)
@@ -42,6 +43,8 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
     install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
+
+    uninstall() if $uninstall;
 
 }
 
@@ -160,6 +163,11 @@ sub enable-ghostscript-in-ImageMagick-policy () {
 sub compile (:$root,:$arch,:$bindir,:$pv) {
     say "install source in $*CWD and binaries with perl version: $pv";
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
+}
+
+sub unistall () {
+    shell "$SUDO zef uninstall OneFit-Engine";
+    shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.e;
 }
 
 sub install (:$test,:$to-site, :$bindir) {
