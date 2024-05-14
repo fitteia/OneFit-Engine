@@ -1,4 +1,4 @@
-f#!/usr/bin/env raku
+#!/usr/bin/env raku
 
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
@@ -34,7 +34,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
     install-web-server if $web-server;
 
-    install-Inline-Perl5() if $inline-perl5.Bool;
+    install-Inline-Perl5($to-site) if $inline-perl5.Bool;
 
     enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool;
 
@@ -144,7 +144,7 @@ sub install-web-server () {
 }
 
 
-sub install-Inline-Perl5 () {
+sub install-Inline-Perl5 ($to-site) {
     shell("sudo zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
 }
 
