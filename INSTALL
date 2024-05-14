@@ -31,7 +31,9 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $root=$*CWD;
 
     $SUDO = "" unless $to-site;
-    
+
+    uninstall() if $uninstall;
+
     install-apt-packages($cpu) if $dpkg.Bool;
 
     install-web-server if $web-server;
@@ -44,9 +46,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
     install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
-    uninstall() if $uninstall;
-
-}
+ }
 
 multi MAIN ('help') { MAIN :h }
 
@@ -168,6 +168,7 @@ sub compile (:$root,:$arch,:$bindir,:$pv) {
 sub uninstall () {
     shell "$SUDO zef uninstall OneFit-Engine";
     shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.e;
+    exit;
 }
 
 sub install (:$test,:$to-site, :$bindir) {
