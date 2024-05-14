@@ -165,7 +165,7 @@ sub compile (:$root,:$arch,:$bindir,:$pv) {
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
 }
 
-sub unistall () {
+sub uninstall () {
     shell "$SUDO zef uninstall OneFit-Engine";
     shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.e;
 }
