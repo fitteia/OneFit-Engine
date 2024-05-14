@@ -68,7 +68,7 @@ Usage:
     --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise
     --bindir       # defaults to $*CWD/../bin (use --bindir=/\$HOME/bin to set another folder for binaries)
     negated options:
-    ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile
+    ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile
 END_HELP
 }
 
