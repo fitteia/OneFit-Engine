@@ -54,7 +54,8 @@ multi MAIN (Bool :h(:help($))) {
     note qq:to/END_HELP/;
 Usage:
     ./INSTALL [-h|--help]
-    ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]
+      ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs] \
+                [-w|--web-server] [-u|--uninstall] [--to-site] [--bindir] \
     --dpkg         # to install required debian packages
     --web-server   # to run tasksel install web-server
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
