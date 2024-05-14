@@ -146,7 +146,7 @@ sub install-web-server () {
 
 
 sub install-Inline-Perl5 ($to-site) {
-    shell("sudo zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
+    shell("$SUDO zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
 }
 
 sub enable-ghostscript-in-ImageMagick-policy () {
