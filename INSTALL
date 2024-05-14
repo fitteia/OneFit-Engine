@@ -27,7 +27,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
-    my $SUDO = "sudo";
+    our $SUDO = "sudo";
     $SUDO = "" unless $to-site;
     
     install-apt-packages($cpu) if $dpkg.Bool;
