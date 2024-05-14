@@ -1,4 +1,4 @@
-#!/usr/bin/env raku
+f#!/usr/bin/env raku
 
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
@@ -27,6 +27,9 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
+    my $SUDO = "sudo";
+    $SUDO = "" unless $to-site;
+    
     install-apt-packages($cpu) if $dpkg.Bool;
 
     install-web-server if $web-server;
@@ -142,7 +145,7 @@ sub install-web-server () {
 
 
 sub install-Inline-Perl5 () {
-    shell("sudo zef install Inline::Perl5 --install-to=site") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
+    shell("sudo zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
 }
 
 sub enable-ghostscript-in-ImageMagick-policy () {
@@ -171,14 +174,14 @@ sub install (:$test,:$to-site, :$bindir) {
     } 
     if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
-	shell("sudo zef -v { '--install-to=site ' if $to-site } install ./");
+	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
 	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
 	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
     else {
-	shell("sudo zef -v --/test { '--install-to=site ' if $to-site } install ./");
+	shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./");
 	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
