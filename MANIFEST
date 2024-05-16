@@ -170,6 +170,7 @@ examples/command-line/02-raku.me
 examples/command-line/03-raku.me
 examples/command-line/04-raku.me
 examples/command-line/05-raku.me
+examples/command-line/06-raku.me
 lib/OneFit.rakumod
 lib/OneFit/Engine/Agrs.rakumod
 lib/OneFit/Engine/Axes.rakumod
