@@ -291,6 +291,7 @@ multi MAIN ('start-web-engine',
 	}
 
     }
+    say "Starting onefite web service on $ip";
     my Cro::Service $service = Cro::HTTP::Server.new:
 			       host => $ip,
 			       :port<10000>,
