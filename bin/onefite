@@ -279,7 +279,7 @@ multi MAIN ('start-web-engine',
 		content 'text/plain', "File '$filename' uploaded.\n$txt";
 	    }	
 	}
-	post -> 'dounload' {
+	post -> 'download' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $file-content = $file.body-blob;
