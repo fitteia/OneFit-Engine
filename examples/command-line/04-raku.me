@@ -15,7 +15,7 @@ onefite command line: Example 04
 END_DESCRIPTION
 
 say $description;
-($folder).map({ .IO.rmdir if .IO.e });
+shell("rm -fr $folder") if $folder.IO.e;
 $folder.IO.mkdir;
 
 my @x = [-5..5].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)});
