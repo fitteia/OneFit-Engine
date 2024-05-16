@@ -12,7 +12,7 @@ onefite command line: Example 01
 END_DESCRIPTION
 
 say $description;
-($folder).map({ .IO.rmdir if .IO.e });
+shell("rm -fr $folder") if $folder.IO.e;
 $folder.IO.mkdir;
 "$folder/lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
 shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
