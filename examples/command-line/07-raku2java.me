@@ -15,7 +15,7 @@ END_DESCRIPTION
 say $description;
 shell("rm -fr $folder") if $folder.IO.e;
 $folder.IO.mkdir;
-"$folder/lixo.txt".IO.spurt: qq:to/END_DATA/;
+"$folder/example_07.txt".IO.spurt: qq:to/END_DATA/;
 4e+07 2.38
 3e+07 2.39
 2.5e+07 2.41
@@ -48,7 +48,7 @@ public class JavaRunOFE {
         ProcessBuilder processBuilder = new ProcessBuilder();
 
 	// Run the specified command
-        processBuilder.command("onefite", "fit", "R1(f[1e4;5e8],q=1,C:7.85e-1[1e-3;5e5],ms=1.8e-2,p=1,S=3.5,tm:1e-7[1e-10;1e-6],tR:1e-8[1e-10;1e-8],tv:1e-12[1e-12;1e-9],r=2.5e-10,Delta2:1e21[1e20;1e22],Aoh=5e6)=R1ISsbm(f,q,C,ms,p,S,tm,tR,tv,r,Delta2,Aoh)", "example_1.txt", "--loglin", "--zip-to=trash3.zip", "--save-to=trash3.json");
+        processBuilder.command("onefite", "fit", "R1(f[1e4;5e8],q=1,C:7.85e-1[1e-3;5e5],ms=1.8e-2,p=1,S=3.5,tm:1e-7[1e-10;1e-6],tR:1e-8[1e-10;1e-8],tv:1e-12[1e-12;1e-9],r=2.5e-10,Delta2:1e21[1e20;1e22],Aoh=5e6)=R1ISsbm(f,q,C,ms,p,S,tm,tR,tv,r,Delta2,Aoh)", "example_07.txt", "--loglin", "--zip-to=trash3.zip", "--save-to=trash3.json");
 
         try {
             Process process = processBuilder.start();
@@ -79,7 +79,7 @@ public class JavaRunOFE {
 }
 END_JAVA
 
-"$folder/manifest.txt".IO.spurt("Main-Class: JavaRunOFE");
+"$folder/manifest.txt".IO.spurt("Main-Class: JavaRunOFE\n");
 
 if so shell("type javac",:err).err.slurp(:close) {
     say "javac not installed";
