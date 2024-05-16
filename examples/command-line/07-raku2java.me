@@ -38,12 +38,12 @@ $folder.IO.mkdir;
 14050 5.48
 END_DATA
 
-"$folder/JavaRunOFE".IO.spurt: q:to/END_JAVA/;
+"$folder/JavaRunOFE.java".IO.spurt: q:to/END_JAVA/;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
-public class RunShellOFE {
+public class JavaRunOFE {
     public static void main(String[] args) {
         ProcessBuilder processBuilder = new ProcessBuilder();
 
@@ -79,11 +79,11 @@ public class RunShellOFE {
 }
 END_JAVA
 
-"$folder/manifest.txt".IO.spurt("Main-Class: RunShellOFE");
+"$folder/manifest.txt".IO.spurt("Main-Class: JavaRunOFE");
 
-shell "cd $folder && javac JaveRunOFE" unless shell("javac",:err).err(:close).words.tail.contains("not found");
+shell "cd $folder && javac JaveRunOFE.java" unless shell("javac",:err).err(:close).words.tail.contains("not found");
 
-shell "cd $folder && jar cfm JavaRunOFE.jar manifest.txt RunShellOFE.class";
+shell "cd $folder && jar cfm JavaRunOFE.jar manifest.txt JavaRunOFE.class";
 shell "cd $folder && java -jar JavaRunOFE.jar";
       
 say "lookup for more output in $folder";
