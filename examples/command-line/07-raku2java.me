@@ -38,7 +38,7 @@ $folder.IO.mkdir;
 14050 5.48
 END_DATA
 
-"$folder/java-ofe".IO.spurt: q:to/END_JAVA/;
+"$folder/JavaRunOFE".IO.spurt: q:to/END_JAVA/;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -81,9 +81,9 @@ END_JAVA
 
 "$folder/manifest.txt".IO.spurt("Main-Class: RunShellOFE");
 
-shell "cd $folder && javac jave-ofe" unless shell("javac",:err).err(:close).words.tail.contains("not found");
+shell "cd $folder && javac JaveRunOFE" unless shell("javac",:err).err(:close).words.tail.contains("not found");
 
-shell "cd $folder && jar cfm java-ofe.jar manifest.txt RunShellOFE.class";
-shell "cd $folder && java -jar java-ofe.jar"
+shell "cd $folder && jar cfm JavaRunOFE.jar manifest.txt RunShellOFE.class";
+shell "cd $folder && java -jar JavaRunOFE.jar";
       
 say "lookup for more output in $folder";
