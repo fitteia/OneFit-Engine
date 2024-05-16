@@ -18,6 +18,6 @@ $folder.IO.mkdir;
 "$folder/lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
 shell "onefite create \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
 say $json-file.IO.slurp;
-shell "onefite create \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
+shell "onefite fit $folder/$json-file --work-folder=$folder --save-to=$folder/$json-file";
       
 say "lookup for more output in $folder";
