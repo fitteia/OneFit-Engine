@@ -81,7 +81,7 @@ END_JAVA
 
 "$folder/manifest.txt".IO.spurt("Main-Class: JavaRunOFE");
 
-if so shell("type javac",:err).err.slupr(:close) {
+if so shell("type javac",:err).err.slurp(:close) {
     say "javac not installed";
     exit;
 }
