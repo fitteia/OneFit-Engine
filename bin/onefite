@@ -14,6 +14,10 @@ use OneFit::Engine::Parfiles;
 use OneFit::Engine::Stpfiles;
 use Test;
 
+use Cro::HTTP::Router;
+use Cro::HTTP::Server;
+use JSON::Fast;
+
 my %*SUB-MAIN-OPTS = :named-anywhere, ;
 
 multi MAIN (Bool :h(:help($))) {
@@ -244,6 +248,52 @@ multi MAIN  ('plot',
 	    zip-fit($engine,$work-folder,$name);
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 	    exit;
+}
+
+multi MAIN ('start-web-engine',
+	   ){
+    my $application = route {
+	get -> {
+            content 'text/html', q:to/HTML/;
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <title>File Upload</title>
+            </head>
+            <body>
+            <h1>File Upload</h1>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <button type="submit">Upload</button>
+            </form>
+            </body>
+            </html>
+            HTML
+	}
+	post -> 'upload' {
+            request-body -> (:$file, *%rest) {
+    		my $filename = $file.filename;
+		my $file-content = $file.body-blob;
+		$filename.IO.spurt: $file-content.decode('UTF-8');
+		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
+		content 'text/plain', "File '$filename' uploaded.\n$txt";
+	    }	
+	}
+
+    }
+    my $IP = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close));
+    $IP = $IP.tail<addr_info>.head<local>;
+    my Cro::Service $service = Cro::HTTP::Server.new:
+			       host => $IP,
+			       :port<10000>,
+			       :$application;
+    
+    $service.start;
+    
+    react whenever signal(SIGINT) {
+	$service.stop;
+	exit;
+    }
 }
 
 multi MAIN ('start-engine',
