@@ -81,7 +81,7 @@ END_JAVA
 
 "$folder/manifest.txt".IO.spurt("Main-Class: JavaRunOFE");
 
-shell "cd $folder && javac JaveRunOFE.java" unless shell("javac",:err).err(:close).words.tail.contains("not found");
+shell("cd $folder && javac JavaRunOFE.java") unless so shell("javac",:err).err(:close).words.tail.contains("not found");
 
 shell "cd $folder && jar cfm JavaRunOFE.jar manifest.txt JavaRunOFE.class";
 shell "cd $folder && java -jar JavaRunOFE.jar";
