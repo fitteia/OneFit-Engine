@@ -277,7 +277,7 @@ multi MAIN ('start-web-engine',
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
 		content 'text/plain', "File '$filename' uploaded.\n$txt";
-		content 'application/octet-stream', $filename.subst('.json','.zip');
+		content 'application/octet-stream', $filename.subst('.json','.zip').IO;
 	    }	
 	}
 
