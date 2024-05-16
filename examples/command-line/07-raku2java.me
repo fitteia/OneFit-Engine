@@ -1,0 +1,89 @@
+#!/usr/bin/env raku
+
+my $folder = "$*HOME/public_html/example_07";
+my $json-file = "example_07.json";
+
+my $description = qq:to/END_DESCRIPTION/;
+onefite command line: Example 07
+
+   1) creates $folder folder
+   2) creates file $folder/lixo.txt with data
+   3) creates a java script to run onefite
+   4) compiles and runs	 
+END_DESCRIPTION
+
+say $description;
+($folder).map({ .IO.rmdir if .IO.e });
+$folder.IO.mkdir;
+"$folder/lixo.txt".IO.spurt: qq:to/END_DATA/;
+4e+07 2.38
+3e+07 2.39
+2.5e+07 2.41
+2e+07 2.44
+1.5e+07 2.51
+1e+07 2.74
+7e+06 3.16 
+5.028e+06 3.73
+2.5188e+06 4.82
+1.2626e+06 5.3 
+632320 5.43
+317030 5.47
+158740 5.48
+112250 5.48
+79720 5.48
+56200 5.48
+39680 5.48
+28200 5.48
+20040 5.48
+14050 5.48
+END_DATA
+
+"$folder/java-ofe".IO.spurt: q:to/END_JAVA/;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+public class RunShellOFE {
+    public static void main(String[] args) {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+
+        // Run the specified command
+        processBuilder.command("onefite", "fit", "R1(f[1e4;5e8],q=1,C:7.85e-1[1e-3;5e5],ms=1.8e-2,p=1,S=3.5,tm:1e-7[1e-10;1e-6],tR:1e-8[1e-10;1e-8],tv:1e-12[1e-12;1e-9],r=2.5e-10,Delta2:1e21[1e20;1e22],Aoh=5e6)=R1ISsbm(f,q,C,ms,p,S,tm,tR,tv,r,Delta2,Aoh)", "example_1.txt", "--loglin", "--zip-to=trash3.zip", "--save-to=trash3.json");
+
+        try {
+            Process process = processBuilder.start();
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+            // Read the output from the command
+            String line;
+            System.out.println("Standard output:\n");
+            while ((line = stdInput.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            // Read any errors from the attempted command
+            System.out.println("\nStandard error:\n");
+            while ((line = stdError.readLine()) != null) {
+                System.out.println(line);
+            }
+
+            // Wait for the process to finish
+            int exitCode = process.waitFor();
+            System.out.println("\nExited with code : " + exitCode);
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+END_JAVA
+
+"$folder/manifest.txt".IO.spurt("Main-Class: RunShellOFE");
+
+shell "cd $folder && javac jave-ofe" unless shell("javac",:err).err(:close).words.tail.contains("not found");
+
+shell "cd $folder && jar cfm java-ofe.jar manifest.txt RunShellOFE.class";
+shell "cd $folder && java -jar java-ofe.jar"
+      
+say "lookup for more output in $folder";
