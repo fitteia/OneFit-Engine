@@ -13,7 +13,7 @@ onefite command line: Example 07
 END_DESCRIPTION
 
 say $description;
-($folder).map({ .IO.rmdir if .IO.e });
+($folder).map({ say $_ if .IO.e });
 $folder.IO.mkdir;
 "$folder/lixo.txt".IO.spurt: qq:to/END_DATA/;
 4e+07 2.38
@@ -81,7 +81,7 @@ END_JAVA
 
 "$folder/manifest.txt".IO.spurt("Main-Class: JavaRunOFE");
 
-shell("cd $folder && javac JavaRunOFE.java") unless so shell("javac",:err).err(:close).words.tail.contains("not found");
+shell("cd $folder && javac JavaRunOFE.java") unless so shell("javac",:err).err(:close).lines.tail.words.tail.contains("not found");
 
 shell "cd $folder && jar cfm JavaRunOFE.jar manifest.txt JavaRunOFE.class";
 shell "cd $folder && java -jar JavaRunOFE.jar";
