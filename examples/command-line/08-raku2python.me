@@ -1,0 +1,70 @@
+#!/usr/bin/env raku
+
+my $folder = "$*HOME/public_html/example_08";
+my $json-file = "example_08.json";
+
+my $description = qq:to/END_DESCRIPTION/;
+onefite command line: Example 07
+
+   1) creates $folder folder
+   2) creates file $folder/lixo.txt with data
+   3) creates a python script to run onefite
+   4) runs the script	 
+END_DESCRIPTION
+
+say $description;
+shell("rm -fr $folder") if $folder.IO.e;
+$folder.IO.mkdir;
+"$folder/example_08.txt".IO.spurt: qq:to/END_DATA/;
+4e+07 2.38
+3e+07 2.39
+2.5e+07 2.41
+2e+07 2.44
+1.5e+07 2.51
+1e+07 2.74
+7e+06 3.16 
+5.028e+06 3.73
+2.5188e+06 4.82
+1.2626e+06 5.3 
+632320 5.43
+317030 5.47
+158740 5.48
+112250 5.48
+79720 5.48
+56200 5.48
+39680 5.48
+28200 5.48
+20040 5.48
+14050 5.48
+END_DATA
+
+"$folder/runs-ofe.py".IO.spurt: q:to/END_PYTHON/;
+#!/usr/bin/env python3
+
+import subprocess
+
+def run_shell_command(command):
+    try:
+        # Run the shell command
+        result = subprocess.run(command, shell=True, check=True, text=True, capture_output=True)
+        
+        # Print the output of the command
+        print("Output:")
+        print(result.stdout)
+        
+        # Print the error (if any) of the command
+        if result.stderr:
+            print("Error:")
+            print(result.stderr)
+    except subprocess.CalledProcessError as e:
+        print(f"The command '{command}' failed with error code: {e.returncode}")
+        print(f"Error message: {e.stderr}")
+
+# Example usage
+if __name__ == "__main__":
+	       command = "cd $folder && onefite fit \"R1(f[1e4;5e8],q=1,C:7.85e-1[1e-3;5e5],ms=1.8e-2,p=1,S=3.5,tm:1e-7[1e-10;1e-6],tR:1e-8[1e-10;1e-8],tv:1e-12[1e-12;1e-9],r=2.5e-10,Delta2:1e21[1e20;1e22],Aoh=5e6)=R1ISsbm(f,q,C,ms,p,S,tm,tR,tv,r,Delta2,Aoh)\" example_07.txt --loglin --zip-to=trash3.zip --save-to=trash3.json";
+END_PYTHON
+        ;
+shell "python runs-ofe.py";
+
+say "Lookup for more output in $folder.";
