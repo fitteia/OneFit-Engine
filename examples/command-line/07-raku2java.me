@@ -79,7 +79,7 @@ public class JavaRunOFE {
 }
 END_JAVA
 
-raku "$folder/manifest.txt".IO.spurt("Main-Class: JavaRunOFE\n");
+"$folder/manifest.txt".IO.spurt("Main-Class: JavaRunOFE\n");
 
 if so shell("type javac",:out,:err).out.slurp(:close).contains("not found") {
     say "javac not installed";
