@@ -270,14 +270,14 @@ multi MAIN ('start-web-engine',
             </html>
             HTML
 	}
-	post -> 'upload' {
+	post -> 'onefite' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
 		content 'text/plain', "File '$filename' uploaded.\n$txt";
-		content 'application/octet-stream', $filename.subst('.json','.zip').IO;
+		static 'files', $filename.subst('.json','.zip');
 	    }	
 	}
 
