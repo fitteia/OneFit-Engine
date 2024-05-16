@@ -251,6 +251,7 @@ multi MAIN  ('plot',
 }
 
 multi MAIN ('start-web-engine',
+	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
 	   ){
     my $application = route {
 	get -> {
@@ -290,10 +291,8 @@ multi MAIN ('start-web-engine',
 	}
 
     }
-    my $IP = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close));
-    $IP = $IP.tail<addr_info>.head<local>;
     my Cro::Service $service = Cro::HTTP::Server.new:
-			       host => $IP,
+			       host => $ip,
 			       :port<10000>,
 			       :$application;
     
