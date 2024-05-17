@@ -60,7 +60,7 @@ prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no
 
 Examples of onefite use can e found in the examples folder.
 
-prompt> cd $HOME/public_html && raku xx-RUN.me"
+prompt> cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/xx-RUN.me"
 
 Tipically the output will go to example_xx folder.
 
@@ -69,3 +69,11 @@ prompt> ip -4 -br add
 to get the IP address
 
 Use a browser to access the http://\<IP\>/~ofe/ folder.
+
+prompt> cd $HOME/public_html && onefite start-web-engine &
+prompt> raku $HOME/.local/OneFit-Engine/06-raku.me
+prompt> curl -F "file=@example_06/example_06.json" http://<IP>/onefite
+
+or
+
+prompt> prompt> curl -F "file=@example_06/example_06.json" http://<IP>/download | tar zxvf -
