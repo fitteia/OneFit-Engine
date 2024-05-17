@@ -86,18 +86,20 @@ multi MAIN ('start-web-engine',
 	post -> 'onefite' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
+		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename --save-to={ $filename.IO.extension('.json').Str }",:out).out.slurp(:close);
+		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
 	    }	
 	}
 	post -> 'download' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
+		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename --save-to={ $filename.IO.extension('.json').Str }",:out).out.slurp(:close);
+		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		content 'application/octet-stream', $filename.IO.extension('zip').slurp(:bin);
 	    }	
 	}
