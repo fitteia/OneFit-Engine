@@ -94,7 +94,7 @@ multi MAIN ('start-web-engine',
 		   if %rest<download>.IO.e {
 		      content 'application/octet-stream', $file.IO.slurp(:bin);
 		   }
-		   elsif ( "$folder/$file".IO.e {
+		   elsif ( "$folder/$file".IO.e ) {
 		      content 'application/octet-stream', "$folder/$file".IO.slurp(:bin);
 		   }
 		   else {
