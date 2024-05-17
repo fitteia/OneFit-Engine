@@ -89,21 +89,22 @@ multi MAIN ('start-web-engine',
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
-		if so %rest<download> {
-		   my $file=%rest<download>;
-		   if %rest<download>.IO.e {
-		      content 'application/octet-stream', $file.IO.slurp(:bin);
-		   }
-		   elsif ( "$folder/$file".IO.e ) {
-		      content 'application/octet-stream', "$folder/$file".IO.slurp(:bin);
-		   }
-		   else {
-		      content 'application/octet-stream', "$folder/$filename".IO.slurp(:bin);
-		   }		      
-		}
-		else {
+say %rest<download>;
+#		if so %rest<download> {
+#		   my $file=%rest<download>;
+#		   if %rest<download>.IO.e {
+#		      content 'application/octet-stream', $file.IO.slurp(:bin);
+#		   }
+#		   elsif ( "$folder/$file".IO.e ) {
+#		      content 'application/octet-stream', "$folder/$file".IO.slurp(:bin);
+#		   }
+#		   else {
+#		      content 'application/octet-stream', "$folder/$filename".IO.slurp(:bin);
+#		   }		      
+#		}
+#		else {
 		     content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
- 		}
+ #		}
 	    }	
 	}
 	post -> 'download' {
