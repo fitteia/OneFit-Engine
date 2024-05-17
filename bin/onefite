@@ -86,7 +86,6 @@ multi MAIN ('start-web-engine',
 	post -> 'onefite' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
-		my $folder = $filename.subst('.json','');
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
@@ -99,7 +98,7 @@ multi MAIN ('start-web-engine',
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
-		content 'application/octet-stream', $filename.subst('.json','.zip').IO.slurp(:bin);
+		content 'application/octet-stream', $filename.IO.extension('zip').slurp(:bin);
 	    }	
 	}
 
