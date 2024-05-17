@@ -38,8 +38,8 @@ class Axis is export {
     method scale (:$min,:$max,:$nt, Bool :$auto) {
 	# algorithm from chatGPT
 	if (%!axis<type> eq "Normal") {
-	    %!axis<step> = ($max-$min)/$nt;
-	    # unrouded step
+	    say $max,$min,$nt;
+	    %!axis<step> = ($max-$min)/$nt; # unrouded step
 	    my $p=(floor(log10(%!axis<step>)));
 	    my $mag  = 10**$p;
 	    %!axis<step> = (2,5,10).grep( { $_*$mag >= %!axis<step> } )[0] * $mag; # rounded step
