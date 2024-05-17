@@ -87,8 +87,8 @@ multi MAIN ('start-web-engine',
     		my $filename = $file.filename;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
-		content 'text/plain', "File '$filename' uploaded.\n$txt";
+		my $txt = shell("onefite fit $filename",:out).out.slurp(:close)
+		content 'text/plain', "File '$filename' uploaded.\n$txt\n%rest";
 	    }	
 	}
 	post -> 'download' {
