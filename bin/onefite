@@ -26,23 +26,23 @@ multi MAIN (Bool :h(:help($))) {
 #    my $p= shell "onefite", :err;
 #    say $p.err.slurp(:close);
     note qq:to/END_USAGE/;
-Usage:
-  onefite [-h|--help]
-  onefite convert <input-file> <output-file>
-  onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
-  onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-  onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-  onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-  onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-  onefite fit <input-file> [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--save-to|--to=<Str>] [--work-folder=<Str>]
-  onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--work-folder=<Str>]
-  onefite test list
-  onefite test [<arr> ...]
+    Usage:
+        onefite [-h|--help]
+	onefite convert <input-file> <output-file>
+	onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
+	onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
+	onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+	onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+	onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+	onefite fit <input-file> [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--save-to|--to=<Str>] [--work-folder=<Str>]
+	onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--work-folder=<Str>]
+	onefite test list
+	onefite test [<arr> ...]
   
-    <input-file>     name of the file to be converted (.sav or .json)
-    <output-file>    name of the converted file (.sav or .json)
-    
-    <function> syntax alternatives:
+	<input-file>     name of the file to be converted (.sav or .json)
+	<output-file>    name of the converted file (.sav or .json)
+
+	<function> syntax alternatives:
     \"y(x,a,b,c)=a + b*x + c*pow(x,2.0)\"
     \"y(t,A,lambda: 0.1)=A*exp(-lambda*t)\" 0.1 is the initial value to start mimimization
     \"y (t,A,B=2,lambda)=A * (1 - B*exp(-lambda*t) )\" B is fixed with value 2
