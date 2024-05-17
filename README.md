@@ -77,3 +77,4 @@ prompt> curl -F "file=@example_06/example_06.json" http://<IP>/onefite
 or
 
 prompt> prompt> curl -F "file=@example_06/example_06.json" http://<IP>/download | tar zxvf -
+
