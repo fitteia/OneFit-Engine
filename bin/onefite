@@ -59,6 +59,115 @@ multi MAIN ('convert',
     my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
     exit;
 }
+multi MAIN ('start-web-engine',
+	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
+	    :p(:$port) = 8142,   
+	   ){
+    my $application = route {
+	get -> {
+            content 'text/html', q:to/HTML/;
+            <!DOCTYPE html>
+            <html>
+            <head>
+            <title>File Upload</title>
+            </head>
+            <body>
+            <h1>File Upload</h1>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="file">
+            <button type="submit">Upload</button>
+            </form>
+            </body>
+            </html>
+            HTML
+	}
+	post -> 'onefite' {
+            request-body -> (:$file, *%rest) {
+    		my $filename = $file.filename;
+		my $file-content = $file.body-blob;
+		$filename.IO.spurt: $file-content.decode('UTF-8');
+		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
+		content 'text/plain', "File '$filename' uploaded.\n$txt";
+	    }	
+	}
+	post -> 'download' {
+            request-body -> (:$file, *%rest) {
+    		my $filename = $file.filename;
+		my $file-content = $file.body-blob;
+		$filename.IO.spurt: $file-content.decode('UTF-8');
+		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
+		content 'application/octet-stream', $filename.subst('.json','.zip').IO.slurp(:bin);
+	    }	
+	}
+
+    }
+    say "Starting onefite web service on $ip";
+    my Cro::Service $service = Cro::HTTP::Server.new:
+			       host => $ip,
+			       port => $port,
+			       :$application;
+    
+    $service.start;
+    
+    react whenever signal(SIGINT) {
+	$service.stop;
+	exit;
+    }
+}
+
+multi MAIN ('start-engine',
+	    Bool :$no-plot,
+	    Bool :q(:$quiet)=False, # Don't show log messages
+	    Str :$work-folder = '.'
+	   ){
+    my $supplier = Supplier.new;
+    $supplier.Supply.tap: -> $f {
+	start {
+	    my $cmd = "plot";
+	    $f ~~ /$<cmd>=(__fit__|__plot__|__fit\-only__)* $<file>=(\S+)/;
+	    my $file = $<file>;
+	    $cmd = $<cmd>.subst('__','',:g);
+	    my $name = $file.subst(/\.sav|\.json/,'',:g);
+	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	    "$work-folder/$name".IO.mkdir;
+	    $f.IO.move("$work-folder/$name/$file");
+	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
+	    if $cmd ~~ /plot/ {
+		my $time = now;
+		say "start plotting $file";
+		$engine.plot;
+		say "finished plotting $file:", now - $time;
+	    }
+	    elsif $cmd ~~ /only/ {
+		my $time = now;
+		say "start fitting $file";
+		$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
+		say "finished fitting $file:", now - $time;
+	    }
+	    else {
+		my $time = now;
+		say "start fitting $file";
+		$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
+		say "finished fitting $file:", now - $time;
+	    }
+	    zip-fit($engine,$work-folder,$name);
+	}
+    }
+    
+    while True {
+	my @files = dir('.').grep(*.f).grep(/\.sav|\.json/).words;
+	for @files -> $file {
+	    if now - $file.IO.changed > 1 { 
+		$supplier.emit($file);
+		sleep 1;
+	    }
+	    else {
+		sleep 1;
+	    }
+	}
+    }
+    
+}
 
 multi MAIN  ('create',
 	     Str  $function,
@@ -250,114 +359,6 @@ multi MAIN  ('plot',
 	    exit;
 }
 
-multi MAIN ('start-web-engine',
-	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
-	   ){
-    my $application = route {
-	get -> {
-            content 'text/html', q:to/HTML/;
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <title>File Upload</title>
-            </head>
-            <body>
-            <h1>File Upload</h1>
-            <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <button type="submit">Upload</button>
-            </form>
-            </body>
-            </html>
-            HTML
-	}
-	post -> 'onefite' {
-            request-body -> (:$file, *%rest) {
-    		my $filename = $file.filename;
-		my $file-content = $file.body-blob;
-		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
-		content 'text/plain', "File '$filename' uploaded.\n$txt";
-	    }	
-	}
-	post -> 'download' {
-            request-body -> (:$file, *%rest) {
-    		my $filename = $file.filename;
-		my $file-content = $file.body-blob;
-		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
-		content 'application/octet-stream', $filename.subst('.json','.zip').IO.slurp(:bin);
-	    }	
-	}
-
-    }
-    say "Starting onefite web service on $ip";
-    my Cro::Service $service = Cro::HTTP::Server.new:
-			       host => $ip,
-			       :port<10000>,
-			       :$application;
-    
-    $service.start;
-    
-    react whenever signal(SIGINT) {
-	$service.stop;
-	exit;
-    }
-}
-
-multi MAIN ('start-engine',
-	    Bool :$no-plot,
-	    Bool :q(:$quiet)=False, # Don't show log messages
-	    Str :$work-folder = '.'
-	   ){
-    my $supplier = Supplier.new;
-    $supplier.Supply.tap: -> $f {
-	start {
-	    my $cmd = "plot";
-	    $f ~~ /$<cmd>=(__fit__|__plot__|__fit\-only__)* $<file>=(\S+)/;
-	    my $file = $<file>;
-	    $cmd = $<cmd>.subst('__','',:g);
-	    my $name = $file.subst(/\.sav|\.json/,'',:g);
-	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-	    "$work-folder/$name".IO.mkdir;
-	    $f.IO.move("$work-folder/$name/$file");
-	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
-	    if $cmd ~~ /plot/ {
-		my $time = now;
-		say "start plotting $file";
-		$engine.plot;
-		say "finished plotting $file:", now - $time;
-	    }
-	    elsif $cmd ~~ /only/ {
-		my $time = now;
-		say "start fitting $file";
-		$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
-		say "finished fitting $file:", now - $time;
-	    }
-	    else {
-		my $time = now;
-		say "start fitting $file";
-		$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
-		say "finished fitting $file:", now - $time;
-	    }
-	    zip-fit($engine,$work-folder,$name);
-	}
-    }
-    
-    while True {
-	my @files = dir('.').grep(*.f).grep(/\.sav|\.json/).words;
-	for @files -> $file {
-	    if now - $file.IO.changed > 1 { 
-		$supplier.emit($file);
-		sleep 1;
-	    }
-	    else {
-		sleep 1;
-	    }
-	}
-    }
-    
-}
 
 multi MAIN ('test','list') {
     my $test-path=OFE-PATH ~ "/t";
