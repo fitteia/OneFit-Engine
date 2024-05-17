@@ -88,7 +88,7 @@ multi MAIN ('start-web-engine',
     		my $filename = $file.filename;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
+		my $txt = shell("onefite fit $filename --save-to={ $filename.IO.extension('.json').Str }",:out).out.slurp(:close);
 		content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
 	    }	
 	}
@@ -97,7 +97,7 @@ multi MAIN ('start-web-engine',
     		my $filename = $file.filename;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename",:out).out.slurp(:close);
+		my $txt = shell("onefite fit $filename --save-to={ $filename.IO.extension('.json').Str }",:out).out.slurp(:close);
 		content 'application/octet-stream', $filename.IO.extension('zip').slurp(:bin);
 	    }	
 	}
