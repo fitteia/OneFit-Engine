@@ -93,7 +93,7 @@ HTML
 		content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
 	    }	
 	}
-	post -> 'download',$file-to-donwload {
+	put -> 'download',$file-to-donwload {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		say $file-to-download;
