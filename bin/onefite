@@ -96,7 +96,7 @@ HTML
 	post -> 'download' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
-		say %rest<download>;
+		say %rest.value;
 		for %rest.kv -> $k,$v {say "$k: $v" }
 		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
