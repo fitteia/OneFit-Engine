@@ -96,8 +96,8 @@ HTML
 	post -> 'download' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
-		say %rest<>:v;
-		for %rest.kv -> $k,$v {say "$k: $v" }
+		my @files = gather for %rest.kv -> $k,$v { take $v }
+		say @files;
 		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
