@@ -37,7 +37,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
     install-web-server if $web-server;
 
-    install-p6-modulles($to-site) if $p6-modules.Bool;
+    install-p6-modules($to-site) if $p6-modules.Bool;
 
     enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool;
 
