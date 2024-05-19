@@ -11,7 +11,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 	    Bool :t(:$test) = True, # to run raku module tests
 	    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
 	    Bool :u(:$uninstall) = False, # to uninstall OneFit-Engine module					   
-	    Bool :p(:$inline-perl5) = True, # attempt to install raku module Inline::Perl5
+	    Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
 	    Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
 	    Bool :s(:$to-site) = True, # install raku module to site (use --/to-site to install-to user)
 	    Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
@@ -37,7 +37,7 @@ multi MAIN (Bool :$dpkg = True, # to install required debian packages
 
     install-web-server if $web-server;
 
-    install-Inline-Perl5($to-site) if $inline-perl5.Bool;
+    install-p6-modulles($to-site) if $p6-modules.Bool;
 
     enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool;
 
@@ -62,7 +62,7 @@ Usage:
     --test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)
     --install      # to install OneFit-Engine as a raku modules available to all users
     --uninstall    # to uninstall: use together with --to-site or --no-to-site
-    --inline-perl5 # to install raku module Inline::Perl5
+    --p6-modules   # to install raku module Inline::Perl5
     --enable-gs    # enable ghostsript in ImageMagick-6 policy.xml
     --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise
     --bindir       # defaults to $*CWD/../bin (use --bindir=/\$HOME/bin to set another folder for binaries)
@@ -149,8 +149,9 @@ sub install-web-server () {
 }
 
 
-sub install-Inline-Perl5 ($to-site) {
+sub install-p6-modules ($to-site) {
     shell("$SUDO zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
+    shell("$SUDO zef install --/test cro { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
 }
 
 sub enable-ghostscript-in-ImageMagick-policy () {

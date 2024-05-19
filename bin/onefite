@@ -76,7 +76,6 @@ multi MAIN ('start-web-engine',
             <h1>File Upload</h1>
             <form action="/upload" method="post" enctype="multipart/form-data">
             <input type="file" name="file">
-	    <input type="file" name="download">	
             <button type="submit">Upload</button>
             </form>
             </body>
@@ -93,10 +92,10 @@ multi MAIN ('start-web-engine',
 		content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
 	    }	
 	}
-	post -> 'download' {
+	post -> 'download',$file-to-donwload {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
-		say %rest.^methods;
+		say $file-to-download if $file-to-download.Bool;
 		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
