@@ -96,8 +96,8 @@ multi MAIN ('start-web-engine',
 	post -> 'download' {
             request-body -> (:$file, :$download, *%rest) {
     		my $filename = $file.filename;
-		say $file.^methods(:all);
-		say $download.Str;
+		say $download.^name;
+		say $download;
 		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
