@@ -96,12 +96,12 @@ HTML
 	post -> 'download',$file-to-donwload {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
-		say $file-to-download if $file-to-download.Bool;
+		say $file-to-download;
 		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-		content 'application/octet-stream', $filename.IO.extension('zip').slurp(:bin);
+#		content 'application/octet-stream', $filename.IO.extension('zip').slurp(:bin);
 	    }	
 	}
 
