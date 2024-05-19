@@ -64,23 +64,24 @@ multi MAIN ('start-web-engine',
 	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
 	    :p(:$port) = 8142,   
 	   ){
-    my $application = route {
-	get -> {
-            content 'text/html', q:to/HTML/;
-            <!DOCTYPE html>
-            <html>
-            <head>
-            <title>File Upload</title>
-            </head>
-            <body>
-            <h1>File Upload</h1>
-            <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="file">
-            <button type="submit">Upload</button>
-            </form>
-            </body>
-            </html>
-            HTML
+	   my $file-to-download;
+    	   my $application = route {
+	   get -> {
+	       content 'text/html', q:to/HTML/;
+               	<!DOCTYPE html>
+            	<html>
+           	 <head>
+            	 <title>File Upload</title>
+            	 </head>
+            	 <body>
+            	 <h1>File Upload</h1>
+            	 <form action="/upload" method="post" enctype="multipart/form-data">
+            	 <input type="file" name="file">
+           	  <button type="submit">Upload</button>
+            	  </form>
+            	  </body>
+            	 </html>
+HTML
 	}
 	post -> 'onefite' {
             request-body -> (:$file, *%rest) {
