@@ -93,10 +93,10 @@ HTML
 		content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
 	    }	
 	}
-	put -> 'download',$file-to-donwload {
+	post -> 'download' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
-		say $file-to-download;
+		for %rest.kv -> $k,$v {say "$k: $v" }
 		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
