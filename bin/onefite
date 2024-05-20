@@ -92,7 +92,7 @@ HTML
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
    		if so %rest.kv.tail.Str {
-		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip"
+		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip";
 		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
 		}
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
