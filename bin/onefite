@@ -96,12 +96,13 @@ HTML
 	post -> 'download' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
-		my @files = gather for %rest.kv -> $k,$v { take $v.Str }
+		my $file-to-download = %rest.kv.tail.Str;
 		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-		for @files.split(',') { content 'application/octet-stream', "{$filename.IO.extension('')}/$_".IO.slurp(:bin) }
+		content 'application/octet-stream', "{$filename.IO.extension('')}/$file-to-download".
+IO.slurp(:bin);
 	    }	
 	}
 
