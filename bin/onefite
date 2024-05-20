@@ -97,7 +97,7 @@ HTML
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
-		my $file-to-download = $filename.IO.extension('.zip').Str;
+		my $file-to-download = $filename.IO.extension('zip').Str;
     		if so %rest.kv.tail.Str { $file-to-download = "$folder/" ~ %rest.kv.tail.Str }
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
