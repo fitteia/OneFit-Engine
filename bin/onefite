@@ -97,7 +97,7 @@ HTML
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my @files = gather for %rest.kv -> $k,$v { take $v.Str }
-		say @files;
+		say @files.join("--");
 		my $folder = $filename.IO.extension('').Str;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
