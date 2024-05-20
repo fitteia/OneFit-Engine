@@ -101,6 +101,7 @@ sub aptpkgs () {
     sudo
     raku
     curl
+    libssl-dev
     liblapack3
     libblas3
     libblas-dev
