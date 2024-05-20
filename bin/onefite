@@ -64,7 +64,6 @@ multi MAIN ('start-web-engine',
 	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
 	    :p(:$port) = 8142,   
 	   ){
-	   my $file-to-download;
     	   my $application = route {
 	   get -> {
 	       content 'text/html', q:to/HTML/;
@@ -83,6 +82,22 @@ multi MAIN ('start-web-engine',
             	 </html>
 HTML
 	}
+	post -> 'upload' {
+            request-body -> (:$file, *%rest) {
+    		my $filename = $file.filename;
+		my $folder = $filename.IO.extension('').Str;
+		my $file-to-download = $filename.IO.extension('zip').Str; 
+		my $file-content = $file.body-blob;
+		$filename.IO.spurt: $file-content.decode('UTF-8');
+		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
+   		if so %rest.kv.tail.Str {
+		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip";
+		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
+		}
+		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
+	    }	
+	}
+
 	post -> 'onefite' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
@@ -96,12 +111,6 @@ HTML
 		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
 		}
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
-#    		my $filename = $file.filename;
-#		my $folder = $filename.IO.extension('').Str;
-#		my $file-content = $file.body-blob;
-#		$filename.IO.spurt: $file-content.decode('UTF-8');
-#		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-#		content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
 	    }	
 	}
 	post -> 'download' {
