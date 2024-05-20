@@ -87,10 +87,21 @@ HTML
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
+		my $file-to-download = $filename.IO.extension('zip').Str; 
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-		content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
+   		if so %rest.kv.tail.Str {
+		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip"
+		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
+		}
+		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
+#    		my $filename = $file.filename;
+#		my $folder = $filename.IO.extension('').Str;
+#		my $file-content = $file.body-blob;
+#		$filename.IO.spurt: $file-content.decode('UTF-8');
+#		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
+#		content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n";
 	    }	
 	}
 	post -> 'download' {
