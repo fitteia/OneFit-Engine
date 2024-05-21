@@ -76,7 +76,7 @@ multi MAIN ('start-web-engine',
             	     <h1>File Upload</h1>
             	     <form action="/upload" method="post" enctype="multipart/form-data">
             	       <input type="file" name="file"><br/>
-		       <small>Download:</small> <input type="text" name="download" default="zip"><br/>
+		       <small>Download:</small> <input type="text" name="download" value="zip"><br/>
            	       <button type="submit">fit</button>
             	     </form>
             	  </body>
