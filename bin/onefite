@@ -93,7 +93,7 @@ HTML
 		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
 say so all(%rest,%rest.kv.tail);
    		if so all(%rest,%rest.kv.tail) {
-		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip";
+		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq any("zip","");
 		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
 		}
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
