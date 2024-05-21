@@ -83,7 +83,7 @@ multi MAIN ('start-web-engine',
             	 </html>
 HTML
 	}
-	post -> 'fit' {
+	post -> 'upload' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
@@ -100,7 +100,7 @@ say %rest.kv.tail.Str;
 	    }	
 	}
 
-	post -> 'onefite' {
+	post -> 'fit' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
