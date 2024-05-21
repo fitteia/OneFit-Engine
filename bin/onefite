@@ -74,16 +74,16 @@ multi MAIN ('start-web-engine',
             	 </head>
             	  <body>
             	     <h1>File Upload</h1>
-            	     <form action="/upload" method="post" enctype="multipart/form-data">
+            	     <form action="/fit" method="post" enctype="multipart/form-data">
             	       <input type="file" name="file"><br/>
-		       <small>Download:</small> <input type="text" name="download"><br/>
+		       <small>Download:</small> <input type="text" name="download" value="zip"><br/>
            	       <button type="submit">fit</button>
             	     </form>
             	  </body>
             	 </html>
 HTML
 	}
-	post -> 'upload' {
+	post -> 'fit' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
@@ -91,7 +91,7 @@ HTML
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-say %rest.kv.tail.Str;
+say so %rest.kv.tail.Str;
    		if so %rest {
 		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip";
 		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
@@ -100,7 +100,7 @@ say %rest.kv.tail.Str;
 	    }	
 	}
 
-	post -> 'fit' {
+	post -> 'onefite' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
