@@ -91,7 +91,7 @@ HTML
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-say ‰rest.kv.tail.Str;
+say %rest.kv.tail.Str;
    		if so %rest {
 		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip";
 		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
