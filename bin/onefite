@@ -70,10 +70,10 @@ multi MAIN ('start-web-engine',
                	<!DOCTYPE html>
             	<html>
            	 <head>
-            	   <title>File Upload</title>
+            	   <title>OneFit Engine Web Server</title>
             	 </head>
             	  <body>
-            	     <h1>File Upload</h1>
+            	     <h1>OneFit Engine Web Server</h1>
             	     <form action="/fit" method="post" enctype="multipart/form-data">
             	       <input type="file" name="file"><br/>
 		       <small>Download:</small> <input type="text" name="download" value="zip"><br/>
