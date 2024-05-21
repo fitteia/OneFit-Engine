@@ -76,13 +76,14 @@ multi MAIN ('start-web-engine',
             	     <h1>File Upload</h1>
             	     <form action="/upload" method="post" enctype="multipart/form-data">
             	       <input type="file" name="file">
-           	       <button type="submit">Upload</button>
+		       <input type="text" name="download">
+           	       <button type="submit">fit</button>
             	     </form>
             	  </body>
             	 </html>
 HTML
 	}
-	post -> 'upload' {
+	post -> 'fit' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
