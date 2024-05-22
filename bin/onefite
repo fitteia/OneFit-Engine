@@ -98,8 +98,8 @@ HTML
 			  else { $file-to-download = "$folder/$v" }
 		       }
 		       $function = '"' ~ $v ~ '"' if $k eq "function";
-		   }		   
-		}
+		   }
+		}		
 		my $txt = shell("onefite fit $function $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
    		if $file-to-download.Bool {
 		    content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
