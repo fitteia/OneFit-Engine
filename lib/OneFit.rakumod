@@ -321,11 +321,9 @@ class Engine is export {
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
 	 my @fit-curves;
 	 for (1 .. @!blocks.elems) {
-	     @fit-curves.push: "fit-curves-$_".IO.slurp
+	     @fit-curves.push: "$!path/fit-curves-$_".IO.slurp
 	 }
 	 %!engine<fit-curves> = @fit-curves;
-	 say %!engine<fit-curves>;
-
 	 say $TXT unless $quiet;
 	 self
      }
