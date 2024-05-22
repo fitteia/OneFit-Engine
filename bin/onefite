@@ -91,20 +91,20 @@ HTML
 		my $function = ""; 
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		if so %rest.kv {
-		   for %rest.kv -> $k, $v {
-		       if $k eq "download" {
-		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
-			  else { $file-to-download = "$folder/$v" }
-		       }
-		       $function = '"' ~ $v ~ '"' if $k eq "function";
-		   }
-		}		
-		my $txt = shell("onefite fit $function $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-   		if $file-to-download.Bool {
-		    content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
-		}
-		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
+#		if so %rest.kv {
+#		   for %rest.kv -> $k, $v {
+#		       if $k eq "download" {
+#		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
+#			  else { $file-to-download = "$folder/$v" }
+#		       }
+#		       $function = '"' ~ $v ~ '"' if $k eq "function";
+#		   }
+#		}		
+#		my $txt = shell("onefite fit $function $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
+#   		if $file-to-download.Bool {
+#		    content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
+#		}
+#		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
 
 	     }
 	}	
