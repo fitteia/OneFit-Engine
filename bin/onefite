@@ -108,21 +108,21 @@ HTML
 
 	     }
 	}	
-
-	say "Starting onefite web service on $ip port $port";
-    	my Cro::Service $service = Cro::HTTP::Server.new:
+    }
+    say "Starting onefite web service on $ip port $port";
+    my Cro::Service $service = Cro::HTTP::Server.new:
 			       host => $ip,
 			       port => $port,
 			       :$application;
     
-	$service.start;
+    $service.start;
     
-	react whenever signal(SIGINT) {
+    react whenever signal(SIGINT) {
 	      $service.stop;
 	      exit;
-    	}
     }
 }
+
 
 multi MAIN ('start-engine',
 	    Bool :$no-plot,
