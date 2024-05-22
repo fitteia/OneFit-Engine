@@ -324,6 +324,8 @@ class Engine is export {
 	     @fit-curves.push: "fit-curves-$_".IO.slurp
 	 }
 	 %!engine<fit-curves> = @fit-curves;
+	 say %!engine<fit-curves>;
+
 	 say $TXT unless $quiet;
 	 self
      }
