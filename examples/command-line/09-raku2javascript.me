@@ -7,9 +7,9 @@ my $description = qq:to/END_DESCRIPTION/;
 onefite command line: Example 09
 
    1) creates $folder folder
-   2) creates file $folder/lixo.txt with data
-   3) creates a python script to run onefite
-   4) runs the script	 
+   2) creates file $folder/example_09.sav
+   3) creates a javascript script to run onefite
+   4) runs the script with nodejs nodejs-ofe.ts	 
 END_DESCRIPTION
 
 say $description;
@@ -205,4 +205,4 @@ shell "sudo npm i fs-extra "unless shell("npm ls",:out).out.slurp(:close).contai
 
 shell "nodejs example_09/nodejs-ofe.ts";
 
-say "Lookup for more output in $folder.";
+say "Lookup for more output in $folder.\n\nThis javascript was provided by Margarida Oliveira, 2024";
