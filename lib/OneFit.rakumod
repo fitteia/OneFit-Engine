@@ -323,7 +323,7 @@ class Engine is export {
 	 for (1 .. @!blocks.elems) {
 	     @fit-curves.push: "fit-curves-$_".IO.slurp
 	 }
-	 %!engine<fit-curves> = @fit-fit-curves;
+	 %!engine<fit-curves> = @fit-curves;
 	 say $TXT unless $quiet;
 	 self
      }
