@@ -97,7 +97,7 @@ HTML
 		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
 			  else { $file-to-download = "$folder/$v" }
 		       }
-		       $function = $v if $k eq "function";
+		       $function = $v.Str if $k eq "function";
 		   }
 		}		
 		my $txt;
