@@ -92,7 +92,7 @@ HTML
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
-		   for @rest.kv -> $k, $v {
+		   for %rest.kv -> $k, $v {
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
 			  else { $file-to-download = "$folder/$v" }
