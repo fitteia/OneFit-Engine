@@ -197,12 +197,12 @@ sendRequest();
 END_JS
 
 shell "sudo apt install nodejs npm";
-shell "sudo npm i jszip";
-shell "sudo npm i fs-extra";
+shell "sudo npm i jszip" unless shell("npm ls",:out).out.slurp(:close).contains("jszip");
+shell "sudo npm i fs-extra "unless shell("npm ls",:out).out.slurp(:close).contains("fs-extra");
 
 #my $IP= shell("onefite start-web-engine &",:out).out.lines(:close).tail.words[6];
 #say $IP;	
 
-#shell "cd $folder && nodejs nodejs-ofe.ts";
+shell "cd $folder && nodejs nodejs-ofe.ts";
 
 say "Lookup for more output in $folder.";
