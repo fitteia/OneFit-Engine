@@ -180,7 +180,7 @@ const sendRequest = async () => {
       // Ignore directories
       if (!files[file].dir) {
         const fileContent = await files[file].async("nodebuffer");
-        const filePath = "./teste" + file;
+        const filePath = "./teste/" + file;
         // Ensure the directory to store the file exists
         await fs.ensureDir(path.dirname(filePath));
         await writeFile(filePath, fileContent);
