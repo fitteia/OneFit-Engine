@@ -1,0 +1,125 @@
+#!/usr/bin/env raku
+
+my $folder = "$*HOME/public_html/example_09";
+my $json-file = "example_09.json";
+
+my $description = qq:to/END_DESCRIPTION/;
+onefite command line: Example 09
+
+   1) creates $folder folder
+   2) creates file $folder/lixo.txt with data
+   3) creates a python script to run onefite
+   4) runs the script	 
+END_DESCRIPTION
+
+say $description;
+shell("rm -fr $folder") if $folder.IO.e;
+$folder.IO.mkdir;
+"$folder/example_08.txt".IO.spurt: qq:to/END_DATA/;
+4e+07 2.38
+3e+07 2.39
+2.5e+07 2.41
+2e+07 2.44
+1.5e+07 2.51
+1e+07 2.74
+7e+06 3.16 
+5.028e+06 3.73
+2.5188e+06 4.82
+1.2626e+06 5.3 
+632320 5.43
+317030 5.47
+158740 5.48
+112250 5.48
+79720 5.48
+56200 5.48
+39680 5.48
+28200 5.48
+20040 5.48
+14050 5.48
+END_DATA
+
+"$folder/nodejs-ofe.ts".IO.spurt: q:to/END_JS/;
+// Import the required modules
+const readFile = require("fs").promises.readFile;
+const writeFile = require("fs").promises.writeFile;
+const JSZip = require("jszip");
+const fs = require("fs-extra");
+const path = require("path");
+
+const body = new FormData();
+const zip = new JSZip();
+
+const sendRequest = async () => {
+  try {
+    // Read the content of the file
+    const fileContents = await readFile("./Master-Mz-to-R1profie_test.sav");
+
+    // Create a blob from the file content
+    const blob = new Blob([fileContents]);
+
+    // Specify which file to download:
+    // "zip" - downloads all output files as a ZIP file
+    // "filename" - downloads the specified file
+    // "outputFilename.json" - downloads the output JSON file
+    // "" - does not download any file, returns a text response with the fitting parameters
+    body.set("download", "zip");
+
+    // Attach the file to the body
+    // Allowed files include .json and .sav
+    body.set("file", blob, "Master-Mz-to-R1profie_test.sav");
+
+    // Send the request to the server
+    const res = await fetch(
+      "http://onefite-t.vps.tecnico.ulisboa.pt:8142/fit",
+      {
+        method: "POST",
+        body,
+      }
+    );
+
+    // If no download files are specified, you can fetch a text response containing the fitting parameters
+    // const textRes = await res.text();
+    // console.log("Response received:", textRes);
+
+    // If the response is a JSON file, you can fetch it as follows
+    // It is then stored in an object you can access with simple dot notation
+    // const jsonRes = await res.json();
+    // console.log("Response received:", jsonRes);
+
+    // Fetch the raw data of the response, which is a ZIP file
+    const rawFileData = await res.arrayBuffer();
+
+    // Extract the files from the ZIP
+    const zipFile = await zip.loadAsync(rawFileData);
+    const files = zipFile.files;
+
+    // Log the files in the ZIP
+    console.log("Files in the ZIP:", files);
+
+    // Save the files to the disk
+    for (const file in files) {
+      // Ignore directories
+      if (!files[file].dir) {
+        const fileContent = await files[file].async("nodebuffer");
+        const filePath = "./" + file;
+        // Ensure the directory to store the file exists
+        await fs.ensureDir(path.dirname(filePath));
+        await writeFile(filePath, fileContent);
+      }
+    }
+  } catch (err) {
+    // Log any errors that occur
+    console.error("Error sending request:", err);
+  }
+};
+
+// Call the function to send the request
+sendRequest();
+END_JS
+        ;
+
+my $IP=shell("onefite start-web-engine &". :out).out.lines(:close).tail.words[6]
+
+#shell "cd $folder && nodejs nodejs-ofe.ts";
+
+say "Lookup for more output in $folder.";
