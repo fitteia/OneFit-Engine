@@ -101,7 +101,8 @@ HTML
 		   }
 		}		
 		my $txt;
-		if $function.Bool {
+say $function;
+		if so $function {
 		   $txt = shell("onefite fit \"$function\" $filename --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		   say "onefite fit \"$function\" $filename --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
 		}
