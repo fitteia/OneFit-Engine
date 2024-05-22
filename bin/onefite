@@ -97,10 +97,14 @@ HTML
 		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
 			  else { $file-to-download = "$folder/$v" }
 		       }
-		       $function = '"' ~ $v ~ '"' if $k eq "function";
+		       $function = $v if $k eq "function";
 		   }
 		}		
-		my $txt = shell("onefite fit $function $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
+		my $txt;
+		if $function.Bool {
+		   $txt = shell("onefite fit \"$function\" $filename --zip-to={ $filename.IO.extension{'zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
+		}
+		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
 		    content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
 		}
