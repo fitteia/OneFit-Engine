@@ -87,52 +87,40 @@ HTML
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
-		my $file-to-download = $filename.IO.extension('zip').Str; 
+		my $file-to-download = ""; 
+		my $function = ""; 
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-   		if so all(%rest,%rest.kv.tail) {
-		   if so %rest.kv.tail.Str {
-		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip";
-		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
-		   }
-		   else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
+		if so %rest.kv {
+		   for @rest.kv -> $k, $v {
+		       if $k eq "download" {
+		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
+			  else { $file-to-download = "$folder/$v" }
+		       }
+		       $function = '"' ~ $v '"' if $k eq "function";
+		   }		   
+
+		}
+		my $txt = shell("onefite fit $function $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
+   		if $file-to-download.Bool {
+		    content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
 		}
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
-	    }	
+
 	}
 
-	post -> 'onefite' {
-            request-body -> (:$file, *%rest) {
-    		my $filename = $file.filename;
-		my $folder = $filename.IO.extension('').Str;
-		my $file-to-download = $filename.IO.extension('zip').Str; 
-		my $file-content = $file.body-blob;
-		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close);
-   		if so all(%rest,%rest.kv.tail) {
-		   if so %rest.kv.tail.Str {
-		      $file-to-download = "$folder/" ~ %rest.kv.tail.Str unless %rest.kv.tail.Str eq "zip";
-		      content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
-		   }
-		   else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
-		}
-		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
-	    }	
-	}
-    }
-    say "Starting onefite web service on $ip port $port";
-    my Cro::Service $service = Cro::HTTP::Server.new:
+	say "Starting onefite web service on $ip port $port";
+    	my Cro::Service $service = Cro::HTTP::Server.new:
 			       host => $ip,
 			       port => $port,
 			       :$application;
     
-    $service.start;
+	$service.start;
     
-    react whenever signal(SIGINT) {
-	$service.stop;
-	exit;
-    }
+	react whenever signal(SIGINT) {
+	      $service.stop;
+	      exit;
+    	}
 }
 
 multi MAIN ('start-engine',
