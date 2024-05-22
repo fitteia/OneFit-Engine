@@ -15,7 +15,7 @@ END_DESCRIPTION
 say $description;
 shell("rm -fr $folder") if $folder.IO.e;
 $folder.IO.mkdir;
-"$folder/example_09.sav".IO.spurt: qq:to/END_SAV/;
+"$folder/example_09.sav".IO.spurt: q:to/END_SAV/;
 submit=Overwrite
 Projecto=lixo
 GuardarNome=Master-Mz-to-R1profie
