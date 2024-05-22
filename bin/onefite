@@ -103,6 +103,7 @@ HTML
 		my $txt;
 		if $function.Bool {
 		   $txt = shell("onefite fit \"$function\" $filename --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
+		   say "onefite fit \"$function\" $filename --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
 		}
 		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
