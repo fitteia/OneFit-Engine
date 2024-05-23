@@ -74,7 +74,7 @@ multi MAIN ('start-web-engine',
             	 </head>
             	  <body>
             	     <h1>OneFit Engine Web Server</h1>
-		     <small>
+
             	     <form action="/fit" method="post" enctype="multipart/form-data">
             	       Upload file [.json | .sav | data-file ] <input type="file" name="file"><br/>
 		       Download: <input type="text" name="download" value="zip"><br/>
@@ -89,7 +89,7 @@ multi MAIN ('start-web-engine',
 		       linlin: <input name="linlin" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
            	       <button type="submit">fit</button>
             	     </form>
-		     </small>
+
             	  </body>
             	 </html>
 HTML
