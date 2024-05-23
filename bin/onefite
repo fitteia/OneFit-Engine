@@ -80,13 +80,15 @@ multi MAIN ('start-web-engine',
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       for data files: <br/>
 		       fitting function: <input type="text" name="function" value=""><br/>
-		       autox: <input name="autox" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
-		       autoy: <input name="autoy" type="radio" value="yes"> yes <input type="radio" value="np" checked> no <br/>
-		       autoxy: <input name="autoxy" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
-		       loglog: <input name="loglog" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
-		       loglin: <input name="loglin" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
-		       linlog: <input name="linlog" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
-		       linlin: <input name="linlin" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
+		       <table>
+		       <tr><td>autox: </td><td><input name="autox" type="radio" value="yes"> yes </td><td><input type="radio" value="no" checked> no </td></tr>
+		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes"> yes </td><td><input type="radio" value="np" checked> no </td></tr>
+		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes"> yes </td><td><input type="radio" value="no" checked> no </td></tr>
+		       <tr><td>loglog: </td><td><input name="loglog" type="radio" value="yes"> yes </td><td><input type="radio" value="no" checked> no </td></tr>
+		       <tr><td>loglin: </td><td><input name="loglin" type="radio" value="yes"> yes </td><td><input type="radio" value="no" checked> no </td></tr>
+		       <tr><td>linlog: </td><td><input name="linlog" type="radio" value="yes"> yes </td><td><input type="radio" value="no" checked> no </td></tr>
+		       <tr><td>linlin: </td><td><input name="linlin" type="radio" value="yes"> yes </td><td><input type="radio" value="no" checked> no </td></tr>
+		       </table>
            	       <button type="submit">fit</button>
             	     </form>
 
@@ -129,7 +131,7 @@ HTML
 		}		
 		my $txt;
 		if so $function {
-		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
 		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
