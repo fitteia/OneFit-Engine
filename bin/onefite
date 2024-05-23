@@ -88,7 +88,15 @@ HTML
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
 		my $file-to-download = ""; 
-		my $function = ""; 
+		my $function = "";
+		my $autox = "autox";
+		my $autoy = "autoy";
+		my $autoxy= "autoxy";
+		my $loglog= "";
+		my $linlin= "linlin";
+		my $loglin= "";
+		my $linlog= "";
+		my $num   = +100;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
@@ -97,13 +105,26 @@ HTML
 		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
 			  else { $file-to-download = "$folder/$v" }
 		       }
-		       $function = $v.Str if $k eq "function";
+		       $function = $v.Str     if $k eq "function";
+		       $num      = +$v.Str    if $k eq "Num";
+		       $autox    = "--autox"  if $k eq "autox";
+		       $autoy    = "--autoy"  if $k eq "autoy";
+		       $autoxy   = "--autoxy" if $k eq "autoxy";
+		       $loglog   = "--loglog" if $k eq "loglog";
+		       $loglin   = "--loglin" if $k eq "loglin";
+		       $linlog   = "--linlog" if $k eq "linlog";
+		       $linlin   = "--linlin" if $k eq "linlin";
 		   }
 		}		
 		my $txt;
-say $function;
 		if so $function {
-		   $txt = shell("onefite fit \"$function\" $filename --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
+say "onefite fit \"$function\" $filename
+                   $autox $autoy $autoxy $loglog $loglin $linlog $linlin $num
+		   --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
+    
+		   $txt = shell("onefite fit \"$function\" $filename
+                   $autox $autoy $autoxy $loglog $loglin $linlog $linlin $num
+		   --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
