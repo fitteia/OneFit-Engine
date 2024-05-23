@@ -68,7 +68,7 @@ grammar Function is Number {
     token le            { <.ws> '<' '='? <.ws> }
     token ge            { <.ws> '>' '='? <.ws> }
     token column        { ':' }
-    token sep           { <.ws> [ ';' ]+ <.ws> }
+    token sep           { <.ws> [ ';' | '<' ]+ <.ws> }
     token eq            { '=' }
     token expression    { \N+ }
     token word          { \w+ }
