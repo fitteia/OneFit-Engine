@@ -89,11 +89,11 @@ HTML
 		my $folder = $filename.IO.extension('').Str;
 		my $file-to-download = ""; 
 		my $function = "";
-		my $autox = "--autox";
-		my $autoy = "--autoy";
-		my $autoxy= "--autoxy";
+		my $autox = "";
+		my $autoy = "";
+		my $autoxy= "";
 		my $loglog= "";
-		my $linlin= "--linlin";
+		my $linlin= "";
 		my $loglin= "";
 		my $linlog= "";
 		my $num   = +100;
@@ -123,7 +123,7 @@ say "onefite fit \"$function\" $filename
 		   --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
     
 		   $txt = shell("onefite fit \"$function\" $filename
-                   $autox $autoy $autoxy $loglog $loglin $linlog $linlin $num
+                   $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num
 		   --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
