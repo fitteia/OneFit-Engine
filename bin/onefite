@@ -107,19 +107,18 @@ HTML
 		       }
 		       $function = $v.Str     if $k eq "function";
 		       $num      = +$v.Str    if $k eq "Num";
-		       $autox    = "--autox"  if $k eq "autox";
-		       $autoy    = "--autoy"  if $k eq "autoy";
-		       $autoxy   = "--autoxy" if $k eq "autoxy";
-		       $loglog   = "--loglog" if $k eq "loglog";
-		       $loglin   = "--loglin" if $k eq "loglin";
-		       $linlog   = "--linlog" if $k eq "linlog";
-		       $linlin   = "--linlin" if $k eq "linlin";
+		       $autox    = "--autox"  if $k eq "autox"  and $v eq all("yes",1);
+		       $autoy    = "--autoy"  if $k eq "autoy"  and $v eq all("yes",1);
+		       $autoxy   = "--autoxy" if $k eq "autoxy" and $v eq all("yes",1);
+		       $loglog   = "--loglog" if $k eq "loglog" and $v eq all("yes",1);
+		       $loglin   = "--loglin" if $k eq "loglin" and $v eq all("yes",1);
+		       $linlog   = "--linlog" if $k eq "linlog" and $v eq all("yes",1);
+		       $linlin   = "--linlin" if $k eq "linlin" and $v eq all("yes",1);
 		   }
 		}		
 		my $txt;
 		if so $function {
-say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
-
+		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
 		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
