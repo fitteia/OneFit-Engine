@@ -118,13 +118,9 @@ HTML
 		}		
 		my $txt;
 		if so $function {
-say "onefite fit \"$function\" $filename
-                   $autox $autoy $autoxy $loglog $loglin $linlog $linlin $num
-		   --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
+say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
     
-		   $txt = shell("onefite fit \"$function\" $filename
-                   $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num
-		   --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
