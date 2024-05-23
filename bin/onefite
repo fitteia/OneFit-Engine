@@ -107,13 +107,13 @@ HTML
 		       }
 		       $function = $v.Str     if $k eq "function";
 		       $num      = +$v.Str    if $k eq "Num";
-		       $autox    = "--autox"  if $k eq "autox"  and $v eq all("yes",1);
-		       $autoy    = "--autoy"  if $k eq "autoy"  and $v eq all("yes",1);
-		       $autoxy   = "--autoxy" if $k eq "autoxy" and $v eq all("yes",1);
-		       $loglog   = "--loglog" if $k eq "loglog" and $v eq all("yes",1);
-		       $loglin   = "--loglin" if $k eq "loglin" and $v eq all("yes",1);
-		       $linlog   = "--linlog" if $k eq "linlog" and $v eq all("yes",1);
-		       $linlin   = "--linlin" if $k eq "linlin" and $v eq all("yes",1);
+		       $autox    = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
+		       $autoy    = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
+		       $autoxy   = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
+		       $loglog   = "--loglog" if $k eq "loglog" and $v eq any("yes",1);
+		       $loglin   = "--loglin" if $k eq "loglin" and $v eq any("yes",1);
+		       $linlog   = "--linlog" if $k eq "linlog" and $v eq any("yes",1);
+		       $linlin   = "--linlin" if $k eq "linlin" and $v eq any("yes",1);
 		   }
 		}		
 		my $txt;
