@@ -74,11 +74,22 @@ multi MAIN ('start-web-engine',
             	 </head>
             	  <body>
             	     <h1>OneFit Engine Web Server</h1>
+		     <small>
             	     <form action="/fit" method="post" enctype="multipart/form-data">
-            	       <input type="file" name="file"><br/>
-		       <small>Download:</small> <input type="text" name="download" value="zip"><br/>
+            	       Upload file [.json | .sav | data-file ] <input type="file" name="file"><br/>
+		       Download: <input type="text" name="download" value="zip"><br/>
+		       for data files: <br/>
+		       fitting function: <input type="text" name="function" value=""><br/>
+		       autox: <input name="autox" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
+		       autoy: <input name="autoy" type="radio" value="yes"> yes <input type="radio" value="np" checked> no <br/>
+		       autoxy: <input name="autoxy" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
+		       loglog: <input name="loglog" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
+		       loglin: <input name="loglin" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
+		       linlog: <input name="linlog" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
+		       linlin: <input name="linlin" type="radio" value="yes"> yes <input type="radio" value="no" checked> no <br/>
            	       <button type="submit">fit</button>
             	     </form>
+		     </small>
             	  </body>
             	 </html>
 HTML
@@ -101,7 +112,6 @@ HTML
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
-		       say "$k $v";
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
 			  else { $file-to-download = "$folder/$v" }
@@ -119,7 +129,7 @@ HTML
 		}		
 		my $txt;
 		if so $function {
-		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
 		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
