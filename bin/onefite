@@ -47,8 +47,8 @@ multi MAIN (Bool :h(:help($))) {
     \"y(t,A,lambda: 0.1)=A*exp(-lambda*t)\" 0.1 is the initial value to start mimimization
     \"y (t,A,B=2,lambda)=A * (1 - B*exp(-lambda*t) )\" B is fixed with value 2
     \"y( t,A, lambda: [0;0.5])=A*exp(-lambda*t)\" [lambda is limited to range 0 to 0.
-    \"R1(f:[0;1e9], A, tau[0;1e-9])=A*tau/(1+pow(2*pi*f*tau,2.0)\" f is limite to positive values up to 1e9 and tau also
-    \"y[-1;1](x:[0;1],a,b,c)=a + b*x + c*x*x\" theoretical curves generated for x is limited to range 0 to 1; in the plot y axis will be limited to range -1 to 1
+    \"R1(f:[0;1e9], A, tau[0<1e-9])=A*tau/(1+pow(2*pi*f*tau,2.0)\" f is limite to positive values up to 1e9 and tau also
+    \"y[-1;1](x:[0<1],a,b,c)=a + b*x + c*x*x\" theoretical curves generated for x is limited to range 0 to 1; in the plot y axis will be limited to range -1 to 1
     \"f(x,p1: 2, p2=0.3, p3[5;10]) :[-5;5]=p1*exp(-p2*x)*sin(2*pi*x/p3)\" p1 is initialized to 1, p2 is fixed to 2 p3 will be in the range 5 to 10
 END_USAGE
 }
