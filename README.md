@@ -16,6 +16,10 @@ prompt> mkdir $HOME/.local && cd $HOME/.local
 prompt> git clone https://github.com/fitteia/OneFit-Engine.git
 
 prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL help \
+
+prompt> onefite upgrade
+
+
 Usage:
     ./INSTALL [-h|--help]\
     ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs] \
@@ -33,6 +37,7 @@ Usage:
     --bindir       # defaults to $*CWD/../bin (use --bindir=/$HOME/bin to set another folder for binaries)
     negated options:\
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] no negate option compile\
+
 
 
 Install examples:
