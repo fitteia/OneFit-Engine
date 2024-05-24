@@ -178,7 +178,7 @@ multi MAIN ('list',
 
 multi MAIN ('list','models',
 	   ){
-	   ::MAIN('list');
+	   MAIN('list');
 }
 
 multi MAIN ('help',
