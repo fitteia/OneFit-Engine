@@ -176,7 +176,7 @@ multi MAIN ('models',
     my %meta-c= from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     if so @cmds {
        my $model = @cmds.shead;
-       say "$model => ",to-json(%meta-c{ @list.grep(/$model/).Str }, :sorted-keys)  } if $cmds.elems < 2;
+       say "$model => ",to-json(%meta-c{ @list.grep(/$model/).Str }, :sorted-keys)  if $cmds.elems < 2;
        say %meta{ @list.grep(/$model/).Str }{ @cmds.tail };
 
     }
