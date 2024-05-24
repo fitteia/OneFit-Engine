@@ -166,7 +166,7 @@ multi MAIN ('list',
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     say "OneFit Engine Models Library:";
     say @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort.join: "\n";
-    for @files -> $f { say $f, @list.grep(*.f) }
+    for @files -> $f { say $f, @list.grep(*.f).grep(/\.c/) }
 }
  
 multi MAIN ('start-engine',
