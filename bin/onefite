@@ -53,8 +53,10 @@ multi MAIN (Bool :h(:help($))) {
 END_USAGE
 }
 
-multi MAIN ('upgrade'){
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --/test"
+multi MAIN ('upgrade',
+      Str :$test = '--/test',
+      ){
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL $test"
 }
 
 
