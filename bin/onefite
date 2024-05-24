@@ -28,7 +28,10 @@ multi MAIN (Bool :h(:help($))) {
     note qq:to/END_USAGE/;
     Usage:
         onefite [-h|--help]
-	onefite upgrade
+	onefite upgrade [--test=<Str>]
+	onefite list
+	onefite list models
+	onefite help <model> [
 	onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	onefite convert <input-file> <output-file>
 	onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
@@ -52,6 +55,28 @@ multi MAIN (Bool :h(:help($))) {
     \"y[-1;1](x:[0<1],a,b,c)=a + b*x + c*x*x\" theoretical curves generated for x is limited to range 0 to 1; in the plot y axis will be limited to range -1 to 1
     \"f(x,p1: 2, p2=0.3, p3[5;10]) :[-5;5]=p1*exp(-p2*x)*sin(2*pi*x/p3)\" p1 is initialized to 1, p2 is fixed to 2 p3 will be in the range 5 to 10
 END_USAGE
+}
+
+multi MAIN ('list',
+	   ){
+    my @list = dir(::('OFE-PATH') ~ "/C/local");
+    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
+    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
+    say "OneFit Engine Models Library:";
+    say @list.join("\n");
+}
+
+multi MAIN ('list','models',
+	   ){
+	   MAIN('list');
+}
+
+multi MAIN ('convert',
+	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
+	    $output-file, #= name of the converted file (.sav or .json)
+	   ) {
+    my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
+    exit;
 }
 
 multi MAIN ('upgrade',
@@ -159,38 +184,17 @@ HTML
     }
 }
 
-multi MAIN ('convert',
-	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
-	    $output-file, #= name of the converted file (.sav or .json)
-	   ) {
-    my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
-    exit;
-}
-
-multi MAIN ('list',
-	   ){
-    my @list = dir(::('OFE-PATH') ~ "/C/local");
-    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
-    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    say "OneFit Engine Models Library:";
-    say @list.join("\n");
-}
-
-multi MAIN ('list','models',
-	   ){
-	   MAIN('list');
-}
 
 multi MAIN ('help',
 	    $model,
-            *@cmds,
+            *$cmds,
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     my %info = %meta-c{ @list.grep(/$model/).Str };
-    if so @cmds { say %info{ @cmds.head } }
+    if so $cmds { say %info{ $cmds } }
     else { say "$model => ",to-json(%info, :sorted-keys) }
 }
  
