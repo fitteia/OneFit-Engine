@@ -175,7 +175,7 @@ multi MAIN ('models',
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     if so @cmds {
-       my $model = @cmds.shead;
+       my $model = @cmds.head;
        my %info = %meta-c{ @list.grep(/$model/).Str };
        if @cmds.elems < 2 { say "$model => ",to-json(%info, :sorted-keys)  }
        else { say %info{ @cmds.tail } }
