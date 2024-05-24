@@ -28,6 +28,7 @@ multi MAIN (Bool :h(:help($))) {
     note qq:to/END_USAGE/;
     Usage:
         onefite [-h|--help]
+	onefite upgrade
 	onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	onefite convert <input-file> <output-file>
 	onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
