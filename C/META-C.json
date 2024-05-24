@@ -1,5 +1,6 @@
 {
     "BPP": {
+	"devision": "Rotations",
 	"call": "BPP(f,a,tau)",
 	"cmd-call": "BPP(f[1e3<1e9],a:1e9[1e6<5e9],tau:1e-8[1e-12<1e6])",
 	"parameters": "f,a,tau",
