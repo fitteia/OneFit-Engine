@@ -168,18 +168,17 @@ multi MAIN ('convert',
 }
 
 multi MAIN ('models',
-	    *@cmds
+	    *@cmds,
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    my %meta-c= from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
+    my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     if so @cmds {
        my $model = @cmds.shead;
        my %info = %meta-c{ @list.grep(/$model/).Str };
        if @cmds.elems < 2 { say "$model => ",to-json(%info, :sorted-keys)  }
        else { say %info{ @cmds.tail } 
-
     }
     else {
         say "OneFit Engine Models Library:";
