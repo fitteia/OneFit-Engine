@@ -167,7 +167,7 @@ multi MAIN ('list',
     say @list;
     say "OneFit Engine Models Library:";
     say @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort.join: "\n";
-    for @files -> $f { say $f, @list.grep($f) }
+    for @files -> $f { say $f, @list.grep(*.c).grep($f) }
 }
  
 multi MAIN ('start-engine',
