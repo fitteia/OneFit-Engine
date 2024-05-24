@@ -2,7 +2,7 @@
     "BPP": {
 	"devision": "Rotations",
 	"function": "BPP(f,a,tau)",
-	"cmd-line-call": "R1(f[1e3<1e9],a:1e9[1e6<5e9],tau:1e-8[1e-12<1e6]) = BPP(f,a,tau)",
+	"call": "R1(f[1e3<1e9],a:1e9[1e6<5e9],tau:1e-8[1e-12<1e6]) = BPP(f,a,tau)",
 	"parameters": "f,a,tau",
 	"description": "Bloembergern, Purcell and Pound spin-lattice relaxation. The function returns a R1=1/T1 in units of s^-1. The names of the variables can be defined by the user and the some tipical values are: f[1e3<1e9], a:1e9[1e6<5e9], tau:1e-9[1e-12<1e-6]"
     }
