@@ -166,7 +166,8 @@ multi MAIN ('list',
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     say "OneFit Engine Models Library:";
     say @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort.join: "\n";
-    for @files -> $f { say @list.grep(*.f).grep(/\.c/).grep(/$f/).tail.slurp }
+    my %meta-c= from-json( ::('OFE-PATH') ~ "/C/local/META_C.json");
+    for @files -> $f { %metc{@list.grep(*.f).grep(/\.c/).grep(/$f/).extension('').Str } }
 		     
 }
  
