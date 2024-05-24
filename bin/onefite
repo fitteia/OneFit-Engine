@@ -53,6 +53,11 @@ multi MAIN (Bool :h(:help($))) {
 END_USAGE
 }
 
+multi MAIN ('upgrade'){
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --/test"
+}
+
+
 multi MAIN ('start-web-engine',
 	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
 	    :p(:$port) = 8142,   
