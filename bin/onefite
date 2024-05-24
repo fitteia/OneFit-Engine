@@ -28,8 +28,8 @@ multi MAIN (Bool :h(:help($))) {
     note qq:to/END_USAGE/;
     Usage:
         onefite [-h|--help]
-	onefite convert <input-file> <output-file>
 	onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
+	onefite convert <input-file> <output-file>
 	onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
 	onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--linlog] [--loglin] [--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
@@ -53,13 +53,6 @@ multi MAIN (Bool :h(:help($))) {
 END_USAGE
 }
 
-multi MAIN ('convert',
-	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
-	    $output-file, #= name of the converted file (.sav or .json)
-	   ) {
-    my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
-    exit;
-}
 multi MAIN ('start-web-engine',
 	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
 	    :p(:$port) = 8142,   
@@ -158,7 +151,19 @@ HTML
     }
 }
 
+multi MAIN ('convert',
+	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
+	    $output-file, #= name of the converted file (.sav or .json)
+	   ) {
+    my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
+    exit;
+}
 
+multi MAIN ('list',
+	   ){
+    say dir(::('OFE-PATH'));
+}
+ 
 multi MAIN ('start-engine',
 	    Bool :$no-plot,
 	    Bool :q(:$quiet)=False, # Don't show log messages
