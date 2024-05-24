@@ -19,7 +19,6 @@ prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL help \
 
 prompt> onefite upgrade
 
-
 Usage:
     ./INSTALL [-h|--help]\
     ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs] \
