@@ -175,7 +175,7 @@ multi MAIN ('list',
     say "OneFit Engine Models Library:";
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c= from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );
-    for @files -> $f { say "$f => ",to-json(%meta-c{ @list.grep(/$f/).Str })  }
+    for @files -> $f { say "$f => ",to-json(%meta-c{ @list.grep(/$f/).Str }, :sorted-keys)  }
 		     
 }
  
