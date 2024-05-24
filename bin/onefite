@@ -176,7 +176,8 @@ multi MAIN ('list',
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c= from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );
 say %meta-c;
-    for @files -> $f { %meta-c{ @list.grep(/$f/).Str } }
+
+    for @files -> $f { say @list.grep(/$f/).Str  }
 		     
 }
  
