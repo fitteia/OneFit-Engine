@@ -161,9 +161,9 @@ multi MAIN ('convert',
 
 multi MAIN ('list',
 	   ){
-    say dir(::('OFE-PATH')~"/C/local").grep(*.c);
-#    @list.push: dir(::('OFE-PATH')~"/C/core/onefit-3.1/modelos").grep(*.c);
-#    say @list.join: "\n";
+    my @list = dir(::('OFE-PATH') ~ "/C/local").grep(*.f).grep(".c");
+    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").grep(*.f).grep("*.c";
+    say @list.join: "\n";
 }
  
 multi MAIN ('start-engine',
