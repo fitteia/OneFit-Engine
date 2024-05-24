@@ -160,6 +160,7 @@ C/local/UserLib.i
 C/local/UserLib.pm
 C/local/UserLib.so
 C/makefile
+C/META-C.json
 doc/onefit-cmd-options.htm
 doc/onefit-FAQ.htm
 doc/onefit-fitmenu.htm
