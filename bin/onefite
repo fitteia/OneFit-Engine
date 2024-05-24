@@ -167,24 +167,31 @@ multi MAIN ('convert',
     exit;
 }
 
-multi MAIN ('models',
-	    *@cmds,
+multi MAIN ('list',
+	   ){
+    my @list = dir(::('OFE-PATH') ~ "/C/local");
+    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
+    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
+    say "OneFit Engine Models Library:";
+    say @list.join("\n");
+}
+
+multi MAIN ('list','models',
+	   ){
+	   ::MAIN('list');
+}
+
+multi MAIN ('help',
+	    $model,
+            *@cmds,
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
-    if so @cmds {
-       my $model = @cmds.head;
-       my %info = %meta-c{ @list.grep(/$model/).Str };
-       if @cmds.elems < 2 { say "$model => ",to-json(%info, :sorted-keys)  }
-       else { say %info{ @cmds.tail } }
-    }
-    else {
-        say "OneFit Engine Models Library:";
-	say @list.join("\n");
-    }
-		     
+    my %info = %meta-c{ @list.grep(/$model/).Str };
+    if so @cmds { say %info{ @cmds.head } }
+    else { say "$model => ",to-json(%info, :sorted-keys) }
 }
  
 multi MAIN ('start-engine',
