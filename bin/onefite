@@ -139,7 +139,7 @@ HTML
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
 	    	if so %rest.kv {
-		   for %rest.kv -> $k,$v { content 'text/plain', "{ MAIN('help',$model.Str, "--cmd=$v", :quiet) }\n"	  }
+		   for %rest.kv -> $k,$v { content 'text/plain', "{ MAIN('help',$model.Str, "--key=$v", :quiet) }\n"	  }
 	    	}
 		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 	    }
@@ -209,7 +209,7 @@ HTML
 
 multi MAIN ('help',
 	    $model,
-            :$cmd,
+            :$key,
 	    Bool :q(:$quiet),
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
@@ -218,7 +218,7 @@ multi MAIN ('help',
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     my %info = %meta-c{ @list.grep(/$model/).Str };
     my $txt="";
-    if so $cmd { $txt = %info{ $cmd } }
+    if so $cmd { $txt = %info{ $key } }
     else { $txt = "$model => " ~ to-json(%info, :sorted-keys) }
     say $txt unless $quiet;
     $txt
