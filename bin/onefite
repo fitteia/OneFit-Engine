@@ -218,7 +218,7 @@ multi MAIN ('help',
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     my %info = %meta-c{ @list.grep(/$model/).Str };
     my $txt="";
-    if so $cmd { $txt = %info{ $key } }
+    if so $key { $txt = %info{ $key } }
     else { $txt = "$model => " ~ to-json(%info, :sorted-keys) }
     say $txt unless $quiet;
     $txt
