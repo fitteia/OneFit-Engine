@@ -139,7 +139,7 @@ HTML
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
 	    	if so %rest.kv {
-		   for %rest.kv -> $k,$v { content 'text/plain', "{ MAIN('help',$model.Str, $v, :quiet) }\n"	  }
+		   for %rest.kv -> $k,$v { content 'text/plain', "{ MAIN('help',$model.Str, "--cmd=$v", :quiet) }\n"	  }
 	    	}
 		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 	    }
