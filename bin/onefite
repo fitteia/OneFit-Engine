@@ -219,7 +219,7 @@ multi MAIN ('help',
     my %info = %meta-c{ @list.grep(/$model/).Str };
     my $txt="";
     if so $cmd { $txt = %info{ $cmd } }
-    else { $txt= "$model => ",to-json(%info, :sorted-keys) }
+    else { $txt = "$model => " ~ to-json(%info, :sorted-keys) }
     say $txt unless $quiet;
     $txt
 }
