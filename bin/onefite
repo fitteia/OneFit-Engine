@@ -136,7 +136,7 @@ HTML
 	post -> 'list' {
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
-	pot -> 'help' {
+	post -> 'help' {
             request-body -> (:$model, *%rest) {
 	    say model.Str;
 	    }
