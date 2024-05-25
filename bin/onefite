@@ -58,13 +58,14 @@ END_USAGE
 }
 
 multi MAIN ('list',
+      	   Bool :q(:$quiet) = False,
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my $txt = "OneFit Engine Models Library:\n";
     $txt ~= @list.join("\n");
-    say $txt;
+    say $txt unless $quiet;
     $txt;
 }
 
@@ -128,7 +129,7 @@ multi MAIN ('start-web-engine',
 HTML
 	}
 	post -> 'list' {
-	     content 'text/plain', "{ MAIN('list') }\n"	
+	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
 
 	post -> 'fit' {
