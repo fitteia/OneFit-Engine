@@ -62,8 +62,10 @@ multi MAIN ('list',
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    say "OneFit Engine Models Library:";
-    say @list.join("\n");
+    my $txt = "OneFit Engine Models Library:\n";
+    $txt .= @list.join("\n");
+    say $txt
+    $txt;
 }
 
 multi MAIN ('list','models',
@@ -126,7 +128,7 @@ multi MAIN ('start-web-engine',
 HTML
 	}
 	post -> 'list' {
-	     MAIN('list');
+	     content 'text/plain', "File '$filename' uploaded and fitted.\n { MAIN('list') }\n"	
 	}	
 
 	post -> 'fit' {
