@@ -125,8 +125,8 @@ multi MAIN ('start-web-engine',
             	     </form>
             	     <form action="/help" method="post" enctype="multipart/form-data">
            	       <button type="submit">help</button>
-		       <input name="model" type="textfield" default="BPP" size=20>
-		       <input name="cmd" type="textfield" default="" size=20>
+		       <input name="model" type="text" value="BPP" size=20>
+		       <input name="cmd" type="text" values="" size=20>
             	     </form>
 
             	  </body>
