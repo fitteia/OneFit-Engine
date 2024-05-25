@@ -122,6 +122,10 @@ multi MAIN ('start-web-engine',
             	 </html>
 HTML
 	}
+	post -> 'list' {
+	     MAIN('list');
+	}	
+
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
