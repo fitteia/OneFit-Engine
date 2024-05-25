@@ -125,8 +125,8 @@ multi MAIN ('start-web-engine',
             	     </form>
             	     <form action="/help" method="post" enctype="multipart/form-data">
            	       <button type="submit">help</button>
-		       <input name="model" type="text" value="BPP" size=20>
-		       <input name="cmd" type="text" values="" size=20>
+		       model: <input name="model" type="text" value="BPP" size=20>
+		       key: <input name="key" type="text" values="" size=20>
             	     </form>
 
             	  </body>
@@ -140,8 +140,8 @@ HTML
             request-body -> (:$model, *%rest) {
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
-		   say $k, $v;
-content 'text/plain', "{ MAIN('help',$model.Str, "--key=$v", :quiet) }\n"	  }
+		   say $k.Str, $v.Str;
+content 'text/plain', "{ MAIN('help',$model.Str, "--key="~ $v.Str, :quiet) }\n"	  }
 	    	}
 		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 	    }
