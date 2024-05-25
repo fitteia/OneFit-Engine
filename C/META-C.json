@@ -6,6 +6,15 @@
 	"parameters": "f,a,tau",
 	"description": "Bloembergern, Purcell and Pound spin-lattice relaxation. The function returns a R1=1/T1 in units of s^-1. The names of the variables can be defined by the user. Typical parameters values: f[1e3<1e9], a:1e9[1e6<5e9], tau:1e-9[1e-12<1e-6]"
 	"source": "C/local/BPP.c"
-    }
+    },
+
+    "R1ISsbm": {
+	"devision": "Paramagnetic",
+	"function": "R1ISsbm(f, q, C, SolvMmass, density, s, tm, tr, tv, r, Delta2, Aoh)",
+	"call": "R1R1ISsbm(f[1e3<1e9], q=1, C:0.78503[0.001<1], SolvMmass=1.8e-2, density=1, s=3.5, tm:1e-7[1e-10<1e-6], tr:5e-9[1e-10<1e-8, tv:1e-12[1e-12<1e-9], r=2.8ee-10, Delta2:1.3e21[1e19<1e22], Aoh=5e6)=R1ISsbm(f, q, C, SolvMmass, density, s, tm, tr, tv, r, Delta2, Aoh)",
+	"parameters": "f,tv, tr, tm, r, Delta2, Aoh ,C, q, s, SolvMmass, density",
+	"description": "Inner-sphere: Solomon-Bloembergen-Morgan model. Check: https://sites.google.com/tecnico.ulisboa.pt/nmrdpedia/relaxation-models/paramagnetic-relaxation",
+	"source": "C/local/R1ISsbm.c"
+    },
     
 }
