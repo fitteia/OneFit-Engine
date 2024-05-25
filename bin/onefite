@@ -138,7 +138,7 @@ HTML
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    say model.Str;
+	    say $model.Str;
 	    }
 	}	
 	post -> 'fit' {
