@@ -117,6 +117,9 @@ multi MAIN ('start-web-engine',
 		       </table>
            	       <button type="submit">fit</button>
             	     </form>
+            	     <form action="/list" method="post" enctype="multipart/form-data">
+           	       <button type="submit">list models</button>
+            	     </form>
 
             	  </body>
             	 </html>
