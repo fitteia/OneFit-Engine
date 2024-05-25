@@ -128,7 +128,7 @@ multi MAIN ('start-web-engine',
 HTML
 	}
 	post -> 'list' {
-	     content 'text/plain', "File '$filename' uploaded and fitted.\n { MAIN('list') }\n"	
+	     content 'text/plain', "{ MAIN('list') }\n"	
 	}	
 
 	post -> 'fit' {
