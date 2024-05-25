@@ -123,6 +123,11 @@ multi MAIN ('start-web-engine',
             	     <form action="/list" method="post" enctype="multipart/form-data">
            	       <button type="submit">list models</button>
             	     </form>
+            	     <form action="/help" method="post" enctype="multipart/form-data">
+           	       <button type="submit">help</button>
+		       <input name="model" type="textfield" default="BPP" size=20>
+		       <input name="cmd" type="textfield" default="" size=20>
+            	     </form>
 
             	  </body>
             	 </html>
@@ -131,7 +136,11 @@ HTML
 	post -> 'list' {
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
-
+	pot -> 'help' {
+            request-body -> (:$model, *%rest) {
+	    say model.Str;
+	    }
+	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
