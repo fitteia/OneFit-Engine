@@ -63,7 +63,7 @@ multi MAIN ('list',
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my $txt = "OneFit Engine Models Library:\n";
-    $txt .= @list.join("\n");
+    $txt ~= @list.join("\n");
     say $txt;
     $txt;
 }
