@@ -209,7 +209,7 @@ HTML
 
 multi MAIN ('help',
 	    $model,
-            *$cmd,
+            :$cmd,
 	    Bool :q(:$quiet),
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
