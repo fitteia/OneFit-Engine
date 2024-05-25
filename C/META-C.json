@@ -14,6 +14,5 @@
 	"parameters": "f,tv, tr, tm, r, Delta2, Aoh ,C, q, s, SolvMmass, density",
 	"description": "Inner-sphere: Solomon-Bloembergen-Morgan model. Check: https://sites.google.com/tecnico.ulisboa.pt/nmrdpedia/relaxation-models/paramagnetic-relaxation",
 	"source": "C/local/R1ISsbm.c"
-    },
-    
+    }   
 }
