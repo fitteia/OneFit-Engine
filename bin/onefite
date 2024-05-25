@@ -138,7 +138,10 @@ HTML
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    say $model.Str;
+	    	if so %rest.kv {
+		   for %rest.kv -> $k,$v { content 'text/plain', "{ MAIN('help',$model.Str, $v, :quiet) }\n"	  }
+	    	}
+		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 	    }
 	}	
 	post -> 'fit' {
@@ -207,14 +210,18 @@ HTML
 multi MAIN ('help',
 	    $model,
             *$cmd,
+	    Bool :q(:$quiet),
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     my %info = %meta-c{ @list.grep(/$model/).Str };
-    if so $cmd { say %info{ $cmd } }
-    else { say "$model => ",to-json(%info, :sorted-keys) }
+    my $txt="";
+    if so $cmd { $txt = %info{ $cmd } }
+    else { $txt= "$model => ",to-json(%info, :sorted-keys) }
+    say $txt unless $quiet;
+    $txt
 }
  
 multi MAIN ('start-engine',
