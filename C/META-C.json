@@ -7,6 +7,72 @@
 	"description": "Bloembergern, Purcell and Pound spin-lattice relaxation. The function returns a R1=1/T1 in units of s^-1. The names of the variables can be defined by the user. Typical parameters values: f[1e3<1e9], a:1e9[1e6<5e9], tau:1e-9[1e-12<1e-6]",
 	"source": "C/local/BPP.c"
     },
+    "Bcirc": {
+	"function": "Bcirc(x,z,miu,N,R,I,NP,axis)"
+    },
+    "Bcoil": {
+	"function": "Bcoil(x,z,miu,nz,nr,dz,R,I,NP,flag)"
+    },
+    "CED_poli": {
+	"function": "CED_poli(f,Aecd,fcM,R,v0)"
+    },
+    "CROSSR1": {
+	"function": "CROSSR1(f,a,tau,f0)"
+    },
+    "CROSSRELAX": {
+	"function": "CROSSRELAX(f,a,tau,f0)"
+    },
+    "CompElliptic1": {
+	"function": "CompElliptic1(K,NP)"
+    },
+    "ECD_poli": {
+	"function": "ECD_poli(f,Aecd,fcm,fcM,R,v0)"
+    },
+    "EllipticE": {
+	"function": "EllipticE(x,k,NP)"
+    },
+    "EllipticF": {
+	"function": "EllipticF(x,k,NP)"
+    },
+    "GAULOR": {
+	"function": "GAULOR(f,a,b,f0,t)"
+    },
+    "GAUSS": {
+	"function": "GAUSS(f,a,b,f0,Df)"
+    },
+    "GAUSS1": {
+	"function": "GAUSS1(f,a,b,f0)"
+    },
+    "GLmix": {
+	"function": "GLmix(f,a,b,f0,t)"
+    },
+    "HavNeg": {
+	"function": "HavNeg(x,A,tau,epsilon,delta)"
+    },
+    "JacobiCN": {
+	"function": "JacobiCN(u,k,ni)"
+    },
+    "JacobiDN": {
+	"function": "JacobiDN(u,k,ni)"
+    },
+    "JacobiSN": {
+	"function": "JacobiSN(u,k,ni)"
+    },
+    "LORTZN": {
+	"function": "LORTZN(f,a,b,f0)"
+    },
+    "ODFN": {
+	"function": "ODFN(f,Aodf,fcm,fcM,delta)"
+    },
+    "ODFSmA": {
+	"function": "ODFSmA(f,Alu,fcm,fcM,delta)"
+    },
+    "OPF": {
+	"function": "OPF(f,Aopf,f0,fcm,fcM,n)"
+    },
+    "R1CRsp1": {
+	"function": "R1CRsp1(f,Cnh,tq,fq1,fq2,Theta,Phi)"
+    },
     "R1ISsbm": {
 	"devision": "Paramagnetic",
 	"function": "R1ISsbm(f, q, C, SolvMmass, density, s, tm, tr, tv, r, Delta2, Aoh)",
@@ -14,5 +80,86 @@
 	"parameters": "f,tv, tr, tm, r, Delta2, Aoh ,C, q, s, SolvMmass, density",
 	"description": "Inner-sphere: Solomon-Bloembergen-Morgan model. Check: https://sites.google.com/tecnico.ulisboa.pt/nmrdpedia/relaxation-models/paramagnetic-relaxation",
 	"source": "C/local/R1ISsbm.c"
-    }   
+    },   
+    "R1OSabhf": {
+	"devision": "Paramagnetic",
+	"function": "R1OSabhf(f,C,S,a,D,tv,Delta2)"
+    },
+    "R1Torrey": {
+	"function": "R1Torrey(f,n,d,r,tauD)"
+    },
+    "RMTDnum": {
+    "function": "RMTDnum(f,p,Armtd,fcm,fcM)"
+    },
+    "RNordio": {
+	"devision": "Rotations",
+	"function": "RNordio(f,S0,A0,A1,A2,Dz,Dx)"
+    },
+    "RNordio_ang": {
+	"function": "RNordio_ang(f,S0,A0,A1,A2,Dz,Dx,delta)"
+    },
+    "RNordio_poli": {
+	"devision": "Rotations",
+	"function": "RNordio_poli(f,S0,A0,A1,A2,Dz,Dx)"
+    },
+    "ROUSE": {
+	"function": "ROUSE(f,a,tauc)"
+    },
+    "ROUSE123": {
+	"function": "ROUSE123(f,a1,f0,f1,p1,p2,p3)"
+    },
+    "RotVold": {
+	"devision": "Rotations",
+	"function": "RotVold(f,delta,Szz,tauS,tauL,k1,p,A0,A1,A2)"
+    },
+    "RotWoessner": {
+	"devision": "Rotations",
+	"function": "RotWoessner(f,S0,A0,A1,A2,ts,tl,delta)"
+    },
+    "SDFreed": {
+    "function": "SDFreed(x,d,n,tauD,NP)"
+    },
+    "SDN11_2_DllDp2": {
+	"function": "SDN11_2_DllDp2(f,d,n,tauD,delta)"
+    },
+    "SDN11_2_DllDp2_poli": {
+	"function": "SDN11_2_DllDp2_poli(f,d,n,tauD)"
+    },
+    "SDvilfSmB": {
+	"function": "SDvilfSmB(f,d,n,t)"
+    },
+    "Torrey": {
+	"function": "Torrey(f,d,n,tauD)"
+    },
+    "Torrey1": {
+	"function": "Torrey1(f,d,r,n,tauD)"
+    },
+    "iT1ISpara": {
+	"devision": "Paramagnetic",
+	"function": "iT1ISpara(f,T,td,ts,M,r,S)"
+    },
+    "iT1inISpara": {
+	"devision": "Paramagnetic",
+	"function": "iT1inISpara(f,T,td,ts,r,S)"
+    },
+    "iT1isSmallS": {
+	"devision": "Paramagnetic",
+	"function": "iT1isSmallS(f,T,tmg,tmH,tv,ZFS,r,Sp,S)"
+    },
+    "iT1osSmallS": {
+	"devision": "Paramagnetic",
+	"function": "iT1osSmallS(f,T,D,tv,ZFS,r,Sp)"
+    },
+    "jhf": {
+	"function": "jhf(w,re,im)"
+    },
+    "mnpR1HSc": {
+	"function": "mnpR1HSc(f,T,gH,gS,C,S,d,D,NP)"
+    },
+    "mnpR1Hsze": {
+	"function": "mnpR1Hsze(f,T,gH,gS,C,S,d,D,T2e,NP)"
+    },
+    "mnpR1Hszn": {
+	"function": "mnpR1Hszn(f,T,gH,gS,C,S,d,D,T1e,NP)"
+    }
 }
