@@ -60,11 +60,12 @@ END_USAGE
 multi MAIN ('list',
       	   Bool :q(:$quiet) = False,
 	   ){
-    my @list = dir(::('OFE-PATH') ~ "/C/local");
-    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
-    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    my $txt = "OneFit Engine Models Library:\n";
-    $txt ~= @list.join("\n");
+#    my @list = dir(::('OFE-PATH') ~ "/C/local");
+#    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
+#    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
+#    my $txt = "OneFit Engine Models Library:\n";
+#    $txt ~= @list.join("\n");
+     my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
     say $txt unless $quiet;
     $txt;
 }
