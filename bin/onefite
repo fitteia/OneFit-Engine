@@ -111,13 +111,13 @@ multi MAIN ('start-web-engine',
 		       for data files: <br/>
 		       fitting function: <input type="text" name="function" value=""><br/>
 		       <table>
-		       <tr><td>autox: </td><td><input name="autox" type="radio" value="no"> yes </td></tr>
-		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="no"> yes </td></tr>
-		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="no"> yes </td></tr>
-		       <tr><td>loglog: </td><td><input name="loglog" type="radio" value="mo"> yes </td></tr>
-		       <tr><td>loglin: </td><td><input name="loglin" type="radio" value="no"> yes </td></tr>
-		       <tr><td>linlog: </td><td><input name="linlog" type="radio" value="no"> yes </td></tr>
-		       <tr><td>linlin: </td><td><input name="linlin" type="radio" value="no"> yes </td></tr>
+		       <tr><td></td><td>yes/no</td>/tr>
+		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes">/<input name="autoxy" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>loglog: </td><td><input name="loglog" type="radio" value="yes">/<input name="loglog" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>loglin: </td><td><input name="loglin" type="radio" value="yes">/<input name="loglin" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>linlog: </td><td><input name="linlog" type="radio" value="yes">/<input name="linlog" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>linlin: </td><td><input name="linlin" type="radio" value="yes" checked="checked">/<input name="linlin" type="radio" value="no"></td>/tr>
 		       </table>
            	       <button type="submit">fit</button>
             	     </form>
