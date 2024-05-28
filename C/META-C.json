@@ -72,7 +72,7 @@
 	"function": "OPF(f,Aopf,f0,fcm,fcM,n)"
     },
     "R1CRsp1": {
-	"devision": "cross-relaxation",
+	"devision": "Cross-Relaxation",
 	"function": "R1CRsp1(f,Cnh,tq,fq1,fq2,Theta,Phi)",
 	"parameters": "f,Cnh,tq,fq1,fq2,Theta,Phi",
 	"call": "R1(f[1e3<1e9],Cnh:9e6[1e5<1e8],tq:1e-7[1e-9<1e-6],fq1:2e6[1e6<2.5e6],fq2:2.5e6[2e6<3e6],Theta:0.0[0.0<1.6],Phi:0.0[0.0<1.6]) = R1CRsp1(f,Cnh,tq,fq1,fq2,Theta,Phi)",
