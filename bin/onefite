@@ -117,7 +117,7 @@ multi MAIN ('start-web-engine',
 		       <tr><td>loglog: </td><td><input name="loglog" type="radio" value="yes">/<input name="loglog" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>loglin: </td><td><input name="loglin" type="radio" value="yes">/<input name="loglin" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>linlog: </td><td><input name="linlog" type="radio" value="yes">/<input name="linlog" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>linlin: </td><td><input name="linlin" type="radio" value="yes" checked="checked">/<input name="linlin" type="radio" value="no"></td>/tr>
+		       <tr><td>linlin: </td><td><input name="linlin" type="radio" value="yes" checked="checked">/<input name="linlin" type="radio" value="no"></td></tr>
 		       </table>
            	       <button type="submit">fit</button>
             	     </form>
