@@ -111,7 +111,7 @@ multi MAIN ('start-web-engine',
 		       for data files: <br/>
 		       fitting function: <input type="text" name="function" value=""><br/>
 		       <table>
-		       <tr><td></td><td>yes/no</td>/tr>
+		       <tr><td></td><td>yes/no</td></tr>
 		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes">/<input name="autoxy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>loglog: </td><td><input name="loglog" type="radio" value="yes">/<input name="loglog" type="radio" value="no" checked="checked"></td></tr>
