@@ -76,14 +76,18 @@
     "R1ISsbm": {
 	"devision": "Paramagnetic",
 	"function": "R1ISsbm(f, q, C, SolvMmass, density, s, tm, tr, tv, r, Delta2, Aoh)",
-	"call": "R1R1ISsbm(f[1e3<1e9], q=1, C:0.78503[0.001<1], SolvMmass=1.8e-2, density=1, s=3.5, tm:1e-7[1e-10<1e-6], tr:5e-9[1e-10<1e-8], tv:1e-12[1e-12<1e-9], r=2.8e-10, Delta2:1.3e21[1e19<1e22], Aoh=5e6)=R1ISsbm(f, q, C, SolvMmass, density, s, tm, tr, tv, r, Delta2, Aoh)",
+	"call": "R1R1ISsbm(f[1e3<1e9], q=1, C:0.78503[0.001<1], SolvMmass=1.8e-2, density=1, s=3.5, tm:1e-7[1e-10<1e-6], tr:5e-9[1e-10<1e-8], tv:1e-12[1e-12<1e-9], r=2.8e-10, Delta2:1.3e21[1e17<1e22], Aoh=5e6)=R1ISsbm(f, q, C, SolvMmass, density, s, tm, tr, tv, r, Delta2, Aoh)",
 	"parameters": "f,tv, tr, tm, r, Delta2, Aoh ,C, q, s, SolvMmass, density",
 	"description": "Inner-sphere: Solomon-Bloembergen-Morgan model. Check: https://sites.google.com/tecnico.ulisboa.pt/nmrdpedia/relaxation-models/paramagnetic-relaxation",
 	"source": "C/local/R1ISsbm.c"
     },   
     "R1OSabhf": {
 	"devision": "Paramagnetic",
-	"function": "R1OSabhf(f,C,S,a,D,tv,Delta2)"
+	"function": "R1OSabhf(f,C,S,a,D,tv,Delta2)",
+	"call": "R1(f[1e3<1e9], C:0.78503[0.001<1], S=3.5, D:1e-9[1e-12<5e-9], tv:1e-12[1e-12<1e-9], a=3.8e-10, Delta2:1.3e21[1e17<1e22]) = R1OSabhf(f,C,S,a,D,tv,Delta2)"
+	"parameters": "f, C, S, a, D, tv, Delta2",
+	"description": "Outer-sphere: Ayant, Belorizky, Hwang, and Freed model. Check: https://sites.google.com/tecnico.ulisboa.pt/nmrdpedia/relaxation-models/paramagnetic-relaxation/",
+	"source": "C/local/R1OSabhf.c"
     },
     "R1Torrey": {
 	"function": "R1Torrey(f,n,d,r,tauD)"
