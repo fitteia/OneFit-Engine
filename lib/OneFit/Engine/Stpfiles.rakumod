@@ -9,6 +9,7 @@ class Stpfile is export {
     multi method update ($eng, Bool :$a, Str :$path) {
 	$!path = $path if $path.defined;
 	my %e=$eng.hash;
+	%e<Num> = +100 unless so %e<Num>;
 	my ($nums) = %e<Num Xmin Xmax>>>.split('\,')>>.join(' ');
 	my $NT=$eng.blocks(:a).elems;
 	my $i=$nums.words.elems;

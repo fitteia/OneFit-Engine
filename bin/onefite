@@ -112,6 +112,7 @@ multi MAIN ('start-web-engine',
 		       fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
+		       <tr><td>autox: </td><td><input name="autox" type="radio" value="yes">/<input name="autox" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes">/<input name="autoxy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>loglog: </td><td><input name="loglog" type="radio" value="yes">/<input name="loglog" type="radio" value="no" checked="checked"></td></tr>
