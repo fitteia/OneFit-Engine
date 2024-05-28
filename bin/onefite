@@ -109,7 +109,7 @@ multi MAIN ('start-web-engine',
             	       Upload file [.json | .sav | data-file ] <input type="file" name="file"><br/>
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       for data files: <br/>
-		       fitting function: <input type="textarea" rows=1 cols=100 name="function" value=""><br/>
+		       fitting function: <input type="textarea" rows="1" cols="100" name="function" value=""><br/>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
 		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
