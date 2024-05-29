@@ -187,7 +187,7 @@ HTML
 #		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
 		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		}
-		else { $txt = shell("onefite fit $filename --save-to=$folder/$folder.json",:out).out.slurp(:close) }
+		else { $txt = shell("onefite fit $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --save-to=$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
 #		   say "downloading file $file-to-download";		   			  
 		   content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
