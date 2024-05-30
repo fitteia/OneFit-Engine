@@ -62,6 +62,7 @@ class Engine is export {
     multi method hash (%e) { %!engine=%e; self }
     multi method get () { %!engine }
     multi method set (%e) { %!engine=%e; self }
+    multi method Num ($npts) { %!engine<Num>=$npts }
     
     method initialize () {
 	self.blocks(:r);
