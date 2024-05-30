@@ -115,8 +115,8 @@ multi MAIN ('start-web-engine',
 		       <tr><td>autox: </td><td><input name="autox" type="radio" value="yes">/<input name="autox" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes">/<input name="autoxy" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="loglin" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="linlog" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="logx" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="logy" type="radio" value="no" checked="checked"></td></tr>
 		       </table>
            	       <button type="submit">fit</button>
             	     </form>
