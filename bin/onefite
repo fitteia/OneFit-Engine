@@ -115,10 +115,8 @@ multi MAIN ('start-web-engine',
 		       <tr><td>autox: </td><td><input name="autox" type="radio" value="yes">/<input name="autox" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes">/<input name="autoxy" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>loglog: </td><td><input name="loglog" type="radio" value="yes">/<input name="loglog" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>loglin: </td><td><input name="loglin" type="radio" value="yes">/<input name="loglin" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>linlog: </td><td><input name="linlog" type="radio" value="yes">/<input name="linlog" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>linlin: </td><td><input name="linlin" type="radio" value="yes" checked="checked">/<input name="linlin" type="radio" value="no"></td></tr>
+		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="loglin" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="linlog" type="radio" value="no" checked="checked"></td></tr>
 		       </table>
            	       <button type="submit">fit</button>
             	     </form>
@@ -158,10 +156,8 @@ HTML
 		my $autox = "";
 		my $autoy = "";
 		my $autoxy= "";
-		my $loglog= "";
-		my $linlin= "";
-		my $loglin= "";
-		my $linlog= "";
+		my $logx= "";
+		my $logy= "";
 		my $num   = +100;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
@@ -176,18 +172,16 @@ HTML
 		       $autox    = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
 		       $autoy    = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
 		       $autoxy   = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
-		       $loglog   = "--loglog" if $k eq "loglog" and $v eq any("yes",1);
-		       $loglin   = "--loglin" if $k eq "loglin" and $v eq any("yes",1);
-		       $linlog   = "--linlog" if $k eq "linlog" and $v eq any("yes",1);
-		       $linlin   = "--linlin" if $k eq "linlin" and $v eq any("yes",1);
+		       $logx     = "--logx"   if $k eq "logx" and $v eq any("yes",1);
+		       $logy     = "--logy  " if $k eq "logy" and $v eq any("yes",1);
 		   }
 		}		
 		my $txt;
 		if so $function {
-#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
-		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
+		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
 		}
-		else { $txt = shell("onefite fit $filename $autox $autoy $autoxy $loglog $loglin $linlog $linlin --Num=$num --save-to=$folder/$folder.json",:out).out.slurp(:close) }
+		else { $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --Num=$num --save-to=$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
 #		   say "downloading file $file-to-download";		   			  
 		   content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
@@ -291,9 +285,9 @@ multi MAIN  ('create',
 	     Bool :$autox,
 	     Bool :$autoy,
 	     Bool :$autoxy,
-	     Bool :$linlog,
-	     Bool :$loglin,
-	     Bool :$loglog,
+	     Bool :logy(:$linlog),
+	     Bool :logx(:$loglin),
+	     Bool :logxy(:$loglog),
 	     Bool :$global,
 	     Str  :save-to(:$to), # write fit settings to json or sav file"
 	     Str  :$work-folder = '.',
@@ -331,9 +325,9 @@ multi MAIN  ('random',
 	     Bool :$autox,
 	     Bool :$autoy,
 	     Bool :$autoxy,
-	     Bool :$linlog,
-	     Bool :$loglin,
-	     Bool :$loglog,
+	     Bool :logy(:$linlog),
+	     Bool :logx(:$loglin),
+	     Bool :logxy(:$loglog),
 	     Bool :$global,
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
@@ -380,9 +374,9 @@ multi MAIN  ('fit',
 	     Bool :$autox,
 	     Bool :$autoy,
 	     Bool :$autoxy,
-	     Bool :$linlog,
-	     Bool :$loglin,
-	     Bool :$loglog,
+	     Bool :logy(:$linlog),
+	     Bool :logx(:$loglin),
+	     Bool :logxy(:$loglog),
 	     Bool :$global,
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
@@ -420,11 +414,12 @@ multi MAIN  ('fit',
 	     Bool :$autox,
 	     Bool :$autoy,
 	     Bool :$autoxy,
-	     Bool :$linlog,
-	     Bool :$loglin,
-	     Bool :$loglog,
+	     Bool :logy(:$linlog),
+	     Bool :logx(:$loglin),
+	     Bool :logxy(:$loglog),
 	     Str  :save-to(:$to), # write fit settings to json or sav file 	     
-	     Str  :$work-folder = '.'
+	     Str  :$work-folder = '.',
+	     Int  :Num(:$npts)
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
@@ -432,6 +427,7 @@ multi MAIN  ('fit',
 	    $input-file.IO.move("$work-folder/$name/$input-file");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
+	    $engine.Num($npts) if $npts.Bool;
 	    $engine.fit(
 		:no-plot($no-plot),
 		:autox($autox or $autoxy),
@@ -451,17 +447,19 @@ multi MAIN  ('plot',
 	     Bool :$autox,
 	     Bool :$autoy,
 	     Bool :$autoxy,
-	     Bool :$linlog,
-	     Bool :$loglin,
-	     Bool :$loglog,
-	     Str  :$work-folder = '.'
+	     Bool :logy(:$linlog),
+	     Bool :logx(:$loglin),
+	     Bool :logxy(:$loglog),
+	     Str  :$work-folder = '.',
+	     Int  :Num(:$npts)
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $input-file.IO.move("$work-folder/$name/$input-file");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
-#	    my $engine = Engine.new.path("$work-folder").read($input-file);
+	    #	    my $engine = Engine.new.path("$work-folder").read($input-file);
+	    $engine.Num($npts) if $npts.Bool;
 	    $engine.plot(
 		:autox($autox or $autoxy),
 		:autoy($autoy or $autoxy)
