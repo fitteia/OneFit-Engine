@@ -110,8 +110,7 @@ multi MAIN ('start-web-engine',
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       Work-folder: <input type="text" name="work-folder" value="."><br/>
 		       Num points: <input type="text" name="Num" value="100"><br/>
-		       For data file: <br/>
-		       fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
+		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
 		       <tr><td>autox: </td><td><input name="autox" type="radio" value="yes">/<input name="autox" type="radio" value="no" checked="checked"></td></tr>
