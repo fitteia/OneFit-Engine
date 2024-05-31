@@ -176,7 +176,7 @@ HTML
 		       $logy     = "--logy  " if $k eq "logy" and $v eq any("yes",1);
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = "$work-folder/" ~ $zip-file }
-			  elsif $v eq "json" { $file-to-download = "$work-folder/$folder/" ~ $filename.IO.extension('json') }}
+			  elsif $v eq "json" { $file-to-download = "$work-folder/$folder/" ~ $filename.IO.extension('json') }
 			  else { $file-to-download = $work-folder ~ "$folder/$v" }
 		       }
 		   }
