@@ -88,6 +88,6 @@ prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=All.pdf"
 
 or
 
-prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=example_06.json" http://<IP>/fit
+prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "work-folder=/home/<usernmae>/public_html" http://<IP>/fit
 
 
