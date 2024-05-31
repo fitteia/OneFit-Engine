@@ -109,6 +109,7 @@ multi MAIN ('start-web-engine',
             	       Upload file [.json | .sav | data-file ] <input type="file" name="file"><br/>
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       Work-folder: <input type="text" name="work-folder" value="./"><br/>
+		       Num points: <input type="text" name="Num" value="100"><br/>
 		       For data file: <br/>
 		       fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
