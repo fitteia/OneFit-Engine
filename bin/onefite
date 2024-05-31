@@ -152,6 +152,7 @@ HTML
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
+		my $zip-file = $filename.IO.extension('zip').Str;		
 		my $file-to-download = ""; 
 		my $function = "";
 		my $autox = "";
@@ -174,15 +175,16 @@ HTML
 		       $logx     = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy     = "--logy  " if $k eq "logy" and $v eq any("yes",1);
 		       if $k eq "download" {
-		       	  if $v eq "zip" { $file-to-download = "$work-folder/" ~ $filename.IO.extension('zip').Str }
+		       	  if $v eq "zip" { $file-to-download = "$work-folder/" ~ $zip-file }
 			  else { $file-to-download = $work-folder ~ "$folder/$v" }
 		       }
 		   }
-		}		
+		}
+		$zip-file = "$work-folder/$zip-file";		
 		my $txt;
 		if so $function {
-#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to={ \"$work-folder/\" ~ $filename.IO.extension('zip') } --save-to=$work-folder/$folder/$folder.json";
-		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to={ $work-folder ~ $filename.IO.extension('zip') } --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else { $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
