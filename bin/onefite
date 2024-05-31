@@ -181,7 +181,6 @@ HTML
 		   }
 		}
 		$zip-file = "$work-folder/$zip-file";
-		say $zip-file;		
 		my $txt;
 		if so $function {
 #		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
@@ -545,5 +544,4 @@ sub zip-fit ($engine,$work-folder,$name) {
     "$name.zip".IO(:e).unlink;
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
-    say "$work-folder/$name.zip";
 }
