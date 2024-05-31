@@ -108,7 +108,8 @@ multi MAIN ('start-web-engine',
             	     <form action="/fit" method="post" enctype="multipart/form-data">
             	       Upload file [.json | .sav | data-file ] <input type="file" name="file"><br/>
 		       Download: <input type="text" name="download" value="zip"><br/>
-		       for data files: <br/>
+		       Work-folder: <input type="text" name="work-folder" value="./"><br/>
+		       For data file: <br/>
 		       fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
@@ -160,28 +161,30 @@ HTML
 		my $logy= "";
 		my $num   = +100;
 		my $file-content = $file.body-blob;
+		my $work-folder = "./";
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
-		       if $k eq "download" {
-		       	  if $v eq "zip" { $file-to-download = $filename.IO.extension('zip').Str }
-			  else { $file-to-download = "$folder/$v" }
-		       }
 		       $function = $v.Str     if $k eq "function";
 		       $num      = +$v.Str    if $k eq "Num";
+		       $work-folder = $v.Str  if $k eq "work-folder";
 		       $autox    = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
 		       $autoy    = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
 		       $autoxy   = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
 		       $logx     = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy     = "--logy  " if $k eq "logy" and $v eq any("yes",1);
+		       if $k eq "download" {
+		       	  if $v eq "zip" { $file-to-download = "$work-folder/" ~ $filename.IO.extension('zip').Str }
+			  else { $file-to-download = $work-folder ~ "$folder/$v" }
+		       }
 		   }
 		}		
 		my $txt;
 		if so $function {
-#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json";
-		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --zip-to={ $filename.IO.extension('zip') } --save-to=$folder/$folder.json",:out).out.slurp(:close);
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to={ $filename.IO.extension('zip') } --save-to=$work-folder/$folder/$folder.json";
+		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to={ $filename.IO.extension('zip') } --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
-		else { $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --Num=$num --save-to=$folder/$folder.json",:out).out.slurp(:close) }
+		else { $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
 #		   say "downloading file $file-to-download";		   			  
 		   content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
