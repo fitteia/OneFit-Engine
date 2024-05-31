@@ -545,5 +545,5 @@ sub zip-fit ($engine,$work-folder,$name) {
     "$name.zip".IO(:e).unlink;
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
     shell "zip -q -r $name.zip $work-folder/$name -x $excluded";
-    say $work-folder/$name";
+    say "$work-folder/$name";
 }
