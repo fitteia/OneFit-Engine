@@ -162,7 +162,7 @@ HTML
 		my $logy= "";
 		my $num   = +100;
 		my $file-content = $file.body-blob;
-		my $work-folder = "./";
+		my $work-folder = ".";
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
@@ -441,7 +441,6 @@ multi MAIN  ('fit',
 		:logy($linlog or $loglog)
 	    );
 	    $engine.save($to) if $to.defined;
-	    say $work-folder;
 	    zip-fit($engine,$work-folder,$name);
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 	    exit;
