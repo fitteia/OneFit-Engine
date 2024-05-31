@@ -182,7 +182,7 @@ HTML
 		my $txt;
 		if so $function {
 #		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to={ \"$work-folder/\" ~ $filename.IO.extension('zip') } --save-to=$work-folder/$folder/$folder.json";
-		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to={ \"$work-folder/\" ~ $filename.IO.extension('zip') } --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to={ $work-folder ~ $filename.IO.extension('zip') } --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else { $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close) }
    		if $file-to-download.Bool {
