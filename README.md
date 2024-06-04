@@ -76,18 +76,18 @@ Use a browser to access the http://\<IP\>/~ofe/ folder.
 
 prompt> cd $HOME/public_html && onefite start-web-engine &
 prompt> raku $HOME/.local/OneFit-Engine/06-raku.me
-prompt> curl -F "file=@example_06/example_06.json" http://<IP>/fit
+prompt> curl -F "file=@example_06/example_06.json" http://\<IP\>/fit
 
 or
 
-prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=zip" http://<IP>/fit | tar zxvf -
+prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=zip" http://\<IP\>/fit | tar zxvf -
 
 or
 
-prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=All.pdf" http://<IP>/fit > All.pdf
+prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=All.pdf" http://\<IP\>/fit > All.pdf
 
 or
 
-prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "work-folder=/home/<usernmae>/public_html" http://<IP>/fit
+prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "username=\<username\>" http://\<IP\>/fit
 
 

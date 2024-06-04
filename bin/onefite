@@ -108,7 +108,7 @@ multi MAIN ('start-web-engine',
             	     <form action="/fit" method="post" enctype="multipart/form-data">
             	       Upload file [.json | .sav | data-file ] <input type="file" name="file"><br/>
 		       Download: <input type="text" name="download" value="zip"><br/>
-		       Work-folder: <input type="text" name="work-folder" value="/home/<username>/public_html"><br/>
+		       Username: <input type="text" name="username" value="<username>"><br/>
 		       Num points: <input type="text" name="Num" value="100"><br/>
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
@@ -168,7 +168,7 @@ HTML
 		   for %rest.kv -> $k, $v {
 		       $function = $v.Str     if $k eq "function";
 		       $num      = +$v.Str    if $k eq "Num";
-		       $work-folder = $v.Str  if $k eq "work-folder";
+		       $work-folder = "./$v"  if $k eq "username";
 		       $autox    = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
 		       $autoy    = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
 		       $autoxy   = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
