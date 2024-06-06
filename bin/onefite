@@ -237,7 +237,7 @@ multi MAIN ('help',
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     my %info = %meta-c{ @list.grep(/$model/).Str };
-    my $txt = %info{ $key } }
+    my $txt = %info{ $key };
     say $txt unless $quiet;
     $txt
 }
