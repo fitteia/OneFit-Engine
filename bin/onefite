@@ -166,7 +166,7 @@ HTML
 		my $work-folder = ".";
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
-		   for %rest.kv -> $k, $v { say $k,$v;
+		   for %rest.kv -> $k, $v { say "$k","$v";
 		       $function = $v.Str     if $k eq "function";
 		       $num      = +$v.Str    if $k eq "Num";
 		       $work-folder = "./$v"  if $k eq "username";
