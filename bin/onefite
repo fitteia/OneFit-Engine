@@ -33,7 +33,8 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite convert <input-file> <output-file>
 	    onefite upgrade [--test=<Str>]
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
-	    onefite help <model> [--key[=Any]] [-q|--quiet]
+	    onefite help <model> [-q|--quiet]
+	    onefite help <model> <key>] [-q|--quiet]
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
 	    onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
@@ -213,8 +214,7 @@ HTML
 
 
 multi MAIN ('help',
-	    $model,
-            :$key,
+	    Str $model,
 	    Bool :q(:$quiet),
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
@@ -222,9 +222,22 @@ multi MAIN ('help',
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     my %info = %meta-c{ @list.grep(/$model/).Str };
-    my $txt="";
-    if so $key { $txt = %info{ $key } }
-    else { $txt = "$model => " ~ to-json(%info, :sorted-keys) }
+    my $txt = "$model => " ~ to-json(%info, :sorted-keys);
+    say $txt unless $quiet;
+    $txt
+}
+
+multi MAIN ('help',
+	    Str $model,
+            Str $key,
+	    Bool :q(:$quiet),
+	   ){
+    my @list = dir(::('OFE-PATH') ~ "/C/local");
+    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
+    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
+    my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
+    my %info = %meta-c{ @list.grep(/$model/).Str };
+    my $txt = %info{ $key } }
     say $txt unless $quiet;
     $txt
 }
