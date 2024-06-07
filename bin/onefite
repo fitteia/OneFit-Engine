@@ -182,7 +182,7 @@ HTML
 		       }
 		   }
 		}
-		$file-to-download = "$work-folder/$file-to-download";
+		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = "$work-folder/$zip-file";
 		my $txt;
 		if so $function {
