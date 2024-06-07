@@ -148,9 +148,9 @@ class Block is export {
 	    @a.push: .words
 	}
 	say @a.join("\n");
-	@a= @a.sort: { $^a[2] <=> $^b[2] };
+	@a= @a.sort: { +$^a[2] <=> +$^b[2] };
 	say @a.join("\n");
-	@a=@a.sort: { $^a[1] <=> $^b[1] };
+	@a=@a.sort: { +$^a[1] <=> +$^b[1] };
 	say @a.join("\n");
 	for @!Data.hyper {
 	    my @arr = $_.words;
