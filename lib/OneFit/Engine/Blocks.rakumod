@@ -143,6 +143,8 @@ class Block is export {
 	@!Y=();
 	@!E=();
 	my $ex=0;
+	say @!Data.join("\n");
+	say @!Data.sort.join("\n");
 	for @!Data.hyper {
 	    my @arr = $_.words;
 	    @!X.push: +@arr[0];   # the + is to make sure X will get numnbers
