@@ -147,11 +147,11 @@ class Block is export {
 	for @!Data.hyper {
 	    @a.push: .words
 	}
-	say @a.join("\n");
-	@a= @a.sort: { +$^a[2] <=> +$^b[2] };
-	say @a.join("\n");
-	@a=@a.sort: { +$^a[1] <=> +$^b[1] };
-	say @a.join("\n");
+#	say @a.join("\n");
+#	@a= @a.sort: { +$^a[2] <=> +$^b[2] };
+#	say @a.join("\n");
+#	@a=@a.sort: { +$^a[1] <=> +$^b[1] };
+#	say @a.join("\n");
 	for @!Data.hyper {
 	    my @arr = $_.words;
 	    @!X.push: +@arr[0];   # the + is to make sure X will get numnbers
