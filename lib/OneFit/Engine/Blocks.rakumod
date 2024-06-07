@@ -143,6 +143,15 @@ class Block is export {
 	@!Y=();
 	@!E=();
 	my $ex=0;
+	my @a;
+	for @!Data.hyper {
+	    @a.push: .words
+	}
+	say @a;
+	@a= @a.sort: { $^a[2] <=> $^b[2] };
+	say @a;
+	@a=@a.sort: { $^a[1] <=> $^b[1] };
+	say @a;
 	for @!Data.hyper {
 	    my @arr = $_.words;
 	    @!X.push: +@arr[0];   # the + is to make sure X will get numnbers
