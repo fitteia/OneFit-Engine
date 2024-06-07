@@ -186,7 +186,7 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
 		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else {
