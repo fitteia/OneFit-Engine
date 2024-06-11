@@ -16,7 +16,6 @@ use Test;
 
 use Cro::HTTP::Router;
 use Cro::HTTP::Server;
-use Cro::HTTP::Log::File;
 use JSON::Fast;
 
 my %*SUB-MAIN-OPTS = :named-anywhere, ;
@@ -205,8 +204,6 @@ HTML
 			       port => $port,
 			       :$application;
     
-    my $logger = Cro::HTTP::Log::File.new(logs => open('http.log', :a));
-
     $service.start;
     
     react whenever signal(SIGINT) {
