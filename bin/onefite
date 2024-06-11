@@ -204,6 +204,8 @@ HTML
 			       port => $port,
 			       :$application;
     
+    my $logger = Cro::HTTP::Log::File.new(logs => open('http.log', :a));
+
     $service.start;
     
     react whenever signal(SIGINT) {
