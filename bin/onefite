@@ -216,7 +216,8 @@ HTML
     react {
 	whenever $log-supply {
 	    my $now = DateTime.now;
-	    open('http.log',:a).say("$now - onefite still running...").close;
+	    my $fh = open('http.log',:a);
+	    $fh.say("$now - onefite still running...").close;
 	}
 	whenever signal(SIGINT) {
 	    $service.stop;
