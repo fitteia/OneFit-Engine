@@ -200,7 +200,7 @@ HTML
 	}
     }
      
-    my $fh = open('http.log', :a);
+    my $fh = open('http.log', :w);
     my $logger = Cro::HTTP::Log::File.new(logs => $fh);
     say "Starting onefite web service on $ip port $port";
     my Cro::Service $service = Cro::HTTP::Server.new:
