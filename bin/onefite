@@ -224,6 +224,7 @@ HTML
 	}
 	whenever signal(SIGINT) {
 	    $service.stop;
+	    $fh.close;
 	    exit;
 	}
     }
