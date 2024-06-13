@@ -213,11 +213,6 @@ HTML
     my $log-supply = Supply.interval(60);
     
     react {
-	whenever $service {
-	    my $msg = .Str;
-	    my $now = DateTime.now;
-	    $fh.say("$now - $msg");
-	}
 	whenever $log-supply {
 	    my $now = DateTime.now;
 	    $fh.say("$now - onefite still running...");
