@@ -96,7 +96,6 @@ multi MAIN ('start-web-engine',
 	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
 	    :p(:$port) = 8142,   
 	   ){
-	   my $log-file = "-";
     my $application = route {
 	   get -> {
 	       content 'text/html', q:to/HTML/;
@@ -138,9 +137,9 @@ multi MAIN ('start-web-engine',
 HTML
 	}
 	post -> 'list' {
-	     my $fh = open($log-file,:a);
-	     $fh.say("{ DateTime.now }: list");
-	     $fh.close;
+#	     my $fh = open($log-file,:a);
+	     say("{ DateTime.now }: list");
+#	     $fh.close;
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
 	post -> 'help' {
@@ -159,9 +158,9 @@ HTML
 	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
-	    	my $fh=open($log-file,:a);
-		$fh.say("{ DateTime.now }: fit { $file.filename }");
-		$fh.close;
+#	    	my $fh=open($log-file,:a);
+		say("{ DateTime.now }: fit { $file.filename }");
+#		$fh.close;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
 		my $zip-file = $filename.IO.extension('zip').Str;		
@@ -223,9 +222,9 @@ HTML
     react {
 	whenever $log-supply {
 	    my $now = DateTime.now;
-	    my $fh = open($log-file,:a);
-	    $fh.say("$now - onefite still running...");
-	    $fh.close;
+#	    my $fh = open($log-file,:a);
+	    say("$now - onefite still running...");
+#	    $fh.close;
 	}
 	whenever signal(SIGINT) {
 	    $service.stop;
