@@ -210,7 +210,7 @@ HTML
     
     $service.start;
 
-    my $log-supply = Supply.interval(60);
+    my $log-supply = Supplier.new.Supply.interval(60);
     
     react {
 	whenever $log-supply {
