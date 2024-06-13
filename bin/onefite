@@ -96,6 +96,7 @@ multi MAIN ('start-web-engine',
 	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
 	    :p(:$port) = 8142,   
 	   ){
+	   my $log-file = "-";
     my $application = route {
 	   get -> {
 	       content 'text/html', q:to/HTML/;
@@ -137,14 +138,14 @@ multi MAIN ('start-web-engine',
 HTML
 	}
 	post -> 'list' {
-	     my $fh = open('http.log',:a);
+	     my $fh = open($log-file,:a);
 	     $fh.say("{ DateTime.now }: list");
 	     $fh.close;
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    	my $fh = open('http.log',:a);
+	    	my $fh = open($log-file,:a);
 		$fh.say("{ DateTime.now }: help");
 		$fh.close;
 	    	if so %rest.kv {
@@ -158,7 +159,7 @@ HTML
 	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
-	    	my $fh=open('http.log',:a);
+	    	my $fh=open($log-file,:a);
 		$fh.say("{ DateTime.now }: fit { $file.filename }");
 		$fh.close;
     		my $filename = $file.filename;
@@ -222,7 +223,7 @@ HTML
     react {
 	whenever $log-supply {
 	    my $now = DateTime.now;
-	    my $fh = open('http.log',:a);
+	    my $fh = open($log-file,:a);
 	    $fh.say("$now - onefite still running...");
 	    $fh.close;
 	}
