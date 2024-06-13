@@ -144,9 +144,9 @@ HTML
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    	my $fh = open($log-file,:a);
-		$fh.say("{ DateTime.now }: help");
-		$fh.close;
+#	    	my $fh = open($log-file,:a);
+		say("{ DateTime.now }: help");
+#		$fh.close;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
 		   if so $v { content 'text/plain', "{ MAIN('help',$model.Str, key => $v.Str, :quiet) }\n" }
