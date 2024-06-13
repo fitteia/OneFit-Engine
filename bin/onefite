@@ -213,7 +213,7 @@ HTML
     my $log-supply = Supply.interval(60);
     
     react {
-	whenever $service.supply.tap {
+	whenever $service {
 	    my $msg = .Str;
 	    my $now = DateTime.now;
 	    $fh.say("$now - $msg");
