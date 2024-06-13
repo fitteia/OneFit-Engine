@@ -137,12 +137,12 @@ multi MAIN ('start-web-engine',
 HTML
 	}
 	post -> 'list' {
-	     say("{ DateTime.now }: list");
+	     open('http.log',:a).say("{ DateTime.now }: list").close;
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    	say("{ DateTime.now }: help");
+	    	open('http.log',:a).say("{ DateTime.now }: help").close;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
 		   if so $v { content 'text/plain', "{ MAIN('help',$model.Str, key => $v.Str, :quiet) }\n" }
@@ -154,7 +154,7 @@ HTML
 	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
-	    	say("{ DateTime.now }: fit { $file.filename }");
+	    	open('http.log',:a).say("{ DateTime.now }: fit { $file.filename }").close;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
 		my $zip-file = $filename.IO.extension('zip').Str;		
@@ -216,7 +216,7 @@ HTML
     react {
 	whenever $log-supply {
 	    my $now = DateTime.now;
-	    say("$now - onefite still running...");
+	    open('http.log',:a).say("$now - onefite still running...").close;
 	}
 	whenever signal(SIGINT) {
 	    $service.stop;
