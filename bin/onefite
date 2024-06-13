@@ -154,7 +154,7 @@ HTML
 	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
-	    	say("{ DateTime.now }: fit $file");
+	    	say("{ DateTime.now }: fit { $file.filename }");
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
 		my $zip-file = $filename.IO.extension('zip').Str;		
