@@ -16,6 +16,8 @@ use Test;
 
 use Cro::HTTP::Router;
 use Cro::HTTP::Server;
+use Cro::HTTP::Log::File;
+use DataTime;
 use JSON::Fast;
 
 my %*SUB-MAIN-OPTS = :named-anywhere, ;
@@ -196,8 +198,11 @@ HTML
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }			    
    		
 	     }
-	}	
+	}
     }
+     
+    my $fh = open('http.log', :w);
+    my $logger = Cro::HTTP::Log::File.new(logs => $fh);
     say "Starting onefite web service on $ip port $port";
     my Cro::Service $service = Cro::HTTP::Server.new:
 			       host => $ip,
@@ -205,10 +210,23 @@ HTML
 			       :$application;
     
     $service.start;
+
+    my $log-supply = Supply.interval(60);
     
-    react whenever signal(SIGINT) {
-	      $service.stop;
-	      exit;
+    react {
+	whenever $service.supply.tap {
+	    my $msg = .Str;
+	    my $now = DateTime.now;
+	    $fh.say("$now - $msg");
+	}
+	whenever $log-supply {
+	    my $now = DateTime.now;
+	    $fh.say("$now - onefite still running...");
+	}
+	whenever signal(SIGINT) {
+	    $service.stop;
+	    exit;
+	}
     }
 }
 
