@@ -96,8 +96,13 @@ multi MAIN ('start-web-engine',
 	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
 	    :p(:$port) = 8142,   
 	   ){
+	   my $log-file="{ ::('OFE-PATH') }/../log/onefite";
+	   my $log-fh = open($log-file, :w);
     my $application = route {
 	   get -> {
+	     $log-fh.say("{ DateTime.now }: get webform");
+	     $log--fh.flush;
+
 	       content 'text/html', q:to/HTML/;
                	<!DOCTYPE html>
             	<html>
@@ -137,16 +142,14 @@ multi MAIN ('start-web-engine',
 HTML
 	}
 	post -> 'list' {
-#	     my $fh = open($log-file,:a);
-	     say("{ DateTime.now }: list");
-#	     $fh.close;
+	     $log-fh.say("{ DateTime.now }: list");
+	     $log--fh.flush;
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-#	    	my $fh = open($log-file,:a);
-		say("{ DateTime.now }: help");
-#		$fh.close;
+	    	$log-file.say("{ DateTime.now }: help");
+		$log-fh.flush;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
 		   if so $v { content 'text/plain', "{ MAIN('help',$model.Str, key => $v.Str, :quiet) }\n" }
@@ -158,9 +161,8 @@ HTML
 	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
-#	    	my $fh=open($log-file,:a);
-		say("{ DateTime.now }: fit { $file.filename }");
-#		$fh.close;
+		$log-fh.say("{ DateTime.now }: fit { $file.filename }");
+		$log-fh.flush;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
 		my $zip-file = $filename.IO.extension('zip').Str;		
@@ -221,13 +223,17 @@ HTML
     
     react {
 	whenever $log-supply {
-	    my $now = DateTime.now;
-#	    my $fh = open($log-file,:a);
-	    say("$now - onefite still running...");
-#	    $fh.close;
+	    if $log-fh.s > 100 {
+		my $now = DateTime.now;
+		$log-fh.say("$now - onefite log rotate");
+		$log-fh.flush;
+		$log-fh.rname($log-file ~ ".0");
+		$log-fh = open($log-file, :w);
+	    }
 	}
 	whenever signal(SIGINT) {
 	    $service.stop;
+	    $log-fh.close;
 	    exit;
 	}
     }
