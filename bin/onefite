@@ -227,8 +227,8 @@ HTML
 		my $now = DateTime.now;
 		$log-fh.say("$now - onefite log rotate");
 		$log-fh.flush;
-		$log-fh.rename($log-file ~ ".0");
-		$log-fh = open($log-file, :w);
+		$log-file.IO.rename($log-file ~ ".0");
+		try $log-fh = open($log-file, :w) or die "can't open file $!";
 	    }
 	}
 	whenever signal(SIGINT) {
