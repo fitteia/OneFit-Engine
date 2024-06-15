@@ -223,7 +223,7 @@ HTML
     
     react {
 	whenever $log-supply {
-	    if $log-fh.s > 100 {
+	    if $log-file.IO.s > 100 {
 		my $now = DateTime.now;
 		$log-fh.say("$now - onefite log rotate");
 		$log-fh.flush;
