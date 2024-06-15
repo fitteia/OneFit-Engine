@@ -147,10 +147,10 @@ HTML
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
 	post -> 'help' {
-            request-body -> (:$model, *%rest) {
+            request-body -> (:$text, *%rest) {
 	    	$log-file.say("{ DateTime.now }: help");
 		$log-fh.flush;
-		say $model.Str;
+		say $text.Str;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
 #say "$k, $v";
