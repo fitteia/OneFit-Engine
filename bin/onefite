@@ -34,6 +34,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite convert <input-file> <output-file>
 	    onefite upgrade [--test=<Str>]
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
+	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
 	    onefite help <model> <key>] [-q|--quiet]
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
@@ -91,6 +92,11 @@ multi MAIN ('upgrade',
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL $test"
 }
 
+multi MAIN ('stop-web-engine') {
+      my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
+      shell "kill -9 $proc";
+      exit;
+}
 
 multi MAIN ('start-web-engine',
 	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
