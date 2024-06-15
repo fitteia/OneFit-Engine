@@ -152,7 +152,6 @@ HTML
 		$log-fh.flush;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
-		       say "$k,$v";
 		       if so $v.Str { content 'text/plain', "{ MAIN('help',$model.Str, $v.Str, :quiet) }\n" }
 		       else { content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 		   }
