@@ -74,7 +74,7 @@ to get the IP address
 
 Use a browser to access the http://\<IP\>/~ofe/ folder.
 
-prompt> cd $HOME/public_html && onefite start-web-engine &
+prompt> cd $HOME/public_html && nohup onefite start-web-engine &
 prompt> raku $HOME/.local/OneFit-Engine/06-raku.me
 prompt> curl -F "file=@example_06/example_06.json" http://\<IP\>/fit
 
