@@ -100,7 +100,7 @@ multi MAIN ('start-web-engine',
 	   my $log-fh = open($log-file, :w);
     my $application = route {
 	   get -> {
-	     $log-fh.say("{ DateTime.now }: get webform");
+	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) get webform");
 	     $log-fh.flush;
 
 	       content 'text/html', q:to/HTML/;
@@ -142,14 +142,13 @@ multi MAIN ('start-web-engine',
 HTML
 	}
 	post -> 'list' {
-	     $log-fh.say("{ DateTime.now }: list");
+	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) list");
 	     $log-fh.flush;
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    	say request.connection.peer-host;
-	    	$log-fh.say("{ DateTime.now }: help");
+	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 		$log-fh.flush;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
@@ -162,7 +161,7 @@ HTML
 	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
-		$log-fh.say("{ DateTime.now }: fit { $file.filename }");
+		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }");
 		$log-fh.flush;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
