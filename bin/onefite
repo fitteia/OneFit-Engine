@@ -149,7 +149,7 @@ HTML
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    	say request.remote-host;
+	    	say request.peer-host;
 	    	$log-fh.say("{ DateTime.now }: help");
 		$log-fh.flush;
 	    	if so %rest.kv {
