@@ -16,7 +16,6 @@ use Test;
 
 use Cro::HTTP::Router;
 use Cro::HTTP::Server;
-use Cro::HTTP::Request;
 use Cro::HTTP::Log::File;
 use JSON::Fast;
 
@@ -149,7 +148,7 @@ HTML
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    	say request.peer-host;
+	    	say .peer-host;
 	    	$log-fh.say("{ DateTime.now }: help");
 		$log-fh.flush;
 	    	if so %rest.kv {
