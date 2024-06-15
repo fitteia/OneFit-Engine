@@ -101,7 +101,7 @@ multi MAIN ('start-web-engine',
     my $application = route {
 	   get -> {
 	     $log-fh.say("{ DateTime.now }: get webform");
-	     $log--fh.flush;
+	     $log-fh.flush;
 
 	       content 'text/html', q:to/HTML/;
                	<!DOCTYPE html>
@@ -143,7 +143,7 @@ HTML
 	}
 	post -> 'list' {
 	     $log-fh.say("{ DateTime.now }: list");
-	     $log--fh.flush;
+	     $log-fh.flush;
 	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
 	}	
 	post -> 'help' {
