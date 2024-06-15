@@ -150,7 +150,7 @@ HTML
             request-body -> (:$model, *%rest) {
 	    	$log-file.say("{ DateTime.now }: help");
 		$log-fh.flush;
-		say $model;
+		say $model.Str;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
 #say "$k, $v";
