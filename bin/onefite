@@ -148,7 +148,7 @@ HTML
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
-	    	$log-file.say("{ DateTime.now }: help");
+	    	$log-fh.say("{ DateTime.now }: help");
 		$log-fh.flush;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
