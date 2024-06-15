@@ -227,7 +227,7 @@ HTML
 		my $now = DateTime.now;
 		$log-fh.say("$now - onefite log rotate");
 		$log-fh.flush;
-		$log-fh.rname($log-file ~ ".0");
+		$log-fh.rename($log-file ~ ".0");
 		$log-fh = open($log-file, :w);
 	    }
 	}
