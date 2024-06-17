@@ -11,11 +11,12 @@ prompt> su -\
 prompt> apt install raku git sudo\
 prompt> usermod -a -G sudo ofe \
 prompt> exit \
+promot> logout and login again\
 prompt> mkdir $HOME/.local && cd $HOME/.local
 
 prompt> git clone https://github.com/fitteia/OneFit-Engine.git
 
-prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL help \
+prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL 
 
 prompt> onefite upgrade
 
