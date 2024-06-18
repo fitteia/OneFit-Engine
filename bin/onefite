@@ -95,8 +95,10 @@ multi MAIN ('upgrade',
 }
 
 multi MAIN ('service','start') {
+      say "stoping onefite service...";
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       shell "kill -9 $proc";
+      say "starting onefite service on the backgound";
       shell "nohup onefite strat-web-engine &";
       exit;
 }
