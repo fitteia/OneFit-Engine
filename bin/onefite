@@ -33,6 +33,8 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list models
 	    onefite convert <input-file> <output-file>
 	    onefite upgrade [--test=<Str>]
+	    onefite service start
+	    onefite service stop
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
@@ -92,7 +94,18 @@ multi MAIN ('upgrade',
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL $test"
 }
 
-multi MAIN ('stop-web-engine') {
+multi MAIN ('service','start') {
+      my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
+      shell "kill -9 $proc";
+      shell "nohup onefite strat-web-engine &";
+      exit;
+}
+
+multi MAIN ('service','stop') {
+      MAIN('stop-web-service');
+}
+
+multi MAIN ('stop-web-engine',
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       shell "kill -9 $proc";
       exit;
