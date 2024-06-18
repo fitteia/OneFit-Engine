@@ -104,7 +104,7 @@ multi MAIN ('service','start') {
 }
 
 multi MAIN ('service','stop') {
-      MAIN('stop-web-service');
+      MAIN('stop-web-engine');
 }
 
 multi MAIN ('stop-web-engine'){
