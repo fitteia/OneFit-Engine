@@ -107,7 +107,7 @@ multi MAIN ('service','stop') {
       MAIN('stop-web-service');
 }
 
-multi MAIN ('stop-web-engine',
+multi MAIN ('stop-web-engine'){
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       shell "kill -9 $proc";
       exit;
