@@ -88,6 +88,8 @@ class Block is export {
 		}
 	    }
 	}
+	say @!Data Z @!Data.sort({ +$^a[0] <=> +$^b[0] });
+	
 	self.select(:fit($fit),:plot($plot));
 	self.XYE;
 	self
