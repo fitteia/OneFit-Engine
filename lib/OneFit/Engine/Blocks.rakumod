@@ -89,7 +89,7 @@ class Block is export {
 	    }
 	}
 	@!Data = @!Data.map({ .words } ).sort({ +$^a[0] <=> +$^b[0] }).map({ .join(" ") });
-	@!Data>>.say;
+#	@!Data>>.say;
 	self.select(:fit($fit),:plot($plot));
 	self.XYE;
 	self
@@ -214,7 +214,7 @@ class Block is export {
 #	    for (0 ..^ @!X.elems) -> $i { @!Data[$b] = "@!X[$i] @!Y[$i] @!E[$i]" }
 	    @!Data[$b]=([Z] @!X,@!Y,@!E)[$b;*].join: " "
 	}
-	@!Data>>.say;
+#	@!Data>>.say;
 	self;
     }
     method write-agr (:$path) {
