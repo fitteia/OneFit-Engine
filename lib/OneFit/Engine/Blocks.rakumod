@@ -88,7 +88,7 @@ class Block is export {
 		}
 	    }
 	}
-	say @!Data Z @!Data.sort({ +$^a[0] <=> +$^b[0] });
+	say @!Data Z @!Data.map({ $_.words }).sort({ +$^a[0] <=> +$^b[0] }).join(" ");
 	
 	self.select(:fit($fit),:plot($plot));
 	self.XYE;
