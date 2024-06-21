@@ -89,7 +89,7 @@ class Block is export {
 	    }
 	}
 	@!Data = @!Data.map({ .words } ).sort({ +$^a[0] <=> +$^b[0] }).map({ .join(" ") });
-	
+	@!Data>>.say;
 	self.select(:fit($fit),:plot($plot));
 	self.XYE;
 	self
@@ -163,7 +163,6 @@ class Block is export {
 		@arr[2].defined ?? @!E.push: "@arr[2] 0.0" !! @!E.push: "1.0 0.0"
 	    }
 	}
-
 	self.E(:ex-to-ey) if ($ex>=0 or any(@!E>>.contains('%')));
 	self
     }
@@ -215,6 +214,7 @@ class Block is export {
 #	    for (0 ..^ @!X.elems) -> $i { @!Data[$b] = "@!X[$i] @!Y[$i] @!E[$i]" }
 	    @!Data[$b]=([Z] @!X,@!Y,@!E)[$b;*].join: " "
 	}
+	@!Data>>.say;
 	self;
     }
     method write-agr (:$path) {
