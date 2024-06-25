@@ -1,3 +1,4 @@
+
 #!/usr/bin/env raku
 
 my $time = BEGIN { now }
@@ -103,9 +104,11 @@ multi MAIN ('service','start') {
       exit;
 }
 
-multi MAIN ('service','stop') {
-      MAIN('stop-web-engine');
-}
+multi MAIN ('service','stop') { MAIN('stop-web-engine') }
+
+multi MAIN ('service','log') { "{ ::('OFE-PATH') }/../log/onefite".IO.slurp.say }
+
+multi MAIN ('service','pid') { shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1].say }
 
 multi MAIN ('stop-web-engine'){
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
