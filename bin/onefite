@@ -202,8 +202,7 @@ HTML
 		my $num   = +100;
 		my $file-content = $file.body-blob;
 		my $n = 10000;
-		$n = loop { $n = 10000.rand.Int; $n; last unless "./$n".IO.e };
-		my $work-folder = "./$n";
+		my $work-folder = "./{ {loop { my $n = 10000.rand.Int; say $n; last unless "./$n".IO.e }}() }";
 		say $work-folder;  
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
