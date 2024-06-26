@@ -190,6 +190,7 @@ class Engine is export {
 	my $code = Code.new.path($!path);
 	$code.cwrite(%!engine,@!blocks,@!Functions) if $w;
 	$code.compile(:quiet($quiet)) if $c;
+	%!engine<compile-log> = "compile.log".IO.slurp;
 	self
     }
     
@@ -325,6 +326,11 @@ class Engine is export {
 	     @fit-curves.push: "$!path/fit-curves-$_".IO.slurp
 	 }
 	 %!engine<fit-curves> = @fit-curves;
+	 my @fit-residues;
+	 for (1 .. @!blocks.elems) {
+	     @fit-residues.push: "$!path/fit-residues-$_.res".IO.slurp
+	 }
+	 %!engine<fit-residues> = @fit-residues;
 	 say $TXT unless $quiet;
 	 self
      }

@@ -1,4 +1,3 @@
-
 #!/usr/bin/env raku
 
 my $time = BEGIN { now }
@@ -36,6 +35,8 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite upgrade [--test=<Str>]
 	    onefite service start
 	    onefite service stop
+	    onefite service log
+	    onefite service PID
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
@@ -99,8 +100,8 @@ multi MAIN ('service','start') {
       say "stoping onefite service...";
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       shell "kill -9 $proc" if so $proc;
-      say "starting onefite service on the backgound";
-      shell "nohup onefite start-web-engine &";
+      say "starting onefite service on $*HOME/public_tml and go in the backgound";
+      shell "cd $*HOME; nohup onefite start-web-engine &";
       exit;
 }
 
