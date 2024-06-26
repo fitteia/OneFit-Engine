@@ -201,10 +201,9 @@ HTML
 		my $logy= "";
 		my $num   = +100;
 		my $file-content = $file.body-blob;
-		my $n=10000;
-
-		loop { $n = 10000.rand.Int; last unless "./8341".IO.e }
-		my $work-folder = "./$n";
+		my $tmp-folder=10000;
+		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
+		my $work-folder = "./$tmp-folder";
 		say $work-folder;  
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
@@ -236,7 +235,7 @@ HTML
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }			    
-   		
+   		"./tmp-folder".IO.rmdir if "./$tmp-folder".IO.e;
 	     }
 	}
     }
