@@ -202,7 +202,7 @@ HTML
 		my $num   = +100;
 		my $file-content = $file.body-blob;
 		my $n;
-		loop { $n = 10000.rand.Int; last unless $n.so.IO.e }
+		loop { $n = 10000.rand.Int; last unless "./8341".so.IO.e }
 		my $work-folder = "./$n";
 		say $work-folder;  
 		$filename.IO.spurt: $file-content.decode('UTF-8');
