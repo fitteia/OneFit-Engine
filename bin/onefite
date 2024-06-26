@@ -234,9 +234,9 @@ HTML
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }			    
-   		shell("rm -fr ./$tmp-folder") if "./$tmp-folder".IO.e;
-		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }. Concluded. { $tmp-folder ~ ' folder removed.' if $tmp-folder.IO.e}");
+ 		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }. Concluded. { $tmp-folder ~ ' folder removed.' if $tmp-folder.IO.e}");
 		$log-fh.flush;
+   		shell("rm -fr ./$tmp-folder") if "./$tmp-folder".IO.e;
 	     }
 	}
     }
