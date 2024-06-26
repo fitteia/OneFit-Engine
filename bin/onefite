@@ -201,7 +201,8 @@ HTML
 		my $logy= "";
 		my $num   = +100;
 		my $file-content = $file.body-blob;
-		my $work-folder = ".";
+		my $work-folder = "./" ~ loop { my $n = 10000.rand.Int; $n; last unless "./$n".IO.e };
+		say $work-folder;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v { 
