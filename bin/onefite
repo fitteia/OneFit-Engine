@@ -202,6 +202,7 @@ HTML
 		my $num   = +100;
 		my $file-content = $file.body-blob;
 		my $work-folder = ".";
+		say $*PID;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v { 
