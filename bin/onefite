@@ -93,7 +93,8 @@ multi MAIN ('convert',
 multi MAIN ('upgrade',
       Str :$test = '--/test',
       ){
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL $test"
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL $test";
+      MAIN('service','start')
 }
 
 multi MAIN ('service','start') {
