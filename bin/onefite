@@ -110,7 +110,7 @@ multi MAIN ('service','stop') { MAIN('stop-web-engine') }
 
 multi MAIN ('service','log') { "{ ::('OFE-PATH') }/../log/onefite".IO.slurp.say }
 
-multi MAIN ('service','pid') { shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1].say }
+multi MAIN ('service','PID') { shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1].say }
 
 multi MAIN ('stop-web-engine'){
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
@@ -202,7 +202,6 @@ HTML
 		my $num   = +100;
 		my $file-content = $file.body-blob;
 		my $work-folder = ".";
-		say $*PID;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v { 
