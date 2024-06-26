@@ -201,7 +201,7 @@ HTML
 		my $logy= "";
 		my $num   = +100;
 		my $file-content = $file.body-blob;
-		my $n;
+		my $n=10000;
 		loop { $n = 10000.rand.Int; last unless "./8341".so.IO.e }
 		my $work-folder = "./$n";
 		say $work-folder;  
