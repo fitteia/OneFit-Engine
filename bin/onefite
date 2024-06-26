@@ -187,7 +187,7 @@ HTML
 	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
-		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }");
+		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }. Initiated!");
 		$log-fh.flush;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
@@ -204,7 +204,6 @@ HTML
 		my $tmp-folder=10000;
 		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
 		my $work-folder = "./$tmp-folder";
-		say $work-folder;  
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v { 
@@ -236,6 +235,8 @@ HTML
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }			    
    		shell("rm -fr ./$tmp-folder") if "./$tmp-folder".IO.e;
+		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }. Concluded. { $tmp-folder ~ ' folder removed.' if $tmp-folder.IO.e}");
+		$log-fh.flush;
 	     }
 	}
     }
