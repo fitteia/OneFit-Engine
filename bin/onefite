@@ -123,7 +123,7 @@ multi MAIN ('start-web-engine',
 	    :p(:$port) = 8142,   
 	   ){
 	   my $log-file="{ ::('OFE-PATH') }/../log/onefite";
-	   my $log-fh = open($log-file, :w);
+	   my $log-fh = open($log-file, :a);
     my $application = route {
 	   get -> {
 	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) get webform");
@@ -253,12 +253,12 @@ HTML
     
     react {
 	whenever $log-supply {
-	    if $log-file.IO.s > 1024*1024 {
+	    if $log-file.IO.s > 10*10 {
 		my $now = DateTime.now;
 		$log-fh.say("$now - onefite log rotate");
 		$log-fh.flush;
 		$log-file.IO.rename($log-file ~ ".0");
-		try $log-fh = open($log-file, :w) or die "can't open file $!";
+		try $log-fh = open($log-file, :a) or die "can't open file $!";
 	    }
 	}
 	whenever signal(SIGINT) {
