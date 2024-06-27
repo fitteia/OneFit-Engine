@@ -187,8 +187,7 @@ HTML
 	}	
 	post -> 'fit' {
             request-body -> (:$file, *%rest) {
-		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }. Initiated!");
-		$log-fh.flush;
+	        my $init = DateTime.now;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
 		my $zip-file = $filename.IO.extension('zip').Str;		
@@ -233,10 +232,11 @@ HTML
 		   $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
-		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }			    
- 		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }. Concluded. { $tmp-folder ~ ' folder removed.' if $tmp-folder.IO.e}");
-		$log-fh.flush;
+		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
+		my Bool $tmp-folder-was-created = "./$tmp-folder".IO.e;
    		shell("rm -fr ./$tmp-folder") if "./$tmp-folder".IO.e;
+ 		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename }. Concluded ($init - DateTime.now). { 'Folder:' ~ $tmp-folder ~ ' removed.' if $tmp-folder-was-created }");
+		$log-fh.flush;
 	     }
 	}
     }
