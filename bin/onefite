@@ -185,7 +185,7 @@ HTML
 		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 	    }
 	}	
-	post -> 'fit', $username {
+	post -> 'fit', $*username {
             request-body -> (:$file, *%rest) {
 	        say $username;
 	        my $time = now;
