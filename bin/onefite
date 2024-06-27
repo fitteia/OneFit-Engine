@@ -187,7 +187,7 @@ HTML
 	}	
 	post -> 'fit', $*username {
             request-body -> (:$file, *%rest) {
-	        say $username;
+	        say $*username;
 	        my $time = now;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
