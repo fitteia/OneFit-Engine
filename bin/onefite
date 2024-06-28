@@ -221,8 +221,8 @@ HTML
 		       }
 		   }
 		}
-		$work-folder = "./{ @args.head }" if @args.so;
-		say $work-folder;
+		$work-folder = "./{ @args.head }" if @args.so and @args.head.IO.e;
+		content 'text/plain', "Username { @args.head } not valied!." unless @args.head.IO.e;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
 		my $txt;
