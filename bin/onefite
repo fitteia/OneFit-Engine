@@ -185,8 +185,9 @@ HTML
 		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 	    }
 	}	
-	post -> 'fit' {
+	post -> 'fit',*$username {
             request-body -> (:$file, *%rest) {
+	        say $username;
 	        my $time = now;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
