@@ -222,7 +222,7 @@ HTML
 		       }
 		   }
 		}
-		$username = @args.head if @args.so;
+		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
 		$work-folder = "./$username" if $username.IO.e;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
