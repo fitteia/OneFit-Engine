@@ -187,6 +187,7 @@ HTML
 	}	
 	post -> 'fit',*@args {
             request-body -> (:$file, *%rest) {
+	        my $username = "";
 	        my $time = now;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
@@ -208,7 +209,7 @@ HTML
 		   for %rest.kv -> $k, $v { 
 		       $function = $v.Str     if $k eq "function";
 		       $num      = +$v.Str    if $k eq "Num";
-		       $work-folder = "./$v"  if $k eq "username";
+		       $username = $v.Str     if $k eq "username";
 		       $autox    = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
 		       $autoy    = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
 		       $autoxy   = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
@@ -221,8 +222,8 @@ HTML
 		       }
 		   }
 		}
-		$work-folder = "./{ @args.head }" if @args.so and @args.head.IO.e;
-		content 'text/plain', "Username { @args.head } not valied!." unless @args.head.IO.e;
+		$username = @args.head if @args.so;
+		$work-folder = "./$username" if $username.IO.e;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
 		my $txt;
