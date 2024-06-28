@@ -187,7 +187,6 @@ HTML
 	}	
 	post -> 'fit',*@args {
             request-body -> (:$file, *%rest) {
-	        say @args.join(":");
 	        my $time = now;
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
@@ -222,6 +221,8 @@ HTML
 		       }
 		   }
 		}
+		$work-folder = "./{ @args.head }" if @args.so;
+		say $work-folder;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
 		my $txt;
