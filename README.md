@@ -70,14 +70,21 @@ OneFit Engine web service runs on port 8142 by default\
 
 prompt> onefite service start
 
+or
+
+prompt> cd $HOME/public_html && nohup onefite start-web-engine &
+
 ### Stop the web service
 
 prompt> onefite service stop
 
+or
+
+prompt> onefite stop-web-engine
+
 ### View web service log
 
 propmt> onefite service log
-
 
 ## INSTALL usage
 
@@ -137,13 +144,6 @@ prompt> ip -4 -br add
 to get the IP address
 
 Use a browser to access the http://\<IP\>/~ofe/ folder.
-
-
-## START the onefite-web-engine:
-prompt> cd $HOME/public_html && nohup onefite start-web-engine &
-
-## STOP web-engine:
-prompt> onefite stop-web-engine
 
 ## TRY:
 prompt> raku $HOME/.local/OneFit-Engine/06-raku.me
