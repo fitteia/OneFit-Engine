@@ -36,8 +36,8 @@ Create a user account, ex: ofe
 
 #### First login with username ofe
 
-ofe@bookworm:~$ su -\
-root@bookworm~# apt install raku git sudo\
+ofe@bookworm:~$ su - \
+root@bookworm~# apt install raku git sudo \
 root@bookworm~# usermod -a -G sudo ofe \
 root@bookworm~# exit \
 ofe@bookworm:~$ exit \
@@ -46,7 +46,7 @@ login you guest again
 
 ofe@bookworm:~$ mkdir $HOME/.local && cd $HOME/.local \
 ofe@bookworm:~$ git clone https://github.com/fitteia/OneFit-Engine.git \
-ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && ./INSTALL \
+ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  \
 ofe@bookworm:~$ onefite service start
 
 
