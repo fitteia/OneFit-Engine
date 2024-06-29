@@ -3,7 +3,7 @@ The OneFit Engine (onefite) is fitteia's internal fitting core, made available f
 
 The copyright will be defined at the end of the devolopment process
 
-##Fresh instalation
+## Fresh instalation
 
 OneFit  Engine package is prepared for instalation in Debian
 
@@ -32,9 +32,9 @@ In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:
 For Debian "bookworm"
 
 Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" ("Laptop" might be an option) all other packages will be installed later.\
-Create a user account: ex ofe
+Create a user account, ex: ofe
 
-#### First login
+#### First login with username ofe
 
 prompt> su -\
 prompt> apt install raku git sudo\
@@ -45,9 +45,41 @@ prompt> mkdir $HOME/.local && cd $HOME/.local
 
 prompt> git clone https://github.com/fitteia/OneFit-Engine.git
 
-prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL 
+prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL
+
+prompt> onefite service start
+
+
+## Updates/Upgrades
+
+Login your guest and
 
 prompt> onefite upgrade
+
+or
+
+prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL 
+
+
+## OneFit web service
+
+OneFit Engine web service runs on port 8142 by default\
+(you can choose another port number, but be aware of firewall issues) 
+
+### Start the web service
+
+prompt> onefite service start
+
+### Stop the web service
+
+prompt> onefite service stop
+
+### View web service log
+
+propmt> onefite service log
+
+
+## INSTALL usage
 
 Usage:
     ./INSTALL [-h|--help]\
@@ -69,7 +101,7 @@ Usage:
 
 
 
-Install examples:
+### Install examples:
 
 -) complete install to site with sudo privileges
 
@@ -92,6 +124,8 @@ prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --un
 prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-to-site -u
 
 
+## Running examples
+
 Examples of onefite use can e found in the examples folder.
 
 prompt> cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/xx-RUN.me"
@@ -104,13 +138,14 @@ to get the IP address
 
 Use a browser to access the http://\<IP\>/~ofe/ folder.
 
-START web-engine:
+
+## START the onefite-web-engine:
 prompt> cd $HOME/public_html && nohup onefite start-web-engine &
 
-STOP web-engine:
+## STOP web-engine:
 prompt> onefite stop-web-engine
 
-TRY:
+## TRY:
 prompt> raku $HOME/.local/OneFit-Engine/06-raku.me
 prompt> curl -F "file=@example_06/example_06.json" http://\<IP\>/fit
 
