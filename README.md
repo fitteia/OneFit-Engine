@@ -3,10 +3,39 @@ The OneFit Engine (onefite) is fitteia's internal fitting core, made available f
 
 The copyright will be defined at the end of the devolopment process
 
-Fresh instalation
+##Fresh instalation
+
+OneFit  Engine package is prepared for instalation in Debian
+
+### Windows
+
+Install Oracle VM VirtualBox in your Windows host.\
+Download Debian netinst iso file for amd64\
+Created a new guest VM with at least 2 cores, 8 GB HD and 4 GB of RAM\
+Edit the Network settings and for a NAT network, in Advanced settings -> Port Forwarding add\
+port 8022 to localhost and 22 to guest (for ssh connections using puTTY)\
+port 8080 to localhost and 80 to guest (for html connections)\
+port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using html)\
+
+In the Host: ssh user@localhost -P 8022; http://localhost:8080; http://localhost:8142
+
+### Mac M2
+
+Install UTM\
+Download Debian for arm64\
+Created a new guest Emulate VM for Architecture ARM64 (aarch64) with at least 8 GB HD and 4 GB of RAM, default number of cores
+
+In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
+
+### Debian Linux
+
 For Debian "bookworm"
 
-Create a user account (ex: ofe):\
+Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" ("Laptop" might be an option) all other packages will be installed later.\
+Create a user account: ex ofe
+
+#### First login
+
 prompt> su -\
 prompt> apt install raku git sudo\
 prompt> usermod -a -G sudo ofe \
