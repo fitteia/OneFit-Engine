@@ -151,7 +151,9 @@ sub install-web-server () {
 
 
 sub install-p6-modules ($to-site) {
+    say "zef install Inline::Perl5....";
     shell("$SUDO zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
+    say "zef install --/test cro....";
     shell("$SUDO zef install --/test cro { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
 }
 
