@@ -145,7 +145,8 @@ sub install-web-server () {
 	say "Select and install Web-server and SSH-server";
 	shell "sudo tasksel";
     } unless $is-installed;
-    shell "sudo a2enmod userdir; sudo systemctl restart apache2" unless "/etc/apache2/mods-enabled/userdir.load".IO.e;
+    shell "sudo a2enmod userdir";
+    shell "sudo systemctl restart apache2";
 }
 
 
