@@ -12,7 +12,7 @@ OneFit  Engine package is prepared for instalation in Debian
 Install Oracle VM VirtualBox in your Windows host.\
 Download Debian netinst iso file for amd64\
 Created a new guest VM with at least 2 cores, 8 GB HD and 4 GB of RAM\
-(ATTENTION: select "Skip the unattended installation" to avoid a full debian installation) \ 
+(ATTENTION: select "Skip the unattended installation" to avoid a full debian installation)  
 Edit the Network settings and for a NAT network, in Advanced settings -> Port Forwarding add\
 port 8022 to localhost and 22 to guest (for ssh connections using puTTY)\
 port 8080 to localhost and 80 to guest (for html connections)\
