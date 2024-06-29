@@ -85,7 +85,7 @@ ofe@bookworm:\~$ onefite stop-web-engine
 
 ### View web service log
 
-propmt> onefite service log
+ofe@bookworm:\~$ onefite service log
 
 ## INSTALL usage
 
