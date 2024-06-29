@@ -83,6 +83,11 @@ or
 
 ofe@bookworm:\~$ onefite stop-web-engine
 
+or
+
+ofe@bookworm:\~$ onefite service PID (or ofe@bookworm:\~$ ps aux | grep onefite) \
+ofe@bookworm:\~$ kill -9 \<PID\>
+
 ### View web service log
 
 ofe@bookworm:\~$ onefite service log
