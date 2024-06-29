@@ -36,29 +36,30 @@ Create a user account, ex: ofe
 
 #### First login with username ofe
 
-prompt> su -\
-prompt> apt install raku git sudo\
-prompt> usermod -a -G sudo ofe \
-prompt> exit \
-promot> logout and login again\
-prompt> mkdir $HOME/.local && cd $HOME/.local
+ofe@bookworm:~$ su -\
+root@bookworm~# apt install raku git sudo\
+root@bookworm~# usermod -a -G sudo ofe \
+root@bookworm~# exit \
+ofe@bookworm:~$ exit \
 
-prompt> git clone https://github.com/fitteia/OneFit-Engine.git
+login you guest again
 
-prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL
-
-prompt> onefite service start
+ofe@bookworm:~$ mkdir $HOME/.local && cd $HOME/.local \
+ofe@bookworm:~$ git clone https://github.com/fitteia/OneFit-Engine.git \
+ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && ./INSTALL \
+ofe@bookworm:~$ onefite service start
 
 
 ## Updates/Upgrades
 
 Login your guest and
 
-prompt> onefite upgrade
+ofe@bookworm:~$ onefite upgrade
 
 or
 
-prompt> cd $HOME/.local/OneFit-Engine && ./INSTALL 
+ofe@bookworm:~$
+ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && ./INSTALL 
 
 
 ## OneFit web service
@@ -68,19 +69,19 @@ OneFit Engine web service runs on port 8142 by default\
 
 ### Start the web service
 
-prompt> onefite service start
+ofe@bookworm:~$ onefite service start
 
 or
 
-prompt> cd $HOME/public_html && nohup onefite start-web-engine &
+ofe@bookworm:~$ cd $HOME/public_html && nohup onefite start-web-engine &
 
 ### Stop the web service
 
-prompt> onefite service stop
+ofe@bookworm:~$ onefite service stop
 
 or
 
-prompt> onefite stop-web-engine
+ofe@bookworm:~$ onefite stop-web-engine
 
 ### View web service log
 
@@ -112,53 +113,53 @@ Usage:
 
 -) complete install to site with sudo privileges
 
-prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
+ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
 
 -) install packages, raku Inline::Perl5, and set ghostscript policy settings
 
-prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -/c -/i -/t
+ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -/c -/i -/t
 
 -) compile and install raku module in user account (no sudo privileges are required)
 
-prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-dpkg --no-enable-gs --no-test --no-to-site
+ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-dpkg --no-enable-gs --no-test --no-to-site
 
 -) uninstall from site
 
-prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --uninstall
+ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --uninstall
 
 -) uninstall from user account
 
-prompt> cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-to-site -u
+ofe@bookworm:~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-to-site -u
 
 
 ## Running examples
 
 Examples of onefite use can e found in the examples folder.
 
-prompt> cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/xx-RUN.me"
+ofe@bookworm:~$ cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/xx-RUN.me"
 
 Tipically the output will go to example_xx folder.
 
-prompt> ip -4 -br add
+ofe@bookworm:~$ ip -4 -br add
 
 to get the IP address
 
 Use a browser to access the http://\<IP\>/~ofe/ folder.
 
 ## TRY:
-prompt> raku $HOME/.local/OneFit-Engine/06-raku.me
-prompt> curl -F "file=@example_06/example_06.json" http://\<IP\>/fit
+ofe@bookworm:~$ raku $HOME/.local/OneFit-Engine/06-raku.me
+ofe@bookworm:~$ curl -F "file=@example_06/example_06.json" http://\<IP\>/fit
 
 or
 
-prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=zip" http://\<IP\>/fit | tar zxvf -
+ofe@bookworm:~$ curl -F "file=@example_06/example_06.json" -F "download=zip" http://\<IP\>/fit | tar zxvf -
 
 or
 
-prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=All.pdf" http://\<IP\>/fit > All.pdf
+ofe@bookworm:~$ curl -F "file=@example_06/example_06.json" -F "download=All.pdf" http://\<IP\>/fit > All.pdf
 
 or
 
-prompt> prompt> curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "username=\<username\>" http://\<IP\>/fit
+ofe@bookworm:~$ curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "username=\<username\>" http://\<IP\>/fit
 
 
