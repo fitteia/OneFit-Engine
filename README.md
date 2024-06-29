@@ -58,9 +58,9 @@ ofe@bookworm:\~$ onefite upgrade
 
 or
 
-ofe@bookworm:\~$
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL 
-
+ofe@bookworm:\~$ onefite service stop \
+ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL \
+ofe@bookworm:\~$ onefite service start
 
 ## OneFit web service
 
