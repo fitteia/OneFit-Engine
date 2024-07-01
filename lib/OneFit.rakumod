@@ -391,7 +391,7 @@ class Engine is export {
 	     @line-fields.push: .Tag;
 	     @line-fields.push: .X.elems;
 	     @line-fields.push: .chi2;
-	     @line-fields.push: .T.words;
+	     @line-fields.push: .T.words.join($fmt);
 	     for @!par-tables[$i].a {
 		 .<err>="-" unless .<err>.defined;
 		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
