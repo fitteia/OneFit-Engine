@@ -24,7 +24,7 @@ In the Host: ssh user@localhost -P 8022; http://localhost:8080; http://localhost
 
 Install UTM\
 Download Debian for arm64\
-Created a new guest Emulate VM for Architecture ARM64 (aarch64) with at least 4 cores, 6 GB HD and 4 GB of RAM.
+Created a new guest Virtualize VM for Linux Architecture ARM64 (aarch64) with at least 4 GB HD, 4 GB of RAM, default number of cores.
 
 In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
 
