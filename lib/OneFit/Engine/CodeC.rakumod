@@ -167,7 +167,7 @@ EOT
 	}
 	for (0 ..^ @!blocks.elems) -> $i {
 	    FIRST {
-		$TXT ~= "\nstatic double Matrix_$t\[\]\[{ @tpars.elems + 1 }\]=\{\n";
+		$TXT ~= "\ndouble Matrix_$t\[\]\[{ @tpars.elems + 1 }\]=\{\n";
 		$TXT ~= "\{" ~ "{ { (0 .. $^a) >>*>> 0 }(@tpars).join(',') }" ~ "\},\n";
 	    }
 	    my @a = ($i+1);
