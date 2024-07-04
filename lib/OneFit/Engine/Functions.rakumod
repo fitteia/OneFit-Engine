@@ -33,7 +33,7 @@ class Function is export {
 	    @!parameters.push($_) if $!formula.contains(/ <|w> $_ <?wb> /);
 	}
 	say %e<T>;
-	$!formula = $!formula.subst(%e<T>,"{%e<T>}_1",:g) unless $!formula.contains(/%e<T>_/);
+	$!formula = $!formula.subst(%e<T>,"{%e<T>}_1",:g) unless $!formula.contains(/{%e<T>}_/);
 	say $!formula;
 	$!formula.subst(/\n/,"").match:
 	/<-["]>+
