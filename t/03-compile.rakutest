@@ -31,7 +31,7 @@ is $output, "C code extracted compiled OK!\n", "compile works! ({ now - $time } 
 
 $time = now;
 $eng = OneFit::Engine.new.path("$workfolder").read("$test-path/2/test2.sav");
-my $output = do {
+$output = do {
     my $*OUT = OutputCapture.new;
     $eng.blocks(:r,:q).functions(:r).code: :w, :c;
     $*OUT.captured;
