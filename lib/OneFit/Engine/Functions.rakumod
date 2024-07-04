@@ -21,7 +21,7 @@ class Function is export {
     method path ($folder) { $!path = $folder; self }
     
     method decode ($function, %e) {
-	$!formula = $function.subst(%e<T>,"{%e<T>}_1",:g) unless $function.contains(/{%e<T>}_/);
+	$!formula =  $function.contains(/{%e<T>}_/) ?? $function !! $function.subst(%e<T>,"{%e<T>}_1",:g);
 
 	$.label = %e{"Func" ~ $!No-1} if %e{"Func" ~  $!No-1}.defined;
 	$.posx = %e{"Funcx" ~ $!No-1} if %e{"Funcx" ~ $!No-1}.defined;
