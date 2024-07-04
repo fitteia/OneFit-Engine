@@ -21,7 +21,8 @@ class Function is export {
     method path ($folder) { $!path = $folder; self }
     
     method decode ($function, %e) {
-	$!formula = $function;
+	$!formula = $function.subst(%e<T>,"{%e<T>}_1",:g) unless $function.contains(/{%e<T>}_/);
+
 	$.label = %e{"Func" ~ $!No-1} if %e{"Func" ~  $!No-1}.defined;
 	$.posx = %e{"Funcx" ~ $!No-1} if %e{"Funcx" ~ $!No-1}.defined;
 	$.posy = %e{"Funcy" ~ $!No-1} if %e{"Funcy" ~ $!No-1}.defined;
@@ -32,9 +33,7 @@ class Function is export {
 	for @p {
 	    @!parameters.push($_) if $!formula.contains(/ <|w> $_ <?wb> /);
 	}
-	say %e<T>;
-	$!formula = $!formula.subst(%e<T>,"{%e<T>}_1",:g) unless $!formula.contains(/{%e<T>}_/);
-	say $!formula;
+
 	$!formula.subst(/\n/,"").match:
 	/<-["]>+
 	 [
