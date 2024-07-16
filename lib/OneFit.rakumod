@@ -215,7 +215,7 @@ class Engine is export {
 #	say "Greatings from update parameters form engine" if $from-engine;
 #	say "Greatings from update parameters form output" if $from-output;
 	#	say "Greatings from update parameters form log" if $from-log;
-	if %!engine<FitType> ~~ /Individual/ or @!blocks.first.parameters.a.last ~~ /MIXED/ {
+	if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race -> $i {
 		my $parameters;
 		if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
