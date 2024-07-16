@@ -103,8 +103,8 @@ class Block is export {
     method export (:$path, Bool :$fit, Bool :$plot) {
 	$!path = $path if $path.defined;
 	self.select(:fit($fit), :plot($plot));
-#	{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: {($!T.words.elems>1) ?? $!No+1 !! $!T.words[0]}() ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
-	{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: $!No+1 ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
+	{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: {($!T.words.elems>1) ?? $!No+1 !! $!T.words[0]}() ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
+#	{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: $!No+1 ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
 	self
     }
     method Graph () { $!Graph }
