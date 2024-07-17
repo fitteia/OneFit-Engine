@@ -242,14 +242,6 @@ class Engine is export {
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
 	    @!par-tables[0]= $parameters;
 	    for @!blocks {
-		if (so $parameters.a.tail<name> and $parameters.a.tail<name>.contains("MIXED") and $parameters.a.tail<value> > 0.0) {
-		    $parameters = Parameters::Parameters.new.path($!path);
-		    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
-		    $parameters.from-output(file => "fit{ .No+1 }.out") if $from-output.Bool;
-		    $parameters.from-log(file => "fit{ .No+1 }.log") if $from-log.Bool;
-		    say "fit{.No+1}.log";
-		    @!par-tables[.No+1]= $parameters;
-		}
 		.parameters = $parameters;
 		.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
 	    }
