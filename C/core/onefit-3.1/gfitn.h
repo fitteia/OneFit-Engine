@@ -69,6 +69,7 @@ char *Gnuplot=0;
 char ***AA_names=0;
 char **dfiles=0;
 char *FUNCAO=0;
+char *PROGNAME=0;
 double *xm=0;
 double *xM=0;
 double *ym=0;

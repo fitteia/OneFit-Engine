@@ -73,6 +73,7 @@ extern char *parfile;
 extern char ***AA_names;
 extern char **dfiles;
 extern char *FUNCAO;
+extern char *PROGNAME;
 extern double *xm;
 extern double *xM;
 extern double *ym;
