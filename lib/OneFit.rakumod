@@ -388,10 +388,10 @@ class Engine is export {
 	 my $TXT = @fields.join($fmt) ~ "\n";
 	 if @!par-tables[0].a.tail<name>.contains("MIXED") and @!par-tables[0].a.tail<value> > 0.0 {
 	     my @line-fields;
-	     @line-fields.push: @blocks[0].Tag;
-	     @line-fields.push: @blocks[0].X.elems;
-	     @line-fields.push: @blocks[0].chi2;
-	     @line-fields.push: @blocks[0].T.words.join($fmt);
+	     @line-fields.push: @!blocks[0].Tag;
+	     @line-fields.push: @!blocks[0].X.elems;
+	     @line-fields.push: @!blocks[0].chi2;
+	     @line-fields.push: @!blocks[0].T.words.join($fmt);
 	     for @!par-tables[0].a {
 		 .<err>="-" unless .<err>.defined;
 		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
