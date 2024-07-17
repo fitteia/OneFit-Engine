@@ -396,9 +396,9 @@ class Engine is export {
 	     @line-fields.push: .T.words.join($fmt);
 	     my $par-table = @!par-tables[$i];
 	     if "fit{.No+1}.log".IO.e {
-		 $parameters-tmp.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
-		 $parameters-tmp.from-output(file => "fit{ .No+1 }.out") if $from-output.Bool;
-		 $parameters-tmp.from-log(file => "fit{ .No+1 }.log") if $from-log.Bool;
+		 $parameters-tmp.from-engine(self);
+		 $parameters-tmp.from-output(file => "fit{ .No+1 }.out");
+		 $parameters-tmp.from-log(file => "fit{ .No+1 }.log");
 		 say "fit{.No+1}.log";
 		 if $parameters-tmp.a.tail<name>.contains("MIXED") and $parameters-tmp.a.tail<value> > 0.0 {
 		     $par-table=$parameters-tmp;
