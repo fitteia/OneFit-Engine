@@ -237,7 +237,7 @@ class Engine is export {
 	    if @!blocks.head.parameters.defined { $parameters = @!blocks.head.parameters }
 	    else { $parameters = Parameters::Parameters.new.path($!path) }
 
-	    say $parameters.a.last<name>;
+	    say $parameters.a.tail<name>;
 	    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 	    $parameters.from-output(path => $!path) if $from-output.Bool;
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
