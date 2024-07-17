@@ -402,6 +402,7 @@ class Engine is export {
 		 say "fit{.No+1}.log";
 		 if $parameters-tmp.a.tail<name>.contains("MIXED") and $parameters-tmp.a.tail<value> > 0.0 {
 		     $par-table=$parameters-tmp;
+		     say $par-table;
 		 }
 	     }
 
