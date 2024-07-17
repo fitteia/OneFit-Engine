@@ -250,6 +250,7 @@ class Engine is export {
 		    $parameters.from-output(path => $!path, file => "fit{ .No+1 }.out") if $from-output.Bool;
 		    $parameters.from-log(path => $!path, file => "fit{ .No+1 }.log") if $from-log.Bool;
 		    @!par-tables[.No+1]= $parameters;
+		    say $parameters;
 		}
 		.parameters = $parameters;
 		.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
