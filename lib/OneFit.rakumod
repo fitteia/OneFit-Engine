@@ -379,6 +379,8 @@ class Engine is export {
 
      method !results (:$fmt = ', ') {
 	 my $parameters-tmp = Parameters::Parameters.new.path($!path);
+	 my Bool $MIXED=False;
+	 $MIXED = @!par-tables[0].a.tail<name>.contains("MIXED") and @!par-tables[0].a.tail<value> > 0.0;
 	 my @fields = ("# TAG");
 	 @fields.push: "Npts";
 	 @fields.push: "chi2";
@@ -386,7 +388,7 @@ class Engine is export {
 	 @fields.push: @a.Slip;
 	 for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1" ~ "err" ).Slip }
 	 my $TXT = @fields.join($fmt) ~ "\n";
-	 if @!par-tables[0].a.tail<name>.contains("MIXED") and @!par-tables[0].a.tail<value> > 0.0 {
+	 if $MIXED {
 	     my @line-fields;
 	     @line-fields.push: "global";
 	     @line-fields.push: @!blocks[0].X.elems;
@@ -407,13 +409,13 @@ class Engine is export {
 	     @line-fields.push: .chi2;
 	     @line-fields.push: .T.words.join($fmt);
 	     my $par-table = @!par-tables[$i];
-	     if "$!path/fit{.No+1}.log".IO.e {
+	     if "$!path/fit{.No+1}.log".IO.e and $MIXED {
 		 $parameters-tmp.from-engine(self);
 		 $parameters-tmp.from-output(file => "fit{ .No+1 }.out");
 		 $parameters-tmp.from-log(file => "fit{ .No+1 }.log");
-		 if $parameters-tmp.a.tail<name>.contains("MIXED") and $parameters-tmp.a.tail<value> < 1.0 {
+#		 if $parameters-tmp.a.tail<name>.contains("MIXED") and $parameters-tmp.a.tail<value> < 1.0 {
 		     $par-table=$parameters-tmp;
-		 }
+#		 }
 	     }
 
 #		 for @!par-tables[$i].a {
