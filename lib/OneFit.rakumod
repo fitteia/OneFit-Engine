@@ -246,7 +246,7 @@ class Engine is export {
 		    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 		    $parameters.from-output(path => $!path, file => "fit{ .No+1 }.out") if $from-output.Bool;
 		    $parameters.from-log(path => $!path, file => "fit{ .No+1 }.log") if $from-log.Bool;
-		    @!par-tables[.No]= $parameters;
+		    @!par-tables[.No+1]= $parameters;
 		}
 		.parameters = $parameters;
 		.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
