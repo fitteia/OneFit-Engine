@@ -242,6 +242,7 @@ class Engine is export {
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
 	    @!par-tables[0]= $parameters;
 	    for @!blocks {
+		say $parameters.a.tail<value>;
 		if ($parameters.a.tail<name>.contains("MIXED") and $parameters.a.tail<value> > 0.0) {
 		    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 		    $parameters.from-output(path => $!path, file => "fit{ .No+1 }.out") if $from-output.Bool;
