@@ -399,7 +399,7 @@ class Engine is export {
 		 $parameters-tmp.from-engine(self);
 		 $parameters-tmp.from-output(file => "fit{ .No+1 }.out");
 		 $parameters-tmp.from-log(file => "fit{ .No+1 }.log");
-		 say "fit{.No+1}.log",$par-table;
+		 say "fit{.No+1}.log",$parameters-tmp;
 		 
 		 if $parameters-tmp.a.tail<name>.contains("MIXED") and $parameters-tmp.a.tail<value> > 0.0 {
 		     $par-table=$parameters-tmp;
