@@ -245,7 +245,7 @@ class Engine is export {
  		if .parameters.defined { $parameters = .parameters }
 		else { $parameters = Parameters::Parameters.new.path($!path) }
 		
-		if all($parameters.a.tail<name>.Bool, $parameters.a.tail<name>.contains("MIXED"), $parameters.a.tail<value> > 0.0) {
+		if (so $parameters.a.tail<name> and $parameters.a.tail<name>.contains("MIXED") and $parameters.a.tail<value> > 0.0) {
 		    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 		    $parameters.from-output(path => $!path, file => "fit{ .No+1 }.out") if $from-output.Bool;
 		    $parameters.from-log(path => $!path, file => "fit{ .No+1 }.log") if $from-log.Bool;
