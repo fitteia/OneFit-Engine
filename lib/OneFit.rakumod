@@ -395,7 +395,7 @@ class Engine is export {
 	     @line-fields.push: .chi2;
 	     @line-fields.push: .T.words.join($fmt);
 	     my $par-table = @!par-tables[$i];
-	     if "fit{.No+1}.log".IO.e {
+	     if "$!path/fit{.No+1}.log".IO.e {
 		 $parameters-tmp.from-engine(self);
 		 $parameters-tmp.from-output(file => "fit{ .No+1 }.out");
 		 $parameters-tmp.from-log(file => "fit{ .No+1 }.log");
