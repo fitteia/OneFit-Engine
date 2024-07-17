@@ -386,7 +386,14 @@ class Engine is export {
 	 @fields.push: @a.Slip;
 	 for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1" ~ "err" ).Slip }
 	 my $TXT = @fields.join($fmt) ~ "\n";
-
+	 if @!par-tables[0].a.tail<name>.contains("MIXED") and @!par-tables[0].a.tail<value> > 0.0 {
+	     for $par-table[0].a {
+		 .<err>="-" unless .<err>.defined;
+		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
+		 else { @line-fields.push: .<value err>.Slip  }
+	     }
+	     $TXT ~= @line-fields.join($fmt) ~ "\n";
+	 }
 	 for @!blocks {
 	     my @line-fields;
 	     my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
