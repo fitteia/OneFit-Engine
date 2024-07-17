@@ -29,7 +29,7 @@ char **env;
   void gfit_outpg(),read_arguments(),decode_funcao();
 
   PROGNAME = argv[0];
-  fprintf(stderr,"%s\n",PROGNAME);
+
   fprintf(stderr,"OneFit, version %s.\n",version_number);
   fprintf(stderr,"Thank you for using OneFit. Every constructive criticism is welcome.\n");
   fprintf(stderr,"\nOneFit is free software with ABSOLUTLY NO WARRANTY.\n\n");
