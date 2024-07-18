@@ -1,15 +1,15 @@
 #include <stdio.h>
 #include <math.h>
-#include <stdlib.h>				
-#include <string.h>				
-#include "globals.h"				
-#include "struct.h"				
-#include "userlib.h"				
+#include <stdlib.h>			
+#include <string.h>
+#include "globals.h"
+#include "struct.h"
+#include "userlib.h"
 
 #define pi 3.1415926
 #define PI 3.1415926
-#define pI 3.1415926						
-#define Pi 3.1415926						
+#define pI 3.1415926
+#define Pi 3.1415926
 
 #define PAR(n) ( (MIXED) ? pars_[(int)N_0][(int) n+1] : par[(int) n] )	
 
