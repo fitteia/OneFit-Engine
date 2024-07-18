@@ -126,7 +126,7 @@ EOT
 		for $auxcode.lines {
 		    take $_ unless $_.contains(any <stdio.h stdlib.h math.h string.h globals.h struct.h userlib.h ndata.h mixed.h AuxCode.h>)
 		}
-	    } .join("\n");
+	    } .join('\n');
 	    $auxcode = "#include \"AuxCode.h\"\n" ~ $auxcode;
 	    
 #	    $auxcode = "#include \"mixed.h\"\n" ~ $auxcode unless $auxcode.contains("mixed.h");
