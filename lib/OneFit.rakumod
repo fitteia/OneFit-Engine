@@ -410,7 +410,8 @@ class Engine is export {
 	     if "$!path/fit{.No+1}.log".IO.e and $MIXED {
 		 .parameters.from-output(file => "fit{ .No+1 }.out");
 		 .parameters.from-log(file => "fit{ .No+1 }.log");
-		 @!par-tables[.No] = .parameters;
+		 @!par-tables[$i] = .parameters;
+#		 @!par-tables[.No] = .parameters;
 	     }
 
 	     for @!par-tables[$i].a {
