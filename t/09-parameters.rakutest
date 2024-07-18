@@ -25,7 +25,7 @@ my class OutputCapture {
 plan 5;
 $time = now;
 my $eng = Engine.new.path("$workfolder").read("$test-path/2/test2.sav").blocks(:r).parameters :r;
-my $parfile = Parfile.new;
+my $parfile = Parfile.new.path("$workfolder");
 is $parfile.write($eng.par-selected.table).get.join("\n"), "$test-path/2/test2.par".IO.slurp, "parameters: create parfile works! ({ now -$time } s)" ;
 
 $time = now;
