@@ -50,7 +50,7 @@ SRC= 	gfitn.c fitutil.c funcoes.c  readdat.c \
 	lfit1n.c usage.c ppcovar.c ludcmp.c \
 	lubksb.c gamma.c pp3d.c gchi2out.c tabfunc.c plot.c mygnus.c getopt.c\
 	getopt1.c getopt.h fitenv.c integra.c makefile gfitn.h globals.h \
-	struct.h mixed.h actpar.c xmgr.c
+	struct.h AuxCode.h actpar.c xmgr.c
 
 UTIL= 	fitutil.o ludcmp.o lubksb.o gamma.o integra.o getopt.o getopt1.o ode2.o
 
@@ -196,7 +196,7 @@ afactors-xyz: afactors-xyz.c
 install-fitteia: Lib fft cop gfilt ccat afactors-xyz
 	install -d $(BINDIR) $(LIBDIR) $(INCLUDEDIR) 
 	install -m 0644 $(LIBNAME) $(LIBUTILNAME) $(LIBDIR)
-	install -m 0644 globals.h struct.h mixed.h $(INCLUDEDIR)
+	install -m 0644 globals.h struct.h AuxCode.h $(INCLUDEDIR)
 	install -m 0755 fft cop gfilt ccat afactors-xyz $(BINDIR)
 	make -C modelos install-lib
 	make -C perl install-pcop
@@ -204,7 +204,7 @@ install-fitteia: Lib fft cop gfilt ccat afactors-xyz
 install: all
 	install -d $(BINDIR) $(LIBDIR) $(LIBEXECDIR) $(INCLUDEDIR) $(PERLDIR)
 	install -m 0644 $(LIBUTILNAME) $(LIBNAME) $(LIBDIR)
-	install -m 0644 globals.h struct.h mixed.h $(INCLUDEDIR)
+	install -m 0644 globals.h struct.h AuxCode.h $(INCLUDEDIR)
 	install cop fitenv actpar afactors-xyz ccat fft gfilt $(BINDIR)
 #	make -C examples install
 	make -C modelos install
