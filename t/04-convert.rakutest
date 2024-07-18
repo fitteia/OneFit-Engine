@@ -24,8 +24,8 @@ my class OutputCapture {
 
 plan 1;
 $time = now;
-$eng.save("test1.json");
-is "test1.json".IO.slurp, "$test-path/1/test1.json".IO.slurp, "convert sav to json works! ({ now - $time } sec)";;
+$eng.save("$workfolder/test1.json");
+is "$workfolder/test1.json".IO.slurp, "$test-path/1/test1.json".IO.slurp, "convert sav to json works! ({ now - $time } sec)";;
 
 
 
