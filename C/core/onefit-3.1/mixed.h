@@ -9,7 +9,7 @@
 #define pI 3.1415926						
 #define Pi 3.1415926						
 
-#define PAR(n) ( (MIXED) ? pars_[(int)N_0][n+1] : par[n] )	
+#define PAR(n) ( (MIXED) ? pars_[(int)N_0][(int) n+1] : par[(int) n] )	
 
 #define SET_INDIVIDUAL_FITS_ENGINE(N,par)			\
 								\
