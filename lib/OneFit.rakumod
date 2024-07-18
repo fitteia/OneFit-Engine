@@ -378,8 +378,6 @@ class Engine is export {
     }
 
      method !results (:$fmt = ', ') {
-#	 my int $NPTS=0;
-#	 my $parameters-tmp = Parameters::Parameters.new.path($!path);
 	 my Bool $MIXED=False;
 	 $MIXED = @!par-tables[0].a.tail<name>.contains("MIXED") and @!par-tables[0].a.tail<value> > 0.0;
 	 my @fields = ("# TAG");
@@ -403,33 +401,25 @@ class Engine is export {
 	     $TXT ~= @line-fields.join($fmt) ~ "\n";
 	 }
 	 for @!blocks {
-#	     $NPTS += .X.elems;
 	     my @line-fields;
 	     my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
 	     @line-fields.push: .Tag;
 	     @line-fields.push: .X.elems;
 	     @line-fields.push: .chi2;
 	     @line-fields.push: .T.words.join($fmt);
-#	     my $par-table = @!par-tables[$i];
 	     if "$!path/fit{.No+1}.log".IO.e and $MIXED {
 		 .parameters.from-output(file => "fit{ .No+1 }.out");
 		 .parameters.from-log(file => "fit{ .No+1 }.log");
 		 @!par-tables[$i] = .parameters;
-#		 $parameters-tmp.from-engine(self);
-#		 $parameters-tmp.from-output(file => "fit{ .No+1 }.out");
-#		 $parameters-tmp.from-log(file => "fit{ .No+1 }.log");
-#		 $par-table=$parameters-tmp;
 	     }
 
 	     for @!par-tables[$i].a {
-#	     for $par-table.a {
 		 .<err>="-" unless .<err>.defined;
 		 if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 else { @line-fields.push: .<value err>.Slip  }
 	     }
 	     $TXT ~= @line-fields.join($fmt) ~ "\n";
 	 }
-	 
 	 return $TXT;
      }
 }
