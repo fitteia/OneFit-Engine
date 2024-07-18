@@ -23,9 +23,7 @@ my class OutputCapture {
 
 plan 1;
 
-subtest '1',{
-    plan 1;
-    $time = now;
-    my $eng = Engine.new.path("$workfolder").read("$test-path/9/Master-MIXED.sav").fit.save("$workfolder/Master-MIXED.json");
-    is "$workfolder/Master-MIXED.json".IO.e, True, "mixed fit finish ok! ({ now -$time } s)" ;;
-}
+$time = now;
+my $eng = Engine.new.path("$workfolder").read("$test-path/9/Master-MIXED.sav").fit.save("$workfolder/Master-MIXED.json");
+is "$workfolder/Master-MIXED.json".IO.e, True, "mixed fit finish ok! ({ now -$time } s)" ;;
+
