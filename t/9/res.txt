@@ -1,0 +1,27 @@
+Compile time: 1.020969983
+read blocks
+ignoring non-conform line: # File = 02 C16-40 PP sweep T=30C.sdf 
+ignoring non-conform line: # ZONE = 23/23 (z=16.) 
+ignoring non-conform line: # BRLX = 300 
+ignoring non-conform line: # DATE = 6/1/2024 8:46:59 AM 
+ignoring non-conform line: # File = 02 C16-40 PP sweep T=30C.sdf 
+ignoring non-conform line: # ZONE = 23/23 (z=16.) 
+ignoring non-conform line: # BRLX = 300 
+ignoring non-conform line: # DATE = 6/1/2024 8:46:59 AM 
+ignoring non-conform line: # File = 02 C16-40 PP sweep T=30C.sdf 
+ignoring non-conform line: # ZONE = 1/23 (z=17.) 
+ignoring non-conform line: # BRLX = 15.999 
+ignoring non-conform line: # DATE = 6/1/2023 9:40:05 AM 
+read pars
+read functions
+write stp
+write code
+C code extracted compiled OK!
+# TAG, Npts, chi2, N_1, N_2, N_3, c, ±err, Minf1, ±err, M0_, ±err, T11_, ±err, T12_, ±err, Minf2, ±err, MIXED, ±err
+global, 66, 0.0149763, 300, 0.0, 2, 0.407251, 0.15303, 1.08889, 0.32437, -0.94249, fixed, 0.58607, fixed, 2.4251, fixed, -0.0249933, 0.38214, 1, fixed
+300, 16, 0.0149763, 300, 0.0, 2, 0.4073, constant, 1.089, constant, -0.941749, 0.67452, 0.524814, 0.97530, 2.425, fixed, -0.02499, constant, 0, constant
+83.36, 16, 0.0132316, 83.36, 1, 2, 0.4073, constant, 1.089, constant, -0.949532, 0.63181, 0.346457, 0.91488, 2.425, fixed, -0.02499, constant, 0, constant
+52.25, 16, 0.0257494, 52.25, 2, 2, 0.4073, constant, 1.089, constant, -0.877432, 0.72266, 0.393678, 0.87688, 2.425, fixed, -0.02499, constant, 0, constant
+0.010, 18, 0.0116553, 0.010, 26, 6, 0.4073, constant, 1.089, constant, 0.908823, 0.75721, 0.00953242, 0.17226, 2.425, fixed, -0.02499, constant, 0, constant
+
+Total execution time (s): 4.647478276
