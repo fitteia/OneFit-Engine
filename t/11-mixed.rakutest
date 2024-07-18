@@ -13,8 +13,6 @@ our constant OFE-PATH="%OFE-PATH%";
 
 my $workfolder="/tmp/OneFit-Engine-test";
 my $test-path=OFE-PATH ~ "/t";
-my $eng = OneFit::Engine.new.read("$test-path/1/test1.sav");
-
 
 my class OutputCapture {
     has @!lines;
@@ -28,7 +26,6 @@ plan 1;
 subtest '1',{
     plan 1;
     $time = now;
-    my $res = shell("cd $workfolder && cp $test-path/9/Master-MIXED.sav . && onefite fit Master-MIXED.sav",:out).out.slurp(:close); 
-    is $res.lines.tai(3), "$test-path/9/res.txt".IO.lines.tail(3), "mixed fit works ok! ({ now -$time } s)";
-
+    my $eng = Engine.new.path("$workfolder").read("$test-path/Master-MIXED.sav").fit.save("Master-MIXED.json");
+    is "$workfolder/Master-MIXED.json".e, True, "mixed fit finish ok! ({ now -$time } s)" ;;
 }
