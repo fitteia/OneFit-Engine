@@ -403,7 +403,7 @@ class Engine is export {
 	     $TXT ~= @line-fields.join($fmt) ~ "\n";
 	 }
 	 for @!blocks {
-	     $NPTS += .X.elems;
+#	     $NPTS += .X.elems;
 	     my @line-fields;
 	     my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
 	     @line-fields.push: .Tag;
