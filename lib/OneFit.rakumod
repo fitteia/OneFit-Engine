@@ -414,7 +414,7 @@ class Engine is export {
 	     if "$!path/fit{.No+1}.log".IO.e and $MIXED {
 		 .parameters.from-output(file => "fit{ .No+1 }.out");
 		 .parameters.from-log(file => "fit{ .No+1 }.log");
-		 $par-tables[$i] = .parameters;
+		 @!par-tables[$i] = .parameters;
 #		 $parameters-tmp.from-engine(self);
 #		 $parameters-tmp.from-output(file => "fit{ .No+1 }.out");
 #		 $parameters-tmp.from-log(file => "fit{ .No+1 }.log");
