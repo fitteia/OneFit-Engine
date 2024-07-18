@@ -6,8 +6,8 @@
 #include "struct.h"				
 #include "userlib.h"				
 
-#define pi 3.1415926						
-#define PI 3.1415926						
+#define pi 3.1415926
+#define PI 3.1415926
 #define pI 3.1415926						
 #define Pi 3.1415926						
 
