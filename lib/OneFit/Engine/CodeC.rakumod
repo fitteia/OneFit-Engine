@@ -127,17 +127,16 @@ EOT
 		    take $_ unless $_.contains(any <stdio.h stdlib.h math.h string.h globals.h struct.h userlib.h ndata.h mixed.h AuxCode.h>)
 		}
 	    } .join("\n");
-	    $auxcode = "#include \"AuxCode.h\"\n" ~ $auxcode;
-	    
-#	    $auxcode = "#include \"mixed.h\"\n" ~ $auxcode unless $auxcode.contains("mixed.h");
-#	    $auxcode = "#include \"ndata.h\"\n" ~ $auxcode unless $auxcode.contains("ndata.h");
-#	    $auxcode = "#include \"userlib.h\"\n" ~ $auxcode unless $auxcode.contains("userlib.h");
-#	    $auxcode = "#include \"struct.h\"\n" ~ $auxcode unless $auxcode.contains("struct.h");
-#	    $auxcode = "#include \"globals.h\"\n" ~ $auxcode unless $auxcode.contains("globals.h");
-#	    $auxcode = "#include <string.h>\n" ~ $auxcode unless $auxcode.contains("string.h");
-#	    $auxcode = "#include <stdlib.h>\n" ~ $auxcode unless $auxcode.contains("stdlib.h");
-#	    $auxcode = "#include <math.h>\n" ~ $auxcode unless $auxcode.contains("math.h");
-#	    $auxcode = "#include <stdio.h>\n" ~ $auxcode unless $auxcode.contains("stdio.h");
+
+	    $auxcode = "#include \"mixed.h\"\n" ~ $auxcode unless $auxcode.contains("mixed.h");
+	    $auxcode = "#include \"ndata.h\"\n" ~ $auxcode unless $auxcode.contains("ndata.h");
+	    $auxcode = "#include \"userlib.h\"\n" ~ $auxcode unless $auxcode.contains("userlib.h");
+	    $auxcode = "#include \"struct.h\"\n" ~ $auxcode unless $auxcode.contains("struct.h");
+	    $auxcode = "#include \"globals.h\"\n" ~ $auxcode unless $auxcode.contains("globals.h");
+	    $auxcode = "#include <string.h>\n" ~ $auxcode unless $auxcode.contains("string.h");
+	    $auxcode = "#include <stdlib.h>\n" ~ $auxcode unless $auxcode.contains("stdlib.h");
+	    $auxcode = "#include <math.h>\n" ~ $auxcode unless $auxcode.contains("math.h");
+	    $auxcode = "#include <stdio.h>\n" ~ $auxcode unless $auxcode.contains("stdio.h");
 
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
