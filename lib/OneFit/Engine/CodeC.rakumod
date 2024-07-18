@@ -125,8 +125,8 @@ EOT
 	if ($auxcode.defined) {
 #	    $auxcode = "#include <stdio.h>\n" ~ $auxcode unless $auxcode.contains("stdio.h");
 #	    $auxcode = "#include <math.h>\n" ~ $auxcode unless $auxcode.contains("math.h");
-	    $auxcode = "#include \"mixed.h\"\n" ~ $auxcode unless $auxcode.contains("mixed.h");
 	    $auxcode = "#include \"ndata.h\"\n" ~ $auxcode unless $auxcode.contains("ndata.h");
+	    $auxcode = "#include \"mixed.h\"\n" ~ $auxcode unless $auxcode.contains("mixed.h");
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
 	
