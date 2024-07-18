@@ -8,7 +8,7 @@
 #include "userlib.h"				
 ***********************/
 #define pi 3.1415926						
-#define PI 3.1415926						y
+#define PI 3.1415926						
 #define pI 3.1415926						
 #define Pi 3.1415926						
 
@@ -138,7 +138,7 @@
   }									\
 									\
 									\
-  int make_individual_fits_(double N, double *par)			\
+  int First_Make_Individual_Fits(double N, double *par)       		\
   {									\
     int write_parfile();						\
     int print_pars_();							\
@@ -170,7 +170,7 @@
       else {								\
 	if ( N_0 < No ) {						\
 	  FIRST_TIME=1;							\
-	  make_individual_fits_(N,par);					\
+	  First_Make_Individual_Fits(N,par);  				\
 	}								\
 	else No = (int) N_0;						\
       }									\
