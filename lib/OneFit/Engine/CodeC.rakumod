@@ -123,10 +123,17 @@ EOT
 
 	
 	if ($auxcode.defined) {
-	    $auxcode = "#include <stdio.h>\n" ~ $auxcode unless $auxcode.contains("stdio.h");
+
+	    $auxcode = "#include \"mixed.h\"\n" ~ $auxcode unless $auxcode.contains("mixed.h");
+	    $auxcode = "#include \"ndata.h\"\n" ~ $auxcode unless $auxcode.contains("ndata.h");
+	    $auxcode = "#include \"userlib.h\"\n" ~ $auxcode unless $auxcode.contains("userlib.h");
+	    $auxcode = "#include \"struct.h\"\n" ~ $auxcode unless $auxcode.contains("struct.h");
+	    $auxcode = "#include \"globals.h\"\n" ~ $auxcode unless $auxcode.contains("globals.h");
+	    $auxcode = "#include <string.h>\n" ~ $auxcode unless $auxcode.contains("string.h");
+	    $auxcode = "#include <stdlib.h>\n" ~ $auxcode unless $auxcode.contains("stdlib.h");
 	    $auxcode = "#include <math.h>\n" ~ $auxcode unless $auxcode.contains("math.h");
-#	    $auxcode = "#include \"ndata.h\"\n" ~ $auxcode unless $auxcode.contains("ndata.h");
-#	    $auxcode = "#include \"mixed.h\"\n" ~ $auxcode unless $auxcode.contains("mixed.h");
+	    $auxcode = "#include <stdio.h>\n" ~ $auxcode unless $auxcode.contains("stdio.h");
+
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
 	
