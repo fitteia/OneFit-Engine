@@ -44,7 +44,7 @@ class Function is export {
 	 ]+
 	 ','? <ws>
 	 $<no>=(<-["]>+)
-	 ')'$
+	 ')' <ws> $
 	 /;
 	@!dif-eqs=$<captures>.Array>>.Str if $<captures>.defined;
 	$!solve-to = $<no>.Str if $<no>.defined;
