@@ -142,7 +142,7 @@ class Function is export {
 		my $h = $!dif-h;
 		$TXT ~= "\n   $!dif-h = oden->h;" if @!dif-eqs[$_].contains(/<|w> $h <|w>/) and !$h.contains($t);
 		$TXT ~= "\n   $t = oden->t;" if @!dif-eqs[$_].contains(/<|w> $t '_'? \d*/) ;
-		$TXT ~= "\n   $x = oden->x;" if @!dif-eqs[$_].contains(/<|w> $x '_'? \d*/) ;
+		$TXT ~= "\n   $x = oden->x;" if @!dif-eqs[$_].contains(/<|w> $x '_'? \d*<|w>/) ;
 		for %Eq-names.sort(*.value).map(*.kv) -> ($k,$v) { $TXT ~= "\n   $k = oden->y\[$v\];" if @!dif-eqs[$_].contains(/<|w> $k <|w>/) };
 		$TXT ~= "\n   return @!dif-eqs[$_];";
 		$TXT ~= "\n\}\n\n";
