@@ -20,7 +20,7 @@
   static int INIT=1;						\
   static int No=0;						\
   static int NP;						\
-  static MIXED=0;						\
+  static int MIXED=0;						\
 								\
   static double **pars_;					\
 								\
@@ -173,6 +173,7 @@
 	  First_Make_Individual_Fits(N,par);  				\
 	}								\
 	else No = (int) N_0;						\
+	retrun 0;							\
       }									\
     }									\
     else {								\
