@@ -12,7 +12,7 @@
 #define pI 3.1415926						
 #define Pi 3.1415926						
 
-#define PAR(n) ( (MIXED) ? pars_[(int)N_0][(int) n+1] : par[(int) n] )	
+#define PAR(no,n) ( (MIXED) ? pars_[(int) no][(int) n+1] : par[(int) n] )	
 
 #define SET_INDIVIDUAL_FITS_ENGINE(N,par)			\
 								\
@@ -138,7 +138,7 @@
   }									\
 									\
 									\
-  int First_Make_Individual_Fits(double N, double *par)       		\
+  int First_Make_Individual_Fits(double N, double *par, double no)      \
   {									\
     int write_parfile();						\
     int print_pars_();							\
@@ -164,16 +164,16 @@
 	write_parfile(par);						\
 	update_pars_(par);						\
 	FIRST_TIME=0;							\
-	No = (int) N_0;							\
+	No = (int) no;							\
 	return 1;							\
       }									\
       else {								\
-	if ( N_0 < No ) {						\
+	if ( no < No ) {						\
 	  FIRST_TIME=1;							\
-	  First_Make_Individual_Fits(N,par);  				\
+	  First_Make_Individual_Fits(N,par,no);  				\
 	}								\
-	else No = (int) N_0;						\
-	retrun 0;							\
+	else No = (int) no;						\
+	return 0;							\
       }									\
     }									\
     else {								\
