@@ -53,7 +53,8 @@
 	  fprintf(fout,"%-10.3e",p[k]);				\
 	  mixed[k]=0;						\
 	  if( val[strlen(val)-1] == '_' ) {			\
-	    mixed[k]=k;						\
+	    mixed[k]=1;						\
+	    /* printf("%d\n",k);	*/			\
 	    sscanf(&s[30],"%s",val);				\
 	    fprintf(fout," %-9s",val);				\
 	    sscanf(&s[40],"%s",val);				\
@@ -80,8 +81,8 @@
 	sscanf(s,"%s",fix);						\
 	if(!strcmp(fix,"fix")) {					\
 	  sscanf(&s[10],"%lf",&no);					\
-	  /*	 printf("%lg\n",no); */					\
-	  if ( !mixed[(int) no] ) fprintf(fout,"%s",s);			\
+	  /* printf("%lg\n",no); */					\
+	  if ( !mixed[(int) no-1] ) fprintf(fout,"%s",s);		\
 	}								\
 	else fprintf(fout,"%s",s);					\
       }									\
@@ -170,7 +171,7 @@
       else {								\
 	if ( no < No ) {						\
 	  FIRST_TIME=1;							\
-	  First_Make_Individual_Fits(N,par,no);  				\
+	  First_Make_Individual_Fits(N,par,no);				\
 	}								\
 	else No = (int) no;						\
 	return 0;							\
