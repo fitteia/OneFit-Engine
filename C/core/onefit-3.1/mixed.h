@@ -171,7 +171,7 @@
       else {								\
 	if ( no < No ) {						\
 	  FIRST_TIME=1;							\
-	  First_Make_Individual_Fits(N,par,no);				\
+	  return First_Make_Individual_Fits(N,par,no);			\
 	}								\
 	else No = (int) no;						\
 	return 0;							\
