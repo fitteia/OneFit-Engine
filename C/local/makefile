@@ -2,7 +2,7 @@ ARCH=x86_64
 ROOT=/home/fitteia
 PERLVERSION=5.36
 PREFIX=
-LIBNUMBER=4.0.2
+LIBNUMBER=4.0.4
 INTERFACE=UserLib
 CCFLAGS=-D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I$(ROOT)$(PREFIX)/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O2 -g -fPIC -I/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE -I$(ROOT)$(PREFIX)/include 
 LDFLAGS=-shared -L/usr/local/lib -fstack-protector -O2 -g 
