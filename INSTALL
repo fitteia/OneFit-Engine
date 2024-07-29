@@ -143,7 +143,7 @@ sub install-web-server () {
     my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
     do {
 	say "Select and install Web-server and SSH-server";
-	shell "sudo tasksel";
+	shell "sudo apt install task-ssh-server task-web-server";
     } unless $is-installed;
     shell "sudo a2enmod userdir";
     shell "sudo systemctl restart apache2";
