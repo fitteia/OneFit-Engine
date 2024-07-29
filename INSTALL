@@ -142,7 +142,7 @@ sub install-web-server () {
     shell "chmod 711 $*HOME && chmod 755 $*HOME/public_html";
     my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
     do {
-	say "Select and install Web-server and SSH-server";
+	say "tasksel install Web-server and SSH-server";
 	shell "sudo apt install task-ssh-server task-web-server";
     } unless $is-installed;
     shell "sudo a2enmod userdir";
