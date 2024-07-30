@@ -45,7 +45,7 @@ multi MAIN (
 
     compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
-    install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
+    install( :test($test), :to-site($to-site and !$to-user), bindir => $bindir ) if $install;
 
  }
 
