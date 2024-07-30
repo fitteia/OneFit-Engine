@@ -11,7 +11,7 @@ multi MAIN (
     Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
     Bool :t(:$test) = True, # to run raku module tests
     Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
-    Bool :U(:$uninstall) = False, # to uninstall OneFit-Engine module					   
+    Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
     Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
     Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
     Bool :s(:$to-site) = True, # install raku module to site (use --/to-site to install-to user)
@@ -33,7 +33,7 @@ multi MAIN (
 
     $SUDO = "" unless $to-site;
 
-    uninstall() if $uninstall;
+    uninstall() if $Uninstall;
 
     install-apt-packages($cpu) if $dpkg.Bool and !$to-user;
 
@@ -56,14 +56,14 @@ multi MAIN (Bool :h(:help($))) {
 Usage:
     ./INSTALL [-h|--help]
       ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs] \
-                [-w|--web-server] [-u|--uninstall] [--to-site] [--bindir] \
+                [-w|--web-server] [-U|--Uninstall] [--to-site] [--bindir] [-u|--to-user] \
     --dpkg         # to install required debian packages
     --web-server   # to run tasksel install web-server
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
     --compile      # to comlipe and install the OneFit engine core (use [-/c|--no-c|--/compile|--no-compile] to skip compiling)
     --test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)
     --install      # to install OneFit-Engine as a raku modules available to all users
-    --uninstall    # to uninstall: use together with --to-site or --no-to-site
+    --Uninstall    # to uninstall: use together with --to-site or --no-to-site
     --p6-modules   # to install raku module Inline::Perl5
     --enable-gs    # enable ghostsript in ImageMagick-6 policy.xml
     --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise
