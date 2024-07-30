@@ -203,8 +203,8 @@ sub install (:$test,:$to-site, :$bindir) {
 	}
     }
 
-    say '/usr/local/bin/onefite'.IO.f;
-    say "$*CWD/../bin/onefite".IO.f;
+    say '/usr/local/bin/onefite'.IO.f if '/usr/local/bin/onefite'.IO.f;
+    say "$*CWD/../bin/onefite".IO.f if "$*CWD/../bin/onefite".IO.f;
     shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.f;
     shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.f;
     if $test.Bool {
