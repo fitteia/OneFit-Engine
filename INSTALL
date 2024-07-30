@@ -32,6 +32,7 @@ multi MAIN (
     my $root=$*CWD;
 
     $SUDO = "" unless $to-site;
+    $SUDO = "" if $to-user;
 
     uninstall() if $Uninstall;
 
