@@ -203,10 +203,10 @@ sub install (:$test,:$to-site, :$bindir) {
 	}
     }
 
-    say '/usr/local/bin/onefite'.IO.l;
-    say "$*CWD/../bin/onefite".IO.l;
-    shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.e;
-    shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.e;
+    say '/usr/local/bin/onefite'.IO.f;
+    say "$*CWD/../bin/onefite".IO.f;
+    shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.f;
+    shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.f;
     if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
 	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
