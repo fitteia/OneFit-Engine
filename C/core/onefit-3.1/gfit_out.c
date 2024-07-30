@@ -29,7 +29,7 @@ double  par[];
   for(i=1;i<=NT;i++) {
     nxy = num_gph_points[i-1];
     x  = dvector(0,nxy-1); 
-    
+
     if(gph_name == NULL){
       if(_T!=NULL) sprintf(aux1,"gfitn%g.gph",_T[i]);
       else strcpy(aux1,"gfitn.gph");
@@ -49,14 +49,13 @@ double  par[];
 
     typex = xscale[i-1];
     for(xi=0;xi<nxy;xi++) {
-      f = (xM[i-1]-xm[i-1])*(double)xi/(nxy-1.0)+xm[i-1];
+      f = (xM[i-1]-xm[i-1])*( (double) xi )/( ((double) nxy) -1.0)+xm[i-1];
       if(!strncmp(typex,"log",3))
 	f = pow(10.0,f);
       else if(!strncmp(typex,"sqrt",4))
 	f = pow(f,2.0);
       else f=f;
       x[xi] = f;
-      fprintf(fptr,"%e ",x[xi]);
 
       mode=0;
 
