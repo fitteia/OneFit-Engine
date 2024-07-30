@@ -201,18 +201,21 @@ sub install (:$test,:$to-site, :$bindir) {
 		shell "$SUDO rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
 	    } unless $_.contains("Nothing located");
 	}
-    } 
+    }
+
+    shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.e;
+    shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.e;
+    
     if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
 	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
 	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	if $to-site {
-	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
+	    shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	else {
-	    my $file = "$*CWD/../bin/onefite";
-	    shell("cd $*CWD/../bin { '&& rm onefite' if $file.IO.e } && ln -s  $onefite-bin") if $onefite-bin.IO.e
+	    shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
@@ -221,13 +224,11 @@ sub install (:$test,:$to-site, :$bindir) {
 	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	if $to-site {
-	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
+	    shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	else {
-	    my $file = "$*CWD/../bin/onefite";
-	    shell("cd $*CWD/../bin { '&& rm onefite' if $file.IO.e } && ln -s  $onefite-bin") if $onefite-bin.IO.e
+	    shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
-#	shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e and $to-site;
     }
 
     my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
