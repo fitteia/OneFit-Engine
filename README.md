@@ -127,7 +127,7 @@ ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INS
 
 -) compile and install raku module in user account (no sudo privileges are required)
 
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-dpkg --no-enable-gs --no-test --no-to-site
+ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-dpkg --no-enable-gs --no-test --no-to-site --no-web-server
 
 -) uninstall from site
 
