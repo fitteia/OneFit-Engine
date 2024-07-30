@@ -95,7 +95,7 @@ multi MAIN ('upgrade',
       Bool :u(:$to-user) = False
       ){
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? $to-user !! '' } $test";
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } $test";
       MAIN('service','start')
 }
 
