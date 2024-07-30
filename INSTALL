@@ -184,6 +184,7 @@ sub uninstall () {
 }
 
 sub install (:$test,:$to-site, :$bindir) {
+    say $to-site;
     "$*CWD/../log".IO.mkdir unless "$*CWD/../log".IO.e;
     my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close).lines;
     for @previous {
