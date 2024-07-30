@@ -204,10 +204,9 @@ sub install (:$test,:$to-site, :$bindir) {
 	}
     }
 
-    say '/usr/local/bin/onefite'.IO.l if '/usr/local/bin/onefite'.IO.l;
-    say "$*CWD/../bin/onefite".IO.l if "$*CWD/../bin/onefite".IO.l;
     shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.l;
     shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
+
     if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
 	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
