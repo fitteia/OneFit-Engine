@@ -32,7 +32,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list [-q|--quiet]
 	    onefite list models
 	    onefite convert <input-file> <output-file>
-	    onefite upgrade [--test=<Str>]
+	    onefite upgrade [--test=<Str>] [-u|--to-user]
 	    onefite service start
 	    onefite service stop
 	    onefite service log
@@ -65,7 +65,7 @@ END_USAGE
 }
 
 multi MAIN ('list',
-      	   Bool :q(:$quiet) = False,
+      	   Bool :q(:$quiet) = False
 	   ){
 #    my @list = dir(::('OFE-PATH') ~ "/C/local");
 #    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
@@ -91,9 +91,11 @@ multi MAIN ('convert',
 }
 
 multi MAIN ('upgrade',
-      Str :$test = '--/test',
+      Str  :$test = '--/test',
+      Bool :u(:$to-user) = False
       ){
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL $test";
+      
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($o-user) ?? $to-user !! '' } $test";
       MAIN('service','start')
 }
 
