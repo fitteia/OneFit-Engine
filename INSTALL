@@ -211,8 +211,8 @@ sub install (:$test,:$to-site, :$bindir) {
 	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	else {
-	    
-	    shell("cd $*CWD/../bin { '&& rm onefite' if \"$*CWD/../bin/onefite\".IO.e } && ln -s  $onefite-bin") if $onefite-bin.IO.e
+	    my $file = "$*CWD/../bin/onefite";
+	    shell("cd $*CWD/../bin { '&& rm onefite' if $file.IO.e } && ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
@@ -224,7 +224,8 @@ sub install (:$test,:$to-site, :$bindir) {
 	    shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	else {
-	    shell("cd $*CWD/../bin { '&& rm onefite' if \"$*CWD/../bin/onefite\".IO.e } && ln -s  $onefite-bin") if $onefite-bin.IO.e
+	    my $file = "$*CWD/../bin/onefite";
+	    shell("cd $*CWD/../bin { '&& rm onefite' if $file.IO.e } && ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 #	shell("cd /usr/local/bin { '&& sudo rm onefite' if '/usr/local/bin/onefite'.IO.e } && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e and $to-site;
     }
