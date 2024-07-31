@@ -14,7 +14,7 @@ multi MAIN (
     Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
     Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
     Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
-    Bool :s(:$to-site) = True, # install raku module to site (use --/to-site to install-to user)
+    Bool :s(:$to-site) = True is copy, # install raku module to site (use --/to-site to install-to user)
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
 ){
@@ -31,22 +31,23 @@ multi MAIN (
     my $arch= shell("arch",:out).out.lines(:close).head;
     my $root=$*CWD;
 
+    $to-site = False if $to-user;
+    
     $SUDO = "" unless $to-site;
-    $SUDO = "" if $to-user;
 
     uninstall() if $Uninstall;
 
-    install-apt-packages($cpu) if $dpkg.Bool and !$to-user;
+    install-apt-packages($cpu) if $dpkg.Bool and $to-site;
 
-    install-web-server if $web-server and !$to-user;
+    install-web-server if $web-server and $to-site;
 
     install-p6-modules($to-site) if $p6-modules.Bool;
 
-    enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and !$to-user;
+    enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
     compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
-    install( :test($test), :to-site($to-site and !$to-user), bindir => $bindir ) if $install;
+    install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
  }
 
