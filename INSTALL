@@ -182,7 +182,7 @@ sub uninstall () {
     for @binaries.splice(1,@binaries.elems-2).push('pcop') {
 	shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } ";
     }
-    shell "$SUDO zef uninstall OneFit-Engine";
+    shell "$SUDO zef uninstall OneFit-Engine && zef uninstall OneFit-Engine";
     exit;
 }
 
