@@ -8,7 +8,7 @@ multi MAIN (
     Bool :$dpkg = True, # to install required debian packages
     Bool :w(:$web-server) = True, # to run tasksel install web-server
     Str  :$cpu is copy, # [amd64|arm64| defaults to "uname -a" detection 
-    Bool :c(:$compile) = True, # to comlipe and install the OneFit engine core
+    Bool :c(:$compile) = True, # to compile and install the OneFit engine core
     Bool :t(:$test) = True, # to run raku module tests
     Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
     Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
