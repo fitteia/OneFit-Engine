@@ -99,6 +99,11 @@ multi MAIN ('upgrade',
       MAIN('service','start')
 }
 
+multi MAIN ('uninstall'){
+      MAIN('service','stop')
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -U";
+}
+
 multi MAIN ('service','start') {
       say "stoping onefite service...";
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
