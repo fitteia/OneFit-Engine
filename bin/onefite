@@ -91,9 +91,9 @@ multi MAIN ('convert',
 }
 
 multi MAIN ('upgrade',
-      Str  :$test = '--/test',
       Bool :u(:$to-user) = False,
-      Bool :c(:$compile) = True
+      Bool :c(:$compile) = True,
+      Str  :$test = '--/test',
       ){
       
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } $test";
