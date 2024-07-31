@@ -100,8 +100,9 @@ multi MAIN ('upgrade',
 }
 
 multi MAIN ('uninstall'){
-      MAIN('service','stop');
+      MAIN('stop-web-service');
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -U";
+      exit;  
 }
 
 multi MAIN ('service','start') {
@@ -110,19 +111,18 @@ multi MAIN ('service','start') {
       shell "kill -9 $proc" if so $proc;
       say "starting onefite service on $*HOME/public_html and go in the backgound";
       shell "cd $*HOME/public_html; nohup onefite start-web-engine &";
-      exit;
+      exit
 }
 
-multi MAIN ('service','stop') { MAIN('stop-web-engine') }
+multi MAIN ('service','stop') { MAIN('stop-web-engine'); exit }
 
-multi MAIN ('service','log') { "{ ::('OFE-PATH') }/../log/onefite".IO.slurp.say }
+multi MAIN ('service','log') { "{ ::('OFE-PATH') }/../log/onefite".IO.slurp.say; exit }
 
-multi MAIN ('service','PID') { shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1].say }
+multi MAIN ('service','PID') { shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1].say; exit }
 
 multi MAIN ('stop-web-engine'){
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       shell "kill -9 $proc" if so $proc;
-      exit;
 }
 
 multi MAIN ('start-web-engine',
