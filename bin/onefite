@@ -29,14 +29,15 @@ multi MAIN (Bool :h(:help($))) {
     note qq:to/END_USAGE/;
     Usage:
             onefite [-h|--help]
-	    onefite list [-q|--quiet]
-	    onefite list models
-	    onefite convert <input-file> <output-file>
-	    onefite upgrade [--test=<Str>] [-u|--to-user]
+	    onefite uninstall
 	    onefite service start
 	    onefite service stop
 	    onefite service log
 	    onefite service PID
+	    onefite list [-q|--quiet]
+	    onefite list models
+	    onefite convert <input-file> <output-file>
+	    onefite upgrade [-u|--to-user] [-c|--compile] [--test=<Str>]  
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
