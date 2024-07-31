@@ -14,7 +14,7 @@ multi MAIN (
     Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
     Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
     Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
-    Bool :s(:$to-site) = True is copy, # install raku module to site (use --/to-site to install-to user)
+    Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
 ){
