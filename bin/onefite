@@ -100,7 +100,7 @@ multi MAIN ('upgrade',
 }
 
 multi MAIN ('uninstall'){
-      MAIN('service','stop')
+      MAIN('service','stop');
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -U";
 }
 
