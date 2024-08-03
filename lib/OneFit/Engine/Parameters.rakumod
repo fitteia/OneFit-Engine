@@ -43,7 +43,6 @@ class Parameters {
 	$!path = $path if $path.Bool;
 	my $filename = ($file.Bool) ?? $file !! "fit.log";
 	my @str = "$!path/$filename".IO.slurp( enc=>"latin1" ).split("EXT PARAMETER");
-	say @str.tail;
 	my $e = OneFit::Engine::Grammars::Log.parse(@str.pop);
 	my @par;
 	for $e<line> {
