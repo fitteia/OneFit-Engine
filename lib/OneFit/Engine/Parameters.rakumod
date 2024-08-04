@@ -55,6 +55,7 @@ class Parameters {
 	    @par.push: %h;
 	}
 	for (0 ..^ $!np) { @!p[$_]<err>=@par[$_+1]<err> }
+	say @!p;
 	($a.Bool) ?? @!p !! self;
     }
     
