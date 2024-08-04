@@ -2,7 +2,7 @@ unit module OneFit::Engine::Parfiles;
 
 class Parfile is export {
     has $!table;
-    has @!fit-methods = <simp scan min minos exit>;
+    has @!fit-methods = <simp scan min exit>;
     has $!path = '.';
 
     method path ($folder) { $!path = $folder; self }
