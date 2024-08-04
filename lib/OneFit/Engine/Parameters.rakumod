@@ -43,7 +43,7 @@ class Parameters {
 	$!path = $path if $path.Bool;
 	my $filename = ($file.Bool) ?? $file !! "fit.log";
 	my $str = "$!path/$filename".IO.slurp( enc=>"latin1" ).split("EXT PARAMETER").tail.split("EXTERNAL").head.Str;
-#	$str.say;
+	$str.say;
 	my $e = OneFit::Engine::Grammars::Log.parse($str);
 	my @par;
 	for $e<line> {
@@ -55,7 +55,7 @@ class Parameters {
 	    @par.push: %h;
 	}
 	for (0 ..^ $!np) { @!p[$_]<err>=@par[$_+1]<err> }
-#	say @!p;
+	say @!p;
 	($a.Bool) ?? @!p !! self;
     }
     
