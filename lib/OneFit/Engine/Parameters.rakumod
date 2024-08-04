@@ -42,7 +42,7 @@ class Parameters {
     method from-log ( Str :$file, Bool :$a , Str :$path) {
 	$!path = $path if $path.Bool;
 	my $filename = ($file.Bool) ?? $file !! "fit.log";
-	my $str = "$!path/$filename".IO.slurp( enc=>"latin1" ).split("EXT PARAMETER").tail.split("ERROR").head.Str;
+	my $str = "$!path/$filename".IO.slurp( enc=>"latin1" ).split("EXT PARAMETER").tail.split("ERROR MATRIX").head.Str;
 	$str.say;
 	my $e = OneFit::Engine::Grammars::Log.parse($str);
 	say $e;

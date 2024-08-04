@@ -34,7 +34,7 @@ grammar Output is Number {
 }
 
 grammar Log is Number {
-     token TOP { [ <.comment> | <line> | \h* <.char> \h* ]+ }
+     token TOP { [ <.comment> | <line> | \h* <.nl> | \h* <.char> \h* ]+ }
     #    token TOP { [ \h* <number> \h* | \h* <word> \h* | \h* <char> \h* | \n ]+ }
     token comment {\h* \D \N+ \n*}
     token line      { \h* <number> \h+ <word> \h+ <number> \h+ [<word>] [ <.word> | <.char> | \h]* <.nl>* }
