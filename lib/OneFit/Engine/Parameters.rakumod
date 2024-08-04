@@ -45,6 +45,7 @@ class Parameters {
 	my $str = "$!path/$filename".IO.slurp( enc=>"latin1" ).split("EXT PARAMETER").tail.split("EXTERNAL").head.Str;
 	$str.say;
 	my $e = OneFit::Engine::Grammars::Log.parse($str);
+	say $e;
 	my @par;
 	for $e<line> {
 	    my %h = 'no'   => $_<number>>>.Str[0],
@@ -55,7 +56,6 @@ class Parameters {
 	    @par.push: %h;
 	}
 	for (0 ..^ $!np) { @!p[$_]<err>=@par[$_+1]<err> }
-	say @!p;
 	($a.Bool) ?? @!p !! self;
     }
     
