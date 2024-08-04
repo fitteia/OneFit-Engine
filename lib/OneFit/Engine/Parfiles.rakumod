@@ -24,7 +24,6 @@ class Parfile is export {
 	}
 	$table ~= (0 ..^ @parameters.elems).hyper.map({ sprintf("\n%-10s%-2.1f","fix",2+$_) if any($fix-all.Bool,!@parameters[$_]<free>.Bool) and $fix-none.not});
 	$table ~=  "\nset       err       1.0\n";
-	say @parameters[@parameters.elems - 1]<name>, @parameters[@parameters.elems - 1]<value>;
 	@!fit-methods = gather for @!fit-methods { take $_ unless .contains("minos") } if @parameters[@parameters.elems - 1]<name>  eq "MIXED" and @parameters[@parameters.elems - 1]<value> == 1;
 	$table ~=  @!fit-methods.join: "\n";
 	"$!path/fit$No.par".IO.spurt: $table;
