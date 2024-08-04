@@ -43,9 +43,7 @@ class Parameters {
 	$!path = $path if $path.Bool;
 	my $filename = ($file.Bool) ?? $file !! "fit.log";
 	my $str = "$!path/$filename".IO.slurp( enc=>"latin1" ).split("EXT PARAMETER").tail.split("ERROR MATRIX").head.Str;
-	$str.say;
 	my $e = OneFit::Engine::Grammars::Log.parse($str);
-	say $e;
 	my @par;
 	for $e<line> {
 	    my %h = 'no'   => $_<number>>>.Str[0],
