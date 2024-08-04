@@ -2,7 +2,7 @@ unit module OneFit::Engine::Parfiles;
 
 class Parfile is export {
     has $!table;
-    has @!fit-methods = <simp scan min exit>;
+    has @!fit-methods = <simp scan min minos exit>;
     has $!path = '.';
 
     method path ($folder) { $!path = $folder; self }
@@ -24,6 +24,7 @@ class Parfile is export {
 	}
 	$table ~= (0 ..^ @parameters.elems).hyper.map({ sprintf("\n%-10s%-2.1f","fix",2+$_) if any($fix-all.Bool,!@parameters[$_]<free>.Bool) and $fix-none.not});
 	$table ~=  "\nset       err       1.0\n";
+	@!fit-methods = gather for @!fit-methods { take $_ unless .contains("minos") } if @parameters[@parameters.elems - 1]  eq "MIXED" and @parameters[@parameters.elems - 1]<value> == 1;
 	$table ~=  @!fit-methods.join: "\n";
 	"$!path/fit$No.par".IO.spurt: $table;
 	$!table=$table;
