@@ -152,7 +152,7 @@ multi MAIN ('start-web-engine',
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       Username: <input type="text" name="username" value="<username>"><br/>
 		       Num points: <input type="text" name="Num" value="100"><br/>
-		       Fit methods: <input type="text" name="FitMethods" value="simp scan min minos"><br/>
+		       Fit methods: <input type="text" name="fit-methods" value="simp scan min minos"><br/>
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
@@ -218,7 +218,7 @@ HTML
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
-		       $fit-methods = $v.Str  if $k eq "FitMethods";
+		       $fit-methods = $v.Str  if $k eq "fit-methods";
 		       $function = $v.Str     if $k eq "function";
 		       $num      = +$v.Str    if $k eq "Num";
 		       $username = $v.Str     if $k eq "username";

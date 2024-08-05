@@ -26,7 +26,6 @@ class Parfile is export {
 	$table ~=  "\nset       err       1.0\n";
 	@!fit-methods = gather for @!fit-methods { take $_ unless .contains("minos") } if @parameters[@parameters.elems - 1]<name>  eq "MIXED" and @parameters[@parameters.elems - 1]<value> == 1;
 	if $fit-methods.Bool {
-	    say $fit-methods.words;
 	    @!fit-methods = gather for $fit-methods.words { take $_ unless .contains("exit") };
 	    @!fit-methods.push("exit");
 	}
