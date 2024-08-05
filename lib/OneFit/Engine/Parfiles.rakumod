@@ -7,7 +7,7 @@ class Parfile is export {
 
     method path ($folder) { $!path = $folder; self }
     
-    method write (@parameters, Bool :$fix-all, Bool :$fix-none, Bool :$s, :$No="", :$path) {
+    method write (@parameters, Bool :$fix-all, Bool :$fix-none, Bool :$s, :$No="", :$path, :$fit-methods) {
 	$!path = $path if $path.defined;
 	my $table = "0123456789/123456789/123456789/123456789/123456789/123456789\n";;
 	$table ~= sprintf("%-10.1f%-10s%-2.1f\n",1.0,"n.tot.par",1+@parameters.elems);
@@ -25,7 +25,8 @@ class Parfile is export {
 	$table ~= (0 ..^ @parameters.elems).hyper.map({ sprintf("\n%-10s%-2.1f","fix",2+$_) if any($fix-all.Bool,!@parameters[$_]<free>.Bool) and $fix-none.not});
 	$table ~=  "\nset       err       1.0\n";
 	@!fit-methods = gather for @!fit-methods { take $_ unless .contains("minos") } if @parameters[@parameters.elems - 1]<name>  eq "MIXED" and @parameters[@parameters.elems - 1]<value> == 1;
-	$table ~=  @!fit-methods.join: "\n";
+	@!fit-methods = gather for $fit-methods { take $_ unless .contains("exit") } if $fit-methods.Bool 
+	$table ~=  @!fit-methods.push("exit").join: "\n";
 	"$!path/fit$No.par".IO.spurt: $table;
 	$!table=$table;
 	($s.Bool) ?? $!table !! self;
