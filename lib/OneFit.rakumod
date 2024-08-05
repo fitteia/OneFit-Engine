@@ -14,6 +14,7 @@ class Engine is export {
     has @!par-tables;
     has @!Functions;
     has $!path = '.';
+    has $!fit-methods = "simp scan min minos";
     
     use JSON::Fast;
 
@@ -214,8 +215,11 @@ class Engine is export {
 		       ){
 #	say "Greatings from update parameters form engine" if $from-engine;
 #	say "Greatings from update parameters form output" if $from-output;
-	#	say "Greatings from update parameters form log" if $from-log;
-	if %!engine<FitType> ~~ /Individual/ {
+	 #	say "Greatings from update parameters form log" if $from-log;
+
+	 $!fit-methods = %!engine<fit-methods> if %!engine<fit-methods>.Bool;
+	 
+	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race -> $i {
 		my $parameters;
 		if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
@@ -226,7 +230,7 @@ class Engine is export {
 		$parameters.from-log(file=>"fit$i.log") if $from-log.Bool;
 		@!par-tables[$i-1]= $parameters;
 		@!blocks[$i-1].parameters=$parameters;
-		if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all, :fit-methods("simp scan min minos exit")) }
+		if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all, :fit-methods($!fit-methods) ) }
 		else {$parameters.parfile.write($parameters.a, No => $i) }
 		self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
 		@!blocks[$i-1].chi2=$parameters.output{"chi2\[1\]"} if $parameters.output{"chi2\[1\]"};
@@ -245,8 +249,8 @@ class Engine is export {
 		.parameters = $parameters;
 		.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
 	    }
-	    if $fix-all.Bool { $parameters.parfile.write($parameters.a, path => $!path, :fix-all, :fit-methods("simp scan min minos exit") ) }
-	    else { $parameters.parfile.write($parameters.a, path => $!path, :fit-methods("simp scan min minos exit")) }
+	    if $fix-all.Bool { $parameters.parfile.write( $parameters.a, path => $!path, :fix-all, :fit-methods($!fit-methods) ) }
+	    else { $parameters.parfile.write( $parameters.a, path => $!path, :fit-methods($!fit-methods) ) }
 	    self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool);
 	}
 	%!engine<par-tables>=@!par-tables>>.table;
