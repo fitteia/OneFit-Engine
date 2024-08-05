@@ -245,7 +245,7 @@ class Engine is export {
 		.parameters = $parameters;
 		.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
 	    }
-	    if $fix-all.Bool { $parameters.parfile.write($parameters.a, path => $!path, :fix-all) }
+	    if $fix-all.Bool { $parameters.parfile.write($parameters.a, path => $!path, :fix-all, :fit-methods("simp scan min minos exit") ) }
 	    else { $parameters.parfile.write($parameters.a, path => $!path) }
 	    self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool);
 	}
