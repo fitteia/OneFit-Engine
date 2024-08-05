@@ -7,7 +7,7 @@ class Parfile is export {
 
     method path ($folder) { $!path = $folder; self }
     
-    method write (@parameters, Bool :$fix-all, Bool :$fix-none, Bool :$s, :$No="", :$path, :$fit-methods) {
+    method write (@parameters, Bool :$fix-all, Bool :$fix-none, Bool :$s, :$No="", :$path, Str :$fit-methods) {
 	$!path = $path if $path.defined;
 	my $table = "0123456789/123456789/123456789/123456789/123456789/123456789\n";;
 	$table ~= sprintf("%-10.1f%-10s%-2.1f\n",1.0,"n.tot.par",1+@parameters.elems);
