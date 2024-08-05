@@ -43,16 +43,17 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite help <model> [-q|--quiet]
 	    onefite help <model> <key>] [-q|--quiet]
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-	    onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+	    onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-	    onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-	    onefite fit <input-file> [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+	    onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
 	    onefite test [<arr> ...]
   
 	    <input-file>     name of the file to be converted (.sav or .json)
 	    <output-file>    name of the converted file (.sav or .json)
+	    fit-methods: simp scan min minos
 
 	    <function> syntax alternatives:
     \"y(x,a,b,c)=a + b*x + c*pow(x,2.0)\"
