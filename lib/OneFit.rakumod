@@ -64,6 +64,9 @@ class Engine is export {
     multi method get () { %!engine }
     multi method set (%e) { %!engine=%e; self }
     multi method Num ($npts) { %!engine<Num>=$npts }
+
+    multi method fit-methods () { $!fit-methods }
+    multi method fit-methods (Str $fit-methods) { $!fit-methods = $fit-methods; %!engine<FitMethods> = $fit-methods } 
     
     method initialize () {
 	self.blocks(:r);
@@ -217,7 +220,7 @@ class Engine is export {
 #	say "Greatings from update parameters form output" if $from-output;
 	 #	say "Greatings from update parameters form log" if $from-log;
 
-	 $!fit-methods = %!engine<fit-methods> if %!engine<fit-methods>.Bool;
+	 $!fit-methods = %!engine<FitMethods> if %!engine<fit-methods>.Bool;
 	 
 	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race -> $i {

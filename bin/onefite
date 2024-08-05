@@ -152,6 +152,7 @@ multi MAIN ('start-web-engine',
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       Username: <input type="text" name="username" value="<username>"><br/>
 		       Num points: <input type="text" name="Num" value="100"><br/>
+		       Fit methods: <input type="text" name="FitMethods" value="simp scan min minos"><br/>
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
@@ -209,13 +210,15 @@ HTML
 		my $logx= "";
 		my $logy= "";
 		my $num   = +100;
+		my $fit-methods = "simp scan min minos";
 		my $file-content = $file.body-blob;
 		my $tmp-folder=10000;
 		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
 		my $work-folder = "./$tmp-folder";
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
-		   for %rest.kv -> $k, $v { 
+		   for %rest.kv -> $k, $v {
+		       $fit-methods = $v.Str  if $k eq "FitMethods";
 		       $function = $v.Str     if $k eq "function";
 		       $num      = +$v.Str    if $k eq "Num";
 		       $username = $v.Str     if $k eq "username";
@@ -237,11 +240,11 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
-		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --fit-methods=$fit-methods --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --fit-methods=$fit-methods --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else {
-		   $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=$fit-methods --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
@@ -369,6 +372,7 @@ multi MAIN  ('create',
 	     Str  $function,
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
 	     Str  :data-label(:$data-labels),
+             Str  :$fit-methods = "simp scan min minos",
 	     Str  :$tags,
 	     Bool :$autox,
 	     Bool :$autoy,
@@ -384,6 +388,7 @@ multi MAIN  ('create',
     use JSON::Fast;
     
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
+    %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
     my $engine = Engine.new.path("$work-folder").set(%e);
@@ -456,6 +461,7 @@ multi MAIN  ('fit',
 	     Str  $function, 
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
 	     Str  :data-label(:$data-labels),
+             Str  :$fit-methods = "simp scan min minos",
 	     Str  :$tags,
 	     Str  :$zip-to,
 	     Bool :$no-plot,
@@ -471,6 +477,7 @@ multi MAIN  ('fit',
 	     Int  :Num(:$npts) = +100
 	    ){
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
+    %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
     my $name = ".";
@@ -498,6 +505,7 @@ multi MAIN  ('fit',
 
 multi MAIN  ('fit',
 	     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the (.sav or .json) to compile
+             Str  :$fit-methods = "simp scan min minos",
 	     Bool :$no-plot,
 	     Bool :$autox,
 	     Bool :$autoy,
@@ -516,6 +524,7 @@ multi MAIN  ('fit',
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
 	    $engine.Num($npts) if $npts.Bool;
+	    $engine.fit-methods($fit-methods);
 	    $engine.fit(
 		:no-plot($no-plot),
 		:autox($autox or $autoxy),
