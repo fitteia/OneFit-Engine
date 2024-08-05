@@ -25,9 +25,12 @@ class Parfile is export {
 	$table ~= (0 ..^ @parameters.elems).hyper.map({ sprintf("\n%-10s%-2.1f","fix",2+$_) if any($fix-all.Bool,!@parameters[$_]<free>.Bool) and $fix-none.not});
 	$table ~=  "\nset       err       1.0\n";
 	@!fit-methods = gather for @!fit-methods { take $_ unless .contains("minos") } if @parameters[@parameters.elems - 1]<name>  eq "MIXED" and @parameters[@parameters.elems - 1]<value> == 1;
-	say $fit-methods.words if $fit-methods.Bool;
-	@!fit-methods = gather for $fit-methods.words { take $_ unless .contains("exit") } if $fit-methods.Bool;
-	$table ~=  @!fit-methods.push("exit").join: "\n";
+	if $fit-methods.Bool {
+	    say $fit-methods.words;
+	    @!fit-methods = gather for $fit-methods.words { take $_ unless .contains("exit") };
+	    @!fit-methods.push("exit");
+	}
+	$table ~=  @!fit-methods.join: "\n";
 	"$!path/fit$No.par".IO.spurt: $table;
 	$!table=$table;
 	($s.Bool) ?? $!table !! self;
