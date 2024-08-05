@@ -240,12 +240,12 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --fit-methods=$fit-methods --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
-		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --fit-methods=$fit-methods --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else {
-		   say "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=$fit-methods --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
-		   $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=$fit-methods --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   say "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
+		   $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
