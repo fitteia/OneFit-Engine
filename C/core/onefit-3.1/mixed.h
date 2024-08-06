@@ -83,7 +83,7 @@
 	double no;							\
 	fgets(s, sizeof(s),fin);					\
 	sscanf(s,"%s",fix);						\
-	printf("%d\n",strlen(fix)); 					\
+	printf("%s %d\n",fix,strlen(fix));				\
 	if(!strcmp(fix,"fix")) {					\
 	  sscanf(&s[10],"%lf",&no);					\
 	  /* printf("%lg\n",no); */					\
