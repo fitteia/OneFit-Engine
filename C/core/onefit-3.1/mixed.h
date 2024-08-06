@@ -88,7 +88,7 @@
 	  /* printf("%lg\n",no); */					\
 	  if ( !mixed[(int) no-1] ) fprintf(fout,"%s",s);		\
 	}								\
-	else if (!strcmp(fix,"\n") ) fprintf(fout,"%s",s);		\
+	else if (!strcmp(fix,"\r") ) fprintf(fout,"%s",s);		\
 	else if (!strcmp(fix,"set") ) fprintf(fout,"%s",s);		\
 	else {								\
 	  if (numMethods<1) fprintf(fout,"%s",s);			\
@@ -96,14 +96,14 @@
       }									\
 									\
       if (numMethods > 0) {						\
-	printf("sizeoffit_methods)=%lu sizeof(pointer)=%lu numStrings=%d\n",sizeof(fit_methods),sizeof(fit_methods[0]),numMethods); \
+	/* printf("sizeoffit_methods)=%lu sizeof(pointer)=%lu numStrings=%d\n",sizeof(fit_methods),sizeof(fit_methods[0]),numMethods); */ \
 									\
 	for (int i = 0; i < numMethods; i++) {				\
 	  fprintf(fout,"%s\n",fit_methods[i]);				\
-	  printf("%s ",fit_methods[i]);					\
+	  /* printf("%s ",fit_methods[i]); */				\
 	}								\
 	fprintf(fout,"exit\n");						\
-	printf("\n");							\
+	/* printf("\n"); */						\
       }									\
       fflush(fout);							\
       fclose(fout);							\
