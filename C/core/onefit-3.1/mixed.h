@@ -76,6 +76,8 @@
       fprintf(fout,"%-10s",val);					\
       fprintf(fout,"%-10.3e\n",0.0);     /**** set MIXED = 0.0 *****/	\
 									\
+      int numMethods = sizeof(fit_methods) / sizeof(fit_methods[0]);	\
+									\
       while( !feof(fin) ) {						\
 	char fix[11];							\
 	double no;							\
@@ -87,19 +89,21 @@
 	  if ( !mixed[(int) no-1] ) fprintf(fout,"%s",s);		\
 	}								\
 	else if (!strcmp(fix,"set") ) fprintf(fout,"%s",s);		\
-	else ;								\
+	else {								\
+	  if (numMethods<1) fprintf(fout,"%s",s);			\
+	};								\
       }									\
-      int count = sizeof(fit_methods) / sizeof(fit_methods[0]);		\
 									\
-      printf("sizeoffit_methods)=%lu sizeof(pointer)=%lu numStrings=%d\n",sizeof(fit_methods),sizeof(fit_methods[0]),count); \
+      if (numMethods > 0) {						\
+	printf("sizeoffit_methods)=%lu sizeof(pointer)=%lu numStrings=%d\n",sizeof(fit_methods),sizeof(fit_methods[0]),numMethods); \
 									\
-      for (int i = 0; i < count; i++) {					\
-	fprintf(fout,"%s ",fit_methods[i]);				\
-	printf("%s ",fit_methods[i]);					\
+	for (int i = 0; i < count; i++) {				\
+	  fprintf(fout,"%s ",fit_methods[i]);				\
+	  printf("%s ",fit_methods[i]);					\
+	}								\
+	fprintf(fout,"exit\n");						\
+	printf("\n");							\
       }									\
-      fprintf(fout,"exit\n"); 						\
-      printf("\n");							\
-      									\
       fflush(fout);							\
       fclose(fout);							\
       rewind(fin);							\
