@@ -97,7 +97,7 @@
       if (numMethods > 0) {						\
 	printf("sizeoffit_methods)=%lu sizeof(pointer)=%lu numStrings=%d\n",sizeof(fit_methods),sizeof(fit_methods[0]),numMethods); \
 									\
-	for (int i = 0; i < count; i++) {				\
+	for (int i = 0; i < numMethods; i++) {				\
 	  fprintf(fout,"%s ",fit_methods[i]);				\
 	  printf("%s ",fit_methods[i]);					\
 	}								\
