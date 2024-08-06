@@ -12,6 +12,8 @@
 #define pI 3.1415926						
 #define Pi 3.1415926						
 
+#define FIT_METHODS(...) const char *fit_methods[] = (const char*[]){__VA_ARGS__}
+
 #define PAR(no,n) ( (MIXED) ? pars_[(int) no][(int) n+1] : par[(int) n] )	
 
 #define SET_INDIVIDUAL_FITS_ENGINE(N,par)			\
@@ -93,6 +95,15 @@
     }									\
     fclose(fin);							\
     free_ivector(mixed,0,NP);						\
+    int count = sizeof(fit_methods) / sizeof(fit_methods[0]);		\
+									\
+    printf("sizeoffit_methods)=%lu sizeof(pointer)=%lu numStrings=%d\n",sizeof(fit_methods),sizeof(fit_methods[0]),count); \
+									\
+    for (int i = 0; i < count; i++) {					\
+      printf("%s ",fit_methods[i]);					\
+    }									\
+    printf("\n");							\
+									\
     return 1;								\
   }									\
 									\
