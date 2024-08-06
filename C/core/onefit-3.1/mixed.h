@@ -12,7 +12,7 @@
 #define pI 3.1415926						
 #define Pi 3.1415926						
 
-#define FIT_METHODS(...) const char *fit_methods[] = (const char*[]){__VA_ARGS__}
+#define FIT_METHODS(...) const char *fit_methods[] = (const char*[]){__VA_ARGS__};
 
 #define PAR(no,n) ( (MIXED) ? pars_[(int) no][(int) n+1] : par[(int) n] )	
 
