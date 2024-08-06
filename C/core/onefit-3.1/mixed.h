@@ -74,7 +74,7 @@
       fprintf(fout,"%-10s",val);				\
       sscanf(&s[10],"%s",val);					\
       fprintf(fout,"%-10s",val);					\
-      fprintf(fout,"%-10.3e\n",0.0);     /**** set MIXED = 0.0 *****/	\
+      fprintf(fout,"%-10.3e\n\n",0.0);     /**** set MIXED = 0.0 *****/	\
 									\
       int numMethods = sizeof(fit_methods) / sizeof(fit_methods[0]);	\
 									\
@@ -83,6 +83,7 @@
 	double no;							\
 	fgets(s, sizeof(s),fin);					\
 	sscanf(s,"%s",fix);						\
+	printf("%d\n",strlen(fix); 					\
 	if(!strcmp(fix,"fix")) {					\
 	  sscanf(&s[10],"%lf",&no);					\
 	  /* printf("%lg\n",no); */					\
