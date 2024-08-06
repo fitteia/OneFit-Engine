@@ -74,7 +74,7 @@
       fprintf(fout,"%-10s",val);				\
       sscanf(&s[10],"%s",val);					\
       fprintf(fout,"%-10s",val);					\
-      fprintf(fout,"%-10.3e\n",0.0);     /**** set MIXED = 0.0 *****/	\
+      fprintf(fout,"%-10.3e\n\n",0.0);     /**** set MIXED = 0.0 *****/	\
 									\
       int numMethods = sizeof(fit_methods) / sizeof(fit_methods[0]);	\
 									\
@@ -88,7 +88,6 @@
 	  /* printf("%lg\n",no); */					\
 	  if ( !mixed[(int) no-1] ) fprintf(fout,"%s",s);		\
 	}								\
-	else if (!strcmp(fix,"") ) fprintf(fout,"%s",s);		\
 	else if (!strcmp(fix,"set") ) fprintf(fout,"%s",s);		\
 	else {								\
 	  if (numMethods<1) fprintf(fout,"%s",s);			\
