@@ -88,6 +88,7 @@
 	  /* printf("%lg\n",no); */					\
 	  if ( !mixed[(int) no-1] ) fprintf(fout,"%s",s);		\
 	}								\
+	else if (!strcmp(fix,"\n") ) fprintf(fout,"%s",s);		\
 	else if (!strcmp(fix,"set") ) fprintf(fout,"%s",s);		\
 	else {								\
 	  if (numMethods<1) fprintf(fout,"%s",s);			\
