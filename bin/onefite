@@ -262,6 +262,7 @@ HTML
 	 post -> 'convert' {
             request-body -> (:$file, *%rest) {
     		my $filename = $file.filename;
+		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my $folder = $filename.IO.extension('').Str;
 		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str; 
