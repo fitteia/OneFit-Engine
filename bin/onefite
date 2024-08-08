@@ -89,7 +89,7 @@ multi MAIN ('convert',
 	    $output-file, #= name of the converted file (.sav or .json)
 	   ) {
     my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
-    exit;
+    return 0;
 }
 
 multi MAIN ('upgrade',
