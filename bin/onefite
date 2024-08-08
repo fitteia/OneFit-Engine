@@ -268,8 +268,8 @@ HTML
 		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str; 
 		my $txt = "mkdir ./$folder && cd $folder && mv ../$filename . && onefite convert $filename $file-to-download";
 		$txt = shell($txt,:out).out.slurp(:close);
-		content 'application/octet-stream', "./$folder/$file-to-download".IO.slurp(:bin);
-#		content 'text/plain', "{ MAIN('convert',$filename,$file-to-download)}\n";
+#		content 'application/octet-stream', "./$folder/$file-to-download".IO.slurp(:bin);
+		content 'text/plain', "{ MAIN('convert',$filename,$file-to-download)}\n";
 #		shell("rm -fr ./$folder") if "./$folder".IO.e;		
  		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $folder ~ ' removed.' }");
 		$log-fh.flush;
