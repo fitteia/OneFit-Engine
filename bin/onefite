@@ -261,7 +261,7 @@ HTML
     		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
 		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str; 
-		my $txt = "mkdir ./$folder && mv $filename ./$folder && onefite convert $filename $file-to-download";
+		my $txt = "mkdir ./$folder && cd $folder && mv ../$filename . && onefite convert $filename $file-to-download";
 		$txt = shell($txt,:out).out.slurp(:close);
 		content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
 		shell("rm -fr ./$folder") if "./$folder".IO.e;		
