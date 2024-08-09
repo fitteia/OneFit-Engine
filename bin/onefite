@@ -269,8 +269,9 @@ HTML
 		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
 		my $work-folder = "./$tmp-folder";
 		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str; 
-		shell "onefite convert $filename $file-to-download --work-folder=$work-folder";
-		content 'application/octet-stream', "$file-to-download".IO.slurp(:bin);
+		my $txt = shell("onefite convert $filename $file-to-download --work-folder=$work-folder", :out).out(:close).slurp;
+		content 'text/plain', "$txt\n";
+#		content 'application/octet-stream', "$file-to-download".IO.slurp(:bin);
 #		shell "rm -fr $work-folder";
  		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $work-folder ~ ' removed.' }");
 		$log-fh.flush;
