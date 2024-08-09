@@ -85,10 +85,11 @@ multi MAIN ('list','models',
 }
 
 multi MAIN ('convert',
-	    $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
-	    $output-file, #= name of the converted file (.sav or .json)
+	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
+	    Str $output-file, #= name of the converted file (.sav or .json)
+            Str :$work-folder = "."
 	   ) {
-    my $eng = Engine.new.read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
+    my $eng = Engine.new.path($work-folder).read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
     return 0;
 }
 
@@ -264,10 +265,12 @@ HTML
     		my $filename = $file.filename;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $folder = $filename.IO.extension('').Str;
+		my $tmp-folder=10000;
+		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
+		my $work-folder = "./$tmp-folder";
 		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str; 
-		shell "onefite convert $filename $file-to-download";
-		content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
+		shell "onefite convert $filename $file-to-download --work-folder=$work-folder";
+		content 'application/octet-stream', "$work-folder/$file-to-download".IO.slurp(:bin);
  		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $folder ~ ' removed.' }");
 		$log-fh.flush;
 	     }
