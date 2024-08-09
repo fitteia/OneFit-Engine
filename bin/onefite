@@ -271,7 +271,7 @@ HTML
 		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str; 
 		shell "onefite convert $filename $file-to-download --work-folder=$work-folder";
 		content 'application/octet-stream', "$work-folder/$file-to-download".IO.slurp(:bin);
- 		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $folder ~ ' removed.' }");
+ 		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $work-folder ~ ' removed.' }");
 		$log-fh.flush;
 	     }
 	}
