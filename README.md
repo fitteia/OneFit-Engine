@@ -154,6 +154,9 @@ Use a browser to access the http://\<IP\>/~ofe/ folder.
 
 ## TRY:
 ofe@bookworm:\~$ raku $HOME/.local/OneFit-Engine/06-raku.me
+
+and
+
 ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" http://\<IP\>/fit
 
 or
@@ -168,4 +171,11 @@ or
 
 ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "username=\<username\>" http://\<IP\>/fit
 
+or
+
+ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" -F http://\<IP\>/convert
+
+or
+
+ofe@bookworm:\~$ curl -F "file=@example_06.sav" -F http://\<IP\>/convert
 
