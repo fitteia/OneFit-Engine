@@ -36,7 +36,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite service PID
 	    onefite list [-q|--quiet]
 	    onefite list models
-	    onefite convert <input-file> <output-file>
+	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
 	    onefite upgrade [-u|--to-user] [-c|--compile] [--test=<Str>]  
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
