@@ -42,6 +42,7 @@ class Graph is export {
 		for (0 ..^ @posy.elems) {
 		    @.Curves[$i]<posx> = @posx[$_];
 		    @.Curves[$i]<posy> = @posy[$_];
+		    say @posx[$_];
 		    last if @posx[$_] >= $target;
 		}
 	    }
