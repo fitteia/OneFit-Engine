@@ -32,7 +32,8 @@ class Graph is export {
 	    @.Curves[$i]<posy>=$.Yaxis.h<min>;
 	    my (@posx,@posy);
 	    for "$!path/$.gph".IO(:e).lines.skip {
-		my @cols = $_.words;
+		say $_;
+		my @cols = .words;
 		say @cols;
 		if @cols[@.Curves[$i]<No>] >= $.Yaxis.h<min> and @cols[@.Curves[$i]<No>] <= $.Yaxis.h<max> {
 		    @posx.push: @cols[0];
