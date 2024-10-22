@@ -50,6 +50,7 @@ class Graph is export {
 	    $ly = $ly - 0.03*($lyf-$lyi)/($agr.view_ymax-$agr.view_ymin) if $ly > 0.9*$lyf;
 	    if $.Yaxis.h<type> ~~ /Logarithmic/ { @.Curves[$i]<posy> = exp($ly) }
 	    else { @.Curves[$i]<posy> = $ly }
+	    say @.Curves[$i]<posx>;
 	}
 	self
     }
