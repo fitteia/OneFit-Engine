@@ -28,13 +28,14 @@ class Graph is export {
 	    
 #	    @.Curves[$i]<posy>=($.Yaxis.h<max>-$.Yaxis.h<min>)/2;
 	    my $target = @.Curves[$i]<posx>;
-	    say $target;
+	    say "target", $target;
 	    @.Curves[$i]<posy>=$.Yaxis.h<min>;
 	    my (@posx,@posy);
 	    for "$!path/$.gph".IO(:e).lines.skip {
 		my @cols = .words;
 		if @cols[@.Curves[$i]<No>] >= $.Yaxis.h<min> and @cols[@.Curves[$i]<No>] <= $.Yaxis.h<max> {
 		    @posx.push: @cols[0];
+		    say @cols[0];
 		    @posy.push(@cols[@.Curves[$i]<No>]);
 		}
 	    }
@@ -42,7 +43,7 @@ class Graph is export {
 		for (0 ..^ @posy.elems) {
 		    @.Curves[$i]<posx> = @posx[$_];
 		    @.Curves[$i]<posy> = @posy[$_];
-		    say @posx[$_];
+		    say "set", @posx[$_];
 		    last if @posx[$_] >= $target;
 		}
 	    }
@@ -52,7 +53,7 @@ class Graph is export {
 	    $ly = $ly - 0.03*($lyf-$lyi)/($agr.view_ymax-$agr.view_ymin) if $ly > 0.9*$lyf;
 	    if $.Yaxis.h<type> ~~ /Logarithmic/ { @.Curves[$i]<posy> = exp($ly) }
 	    else { @.Curves[$i]<posy> = $ly }
-	    say @.Curves[$i]<posx>;
+	    say "final",@.Curves[$i]<posx>;
 	}
 	self
     }
