@@ -339,7 +339,6 @@ class Engine is export {
 	 }
 	 %!engine<fit-residues> = @fit-residues;
 	 say $TXT unless $quiet;
-	 say "$!path/fit-curves-1".IO.lines.skip.head;
 	 self
      }
 

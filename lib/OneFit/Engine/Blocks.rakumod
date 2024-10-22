@@ -221,7 +221,6 @@ class Block is export {
     method write-agr (:$path) {
 	$!path = $path if $path.defined;
 	my $agr = OneFit::Engine::Agrs::template.new;
-	say "$!path/fit-curves-1".IO.lines.skip.head;
 	$!Graph.rminf.autoposxy($agr);
 	my $TXT = $agr.head(
 	    $!Graph.Title.h<title>,
