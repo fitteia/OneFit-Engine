@@ -31,8 +31,8 @@ class Graph is export {
 	    say "target", $target;
 	    @.Curves[$i]<posy>=$.Yaxis.h<min>;
 	    my (@posx,@posy);
-	    my @b = "$!path/$.gph".IO(:e).lines;
-	    for @b {
+	    say "$!path/$.gph".IO(:e).lines;
+	    for "$!path/$.gph".IO(:e).lines {
 		say $_;
 		my @cols = .words;
 		say @cols;
