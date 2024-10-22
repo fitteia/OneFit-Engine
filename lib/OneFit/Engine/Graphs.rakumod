@@ -31,11 +31,11 @@ class Graph is export {
 	    say "target", $target;
 	    @.Curves[$i]<posy>=$.Yaxis.h<min>;
 	    my (@posx,@posy);
-	    say "$!path/$.gph";
+	    say "$!path/$.gph".IO.slurp;
 	    for "$!path/$.gph".IO(:e).slurp.lines.skip {
-		say $_;
+#		say $_;
 		my @cols = .words;
-		say @cols;
+#		say @cols;
 		if @cols[@.Curves[$i]<No>] >= $.Yaxis.h<min> and @cols[@.Curves[$i]<No>] <= $.Yaxis.h<max> {
 		    @posx.push: @cols[0];
 		    say "col[0]=",@cols[0];
