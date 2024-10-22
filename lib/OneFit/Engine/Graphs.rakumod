@@ -37,7 +37,6 @@ class Graph is export {
 #		say @cols;
 		if @cols[@.Curves[$i]<No>] >= $.Yaxis.h<min> and @cols[@.Curves[$i]<No>] <= $.Yaxis.h<max> {
 		    @posx.push: @cols[0];
-		    say "col[0]=",@cols[0];
 		    @posy.push(@cols[@.Curves[$i]<No>]);
 		}
 	    }
@@ -45,7 +44,6 @@ class Graph is export {
 		for (0 ..^ @posy.elems) {
 		    @.Curves[$i]<posx> = @posx[$_];
 		    @.Curves[$i]<posy> = @posy[$_];
-		    say "set", @posx[$_];
 		    last if @posx[$_] >= $target;
 		}
 	    }
