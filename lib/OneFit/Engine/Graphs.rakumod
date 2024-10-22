@@ -32,7 +32,7 @@ class Graph is export {
 	    @.Curves[$i]<posy>=$.Yaxis.h<min>;
 	    my (@posx,@posy);
 	    say "$!path/$.gph";
-	    for "$!path/$.gph".IO(:e).lines.skip {
+	    for "$!path/$.gph".IO(:e).slurp.lines.skip {
 		say $_;
 		my @cols = .words;
 		say @cols;
