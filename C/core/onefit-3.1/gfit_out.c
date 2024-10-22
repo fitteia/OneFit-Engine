@@ -57,6 +57,8 @@ double  par[];
       else f=f;
       x[xi] = f;
 
+      fprintf(fptr,"%lg ", x[xi]);
+      
       mode=0;
 
       if(_T!=NULL) funcsn(x[xi],fs,ma,par,_T[i],mode);
