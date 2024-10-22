@@ -330,8 +330,7 @@ class Engine is export {
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
 	 my @fit-curves;
 	 for (1 .. @!blocks.elems) {
-	     @fit-curves.push: "$!path/fit-curves-$_".IO.slurp;
-	     say "$!path/fit-curves-$_".IO.slurp;
+	     @fit-curves.push: "$!path/fit-curves-$_".IO.slurp
 	 }
 	 %!engine<fit-curves> = @fit-curves;
 	 my @fit-residues;
