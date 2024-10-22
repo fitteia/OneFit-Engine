@@ -28,6 +28,7 @@ class Graph is export {
 	    
 #	    @.Curves[$i]<posy>=($.Yaxis.h<max>-$.Yaxis.h<min>)/2;
 	    my $target = @.Curves[$i]<posx>;
+	    say $target;
 	    @.Curves[$i]<posy>=$.Yaxis.h<min>;
 	    my (@posx,@posy);
 	    for "$!path/$.gph".IO(:e).lines.skip {
