@@ -57,7 +57,7 @@ double  par[];
       else f=f;
       x[xi] = f;
 
-fprintf(fptr,"%lg ", x[xi]);
+      fprintf(fptr,"%lg ", x[xi]);
       
       mode=0;
 
