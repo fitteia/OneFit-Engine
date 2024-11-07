@@ -112,6 +112,7 @@ sub aptpkgs () {
     libblas-dev
     libatlas-base-dev
     libatlas3-base
+    hdf5-tools
     tasksel>
 }
 
