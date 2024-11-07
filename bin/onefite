@@ -214,6 +214,9 @@ HTML
 		my $autoxy= "";
 		my $logx= "";
 		my $logy= "";
+		my $stelar-hdf5 = "";
+		my $stelar-hdf5-Re = "";
+		my $stelar-hdf5-Im = "";
 		my $num   = +100;
 		my $fit-methods = "simp scan min minos";
 		my $file-content = $file.body-blob;
@@ -223,15 +226,18 @@ HTML
 		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
-		       $fit-methods = $v.Str  if $k eq "fit-methods";
-		       $function = $v.Str     if $k eq "function";
-		       $num      = +$v.Str    if $k eq "Num";
-		       $username = $v.Str     if $k eq "username";
-		       $autox    = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
-		       $autoy    = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
-		       $autoxy   = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
-		       $logx     = "--logx"   if $k eq "logx" and $v eq any("yes",1);
-		       $logy     = "--logy  " if $k eq "logy" and $v eq any("yes",1);
+		       $fit-methods	      = $v.Str	   if $k eq "fit-methods";
+		       $function      	      = $v.Str     if $k eq "function";
+		       $num        	      = +$v.Str    if $k eq "Num";
+		       $username   	      = $v.Str     if $k eq "username";
+		       $autox      	      = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
+		       $autoy      	      = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
+		       $autoxy     	      = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
+		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
+		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
+		       $stelar-hdf5           = "--stelar-hdf5  " if $k eq "stelar-hdf5" and $v eq any("yes",1);
+		       $stelar-hdf5-Re        = "--stelar-hdf5-Re  " if $k eq "stelar-hdf5-Re" and $v eq any("yes",1);
+		       $stelar-hdf5-Im        = "--stelar-hdf5-Im  " if $k eq "stelar-hdf5-Im" and $v eq any("yes",1);
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
 			  elsif $v eq "json" { $file-to-download = "$folder/" ~ $filename.IO.extension('json') }
@@ -245,8 +251,8 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
-		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im  --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else {
 		   say "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
