@@ -496,12 +496,14 @@ multi MAIN  ('fit',
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
-	     Bool :$stelar-hdf5i = False,
+	     Bool :$stelar-hdf5 = False,
+	     Bool :$stelar-hdf5-Re = False,
+	     Bool :$stelar-hdf5-Im = False,
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts) = +100
 	    ){
-    @data-files = parse-stelar-hdf5(@data-files[0]);
+    @data-files = parse-stelar-hdf5(@data-files[0],$stelar-hdf5-Re,$stelar-hdf5-Im) if $stelar-hdf5;
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
@@ -664,7 +666,7 @@ sub zip-fit ($engine,$work-folder,$name) {
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
 }
 
-sub parse-stelar-hdf5($stelar-hdf5) {
+sub parse-stelar-hdf5($stelar-hdf5, Bool $Real, Bool $Imaginary) {
     my @zones = gather for shell("h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
     my @data-files;
     for @zones {
@@ -680,9 +682,9 @@ sub parse-stelar-hdf5($stelar-hdf5) {
 	my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
 	my $sqr =  { $^a.map({ $_ ** 2 }) };
 	my @module = ($sqr(@Re) Z+ $sqr(@Im))>>.sqrt;
-	$datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max })).join("\n") if !$Re and !$Im;
-	$datafile.IO.spurt:  (@x Z @Re.map({ $_ / @Re.max })).join("\n") if $Re;
-	$datafile.IO.spurt:  (@x Z @Im.map({ $_ / @Im.max })).join("\n") if $Im;
+	$datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max })).join("\n") if !$Real and !$Imaginary;
+	$datafile.IO.spurt:  (@x Z @Re.map({ $_ / @Re.max })).join("\n") if $Real;
+	$datafile.IO.spurt:  (@x Z @Im.map({ $_ / @Im.max })).join("\n") if $Imaginary;
     }
     for (1 .. @zones.elems) { @data-files.push: 'zone' ~ $_ ~ '.dat' };
     return @data-files;
