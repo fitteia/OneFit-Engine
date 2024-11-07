@@ -503,7 +503,7 @@ multi MAIN  ('fit',
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts) = +100
 	    ){
-    @data-files = parse-stelar-hdf5(@data-files[0],$stelar-hdf5-Re,$stelar-hdf5-Im) if $stelar-hdf5;
+    @data-files = parse-stelar-hdf5(@data-files[0],$stelar-hdf5-Re,$stelar-hdf5-Im) if any($stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im);
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
