@@ -245,18 +245,22 @@ HTML
 		       }
 		   }
 		}
+
+		if none($stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool) {
+		   $filename.IO.spurt: $file-content.decode('UTF-8')
+		}
+		else { $filename.IO(:bin).spurt: $file-content }
+
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
 		$work-folder = "./$username" if $username.so and $username.IO.e;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {	
-		   $filename.IO(:bin).spurt: $file-content;	
 #		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
 		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im  --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else {
-		    $filename.IO.spurt: $file-content.decode('UTF-8');
 		    say "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
 		    $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
