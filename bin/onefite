@@ -223,7 +223,7 @@ HTML
 		my $tmp-folder=10000;
 		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
 		my $work-folder = "./$tmp-folder";
-		$filename.IO.spurt: $file-content.decode('UTF-8');
+#		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
 		       $fit-methods	      = $v.Str	   if $k eq "fit-methods";
@@ -250,13 +250,15 @@ HTML
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
 		my $txt;
-		if so $function {
-#		   $txt= "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		if so $function {	
+		   $filename.IO(:bin).spurt: $file-content;	
+#		   say "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
 		   $txt = shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im  --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else {
-		   say "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
-		   $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		    $filename.IO.spurt: $file-content.decode('UTF-8');
+		    say "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
+		    $txt = shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
