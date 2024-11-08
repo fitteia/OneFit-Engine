@@ -246,10 +246,12 @@ HTML
 		   }
 		}
 
-		if none($stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool) {
-		   $filename.IO.spurt: $file-content.decode('UTF-8')
+		if any($stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool) {
+		   $filename.IO(:bin).spurt: $file-content			
 		}
-		else { $filename.IO(:bin).spurt: $file-content }
+		else {
+		   $filename.IO.spurt: $file-content.decode('UTF-8')
+ 		}	   
 
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
 		$work-folder = "./$username" if $username.so and $username.IO.e;
