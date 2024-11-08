@@ -696,9 +696,9 @@ sub parse-stelar-hdf5($stelar-hdf5, Bool $Real, Bool $Imaginary) {
 	my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
 	my $sqr =  { $^a.map({ $_ ** 2 }) };
 	my @module = ($sqr(@Re) Z+ $sqr(@Im))>>.sqrt;
-	$datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max })).join("\n") if !$Real and !$Imaginary;
-	$datafile.IO.spurt:  (@x Z @Re.map({ $_ / @Re.max })).join("\n") if $Real;
-	$datafile.IO.spurt:  (@x Z @Im.map({ $_ / @Im.max })).join("\n") if $Imaginary;
+	$datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max })).join("\n") ~ "\n\n" if !$Real and !$Imaginary;
+	$datafile.IO.spurt:  (@x Z @Re.map({ $_ / @Re.max })).join("\n") ~ "\n\n" if $Real;
+	$datafile.IO.spurt:  (@x Z @Im.map({ $_ / @Im.max })).join("\n") ~ "\n\n" if $Imaginary;
     }
     for (1 .. @zones.elems) { @data-files.push: 'zone' ~ $_ ~ '.dat' };
     return @data-files;
