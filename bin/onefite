@@ -520,7 +520,7 @@ multi MAIN  ('fit',
 	     Int  :Num(:$npts) = +100
 	    ){
     my $name = ".";
-    @data-files = ($R1) ??
+    @data-files = ($stelar-hdf5-R1) ??
 			Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).R1
 			!!
 			Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).Mz
