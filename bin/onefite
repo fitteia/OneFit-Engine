@@ -425,6 +425,11 @@ multi MAIN  ('create',
              Int  :Num(:$npts) = +100
 	    ){
     use JSON::Fast;
+    @data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
+			Stelar-hdf5.new.path("$work-folder").filename(@data-files[0]).R1(err => $stelar-hdf5-R1-err)
+			!!
+			Stelar-hdf5.new.path("$work-folder").filename(@data-files[0]).Mz
+    ;
     
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitMethods> = $fit-methods;
@@ -688,27 +693,3 @@ sub zip-fit ($engine,$work-folder,$name) {
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
 }
 
-sub parse-stelar-hdf5($stelar-hdf5, Bool $Real, Bool $Imaginary) {
-    my @zones = gather for shell("h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
-    my @data-files;
-    for @zones {
-	my @x;
-	my @Re;
-	my @Im;
-	say "opa";
-	for shell("h5dump -d $_ $stelar-hdf5",:out).out.lines(:close) {
-	    my @c = $_.words;
-	    @x.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
-	    @Re.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
-	    @Im.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
-	}
-	my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
-	my $sqr =  { $^a.map({ $_ ** 2 }) };
-	my @module = ($sqr(@Re) Z+ $sqr(@Im))>>.sqrt;
-	$datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Real and !$Imaginary;
-	$datafile.IO.spurt:  (@x Z @Re.map({ $_ / @Re.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Real;
-	$datafile.IO.spurt:  (@x Z @Im.map({ $_ / @Im.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Imaginary;
-    }
-    for (1 .. @zones.elems) { @data-files.push: 'zone' ~ $_ ~ '.dat' };
-    return @data-files;
-}
