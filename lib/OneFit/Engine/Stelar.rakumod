@@ -1,7 +1,7 @@
 unit module OneFit::Engine::Stelar;
 
 class Stelar-hdf5 is export {
-    has $!hdf5;
+    has $!stelar-hdf5;
     has $!path = '.';
 
     method path ($folder) { $!path = $folder; self }
@@ -11,13 +11,13 @@ class Stelar-hdf5 is export {
     multi method filename () { $!hdf5 }
     
     method Mz (Bool :$Re, Bool :$Im) {
-	my @zones = gather for shell("h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
+	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	my @data-files;
 	for @zones {
 	    my @x;
 	    my @Re_;
 	    my @Im_;
-	    for shell("h5dump -d $_ $stelar-hdf5",:out).out.lines(:close) {
+	    for shell("h5dump -d $_ $!stelar-hdf5",:out).out.lines(:close) {
 		my @c = $_.words;
 		@x.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
 		@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
@@ -36,11 +36,11 @@ class Stelar-hdf5 is export {
     }
 
     method R1 () {
-	my @zones = gather for shell("h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
+	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	for @zones {
 	    my @BR;
 	    my @R1;
-	    for shell("h5dump -d $_ $stelar-hdf5",:out).out.slurp(:close) {
+	    for shell("h5dump -d $_ $!stelar-hdf5",:out).out.slurp(:close) {
 		my @c = $_.split: "ATTRIBUTE";
 		@c = gather for @c { take $_  if .contains(/\"BR\"|\"R1\"/) }
 		@BR.push: @c[0].split('(0):')[1];
