@@ -194,6 +194,7 @@ lib/OneFit/Engine/Grammars.rakumod
 lib/OneFit/Engine/Graphs.rakumod
 lib/OneFit/Engine/Parameters.rakumod
 lib/OneFit/Engine/Parfiles.rakumod
+lib/OneFit/Engine/Stelar.rakumod
 lib/OneFit/Engine/Stpfiles.rakumod
 lib/OneFit/Engine/Titles.rakumod
 lib/OneFit.rakumod
