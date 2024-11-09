@@ -47,7 +47,7 @@ class Stelar-hdf5 is export {
 		@R1.push: @c[1].split('(0):')[1].words.head;
 	    }
 	}
-	$!stelar-hdf5.IO.extension('dat').spurt:  (@BR Z @R1 Z @R1.map({ $_ * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
+	$!stelar-hdf5.IO.extension('dat').spurt:  (@BR.map({ $ _ * 1e6 }) Z @R1 Z @R1.map({ $_ * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
 	return $!stelar-hdf5.IO.extension('dat').Str;
     }
 }
