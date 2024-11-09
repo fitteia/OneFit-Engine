@@ -31,23 +31,23 @@ class Stelar-hdf5 is export {
 	    $datafile.IO.spurt:  (@x Z @Im_.map({ $_ / @Im_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Im;
 	}
 	for (1 .. @zones.elems) { @data-files.push: 'zone' ~ $_ ~ '.dat' };
-	say @data-files;
 	return @data-files;
     }
 
     method R1 () {
 	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
+	my @BR;
+	my @R1;
 	for @zones {
-	    my @BR;
-	    my @R1;
 	    for shell("h5dump -d $_ $!stelar-hdf5",:out).out.slurp(:close) {
 		my @c = $_.split: "ATTRIBUTE";
 		@c = gather for @c { take $_  if $_.contains(/'"BR"'|'"R1"'/) }
 		@BR.push: @c[0].split('(0):')[1].words.head;
 		@R1.push: @c[1].split('(0):')[1].words.head;
 	    }
-	    self.filename.IO.extension('dat').spurt:  (@BR Z @R1 Z (1 .. @BR.elems).map({1})).join("\n") ~ "\n\n";
-	    return self.filename.IO.extension: 'dat';
 	}
+	$!stelar-hdf5.IO.extension('dat').spurt:  (@BR Z @R1 Z (1 .. @BR.elems).map({1})).join("\n") ~ "\n\n";
+	say $!stelar-hdf5.IO.extension: 'dat';
+	return $!stelar-hdf5.IO.extension: 'dat';
     }
 }
