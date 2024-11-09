@@ -34,7 +34,7 @@ class Stelar-hdf5 is export {
 	return @data-files;
     }
 
-    method R1 (Num :$err) {
+    method R1 (Rat :$err) {
 	
 	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	my @BR;
