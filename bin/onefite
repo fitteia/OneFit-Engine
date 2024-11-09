@@ -689,16 +689,16 @@ sub parse-stelar-hdf5($stelar-hdf5, Bool $Real, Bool $Imaginary) {
 	my @Im;
 	for shell("h5dump -d $_ $stelar-hdf5",:out).out.lines(:close) {
 	    my @c = $_.words;
-	    @x.push: @c[1..@c.elems-1]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
-	    @Re.push: @c[1..@c.elems-1]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
-	    @Im.push: @c[1..@c.elems-1]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
+	    @x.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
+	    @Re.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
+	    @Im.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	}
 	my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
 	my $sqr =  { $^a.map({ $_ ** 2 }) };
 	my @module = ($sqr(@Re) Z+ $sqr(@Im))>>.sqrt;
-	$datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max })).join("\n") ~ "\n\n" if !$Real and !$Imaginary;
-	$datafile.IO.spurt:  (@x Z @Re.map({ $_ / @Re.max })).join("\n") ~ "\n\n" if $Real;
-	$datafile.IO.spurt:  (@x Z @Im.map({ $_ / @Im.max })).join("\n") ~ "\n\n" if $Imaginary;
+	$datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Real and !$Imaginary;
+	$datafile.IO.spurt:  (@x Z @Re.map({ $_ / @Re.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Real;
+	$datafile.IO.spurt:  (@x Z @Im.map({ $_ / @Im.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Imaginary;
     }
     for (1 .. @zones.elems) { @data-files.push: 'zone' ~ $_ ~ '.dat' };
     return @data-files;
