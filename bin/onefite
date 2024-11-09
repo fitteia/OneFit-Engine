@@ -12,6 +12,7 @@ use OneFit::Engine::Grammars;
 use OneFit::Engine::Parameters;
 use OneFit::Engine::Parfiles;
 use OneFit::Engine::Stpfiles;
+use OneFit::Engine::Stelar;
 use Test;
 
 use Cro::HTTP::Router;
@@ -517,6 +518,7 @@ multi MAIN  ('fit',
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts) = +100
 	    ){
+    @data-files = Stelar-hdf5.new.path"$work-folder/$name").filename(@data-files[0]).Mz(:Re);
     @data-files = parse-stelar-hdf5(@data-files[0],$stelar-hdf5-Re,$stelar-hdf5-Im) if any($stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im);
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitMethods> = $fit-methods;
