@@ -26,7 +26,7 @@ class Stelar-hdf5 is export {
 	    my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
 	    my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
-	    $datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Real and !$Imaginary;
+	    $datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Re and !$Ima;
 	    $datafile.IO.spurt:  (@x Z @Re_.map({ $_ / @Re_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Re;
 	    $datafile.IO.spurt:  (@x Z @Im_.map({ $_ / @Im_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Im;
 	}
