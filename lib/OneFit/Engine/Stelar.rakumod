@@ -43,8 +43,8 @@ class Stelar-hdf5 is export {
 	    for shell("h5dump -d $_ $!stelar-hdf5",:out).out.slurp(:close) {
 		my @c = $_.split: "ATTRIBUTE";
 		@c = gather for @c { take $_  if $_.contains(/'"BR"'|'"R1"'/) }
-		@BR.push: @c[0].split('(0):')[1];
-		@R1.push: @c[1].split('(0):')[1];
+		@BR.push: @c[0].split('(0):')[1].words.head;
+		@R1.push: @c[1].split('(0):')[1].words.head;
 	    }
 	    self.filename.IO.extension('dat').spurt:  (@BR Z @R1 Z (1 .. @BR.elems).map({1})).join("\n") ~ "\n\n";
 	    return self.filename.IO.extension: 'dat';
