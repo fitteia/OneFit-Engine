@@ -6,9 +6,9 @@ class Stelar-hdf5 is export {
 
     method path ($folder) { $!path = $folder; self }
     
-    multi method filename ($file) { $!hdf5 = $file; self }
+    multi method filename ($file) { $!stelar-hdf5 = $file; self }
 
-    multi method filename () { $!hdf5 }
+    multi method filename () { $!stelar-hdf5 }
     
     method Mz (Bool :$Re, Bool :$Im) {
 	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
