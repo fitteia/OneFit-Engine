@@ -47,6 +47,7 @@ class Stelar-hdf5 is export {
 		@R1.push: @c[1].split('(0):')[1];
 	    }
 	    self.filename.IO.extension('dat').spurt:  (@BR Z @R1 Z (1 .. @BR.elems).map({1})).join("\n") ~ "\n\n";
-	return self.filename.IO.extension: 'dat';
+	    return self.filename.IO.extension: 'dat';
+	}
     }
 }
