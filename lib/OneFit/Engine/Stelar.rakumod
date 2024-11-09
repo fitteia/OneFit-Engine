@@ -34,7 +34,7 @@ class Stelar-hdf5 is export {
 	return @data-files;
     }
 
-    method R1 (:$err) {
+    method R1 (Num :$err) {
 	
 	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	my @BR;
@@ -47,8 +47,7 @@ class Stelar-hdf5 is export {
 		@R1.push: @c[1].split('(0):')[1].words.head;
 	    }
 	}
-	say $!stelar-hdf5;
-	$!stelar-hdf5.IO.extension('dat').spurt:  (@BR Z @R1 Z @BR.map({ $_ * (($err) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
-	return $!stelar-hdf5.IO.extension: 'dat';
+	$!stelar-hdf5.IO.extension('dat').spurt:  (@BR Z @R1 Z @R1.map({ $_ * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
+	return $!stelar-hdf5.IO.extension('dat').Str;
     }
 }
