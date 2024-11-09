@@ -690,6 +690,7 @@ sub parse-stelar-hdf5($stelar-hdf5, Bool $Real, Bool $Imaginary) {
 	my @x;
 	my @Re;
 	my @Im;
+	say "opa";
 	for shell("h5dump -d $_ $stelar-hdf5",:out).out.lines(:close) {
 	    my @c = $_.words;
 	    @x.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
