@@ -17,18 +17,20 @@ class Stelar-hdf5 is export {
 	    my @x;
 	    my @Re_;
 	    my @Im_;
-	    for shell("h5dump -d $_ $!stelar-hdf5",:out).out.lines(:close) {
+	    my $buf = shell("h5dump -d $_ $!stelar-hdf5",:out).out.slurp(:close);  
+	    for $buf.lines {
 		my @c = $_.words;
 		@x.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
 		@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 		@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    }
+	    my $flarmor = '# DATA dum = ' ~ $buf.words[1].split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6;
 	    my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
 	    my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
-	    $datafile.IO.spurt:  (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Re and !$Im;
-	    $datafile.IO.spurt:  (@x Z @Re_.map({ $_ / @Re_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Re;
-	    $datafile.IO.spurt:  (@x Z @Im_.map({ $_ / @Im_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Im;
+	    $datafile.IO.spurt:  $flarmor ~ (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Re and !$Im;
+	    $datafile.IO.spurt:  $flarmor ~ (@x Z @Re_.map({ $_ / @Re_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Re;
+	    $datafile.IO.spurt:  $flarmor ~ (@x Z @Im_.map({ $_ / @Im_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Im;
 	}
 	for (1 .. @zones.elems) { @data-files.push: 'zone' ~ $_ ~ '.dat' };
 	return @data-files;
