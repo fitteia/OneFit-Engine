@@ -181,6 +181,11 @@ ofe@bookworm:\~$ curl -F "file=@example_06.sav" -F http://\<IP\>/convert
 
 or
 
-ofe@bookworm:\~$ curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://\<IP:8142\>/fit
+ofe@bookworm:\~$ curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://\<IP:8142\>/fit 
 
+or
+
+ofe@bookworm:\~$ curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://\<IP:8142\>/fit | awk '/^zone/ {gsub(","," "); print $4 " " $11} " " $13'
+
+to get just flarmor and R11 and R12
 
