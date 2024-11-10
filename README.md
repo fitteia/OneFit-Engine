@@ -41,9 +41,9 @@ ofe@bookworm:\~$ su - \
 root@bookworm\~# apt install raku git sudo \
 root@bookworm:\~# usermod -a -G sudo ofe \
 root@bookworm:\~# exit \
-ofe@bookworm:\~$ exit \
+ofe@bookworm:\~$ exit 
 
-login you guest again
+login your guest again
 
 ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local \
 ofe@bookworm:\~$ git clone https://github.com/fitteia/OneFit-Engine.git \
