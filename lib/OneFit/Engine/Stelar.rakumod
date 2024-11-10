@@ -24,7 +24,7 @@ class Stelar-hdf5 is export {
 		@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 		@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    }
-	    my $flarmor = '# DATA dum = ' ~ $buf.words[1].split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6;
+	    my $flarmor = '# DATA dum = ' ~ $buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6;
 	    my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
 	    my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
