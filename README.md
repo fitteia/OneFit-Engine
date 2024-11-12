@@ -24,7 +24,7 @@ In the Host: ssh user@localhost -P 8022; http://localhost:8080; http://localhost
 
 Install UTM\
 Download Debian for arm64\
-Created a new guest Virtualize VM for Linux Architecture ARM64 (aarch64) with at least 6 GB HD, 4 GB of RAM, default number of cores.
+Created a new guest Virtualize VM for Linux Architecture ARM64 (aarch64) with at least 8 GB HD, 4 GB of RAM, default number of cores.
 
 In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
 
@@ -38,6 +38,10 @@ Create a user account, ex: ofe
 #### First login with username ofe
 
 ofe@bookworm:\~$ su - \
+
+(Suggestion: edit /etc/issue and and add "\4" to the the end of the line there.
+It will show the IP number on the login prompt message)
+
 root@bookworm\~# apt install raku git sudo \
 root@bookworm:\~# usermod -a -G sudo ofe \
 root@bookworm:\~# exit \
