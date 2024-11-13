@@ -24,13 +24,16 @@ class Stelar-hdf5 is export {
 		@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 		@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    }
-	    my $flarmor = '# DATA dum = ' ~ $buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6;
 	    my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
+	    my $flarmor = '# DATA dum = ' ~ $buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6;
+	    my $tag = '# TAG = ' ~ $_.split('/')[1];
+	    my $R1 = '# R1 = ' ~ ~ $buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
+	    my $header = "$flarmor\n$tag\n$R1\n";
 	    my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
-	    $datafile.IO.spurt:  "$flarmor\n" ~ (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Re and !$Im;
-	    $datafile.IO.spurt:  "$flarmor\n" ~ (@x Z @Re_.map({ $_ / @Re_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Re;
-	    $datafile.IO.spurt:  "$flarmor\n" ~ (@x Z @Im_.map({ $_ / @Im_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Im;
+	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Re and !$Im;
+	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @Re_.map({ $_ / @Re_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Re;
+	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @Im_.map({ $_ / @Im_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Im;
 	}
 	for (1 .. @zones.elems) { @data-files.push: 'zone' ~ $_ ~ '.dat' };
 	return @data-files;
