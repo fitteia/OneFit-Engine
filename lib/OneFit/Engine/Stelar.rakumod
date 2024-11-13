@@ -28,7 +28,7 @@ class Stelar-hdf5 is export {
 	    my $flarmor = '# DATA dum = ' ~ $buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6;
 	    my $tag = '# TAG = ' ~ $_.split('/')[1];
 	    my $R1 = '# R1 = ' ~ ~ $buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
-	    my $header = "$flarmor\n$tag\n$R1\n";
+	    my $header = "$flarmor\n$tag\n$R1";
 	    my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
 	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Re and !$Im;
