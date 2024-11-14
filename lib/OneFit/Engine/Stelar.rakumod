@@ -25,16 +25,21 @@ class Stelar-hdf5 is export {
 		@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    }
 	    my $datafile = "zone{$_}.dat";
-	    my $flarmor = '# DATA dum = ' ~ $buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6;
-	    my $tag = "# TAG = zone{$_}";
-	    my $R1 = '# R1 = ' ~ ~ $buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
-	    my $header = "$flarmor\n$tag\n$R1";
+	    my $header = "# DATA dum = " ~
+					 $buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6
+					 ~
+					 "\n# TAG = zone{$_}\n# R1 = "
+					 ~
+					 $buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
+
 	    my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
+	    
 	    my @y = @module.map({ $_ / @module.max }) if !$Re and !$Im;
 	    @y = @Re_.map({ $_ / @Re_.max }) if $Re;
 	    @y = @Im_.map({ $_ / @Im_.max }) if $Im;
 	    my @err = (1 .. @x.elems).map({1});
+
 	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
 	    @data-files.push: $datafile;
 	}
