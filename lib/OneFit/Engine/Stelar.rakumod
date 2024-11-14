@@ -32,7 +32,7 @@ class Stelar-hdf5 is export {
 	    my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
 	    my @y;
-	    @y = @module.map({ $_ / @module.max }) if if !$Re and !$Im;
+	    @y = @module.map({ $_ / @module.max }) if !$Re and !$Im;
 	    @y = @Re_.map({ $_ / @Re_.max }) if $Re;
 	    @y = @Im_.map({ $_ / @Im_.max }) if $Im;
 	    my @err = (1 .. @x.elems).map({1});
