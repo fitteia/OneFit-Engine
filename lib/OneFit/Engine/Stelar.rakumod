@@ -13,29 +13,32 @@ class Stelar-hdf5 is export {
     method Mz (Bool :$Re, Bool :$Im) {
 	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	my @data-files;
-	for @zones {
+	for ( 1 .. @zones.elems ) {
 	    my @x;
 	    my @Re_;
 	    my @Im_;
-	    my $buf = shell("h5dump -d $_ $!stelar-hdf5",:out).out.slurp(:close);  
+	    my $buf = shell("h5dump -d /zone{$_}/t1_fit $!stelar-hdf5",:out).out.slurp(:close);  
 	    for $buf.lines {
 		my @c = $_.words;
 		@x.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
 		@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 		@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    }
-	    my $datafile = $_.subst('/','',:g).subst('t1_fit','.dat');
+	    my $datafile = "zone{$_}.dat";
 	    my $flarmor = '# DATA dum = ' ~ $buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6;
-	    my $tag = '# TAG = ' ~ $_.split('/')[1];
+	    my $tag = "# TAG = zone{$_}";
 	    my $R1 = '# R1 = ' ~ ~ $buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
 	    my $header = "$flarmor\n$tag\n$R1";
 	    my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
-	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @module.map({ $_ / @module.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if !$Re and !$Im;
-	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @Re_.map({ $_ / @Re_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Re;
-	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @Im_.map({ $_ / @Im_.max }) Z (1 .. @x.elems).map({1})).join("\n") ~ "\n\n" if $Im;
+	    my @y;
+	    @y = @module.map({ $_ / @module.max }) if if !$Re and !$Im;
+	    @y = @Re_.map({ $_ / @Re_.max }) if $Re_;
+	    @y = @Im_.map({ $_ / @Im_.max }) if $Im_;
+	    my @err = (1 .. @x.elems).map({1});
+	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
+	    @data-files.push: $datafile;
 	}
-	for (1 .. @zones.elems) { @data-files.push: 'zone' ~ $_ ~ '.dat' };
 	return @data-files;
     }
 
