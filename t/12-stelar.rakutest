@@ -1,0 +1,29 @@
+#!/usr/bin/env raku
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use OneFit;
+use OneFit::Engine::Stpfiles;
+use Test;
+
+our constant OFE-PATH="%OFE-PATH%";
+
+my $workfolder="/tmp/OneFit-Engine-test";
+my $test-path=OFE-PATH ~ "/t";
+
+my class OutputCapture {
+    has @!lines;
+    
+    method print (\s) { @!lines.append(s) }
+    method captured () { @!lines.join }
+}
+
+plan 1;
+
+$time = now;
+my $out = shell "unzip $text-path/10/C12-60.zip -d $workfolder; onefite fit \"Mz(t,a,b,c[0<0.5],T11[0<4],T12[0<4])[-1.5<1.5] = a\+b*c*exp(-t/T11)\+b*(1-c)*exp(-t/T12)\" $workfolder/C12-60.hdf5 --autox --logx --stelar-hdf5 --work-folder=$workfolder",:out).out.slurp(:close);
+is $out.contains("zone24"), True, "fit data from Stelar hdf5 file ok! ({ now -$time } s)" ;;
+
