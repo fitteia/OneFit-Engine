@@ -67,6 +67,36 @@ multi MAIN (Bool :h(:help($))) {
 END_USAGE
 }
 
+multi MAIN ('path',
+      Bool :s(:$src) = False,
+      Bool :$t = False,
+      Bool :e(:$examples) = False,
+      Bool :b(:$bin) = False,
+      Bool :l(:$lib) = False,	
+      Bool :c(:$C) = False,
+      Bool :$log = False
+      ){
+      if none($src,$t,$bin,$lib,C) {
+      	 say ::('OFE-PATH');
+	 say ::('OFE-PATH') ~ "/t";
+	 say ::('OFE-PATH') ~ "/examples";
+	 say ::('OFE-PATH') ~ "lib";
+	 say ::('OFE-PATH') ~ "bin";
+	 say ::('OFE-PATH') ~ "../bin";
+	 say ::('OFE-PATH') ~ "../log";
+	 say ::('OFE-PATH') ~ "/C";
+      }
+      else {
+	 say ::('OFE-PATH') ~ "/t" if $t;
+	 say ::('OFE-PATH') ~ "/examples" if $examples;
+	 say ::('OFE-PATH') ~ "lib" if $lib;
+	 say ::('OFE-PATH') ~ "../bin" if $bin;
+	 say ::('OFE-PATH') ~ "../log" if $log;
+	 say ::('OFE-PATH') ~ "/C" if $C;
+      }
+}
+
+
 multi MAIN ('list',
       	   Bool :q(:$quiet) = False
 	   ){
