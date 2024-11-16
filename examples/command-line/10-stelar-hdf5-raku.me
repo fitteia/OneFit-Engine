@@ -16,7 +16,7 @@ my $tmp-folder=10000;
 loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
 
 my $workfolder="/tmp/$tmp-folder";
-my $eng = OneFit::Engine.new.path("$workfolder";		   
+my $eng = OneFit::Engine.new.path("$workfolder");		   
 
 plan 1;
 $time = now;
