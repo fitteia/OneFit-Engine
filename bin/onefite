@@ -76,7 +76,7 @@ multi MAIN ('path',
       Bool :c(:$C) = False,
       Bool :$log = False
       ){
-      if none($src,$t,$bin,$lib,C) {
+      if none($src,$t,$bin,$lib,$C) {
       	 say ::('OFE-PATH');
 	 say ::('OFE-PATH') ~ "/t";
 	 say ::('OFE-PATH') ~ "/examples";
