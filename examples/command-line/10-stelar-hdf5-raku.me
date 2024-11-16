@@ -24,4 +24,4 @@ my $result = shell("unzip $test-path/C12-60.zip -d $workfolder; cd $workfolder &
 
 is $result.contains('zone24'),True, "Stelar hdf5 data fitted OK!\n ({ now - $time } sec)";
 
-shell "rm -fr $worfolder" if $workfolder.IO.d;
+shell "rm -fr $workfolder" if $workfolder.IO.d;
