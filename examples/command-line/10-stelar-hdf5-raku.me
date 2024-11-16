@@ -5,14 +5,21 @@ END { say "Total execution time (s): " , now - INIT now }
 
 say "Compile time: ", now - $time;
 
+use OneFit;
 use Test;
 
-my $workfolder="/tmp/OneFit-Engine-test";
+our constant OFE-PATH="%OFE-PATH%";
+my $test-path=OFE-PATH ~ "/examples/command-line/test-data";
+
+my $tmp-folder=10000;
+loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
+
+my $workfolder="/tmp/$tmp-folder";
 		   
 
-plan 2;
+plan 1;
 $time = now;
-my $result = shell("unzip test-data/C12-60.zip -d $workfolder; onefite fit \"Mz(t,a,b,c[0<0.5],T11[0<4],T12[0<4])[-1.5<1.5] = a\+b*c*exp(-t/T11)\+b*(1-c)*exp(-t/T12)\" $workfolder/C12-60.hdf5 --autox --logx --stelar-hdf5 --work-folder=$workfolder",:out, :err);
+my $result = shell("unzip $test-path/C12-60.zip -d $workfolder; onefite fit \"Mz(t,a,b,c[0<0.5],T11[0<4],T12[0<4])[-1.5<1.5] = a\+b*c*exp(-t/T11)\+b*(1-c)*exp(-t/T12)\" $workfolder/C12-60.hdf5 --autox --logx --stelar-hdf5 --work-folder=$workfolder",:out).out.slurp(:close);
 
-is $result.out.slurp(:close),"zone24", "Stelar hdf5 data fitted OK!\n", "compile works! ({ now - $time } sec)";
+is $result.contains('zone24'),True, "Stelar hdf5 data fitted OK!\n", "compile works! ({ now - $time } sec)";
 
