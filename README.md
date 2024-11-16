@@ -141,6 +141,12 @@ ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INS
 
 ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-to-site -u
 
+## OneFit Engine paths
+
+ofe@bookworm:\~$ onefite path
+
+ofe@bookworm:\~$ cd $(onefite path --src | awk ´/\//') # to got to src file
+
 
 ## Running examples
 
