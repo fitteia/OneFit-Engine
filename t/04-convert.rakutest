@@ -5,11 +5,11 @@ END { say "Total execution time (s): " , now - INIT now }
 
 say "Compile time: ", now - $time;
 
+our constant OFE-PATH="%OFE-PATH%";
+
 use OneFit;
 use Test;
 
-
-our constant OFE-PATH="%OFE-PATH%";
 my $test-path=OFE-PATH ~ "/t";
 my $workfolder="/tmp/OneFit-Engine-test";
 my $eng = OneFit::Engine.new.path("$workfolder").read("$test-path/1/test1.sav");

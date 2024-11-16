@@ -5,10 +5,11 @@ END { say "Total execution time (s): " , now - INIT now }
 
 say "Compile time: ", now - $time;
 
+our constant OFE-PATH="%OFE-PATH%";
+
 use OneFit;
 use Test;
 
-our constant OFE-PATH="%OFE-PATH%";
 my $test-path=OFE-PATH ~ "/examples/command-line/test-data";
 
 my $tmp-folder=10000;
