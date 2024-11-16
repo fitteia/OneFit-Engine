@@ -25,7 +25,7 @@ my class OutputCapture {
 plan 2;
 $time = now;
 $eng.fit;
-is "$workfolder/fit1.agr-par".IO.lines.tail.contains("s6 legend"), True, "agr test! ({ now - $time } sec)";
+is "$workfolder/fit1.agr-par".IO.lines.tail.contains("s6 legend"), True, "$test-path; agr test! ({ now - $time } sec)";
 
 $time = now;
 $eng = Engine.new.path("$workfolder").read("$test-path/2/test2.sav").fit;
