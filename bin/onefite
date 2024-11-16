@@ -37,6 +37,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite service PID
 	    onefite list [-q|--quiet]
 	    onefite list models
+	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
 	    onefite upgrade [-u|--to-user] [-c|--compile] [--test=<Str>]  
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
@@ -67,36 +68,6 @@ multi MAIN (Bool :h(:help($))) {
 END_USAGE
 }
 
-multi MAIN ('path',
-      Bool :s(:$src) = False,
-      Bool :$t = False,
-      Bool :e(:$examples) = False,
-      Bool :b(:$bin) = False,
-      Bool :l(:$lib) = False,	
-      Bool :c(:$C) = False,
-      Bool :$log = False
-      ){
-      if none($src,$t,$bin,$lib,$C) {
-      	 say ::('OFE-PATH');
-	 say ::('OFE-PATH') ~ "/t";
-	 say ::('OFE-PATH') ~ "/examples";
-	 say ::('OFE-PATH') ~ "lib";
-	 say ::('OFE-PATH') ~ "bin";
-	 say ::('OFE-PATH') ~ "../bin";
-	 say ::('OFE-PATH') ~ "../log";
-	 say ::('OFE-PATH') ~ "/C";
-      }
-      else {
-	 say ::('OFE-PATH') ~ "/t" if $t;
-	 say ::('OFE-PATH') ~ "/examples" if $examples;
-	 say ::('OFE-PATH') ~ "lib" if $lib;
-	 say ::('OFE-PATH') ~ "../bin" if $bin;
-	 say ::('OFE-PATH') ~ "../log" if $log;
-	 say ::('OFE-PATH') ~ "/C" if $C;
-      }
-}
-
-
 multi MAIN ('list',
       	   Bool :q(:$quiet) = False
 	   ){
@@ -122,6 +93,35 @@ multi MAIN ('convert',
 	   ) {
     my $eng = Engine.new.path($work-folder).read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
     return 0;
+}
+
+multi MAIN ('path',
+      Bool :s(:$src) = False,
+      Bool :$t = False,
+      Bool :e(:$examples) = False,
+      Bool :b(:$bin) = False,
+      Bool :l(:$lib) = False,	
+      Bool :c(:$C) = False,
+      Bool :$log = False
+      ){
+      if none($src,$t,$bin,$lib,$C) {
+      	 say ::('OFE-PATH');
+	 say ::('OFE-PATH') ~ "/t";
+	 say ::('OFE-PATH') ~ "/examples";
+	 say ::('OFE-PATH') ~ "/lib";
+	 say ::('OFE-PATH') ~ "/bin";
+	 say ::('OFE-PATH') ~ "../bin";
+	 say ::('OFE-PATH') ~ "../log";
+	 say ::('OFE-PATH') ~ "/C";
+      }
+      else {
+	 say ::('OFE-PATH') ~ "/t" if $t;
+	 say ::('OFE-PATH') ~ "/examples" if $examples;
+	 say ::('OFE-PATH') ~ "/lib" if $lib;
+	 say ::('OFE-PATH') ~ "../bin" if $bin;
+	 say ::('OFE-PATH') ~ "../log" if $log;
+	 say ::('OFE-PATH') ~ "/C" if $C;
+      }
 }
 
 multi MAIN ('upgrade',
