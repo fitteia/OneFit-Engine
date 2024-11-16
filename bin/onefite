@@ -115,7 +115,7 @@ multi MAIN ('path',
 	 say ::('OFE-PATH') ~ "/C";
       }
       else {
-      	 say ::('OFE-PATH') if $ts;
+      	 say ::('OFE-PATH') if $src;
 	 say ::('OFE-PATH') ~ "/t" if $t;
 	 say ::('OFE-PATH') ~ "/examples" if $examples;
 	 say ::('OFE-PATH') ~ "/lib" if $lib;
