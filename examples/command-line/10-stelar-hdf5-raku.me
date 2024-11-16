@@ -10,7 +10,7 @@ use Test;
 
 our constant OFE-PATH="%OFE-PATH%";
 
-my $test-path=OFE-PATH ~ "/examples/command-line/test-data";
+my $test-path="{ ::('OFE-PATH') }/examples/command-line/test-data";
 
 my $tmp-folder=10000;
 loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
