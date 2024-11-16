@@ -172,6 +172,8 @@ examples/command-line/06-raku.me
 examples/command-line/07-raku2java.me
 examples/command-line/08-raku2python.me
 examples/command-line/09-raku2javascript.me
+examples/command-line/10-stelar-hdf5-raku.me
+examples/command-line/test-data/C12-60.zip
 include/AuxCode.h
 include/globals.h
 include/mixed.h
@@ -216,6 +218,7 @@ t/06-fit.rakutest
 t/07-functions.rakutest
 t/08-grap.rakutest
 t/09-parameters.rakutest
+t/10-stelar-hdf5-raku.me
 t/10-stpfile.rakutest
 t/11-mixed.rakutest
 t/1/data10.dat
