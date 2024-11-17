@@ -20,6 +20,9 @@ port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using ht
 
 In the Host: ssh user@localhost -P 8022; http://localhost:8080; http://localhost:8142
 
+Install suggestion: FileZilla (https://filezilla-project.org) and curl (https://curl.se/windows/)
+
+
 ### Mac M2
 
 Install UTM\
@@ -27,6 +30,8 @@ Download Debian for arm64\
 Created a new guest Virtualize VM for Linux Architecture ARM64 (aarch64) with at least 8 GB HD, 4 GB of RAM, default number of cores.
 
 In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
+
+Install suggestion: curl
 
 ### Debian Linux
 
