@@ -20,8 +20,8 @@ port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using ht
 
 In the Host: ssh user@localhost -P 8022; http://localhost:8080; http://localhost:8142
 
-Install suggestion: FileZilla (https://filezilla-project.org) and curl (https://curl.se/windows/)
-		    when using FileZilla use sftp://localhost:4122/ to use ssh protocol
+Install suggestion: FileZilla (https://filezilla-project.org) and curl (https://curl.se/windows/).
+	            When using FileZilla use sftp://localhost:4122/ to use ssh protocol
 
 ### Mac M2
 
