@@ -18,10 +18,10 @@ port 8122 to localhost and 22 to guest (for ssh connections using puTTY)\
 port 8180 to localhost and 80 to guest (for html connections)\
 port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using html)\
 
-In the Host: ssh user@localhost -P 8022; http://localhost:8080; http://localhost:8142
+In the Host: ssh user@localhost -P 8122; http://localhost:8180; http://localhost:8142
 
 Install suggestion: FileZilla (https://filezilla-project.org) and curl (https://curl.se/windows/).
-	            When using FileZilla use sftp://localhost:4122/ to use ssh protocol
+	            When using FileZilla use sftp://localhost:8122/ to use ssh protocol
 
 ### Mac M2
 
