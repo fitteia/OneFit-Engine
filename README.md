@@ -14,14 +14,14 @@ Download Debian netinst iso file for amd64\
 Creat a new guest VM with at least 4 cores, 6 GB HD and 4 GB of RAM\
 (ATTENTION: select "Skip the Unattended Guest Installation" to avoid a full debian installation)  
 Edit the Network settings and for a NAT network, in Advanced settings -> Port Forwarding add\
-port 8022 to localhost and 22 to guest (for ssh connections using puTTY)\
-port 8080 to localhost and 80 to guest (for html connections)\
+port 8122 to localhost and 22 to guest (for ssh connections using puTTY)\
+port 8180 to localhost and 80 to guest (for html connections)\
 port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using html)\
 
 In the Host: ssh user@localhost -P 8022; http://localhost:8080; http://localhost:8142
 
 Install suggestion: FileZilla (https://filezilla-project.org) and curl (https://curl.se/windows/)
-
+		    when using FileZilla use sftp://localhost:4122/ to use ssh protocol
 
 ### Mac M2
 
