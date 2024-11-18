@@ -104,14 +104,14 @@ multi MAIN ('path',
       Bool :c(:$C) = False,
       Bool :$log = False
       ){
-      if none($src,$t,$bin,$lib,$C) {
+      if none($src,$t,$bin,$lib,$C,$examples) {
       	 say ::('OFE-PATH');
 	 say ::('OFE-PATH') ~ "/t";
 	 say ::('OFE-PATH') ~ "/examples";
 	 say ::('OFE-PATH') ~ "/lib";
 	 say ::('OFE-PATH') ~ "/bin";
-	 say ::('OFE-PATH') ~ "../bin";
-	 say ::('OFE-PATH') ~ "../log";
+	 say ::('OFE-PATH') ~ "/../bin";
+	 say ::('OFE-PATH') ~ "/../log";
 	 say ::('OFE-PATH') ~ "/C";
       }
       else {
@@ -119,8 +119,8 @@ multi MAIN ('path',
 	 say ::('OFE-PATH') ~ "/t" if $t;
 	 say ::('OFE-PATH') ~ "/examples" if $examples;
 	 say ::('OFE-PATH') ~ "/lib" if $lib;
-	 say ::('OFE-PATH') ~ "../bin" if $bin;
-	 say ::('OFE-PATH') ~ "../log" if $log;
+	 say ::('OFE-PATH') ~ "/../bin" if $bin;
+	 say ::('OFE-PATH') ~ "/../log" if $log;
 	 say ::('OFE-PATH') ~ "/C" if $C;
       }
 }
@@ -470,12 +470,13 @@ multi MAIN  ('create',
              Int  :Num(:$npts) = +100
 	    ){
     use JSON::Fast;
-    @data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
-			Stelar-hdf5.new.path("$work-folder").filename(@data-files[0]).R1(err => $stelar-hdf5-R1-err)
-			!!
-			Stelar-hdf5.new.path("$work-folder").filename(@data-files[0]).Mz
-    ;
-    
+    if any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool,$stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im) {
+	@data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
+			 Stelar-hdf5.new.path("$work-folder").filename(@data-files[0]).R1(err => $stelar-hdf5-R1-err)
+			 !!
+			 Stelar-hdf5.new.path("$work-folder").filename(@data-files[0]).Mz
+	;
+    }
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
