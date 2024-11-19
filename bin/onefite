@@ -637,7 +637,8 @@ multi MAIN  ('fit',
 		:logy($linlog or $loglog)
 	    );
 	    $engine.save($to) if $to.defined;
-	    zip-fit($engine,$work-folder,$zip-to);
+	    zip-fit($engine,$work-folder,$name);
+	    shell "mv $name.zip $zip-to.zip";
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 	    exit;
 }
