@@ -617,6 +617,7 @@ multi MAIN  ('fit',
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
 	     Str  :save-to(:$to), # write fit settings to json or sav file 	     
+	     Str  :$zip-to = $input-file.IO.extension('').Str,
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts)
 	    ){
@@ -636,7 +637,7 @@ multi MAIN  ('fit',
 		:logy($linlog or $loglog)
 	    );
 	    $engine.save($to) if $to.defined;
-	    zip-fit($engine,$work-folder,$name);
+	    zip-fit($engine,$work-folder,$zip-to);
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 	    exit;
 }
