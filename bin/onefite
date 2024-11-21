@@ -39,7 +39,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list models
 	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
-	    onefite upgrade [-u|--to-user] [-c|--compile] [--test=<Str>]  
+	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>]  
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
@@ -128,11 +128,13 @@ multi MAIN ('path',
 multi MAIN ('upgrade',
       Bool :u(:$to-user) = False,
       Bool :c(:$compile) = True,
+      Bool :d(:$systemd-daemon) = False,
       Str  :$test = '--/test',
       ){
+      shell "sudo service onefite stop" if $systemd-daemon and !$to-user;
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } $test";
-      MAIN('service','start')
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test";
+      MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)))
 }
 
 multi MAIN ('uninstall'){
@@ -141,12 +143,23 @@ multi MAIN ('uninstall'){
       exit;  
 }
 
-multi MAIN ('service','start') {
-      say "stoping onefite service...";
-      my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
-      shell "kill -9 $proc" if so $proc;
-      say "starting onefite service on $*HOME/public_html and go in the backgound";
-      shell "cd $*HOME/public_html; nohup onefite start-web-engine &";
+multi MAIN ('service','start',Bool :d(:$systemd-daemon) = False) {
+      if $systemd-daemon {
+           say "stoping onefite service...";
+      	   my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
+      	   shell "sudo kill -9 $proc" if so $proc;
+           shell 'sudo systemctl daemon-reload';
+	   shell 'sudo systemctl enable onefite.service';
+	   shell 'sudo service onefite start';
+	   say "service onefite started";
+      }
+      else {           
+            say "stoping onefite service...";
+      	    my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
+      	    shell "kill -9 $proc" if so $proc;
+      	    say "starting onefite service on $*HOME/public_html and go in the backgound";
+      	    shell "cd $*HOME/public_html; nohup onefite start-web-engine &";
+      }
       exit
 }
 
