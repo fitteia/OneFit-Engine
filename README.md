@@ -59,6 +59,10 @@ ofe@bookworm:\~$ git clone https://github.com/fitteia/OneFit-Engine.git \
 ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  \
 ofe@bookworm:\~$ onefite service start
 
+Alternative: run a daemon that start the onefite service after system boot
+
+ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon\
+ofe@bookworm:\~$ sudo service onefite start
 
 ## Updates/Upgrades
 
