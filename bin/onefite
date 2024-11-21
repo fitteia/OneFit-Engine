@@ -151,7 +151,7 @@ multi MAIN ('service','start',Bool :d(:$systemd-daemon) = False) {
            shell 'sudo systemctl daemon-reload';
 	   shell 'sudo systemctl enable onefite.service';
 	   shell 'sudo service onefite start';
-	   say "
+	   say "onefite service started";
       }
       else {           
             say "stoping onefite service...";
