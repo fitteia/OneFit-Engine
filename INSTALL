@@ -259,7 +259,8 @@ ExecStart=/usr/local/bin/onefite service start
 ExecStop=/usr/local/bin /onefite service stop
 Restart=always
 WorkingDirectory=/home/ofe/public_html
-
+User=ofe
+Group=ofe
 [Install]
 WantedBy=multi-user.target
 ";
