@@ -128,10 +128,11 @@ multi MAIN ('path',
 multi MAIN ('upgrade',
       Bool :u(:$to-user) = False,
       Bool :c(:$compile) = True,
+      Bool :d(:$systemd-daemon) = False,
       Str  :$test = '--/test',
       ){
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } $test";
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test";
       MAIN('service','start')
 }
 
