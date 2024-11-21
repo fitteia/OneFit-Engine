@@ -39,7 +39,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list models
 	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
-	    onefite upgrade [-u|--to-user] [-c|--compile] [--test=<Str>]  
+	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>]  
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
@@ -133,7 +133,7 @@ multi MAIN ('upgrade',
       ){
       
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test";
-      MAIN('service','start')
+      MAIN('service','start',:systemd-daemon($systemd-daemon))
 }
 
 multi MAIN ('uninstall'){
@@ -142,12 +142,17 @@ multi MAIN ('uninstall'){
       exit;  
 }
 
-multi MAIN ('service','start') {
-      say "stoping onefite service...";
-      my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
-      shell "kill -9 $proc" if so $proc;
-      say "starting onefite service on $*HOME/public_html and go in the backgound";
-      shell "cd $*HOME/public_html; nohup onefite start-web-engine &";
+multi MAIN ('service','start',Bool :d(:$systemd-daemon) = False) {
+      if $systemd-daemon {
+           shell "sudo service onefite stop && systemctl daemon-reload && sudo service onefite start"
+      }
+      else {           
+            say "stoping onefite service...";
+      	    my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
+      	    shell "kill -9 $proc" if so $proc;
+      	    say "starting onefite service on $*HOME/public_html and go in the backgound";
+      	    shell "cd $*HOME/public_html; nohup onefite start-web-engine &";
+      }
       exit
 }
 
