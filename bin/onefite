@@ -144,7 +144,10 @@ multi MAIN ('uninstall'){
 
 multi MAIN ('service','start',Bool :d(:$systemd-daemon) = False) {
       if $systemd-daemon {
-           shell "sudo systemctl daemon-reload && sudo service onefite stop && sudo service onefite start"
+            say "stoping onefite service...";
+      	    my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
+      	    shell "sudo kill -9 $proc" if so $proc;
+           shell 'sudo systemctl daemon-reload && sudo service onefite stop && sudo service onefite start';
       }
       else {           
             say "stoping onefite service...";
