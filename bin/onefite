@@ -131,6 +131,7 @@ multi MAIN ('upgrade',
       Bool :d(:$systemd-daemon) = False,
       Str  :$test = '--/test',
       ){
+      shell "sudo service onefite stop" if $systemd-daemon;
       
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test";
       MAIN('service','start',:systemd-daemon($systemd-daemon))
@@ -147,7 +148,6 @@ multi MAIN ('service','start',Bool :d(:$systemd-daemon) = False) {
            say "stoping onefite service...";
       	   my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       	   shell "sudo kill -9 $proc" if so $proc;
-   	   shell 'sudo service onefite stop';
            shell 'sudo systemctl daemon-reload';
 	   shell 'sudo systemctl enable onefite.service';
 	   shell 'sudo service onefite start';
