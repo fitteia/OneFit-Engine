@@ -131,7 +131,7 @@ multi MAIN ('upgrade',
       Bool :d(:$systemd-daemon) = False,
       Str  :$test = '--/test',
       ){
-      shell "sudo service onefite stop" if $systemd-daemon and !$to-user;
+      shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print $1\}\',:out).out.slurp.Bool;
       
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)))
