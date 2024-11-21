@@ -50,7 +50,7 @@ multi MAIN (
 
     install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
-    systemd-daemon() if $systemd-daemon;
+    systemd-daemon() if $systemd-daemon and $to-site;
  }
 
 multi MAIN ('help') { MAIN :h }
