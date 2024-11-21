@@ -16,6 +16,7 @@ multi MAIN (
     Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
     Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
+    Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
 ){
     my %cpus = ("x86_64"  => "amd64",
@@ -49,6 +50,7 @@ multi MAIN (
 
     install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
+    systemd-daemon() if $systemd-daemon and $to-site;
  }
 
 multi MAIN ('help') { MAIN :h }
@@ -58,7 +60,7 @@ multi MAIN (Bool :h(:help($))) {
 Usage:
     ./INSTALL [-h|--help]
       ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs] \
-                [-w|--web-server] [-U|--Uninstall] [--to-site] [--bindir] [-u|--to-user] \
+                [-w|--web-server] [-U|--Uninstall] [--to-site] [--bindir=<Str>] [--systemd-daemon] [-u|--to-user] \
     --dpkg         # to install required debian packages
     --web-server   # to run tasksel install web-server
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
@@ -71,6 +73,7 @@ Usage:
     --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise
     --to-user      # to install raku module to user ( sets --no-to-site --no-web-server --no-enable-gs  --no-dpkg)
     --bindir       # defaults to $*CWD/../bin (use --bindir=/\$HOME/bin to set another folder for binaries)
+    --systemd-daemon # to create and start the onefite daemon service
     negated options:
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile
 END_HELP
@@ -242,4 +245,24 @@ sub install (:$test,:$to-site, :$bindir) {
 	}
     }
 
+}
+
+sub systemd-daemon() {
+    "/tmp/onefite.service".IO.spurt: "[Unit]
+Description=OneFite Engine Server
+After=network.target 
+Documentation=https://github.com/fitteia/OneFit-Engine
+
+[Service]
+Type=forking
+ExecStart=/usr/local/bin/onefite service start
+ExecStop=/usr/local/bin /onefite service stop
+Restart=always
+WorkingDirectory=/home/ofe/public_html
+User=ofe
+Group=ofe
+[Install]
+WantedBy=multi-user.target
+";
+    shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
 }
