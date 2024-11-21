@@ -245,8 +245,10 @@ sub install (:$test,:$to-site, :$bindir) {
 	}
     }
 
-    sub systemd-daemon() {
-	"/tmp/onefite.service".IO.spurt: "[Unit]
+}
+
+sub systemd-daemon() {
+    "/tmp/onefite.service".IO.spurt: "[Unit]
 Description=OneFite Engine Server
 After=network.target 
 Documentation=https://github.com/fitteia/OneFit-Engine
@@ -261,7 +263,5 @@ WorkingDirectory=/home/ofe/public_html
 [Install]
 WantedBy=multi-user.target
 ";
-	shell "sudo cp /tmp/onefite.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo service onefite start";
-    }
-
+    shell "sudo cp /tmp/onefite.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo service onefite start";
 }
