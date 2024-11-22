@@ -271,5 +271,5 @@ WantedBy=multi-user.target
 
 sub add-show-ip-in-issue() {
     my $issue="/etc/issue".IO.slurp(:close);
-    say "cp /etc/issue /tmp && sudo awk \'/^Debian/ && !/\\4/ \{print $0 \" \\4\n\"\}\' >\/etc\/issue" unless $issue.contains('\4'); 
+    say "cp /etc/issue /tmp && sudo awk \'/^Debian/ && !/\\\\4/ \{print \$0 \" \\\\4\n\"\}\' \>\/etc\/issue" unless $issue.contains('\4'); 
 }
