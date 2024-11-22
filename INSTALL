@@ -270,5 +270,7 @@ WantedBy=multi-user.target
 }
 
 sub add-show-ip-in-issue() {
-    shell "cp /etc/issue /tmp/issue.bak && awk \'/^Debian/ && !/\\\\4/ \{print \$0 \" \\\\4\\n\"\}\' \/tmp\/issue.bak \> \/tmp\/issue && sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
+    my $issue = "/etc/issue".IO.slurp.subst(/'\l'\s*'\4'*/,'\l \4');
+    "/tmp/issue".IO.spurt: $issue;
+    shell "sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
 }
