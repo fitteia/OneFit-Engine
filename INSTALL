@@ -272,4 +272,4 @@ WantedBy=multi-user.target
 sub add-show-ip-in-issue() {
     my $issue="/etc/issue".IO.slurp(:close);
     "/etc/issue".IO.spurt($issue.subst('\l','\l \4')) unless $issue.contains('\4'); 
-{
+}
