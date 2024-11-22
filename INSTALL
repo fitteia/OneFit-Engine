@@ -51,7 +51,9 @@ multi MAIN (
     install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
     systemd-daemon() if $systemd-daemon and $to-site;
- }
+
+    add-show-ip-in-issue() if $to-site;
+}
 
 multi MAIN ('help') { MAIN :h }
 
@@ -265,4 +267,10 @@ Group=ofe
 WantedBy=multi-user.target
 ";
     shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
+}
+
+sub add-show-ip-in-issue() {
+    my $issue = "/etc/issue".IO.slurp.subst(/'\l'\s*'\4'*/,'\l \4');
+    "/tmp/issue".IO.spurt: $issue ~ "\n\n";
+    shell "sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
 }
