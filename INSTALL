@@ -271,6 +271,6 @@ WantedBy=multi-user.target
 
 sub add-show-ip-in-issue() {
     my $issue = "/etc/issue".IO.slurp.subst(/'\l'\s*'\4'*/,'\l \4');
-    "/tmp/issue".IO.spurt: $issue ~ "\n";
+    "/tmp/issue".IO.spurt: $issue ~ "\n\n";
     shell "sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
 }
