@@ -44,9 +44,6 @@ Create a user account, ex: ofe
 
 ofe@bookworm:\~$ su - \
 
-(Suggestion: edit /etc/issue and and add "\4" to the the end of the line there.
-It will show the IP number on the login prompt message)
-
 root@bookworm\~# apt install raku git sudo \
 root@bookworm:\~# usermod -a -G sudo ofe \
 root@bookworm:\~# exit \
