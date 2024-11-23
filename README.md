@@ -33,9 +33,9 @@ In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:
 
 Install suggestion: curl
 
-### Debian Linux
+### APT based Linux distros (Debian, Ubuntu, Linux Mint,...)
 
-For Debian 12 "bookworm" and Ubuntu 24.04.1 LTS "Noble Numbat"
+Ex: Debian 12 "bookworm" and Ubuntu 24.04.1 LTS "Noble Numbat"
 
 Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" ("Laptop" might be an option) all other packages will be installed later.\
 Create a user account, ex: ofe
