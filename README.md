@@ -52,7 +52,7 @@ login your guest again
 
 ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
 
-ofe@bookworm:\~$ git clone https://github.com/fitteia/OneFit-Engine.git && ./INSTALL && onefite service start
+ofe@bookworm:\~/.local/OneFit-Engine$ git clone https://github.com/fitteia/OneFit-Engine.git && ./INSTALL && onefite service start
 
 Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
 
@@ -62,13 +62,19 @@ ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon &&
 
 Login your guest and
 
-ofe@bookworm:\~$ onefite upgrade
+ofe@bookworm:\~$ onefite upgrade 
 
 or
 
-ofe@bookworm:\~$ onefite service stop \
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL \
-ofe@bookworm:\~$ onefite service start
+ofe@bookworm:\~$ onefite upgrade -d
+
+or
+
+ofe@bookworm:\~$ onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
+
+or
+
+ofe@bookworm:\~$ sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
 
 ## OneFit web service
 
