@@ -33,45 +33,48 @@ In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:
 
 Install suggestion: curl
 
-### Debian Linux
+### APT based Linux distros (Debian, Ubuntu, Linux Mint,...)
 
-For Debian "bookworm"
+Ex: Debian 12 "bookworm" and Ubuntu 24.04.1 LTS "Noble Numbat"
 
 Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" ("Laptop" might be an option) all other packages will be installed later.\
 Create a user account, ex: ofe
 
 #### First login with username ofe
 
-ofe@bookworm:\~$ su - \
+ofe@bookworm:\~$ su - 
 
-root@bookworm\~# apt install raku git sudo \
-root@bookworm:\~# usermod -a -G sudo ofe \
-root@bookworm:\~# exit \
+root@bookworm\~# apt install raku git sudo && usermod -a -G sudo ofe && exit
+
 ofe@bookworm:\~$ exit 
 
 login your guest again
 
-ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local \
-ofe@bookworm:\~$ git clone https://github.com/fitteia/OneFit-Engine.git \
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  \
-ofe@bookworm:\~$ onefite service start
+ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
 
-Alternative: run a daemon that start the onefite service after system boot
+ofe@bookworm:\~/.local$ git clone https://github.com/fitteia/OneFit-Engine.git && ./INSTALL && onefite service start
 
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon\
-ofe@bookworm:\~$ sudo service onefite start
+Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
+
+ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
 
 ## Updates/Upgrades
 
 Login your guest and
 
-ofe@bookworm:\~$ onefite upgrade
+ofe@bookworm:\~$ onefite upgrade 
 
 or
 
-ofe@bookworm:\~$ onefite service stop \
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL \
-ofe@bookworm:\~$ onefite service start
+ofe@bookworm:\~$ onefite upgrade -d
+
+or
+
+ofe@bookworm:\~$ onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
+
+or
+
+ofe@bookworm:\~$ sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
 
 ## OneFit web service
 
