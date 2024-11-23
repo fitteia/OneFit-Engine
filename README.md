@@ -35,7 +35,7 @@ Install suggestion: curl
 
 ### Debian Linux
 
-For Debian "bookworm"
+For Debian 12 "bookworm" and Ubuntu 24.04.1 LTS "Noble Numbat"
 
 Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" ("Laptop" might be an option) all other packages will be installed later.\
 Create a user account, ex: ofe
