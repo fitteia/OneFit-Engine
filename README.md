@@ -42,24 +42,23 @@ Create a user account, ex: ofe
 
 #### First login with username ofe
 
-ofe@bookworm:\~$ su - \
+ofe@bookworm:\~$ su - 
 
-root@bookworm\~# apt install raku git sudo \
-root@bookworm:\~# usermod -a -G sudo ofe \
-root@bookworm:\~# exit \
+root@bookworm\~# apt install raku git sudo && usermod -a -G sudo ofe && exit
+
 ofe@bookworm:\~$ exit 
 
 login your guest again
 
-ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local \
-ofe@bookworm:\~$ git clone https://github.com/fitteia/OneFit-Engine.git \
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  \
-ofe@bookworm:\~$ onefite service start
+ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
 
-Alternative: run a daemon that start the onefite service after system boot
+ofe@bookworm:\~$ git clone https://github.com/fitteia/OneFit-Engine.git && ./INSTALL 
 
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon\
-ofe@bookworm:\~$ sudo service onefite start
+ofe@bookworm:\~$ onefite service start 
+
+Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
+
+ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon
 
 ## Updates/Upgrades
 

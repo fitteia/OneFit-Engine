@@ -267,6 +267,8 @@ Group=ofe
 WantedBy=multi-user.target
 ";
     shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
+    shell "sudo service onefite start";
+    say "onefite service daemon started";
 }
 
 sub add-show-ip-in-issue() {
