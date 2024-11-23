@@ -267,10 +267,14 @@ Group=ofe
 WantedBy=multi-user.target
 ";
     shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
-    shell 'sudo systemctl daemon-reload';
-    shell 'sudo systemctl enable onefite.service';
-    shell 'sudo service onefite start';
-    say "onefite service daemon started";
+    shell "sudo systemctl daemon-reload";
+    shell "sudo systemctl enable onefite.service";
+    say "onefite service daemon created:
+
+    1) sudo service onefite start
+    2) sudo onefite upgrade -d (for future upgrades)
+
+    ";
 }
 
 sub add-show-ip-in-issue() {
