@@ -91,6 +91,8 @@ char filePar[];
    if(npar>0) free_ivector(status,0,npar-1);
    fclose(fpar);
    ParFreeVector=pParfree;
+   if (err<=0) printf("scanf read error:%d\n",err);
+
 }
 /**********************************************************************/
 /*                                                                    */
@@ -120,8 +122,8 @@ char filepar[];
     fgets(s,124,fin);
     err = sscanf(s,"%lf%s",&x1,m[i]);
   }
-
   fclose(fin);
+  if (err<=0) printf("scanf read error:%d\n",err);
   return m;
 }
 /**********************************************************************/
