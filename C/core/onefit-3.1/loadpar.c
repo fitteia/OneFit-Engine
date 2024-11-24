@@ -9,7 +9,7 @@
 void ParFreeF(filePar)
 char filePar[];
 {
-   char   s[100],c;
+   char   s[100]="",c;
    double *dvector(),pn,pv;
    int    *ivector();
    void   new_line(),free_dvector(),free_ivector(),free_cmatrix();
@@ -103,11 +103,11 @@ char filepar[];
   char **cmatrix(),**m;
   int i,npar;
   double x1,x2;
-  char s[125],s1[11];
+  char s[125]="",s1[11]="";
   void new_line();
   FILE *fin,*openf();
-  int err;
-  char *cerr;
+  int err=1;
+  char *cerr=s;
   
   fin = openf(filepar,"r");
 
