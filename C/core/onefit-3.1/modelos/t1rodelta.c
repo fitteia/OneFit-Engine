@@ -16,12 +16,12 @@ int main()
 	void	graf();
 	
 	printf(" input file: ");
-	scanf("%s",file);
+	if (!scanf("%s",file)) printf("scanf() call error in t1rodelta.c main()\n");
 
 	f = openf(file,"r");
 
-	fscanf(f,"%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%d",
-		&f0,&f1,&td,&d,&n,&A,&fcm,&fcM,&RA,&RB,&np);
+	if (!fscanf(f,"%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%d",
+		    &f0,&f1,&td,&d,&n,&A,&fcm,&fcM,&RA,&RB,&np)) print("fscanf() call error in t1rodelta.c main()\n");
 /*
 	printf("f0=%lg\nf1=%lg\ntd=%lg\nd=%lg\nn=%g\nA=%lg\nfcm=%lg\nfcM=%lg\n",
 		f0,f1,td,d,n,A,fcm,fcM);
@@ -52,7 +52,7 @@ double	f0,f1,td,d,n,A,fcm,fcM,RA,RB;
 	wcm=2*pi*fcm;
 	wcM=2*pi*fcM;
 
-	system("cls");
+	if (!system("cls")) printf("system() call error in t1rodelta.c, graf()\n");
 	cdevice(2);
 	ctsetup();
 
