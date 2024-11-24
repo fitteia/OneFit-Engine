@@ -206,12 +206,12 @@ int	iR,ifr;		/* contador de R's e f's     */
 
 fp = openf(tabfile,"r");
 
-fscanf(fp,"%d %d",&nR,&nfr);
+ if (!fscanf(fp,"%d %d",&nR,&nfr)) printf("fscanf() call error in ECD_poli.c, read_Jtab()\n");
 /*
 printf("nR=%d,nfr=%d\n",nR,nfr);
 */
 for(iR=0; iR<nR; iR++){
-	fscanf(fp,"%le",tabR+iR);
+  if (!fscanf(fp,"%le",tabR+iR)) printf("fscanf() call error in ECD_poli.c, read_Jtab() for loop\n");
 	/*
 	printf("R= %le\n",tabR[iR]);
 	*/

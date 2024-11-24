@@ -21,7 +21,7 @@ int main()
 	f = openf(file,"r");
 
 	if (!fscanf(f,"%lf%lf%lf%lf%lf%lf%lf%lf%lf%lf%d",
-		    &f0,&f1,&td,&d,&n,&A,&fcm,&fcM,&RA,&RB,&np)) print("fscanf() call error in t1rodelta.c main()\n");
+		    &f0,&f1,&td,&d,&n,&A,&fcm,&fcM,&RA,&RB,&np)) printf("fscanf() call error in t1rodelta.c main()\n");
 /*
 	printf("f0=%lg\nf1=%lg\ntd=%lg\nd=%lg\nn=%g\nA=%lg\nfcm=%lg\nfcM=%lg\n",
 		f0,f1,td,d,n,A,fcm,fcM);
