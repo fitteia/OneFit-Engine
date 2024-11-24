@@ -125,7 +125,7 @@ char filepar[];
   }
   fclose(fin);
   if (err<=0) printf("scanf read error:%d\n",err);
-  if (cerr==NULL) printf("scanf read error:%s\n",cerr);
+  if (cerr==NULL) printf("fgets read error in ReadParNames\n");
   return m;
 }
 /**********************************************************************/
