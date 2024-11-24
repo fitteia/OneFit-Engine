@@ -204,7 +204,7 @@ sub install (:$test,:$to-site, :$bindir) {
     for @previous {
 	if $_.Bool {
 	    do {
-		my $yesno;
+		my $yesno='y';
 		$yesno = prompt "$_ located, do you wish to remove it [y|n]?";
 		shell "$SUDO zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
 		shell "$SUDO rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
