@@ -91,7 +91,7 @@ char filePar[];
    if(npar>0) free_ivector(status,0,npar-1);
    fclose(fpar);
    ParFreeVector=pParfree;
-   if (err<=0) printf("scanf read error:%d\n",err);
+   if (err<=0) printf("scanf read error in loadpar.c, ParFreeF():%d\n",err);
 
 }
 /**********************************************************************/

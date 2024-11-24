@@ -703,8 +703,9 @@ FILE   *f;
 {
    double   x;
    char   c;
+   int err = 1;
    while( (c=fgetc(f)) != '=');
-   fscanf(f,"%lf",&x);
+   if (!fscanf(f,"%lf",&x)) printf("error in fitutil.c, lernum()\n";
    return x;
 }
 /****************************************************************************/
