@@ -107,11 +107,12 @@ char filepar[];
   void new_line();
   FILE *fin,*openf();
   int err;
+  char *cerr;
   
   fin = openf(filepar,"r");
 
   new_line(fin,1);
-  s = fgets(s,124,fin);
+  cerr = fgets(s,124,fin);
   err = sscanf(s,"%lf%s%lf",&x1,s1,&x2);
 
   npar = (int) x2;
@@ -119,7 +120,7 @@ char filepar[];
 
   strcpy(m[0],s1);
   for(i=1;i<npar;i++){
-    s = fgets(s,124,fin);
+    cerr = fgets(s,124,fin);
     err = sscanf(s,"%lf%s",&x1,m[i]);
   }
   fclose(fin);
