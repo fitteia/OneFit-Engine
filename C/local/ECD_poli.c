@@ -211,12 +211,12 @@ fp = openf(tabfile,"r");
 printf("nR=%d,nfr=%d\n",nR,nfr);
 */
 for(iR=0; iR<nR; iR++){
-  if (!fscanf(fp,"%le",tabR+iR)) printf("fscanf() call error in ECD_poli.c, read_Jtab() for loop\n");
+  if (!fscanf(fp,"%le",tabR+iR)) printf("fscanf() call error in ECD_poli.c, read_Jtab() for loop iR\n");
 	/*
 	printf("R= %le\n",tabR[iR]);
 	*/
 	for(ifr=0; ifr<nfr; ifr++){
-		fscanf(fp,"%le %le",tabfr+ifr,J1tab+iR*nfr+ifr);
+	  if (!fscanf(fp,"%le %le",tabfr+ifr,J1tab+iR*nfr+ifr)) printf("fscanf() call error in ECD_poli.c, read_Jtab() for loop ifr\n");
 		/* 
 		printf("fr=%le J1=%le\n",tabfr[ifr],*(J1tab+iR*nfr+ifr));
 		*/
