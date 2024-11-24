@@ -705,7 +705,7 @@ FILE   *f;
    char   c;
    int err = 1;
    while( (c=fgetc(f)) != '=');
-   if (!fscanf(f,"%lf",&x)) printf("error in fitutil.c, lernum()\n";
+   if (!fscanf(f,"%lf",&x)) printf("error in fitutil.c, lernum()\n");
    return x;
 }
 /****************************************************************************/
