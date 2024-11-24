@@ -15,12 +15,13 @@ char filePar[];
    void   new_line(),free_dvector(),free_ivector(),free_cmatrix();
    int    i,j,nd,fnd,*status=0;
    int    npar,*pParfree=0;
-
+   int    err;
+   
    FILE   *fpar,*openf();
 
    fpar = openf(filePar,"r");
    new_line(fpar,1);
-   fscanf(fpar,"%lf%s%lf",&pn,s,&pv);
+   err = fscanf(fpar,"%lf%s%lf",&pn,s,&pv);
    new_line(fpar,1);
 /*
    printf("%11.3le %-11s %11.3le\n",pn,s,pv);
@@ -32,8 +33,8 @@ char filePar[];
    status[0]  = 0;
 
    for(i=1;i<npar;i++) {
-     for(j=0;j<=19;j++) fscanf(fpar,"%c",&c);
-     fscanf(fpar,"%lf",&pv);
+     for(j=0;j<=19;j++) err = fscanf(fpar,"%c",&c);
+     err = fscanf(fpar,"%lf",&pv);
       nd=fnd=0;
       for(j=0;j<100;j++) s[j]=0;
       j=99;
@@ -69,9 +70,9 @@ char filePar[];
 
  }
    while(!feof(fpar)) {
-      fscanf(fpar,"%s",s);
+      err = fscanf(fpar,"%s",s);
       if(!strcmp(s,"fix")) {
-         fscanf(fpar,"%lf",&pn);
+         err = fscanf(fpar,"%lf",&pn);
          status[(int)pn-1]=0;
       }
    }
@@ -103,12 +104,13 @@ char filepar[];
   char s[125],s1[11];
   void new_line();
   FILE *fin,*openf();
-
+  int err;
+  
   fin = openf(filepar,"r");
 
   new_line(fin,1);
   fgets(s,124,fin);
-  sscanf(s,"%lf%s%lf",&x1,s1,&x2);
+  err = sscanf(s,"%lf%s%lf",&x1,s1,&x2);
 
   npar = (int) x2;
   m = cmatrix(0,npar,0,11);
@@ -116,7 +118,7 @@ char filepar[];
   strcpy(m[0],s1);
   for(i=1;i<npar;i++){
     fgets(s,124,fin);
-    sscanf(s,"%lf%s",&x1,m[i]);
+    err = sscanf(s,"%lf%s",&x1,m[i]);
   }
 
   fclose(fin);
