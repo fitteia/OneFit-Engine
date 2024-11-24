@@ -70,7 +70,7 @@ void mygnus()
       fprintf(f,"set ylabel %s\n",ylabel[i]);
     }
     typex = xscale[i];
-    typey = yscale[i];g
+    typey = yscale[i];
 
     if(!strcmp(xscale[i],"log")) {
       xm[i]=pow(10,xm[i]);
