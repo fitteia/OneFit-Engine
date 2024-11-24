@@ -473,17 +473,18 @@ char *s;
 int flc(file)
 FILE *file;
 {
-  char str[1024];
+  char str[1024]="";
   int lc=0;
-
+  char *cerr=str;
+  
   while(1){
-    fgets(str,1024,file);
+    cerr = fgets(str,1024,file);
     if(swc(str)) lc++;
     if(str[0] == '#') lc--;
     if(!feof(file)) break;
   }
   rewind(file);
-
+  if (cerr==NULL) printf("fgets read error in fitutil.c, flc().\n");
   return lc;
 }
 /****************************************************************************/
@@ -702,8 +703,9 @@ FILE   *f;
 {
    double   x;
    char   c;
+
    while( (c=fgetc(f)) != '=');
-   fscanf(f,"%lf",&x);
+   if (!fscanf(f,"%lf",&x)) printf("fscanf() call error in fitutil.c, lernum()\n");
    return x;
 }
 /****************************************************************************/

@@ -20,6 +20,7 @@ void xmgr(prog,format)
   char graph_type[30];
   char curv_teo[100];
   int print_data();
+  int err = 1;
   
   for(i=0;i<NT;i++){
     typex = xscale[i];
@@ -85,7 +86,7 @@ void xmgr(prog,format)
       lixo1[nchar-1]='_';   /* <--- PC version */
 /*      strcat(lixo1,"_");        */
       sprintf(ins,"cop -b2 %d %s %s %s",Ma+2,Files_gph,lixo1,lixo);
-      system(ins);
+      err = system(ins);
       strcpy(curv_teo,lixo1);
     }
     else if(!strcmp(typey,"logabs")){
@@ -95,7 +96,7 @@ void xmgr(prog,format)
 	strcat(gph,aux);
       }
       sprintf(ins,"cop -b2 %d %s %s_ %s",Ma+2,Files_gph,Files_gph,gph);
-      system(ins);
+      err = system(ins);
       
       strcpy(curv_teo,Files_gph);
 
@@ -119,11 +120,11 @@ void xmgr(prog,format)
     if(!strcmp(typey,"logT1") || !strcmp(typey,"inv")) {
       sprintf(ins,"cop 3 %s . %s | cop 3 . %s c1 c2 c3xc2\n",dlixo1,dlixo,gnu);
       /*printf("cop 3 %s . %s | cop 3 . %s c1 c2 c3xc2\n",dlixo1,dlixo,gnu);*/
-      system(ins);
+      err = system(ins);
     }
     else {
       sprintf(ins,"cop 3 %s %s %s\n",dlixo1,gnu,dlixo);
-      system(ins);
+      err = system(ins);
     }
     if(!strcmp(prog,"xmgr") && !strcmp(format,"")){
       if(!strcmp(xmgr_par_file,"NULL")){
@@ -224,9 +225,10 @@ void xmgr(prog,format)
     }
 #endif  
   //    printf("%s\n",xmgr_cmd);
-    system(xmgr_cmd);
+    err = system(xmgr_cmd);
 
   }
+  if (!err) printf("system() call errror in xmgr.c, xmgr(): %d\n",err);
 }
 
 void grbatch()
@@ -242,6 +244,7 @@ void grbatch()
   char graph_type[30];
   char curv_teo[100];
   int print_data();
+  int err = 1;
   
   for(i=0;i<NT;i++){
     typex = xscale[i];
@@ -306,7 +309,7 @@ void grbatch()
       lixo1[nchar-1]='_';   /* <--- PC version */
 /*      strcat(lixo1,"_");        */
       sprintf(ins,"cop -b2 %d %s %s %s",Ma+2,Files_gph,lixo1,lixo);
-      system(ins);
+      err = system(ins);
       strcpy(curv_teo,lixo1);
     }
     else if(!strcmp(typey,"logabs")){
@@ -316,7 +319,7 @@ void grbatch()
 	strcat(gph,aux);
       }
       sprintf(ins,"cop -b2 %d %s %s_ %s",Ma+2,Files_gph,Files_gph,gph);
-      system(ins);
+      err = system(ins);
       
       strcpy(curv_teo,Files_gph);
 
@@ -340,20 +343,21 @@ void grbatch()
     if(!strcmp(typey,"logT1") || !strcmp(typey,"inv")) {
       sprintf(ins,"cop 3 %s . %s | cop 3 . %s c1 c2 c3xc2\n",dlixo1,dlixo,gnu);
       /*printf("cop 3 %s . %s | cop 3 . %s c1 c2 c3xc2\n",dlixo1,dlixo,gnu);*/
-      system(ins);
+      err = system(ins);
     }
     else {
       sprintf(ins,"cop 3 %s %s %s\n",dlixo1,gnu,dlixo);
-      system(ins);
+      err = system(ins);
     }
 
     if(!strcmp(xmgr_par_file,"NULL")){
       sprintf(xmgr_cmd,"grbatch  %s -nxy %s -xydy %s -printfile %s.ps -device 1 -saveall %s.agr; convert -density 125x125 %s.ps %s.%s; display %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
     }
     else sprintf(xmgr_cmd,"grbatch  %s -nxy %s -xydy %s -param %s -printfile %s.ps -device 1 -saveall %s.agr; convert -density 125x125 %s.ps %s.%s; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
-    system(xmgr_cmd);
+    err = system(xmgr_cmd);
     
   }
+    if (!err) printf("system() call errror in xmgr.c, xmgr(): %d\n",err);
 }
 
 

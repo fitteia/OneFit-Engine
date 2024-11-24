@@ -30,7 +30,8 @@ void mygnus()
   char pt[10];
   void new_line();
   int print_data();
-
+  int err = 1;
+  
   if(Gnuplot == NULL) f = openf("gfitn.gnu","w");
   else f = openf(Gnuplot,"w");
 
@@ -233,11 +234,12 @@ void mygnus()
     fprintf(f,"%s -1\n#\n",pausa);
   }
   fclose(f);
-  if(Gnuplot == NULL) system("gnuplot gfitn.gnu");
+  if(Gnuplot == NULL) err = system("gnuplot gfitn.gnu");
   else {
     sprintf(lixo,"gnuplot %s",Gnuplot);
-    system(lixo);
+    err = system(lixo);
   }
+  if (!err) printf("system() call returned: %d\n",err);
 }
 
 

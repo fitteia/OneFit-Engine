@@ -72,7 +72,7 @@ void maincop(argc,argv)
 int argc;
 char *argv[];
 {
-  int i,j,k,nop,nc_out,nc;
+  int i,j,k,nop,nc_out,nc,err=1;
   char c,ins[20];
   double x,*y;
   double *dvector();
@@ -168,8 +168,8 @@ char *argv[];
     }
     for(k=nb;k<=ne;k++){
       if(feof(fin)!=0) break;
-      for(j=1;j<nc;j++) fscanf(fin,"%lf%c",&y[j],&c);
-      fscanf(fin,"%lf",&y[nc]);
+      for(j=1;j<nc;j++) err = fscanf(fin,"%lf%c",&y[j],&c);
+      err = fscanf(fin,"%lf",&y[nc]);
       if(feof(fin)!=0) break;
       for(i=0;i<nc_out-1;i++) {
 	x = (*(col[i].fptr))(&col[i],y);
@@ -200,6 +200,7 @@ char *argv[];
     fclose(fin);
     fclose(fout);
   }
+  if (!err) printf("fscan() call error in cop.c, maincop()\n");
 }
 
 void options(argu)
@@ -239,7 +240,7 @@ void operacao(col,argu)
 Operacao *col;
 char *argu;
 {
-  int i,j,op_flag=0,ncar=0;
+  int i,j,op_flag=0,ncar=0,err=1;
   char c;
   double x;
   double id(),sim(),soma(),dif(),mult(),divi(),ln_(),Log_(),Exp_();
@@ -262,7 +263,7 @@ char *argu;
 
   case 1:
     if(argu[0]=='c') {
-      sscanf(argu,"c%d%c%lf",&i,&c,&x);
+      err = sscanf(argu,"c%d%c%lf",&i,&c,&x);
       (*col).i    = i;
       (*col).c    = x;
       switch(op_flag){
@@ -307,7 +308,7 @@ char *argu;
     }
 
     else if((argu[0]=='-' && argu[1] != 'c') || argu[0]=='.' || (argu[0]<='9' && argu[0] >='0')) {
-      sscanf(argu,"%lf%cc%d",&x,&c,&i);
+      err = sscanf(argu,"%lf%cc%d",&x,&c,&i);
       (*col).i = i;
       (*col).c = x;
       (*col).t = 2;
@@ -367,7 +368,7 @@ char *argu;
     break;
 
   case 2:
-    sscanf(argu,"c%d%cc%d",&i,&c,&j);
+    err = sscanf(argu,"c%d%cc%d",&i,&c,&j);
     (*col).i = i;
     (*col).j = j;
     if(c=='+') (*col).fptr = soma;
@@ -380,7 +381,7 @@ char *argu;
   default:
     usage();
   }
-
+  if (!err) printf("fscan() call error in cop.c, maincop()\n");
 }
 
 double Abs_(x,y)
