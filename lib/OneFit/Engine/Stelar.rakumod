@@ -43,6 +43,7 @@ class Stelar-hdf5 is export {
 	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
 	    @data-files.push: $datafile;
 	}
+	$!stelar-hdf5.IO.unlink;
 	return @data-files;
     }
 
