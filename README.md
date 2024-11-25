@@ -50,7 +50,7 @@ ofe@bookworm:\~$ exit
 
 login your guest again
 
-ofe@bookworm:\~$ script onefite-install.log \ 
+ofe@bookworm:\~$ script onefite-install.log \
 (it will record the session unitl you exit)
 
 ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
