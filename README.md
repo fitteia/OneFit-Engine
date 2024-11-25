@@ -50,6 +50,9 @@ ofe@bookworm:\~$ exit
 
 login your guest again
 
+ofe@bookworm:\~$ script onefite-install.log
+(it will record the session unitl you exit)
+
 ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
 
 ofe@bookworm:\~/.local$ git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && ./INSTALL && onefite service start
@@ -61,6 +64,9 @@ ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon &&
 ## Updates/Upgrades
 
 Login your guest and
+
+ofe@bookworm:\~$ script onefite-upgrade.log \
+(it will record the session until you exit after the upgrade finishes)
 
 ofe@bookworm:\~$ onefite upgrade 
 
@@ -75,6 +81,9 @@ ofe@bookworm:\~$ onefite service stop && cd $HOME/.local/OneFit-Engine && ./INST
 or
 
 ofe@bookworm:\~$ sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
+
+ofe@bookworm:\~$ exit \
+(to finish recording the session)
 
 ## OneFit web service
 
