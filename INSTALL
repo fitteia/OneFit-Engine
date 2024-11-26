@@ -252,7 +252,8 @@ sub install (:$test,:$to-site, :$bindir) {
 sub systemd-daemon() {
     "/tmp/onefite.service".IO.spurt: "[Unit]
 Description=OneFite Engine Server
-After=network.target 
+Wants=network-online.target
+After=network.target network-online.target
 Documentation=https://github.com/fitteia/OneFit-Engine
 
 [Service]
