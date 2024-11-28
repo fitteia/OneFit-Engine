@@ -129,12 +129,14 @@ multi MAIN ('upgrade',
       Bool :u(:$to-user) = False,
       Bool :c(:$compile) = True,
       Bool :d(:$systemd-daemon) = False,
+      Bool :$ip = '*',
+      Num  :p($port) = 8142,
       Str  :$test = '--/test',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
       shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test";
-      MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)))
+      MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),$ip,$port)
 }
 
 multi MAIN ('uninstall'){
@@ -143,7 +145,11 @@ multi MAIN ('uninstall'){
       exit;  
 }
 
-multi MAIN ('service','start',Bool :d(:$systemd-daemon) = False) {
+multi MAIN ('service','start',	
+      Bool :d(:$systemd-daemon) = False,
+      Bool :$ip = '*',
+      Num  :p($port) = 8142
+      ) {
       if $systemd-daemon {
            say "stoping onefite service...";
       	   my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
@@ -158,7 +164,7 @@ multi MAIN ('service','start',Bool :d(:$systemd-daemon) = False) {
       	    my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       	    shell "kill -9 $proc" if so $proc;
       	    say "starting onefite service on $*HOME/public_html and go in the backgound";
-      	    shell "cd $*HOME/public_html; nohup onefite start-web-engine &";
+      	    shell "cd $*HOME/public_html; nohup onefite start-web-engine --ip=$ip --port=$port &";
       }
       exit
 }
