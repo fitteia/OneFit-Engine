@@ -129,7 +129,7 @@ multi MAIN ('upgrade',
       Bool :u(:$to-user) = False,
       Bool :c(:$compile) = True,
       Bool :d(:$systemd-daemon) = False,
-      :$ip = "\"*\"",
+      :$ip = "*",
       :p($port) = 8142,
       Str  :$test = '--/test',
       ){
@@ -147,7 +147,7 @@ multi MAIN ('uninstall'){
 
 multi MAIN ('service','start',	
       Bool :d(:$systemd-daemon) = False,
-      :$ip = "\"*\"",
+      :$ip = "*",
       :p($port) = 8142
       ) {
       if $systemd-daemon {
