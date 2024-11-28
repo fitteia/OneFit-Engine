@@ -350,7 +350,7 @@ HTML
      
     say "Starting onefite web service on $ip port $port";
     my Cro::Service $service = Cro::HTTP::Server.new:
-			       host => $ip,
+			       host => 'localhost',
 			       port => $port,
 			       :$application;
     
