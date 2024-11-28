@@ -158,6 +158,7 @@ multi MAIN ('service','start',
 	   shell 'sudo systemctl enable onefite.service';
 	   shell 'sudo service onefite start';
 	   say "service onefite started";
+
       }
       else {           
             say "stoping onefite service...";
