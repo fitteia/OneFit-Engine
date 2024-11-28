@@ -17,6 +17,8 @@ multi MAIN (
     Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
+    Str  :$ip = '*',
+    Int  :p(:$port) = 8142,
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
 ){
     my %cpus = ("x86_64"  => "amd64",
@@ -50,7 +52,7 @@ multi MAIN (
 
     install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
-    systemd-daemon() if $systemd-daemon and $to-site;
+    systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
 
     add-show-ip-in-issue() if $to-site;
 }
@@ -76,6 +78,9 @@ Usage:
     --to-user      # to install raku module to user ( sets --no-to-site --no-web-server --no-enable-gs  --no-dpkg)
     --bindir       # defaults to $*CWD/../bin (use --bindir=/\$HOME/bin to set another folder for binaries)
     --systemd-daemon # to create and start the onefite daemon service
+    --ip = '*'     # creates the onefite.service for all IPv4 interfaces
+    --port = 8142  # onefite web service service port defaults to 8142
+			    
     negated options:
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile
 END_HELP
@@ -249,7 +254,7 @@ sub install (:$test,:$to-site, :$bindir) {
 
 }
 
-sub systemd-daemon() {
+sub systemd-daemon($ip,$port) {
     "/tmp/onefite.service".IO.spurt: "[Unit]
 Description=OneFite Engine Server
 Wants=network-online.target
@@ -258,7 +263,7 @@ Documentation=https://github.com/fitteia/OneFit-Engine
 
 [Service]
 Type=forking
-ExecStart=/usr/local/bin/onefite service start
+ExecStart=/usr/local/bin/onefite service start --ip=$ip --port=$port
 ExecStop=/usr/local/bin /onefite service stop
 Restart=always
 WorkingDirectory=/home/ofe/public_html
@@ -270,7 +275,7 @@ WantedBy=multi-user.target
     shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
     shell "sudo systemctl daemon-reload";
     shell "sudo systemctl enable onefite.service";
-    say "onefite service daemon created:
+    say "onefite service daemon created for IPv4 $ip and port $port:
 
     1) sudo service onefite start
     2) sudo onefite upgrade -d (for future upgrades)
