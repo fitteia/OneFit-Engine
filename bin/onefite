@@ -157,7 +157,7 @@ multi MAIN ('service','start',
            shell 'sudo systemctl daemon-reload';
 	   shell 'sudo systemctl enable onefite.service';
 	   shell 'sudo service onefite start';
-	   say "service onefite started";
+	   say "service onefite started on IPv4 $ip and port $port";
       }
       else {           
             say "stoping onefite service...";
