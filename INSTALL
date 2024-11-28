@@ -151,6 +151,7 @@ sub install-apt-packages ($cpu) {
 	shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
 	shell "cd /tmp && sudo apt install ./" ~ @pkgs-to-install.join(" ./"); 
     }
+    shell "sudo apt update && sudo apt upgrade && sudo apt autoremove && sudo apt clean";
 }
 
 sub install-web-server () {
