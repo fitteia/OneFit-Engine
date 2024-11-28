@@ -148,7 +148,7 @@ multi MAIN ('uninstall'){
 multi MAIN ('service','start',	
       Bool :d(:$systemd-daemon) = False,
       Bool :$ip = '*',
-      Num  :p($port) = 8142
+      Int  :p($port) = 8142
       ) {
       if $systemd-daemon {
            say "stoping onefite service...";
