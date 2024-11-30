@@ -218,11 +218,11 @@ ofe@bookworm:\~$ curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=M
 to get just flarmor and R11 and err_R1
 
 
-### OneFit Engine Virtual Machines
+# OneFit Engine Virtual Machines
 
-## Accessing and controling the onefit-e VM from the host
+# Accessing and controling the onefit-e VM from the host
 
-# Windows host running VirtualBox VM, guest NAT with port forwarding
+### Windows host running VirtualBox VM, guest NAT with port forwarding
 
 
 host_prompt> VBoxManage startvm onefit-e
@@ -231,7 +231,7 @@ host_prompt> VBoxManage controlvm onefit-e poweroff
 
 host_prompt> ssh ofe@localhost -P 8122
 
-# Mac OS host running UTM
+### Mac OS host running UTM
 
 host_prompt> /Applications/UTM/Contents/MacOS/utmctl start onefit-e [--disposable]
 
