@@ -51,7 +51,7 @@ ofe@bookworm:\~$ exit
 login your guest again
 
 ofe@bookworm:\~$ script onefite-install.log \
-(it will record the session unitl you exit) 
+(it will record the session until you exit) 
 
 ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
 
@@ -217,3 +217,24 @@ ofe@bookworm:\~$ curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=M
 
 to get just flarmor and R11 and err_R1
 
+
+### OneFit Engine Virtual Machines
+
+## Accessing and controling the onefit-e VM from the host
+
+# Windows host running VirtualBox VM, guest NAT with port forwarding
+
+
+host_prompt> VBoxManage startvm onefit-e
+
+host_prompt> VBoxManage controlvm onefit-e poweroff
+
+host_prompt> ssh ofe@localhost -P 8122
+
+# Mac OS host running UTM
+
+host_prompt> /Applications/UTM/Contents/MacOS/utmctl start onefit-e [--disposable]
+
+host_prompt> /Applications/UTM/Contents/MacOS/utmctl stop onefit-e
+
+host_prompt> ssh ofe@$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/^[0-9]+/ {print $1}')
