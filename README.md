@@ -239,7 +239,7 @@ host_prompt> utmctl start onefit-e [--disposable]
 
 host_prompt> utmctl stop onefit-e
 
-Host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/^[0-9]+/ {print $1}')
+Host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/\./ {print $1}')
 
 host_prompt> ssh ofe@$ONEFITE
 
@@ -267,7 +267,7 @@ host_prompt> utmctl start onefit-e --disposable
 
 host_prompt> utmctl stop onefit-e
 
-host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/^[0-9]+/ {print $1}')
+host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/\./ {print $1}')
 
 host_prompt> ssh ofe@$ONEFITE
 
