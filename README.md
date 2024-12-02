@@ -263,7 +263,7 @@ Edit VM settings and remove Display interface (you can get it back when necessar
 
 host_prompt> echo "/Applications/UTM/Contents/MacOS/" | sudo tee /etc/paths.d/50-UTM && exit
 
-host_prompt> utmctl start onefit-e --disposable]
+host_prompt> utmctl start onefit-e --disposable
 
 host_prompt> utmctl stop onefit-e
 
