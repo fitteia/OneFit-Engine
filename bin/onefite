@@ -606,7 +606,7 @@ multi MAIN  ('fit',
     else {
 	for @data-files { $_.IO.move("$work-folder/$name/$_") };
     }
-    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files.map({ "$work-folder/$name/" ~ $_ }),$data-labels);
+    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
@@ -723,12 +723,12 @@ multi MAIN ('test',
     exit;
 }
 
-sub parse-function ($function, @data-files, $data-labels) {
+sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
     my %e = OneFit::Engine::Grammars::Function.parse-me($function);
     %e<FitType T Num> = <Individual dum 100>;
     %e<SelectedDataSet> = @data-files[0].subst(".dat","");
     for (1 .. @data-files.elems) {
-	my @lines=@data-files[$_-1].IO.lines;
+	my @lines="$path/{@data-files[$_-1]}".IO.lines;
 	my $label = "dum";
 	my $dum=$_;
 	$dum = @lines.head if @lines.head.words.elems < 2;
