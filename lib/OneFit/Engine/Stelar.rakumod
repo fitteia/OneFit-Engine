@@ -13,7 +13,7 @@ class Stelar-hdf5 is export {
     method Mz (Bool :$Re, Bool :$Im) {
 	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	my @data-files;
-	for ( 1 .. @zones.elems ).race {
+	for ( 1 .. @zones.elems ) {
 	    my @x;
 	    my @Re_;
 	    my @Im_;
@@ -52,7 +52,7 @@ class Stelar-hdf5 is export {
 	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	my @BR;
 	my @R1;
-	for @zones.hyper {
+	for @zones {
 	    for shell("h5dump -d $_ $!stelar-hdf5",:out).out.slurp(:close) {
 		my @c = $_.split: "ATTRIBUTE";
 		@c = gather for @c { take $_  if $_.contains(/'"BR"'|'"R1"'/) }
