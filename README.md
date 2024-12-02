@@ -243,7 +243,7 @@ Host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address
 
 host_prompt> ssh ofe@$ONEFITE
 
-## Running OneFit-Engine as a stand alone service running on the backgound in a virtual machine
+## Running OneFit-Engine as a standalone service in the backgound on a virtual machine
 
 ### Windows running VirtualBox, guest NAT, with port forwarding
 
