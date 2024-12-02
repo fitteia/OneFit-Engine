@@ -6,7 +6,6 @@ class Stelar-hdf5 is export {
 
     method path ($folder) { $!path = $folder;
 			    $folder.IO.mkdir unless $folder.IO.e;
-			    say "ola";
 			    self }
     
     multi method filename ($file) { $!stelar-hdf5 = $file; self }
