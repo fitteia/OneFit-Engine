@@ -220,7 +220,7 @@ to get just flarmor and R11 and err_R1
 
 # OneFit Engine Virtual Machines
 
-# Accessing and controling the onefit-e VM from the host
+## Accessing and controling the onefit-e VM from the host
 
 ### Windows host running VirtualBox VM, guest NAT with port forwarding
 
@@ -233,8 +233,46 @@ host_prompt> ssh ofe@localhost -P 8122
 
 ### Mac OS host running UTM
 
-host_prompt> /Applications/UTM/Contents/MacOS/utmctl start onefit-e [--disposable]
+host_prompt> echo "/Applications/UTM/Contents/MacOS/" | sudo tee /etc/paths.d/50-UTM && exit
 
-host_prompt> /Applications/UTM/Contents/MacOS/utmctl stop onefit-e
+host_prompt> utmctl start onefit-e [--disposable]
 
-host_prompt> ssh ofe@$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/^[0-9]+/ {print $1}')
+host_prompt> utmctl stop onefit-e
+
+Host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/^[0-9]+/ {print $1}')
+
+host_prompt> ssh ofe@$ONEFITE
+
+## Running OneFit-Engine as a standalone service in the backgound on a virtual machine
+
+### Windows running VirtualBox, guest NAT, with port forwarding
+
+host_prompt> VBoxManage startvm onefit-e --type=headless
+
+host_prompt> putty.exe -ssh ofe@localhost -P 8122
+
+host_prompt> curl.exe -F "file=@datafile.name" -F "function=..." -F "autox=yes" -F "autoy=yes" -F "logx=yes" -F "download=zip" http://localhost:8142/fit
+
+host_prompt> .....
+
+host_prompt> VBoxManage controlvm onefit-e poweroff
+
+### MacOS runnig UTM, guest "shared network"
+
+Edit VM settings and remove Display interface (you can get it back when necessary).
+
+host_prompt> echo "/Applications/UTM/Contents/MacOS/" | sudo tee /etc/paths.d/50-UTM && exit
+
+host_prompt> utmctl start onefit-e --disposable
+
+host_prompt> utmctl stop onefit-e
+
+host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/^[0-9]+/ {print $1}')
+
+host_prompt> ssh ofe@$ONEFITE
+
+_prompt> curl.exe -F "file=@datafile.name" -F "function=..." -F "autox=yes" -F "autoy=yes" -F "logx=yes" -F "download=zip" http://$ONEFITE:8142/fit
+
+host_prompt> ..
+
+host_prompt> utmctl stop onefit-e
