@@ -606,8 +606,10 @@ multi MAIN  ('fit',
     if $zip-to.Bool {
 	$name = $zip-to.subst(/\.zip/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-	"$work-folder/$name".IO.mkdir;
-	for @data-files { $_.IO.move("$work-folder/$name/$_") };
+	"$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
+	do {
+	    for @data-files { $_.IO.move("$work-folder/$name/$_") }
+	} unless any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool,$stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im);
     }
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(

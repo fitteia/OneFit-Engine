@@ -4,27 +4,30 @@ class Stelar-hdf5 is export {
     has $!stelar-hdf5;
     has $!path = '.';
 
-    method path ($folder) { $!path = $folder; self }
+    method path ($folder) { $!path = $folder;
+			    $folder.IO.mkdir unless $folder.IO.e;
+			    self }
     
     multi method filename ($file) { $!stelar-hdf5 = $file; self }
 
     multi method filename () { $!stelar-hdf5 }
     
     method Mz (Bool :$Re, Bool :$Im) {
-	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
+	$!stelar-hdf5.IO.move: "$!path/$!stelar-hdf5";
+	my @zones = gather for shell("cd $!path && h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	my @data-files;
 	for ( 1 .. @zones.elems ).race {
 	    my @x;
 	    my @Re_;
 	    my @Im_;
-	    my $buf = shell("h5dump -d /zone{$_}/t1_fit $!stelar-hdf5",:out).out.slurp(:close);  
+	    my $buf = shell("cd $!path && h5dump -d /zone{$_}/t1_fit $!stelar-hdf5",:out).out.slurp(:close);  
 	    for $buf.lines {
 		my @c = $_.words;
 		@x.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
 		@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 		@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    }
-	    my $datafile = "{$!stelar-hdf5.IO.extension('').Str}-zone{$_}.dat";
+	    my $datafile = "zone{$_}.dat";
 	    my $header = "# DATA dum = " ~
 					 $buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6
 					 ~
@@ -40,15 +43,14 @@ class Stelar-hdf5 is export {
 	    @y = @Im_.map({ $_ / @Im_.max }) if $Im;
 	    my @err = (1 .. @x.elems).map({1});
 
-	    $datafile.IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
+	    "$!path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
 	    @data-files.push: $datafile;
 	}
-	$!stelar-hdf5.IO.unlink;
+	"$!path/$!stelar-hdf5".IO.unlink;
 	return @data-files;
     }
 
     method R1 (Rat :$err) {
-	
 	my @zones = gather for shell("h5dump -n $!stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 	my @BR;
 	my @R1;
