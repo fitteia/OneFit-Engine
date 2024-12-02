@@ -259,7 +259,7 @@ host_prompt> VBoxManage controlvm onefit-e poweroff
 
 ### MacOS runnig UTM, guest "shared network"
 
-Edit VM settings and remove Display interface (you can get it back when necessary)
+Edit VM settings and remove Display interface (you can get it back when necessary).
 
 host_prompt> echo "/Applications/UTM/Contents/MacOS/" | sudo tee /etc/paths.d/50-UTM && exit
 
