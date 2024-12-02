@@ -606,7 +606,7 @@ multi MAIN  ('fit',
     else {
 	for @data-files { $_.IO.move("$work-folder/$name/$_") };
     }
-    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
+    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files.map({ "$work-folder/$name/" ~ $_ }),$data-labels);
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
