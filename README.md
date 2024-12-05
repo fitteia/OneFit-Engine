@@ -303,6 +303,11 @@ prompt> cd $HOME/.local/OneFit-Engine/C/local && git checkout site
 
 prompt> git commit -a && git chekout main && git pull & git merge -m "some info" site && onefite upgrade -d --test
 
+or as the last step
+
+propmt> onefite upgrade -systemd-daemon --merge-info="some info"
+
+
 
 
 
