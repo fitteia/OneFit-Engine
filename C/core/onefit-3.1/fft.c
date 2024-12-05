@@ -9,7 +9,7 @@ int main (int argc, char **argv)
   int     i=0,n=0,N=0;
   double	t,t1,a,x;
   char    c;
-  double *dvector(),*data,*re,*im, delta,fstep,f,atof();
+  double *dvector(),*data,*re,*im, delta=1.0,fstep,f,atof();
 
 	void	drealfft(),expri(),exit();
 	FILE	*fp,*openf(),*fout;
