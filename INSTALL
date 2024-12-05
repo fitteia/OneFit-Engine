@@ -20,6 +20,7 @@ multi MAIN (
     Str  :$ip = '*',
     Int  :$port = 8142,
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
+    Str  :m(:$merge-info)='', # if merge string then merge site branch (it it exits) into current branch
 ){
     my %cpus = ("x86_64"  => "amd64",
 		"aarch64" => "arm64"
@@ -27,6 +28,7 @@ multi MAIN (
 
     shell "git stash";
     shell "git pull";
+    shell 'git merge -m "$merge-info" site' if $merge.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
     
     $cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless so $cpu;
 
