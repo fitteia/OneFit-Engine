@@ -278,7 +278,7 @@ host_prompt> ..
 host_prompt> utmctl stop onefit-e
 
 
-# Managing a local git repository in you onefite box
+# Managing a site git repository in you onefite box
 
 Ex: adding additional models to your fitting engine in $HOME/.local/OneFit-Engine/C/local
 
@@ -286,18 +286,22 @@ Assuming that your OneFit-Engine.git clone repository is in $HOME/.local/OneFit-
 
 ### First Time
 
-prompt> cd $HOME/.local/OneFit-Engine/C/local && git checkout -b local
-
-(creates a new branch local" and check it out)
+prompt> cd $HOME/.local/OneFit-Engine/C/local && git checkout -b site
 
 prompt> git config user.email "your email" && git config user.name "your name"
+
+(creates a new branch "site" and check it out)
+
+### Further changes/updates
+
+prompt> cd $HOME/.local/OneFit-Engine/C/local && git checkout site
 
 1. Create new model functions using an existing one as a template.\
 2. Edit userlib.h and add your new functions according to existing examples.\
 3: Edit Usrelib.i and add the your functions signatures using the existing ones as examples\don't forget that there two planes in the file where the new functions signatures have to be added.
 4: Edit the META-C.json in the $HOME/.local/OneFit-Engine/C folder to add your new functions info
 
-prompt> git commit -a && git chekout main && git merge -m "some info" local && onefite upgrade -d --test
+prompt> git commit -a && git chekout main && git pull & git merge -m "some info" site && onefite upgrade -d --test
 
 
 
