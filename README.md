@@ -55,7 +55,7 @@ ofe@bookworm:\~$ script onefite-install.log \
 
 ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
 
-ofe@bookworm:\~/.local$ git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && ./INSTALL && onefite service start
+ofe@bookworm:\~/.local$ git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && git branch site && ./INSTALL && onefite service start
 
 Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
 
