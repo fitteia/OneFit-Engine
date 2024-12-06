@@ -55,7 +55,7 @@ ofe@bookworm:\~$ script onefite-install.log \
 
 ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
 
-ofe@bookworm:\~/.local$ git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && ./INSTALL && onefite service start
+ofe@bookworm:\~/.local$ git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && git branch site && ./INSTALL && onefite service start
 
 Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
 
@@ -302,6 +302,11 @@ prompt> cd $HOME/.local/OneFit-Engine/C/local && git checkout site
 4: Edit the META-C.json in the $HOME/.local/OneFit-Engine/C folder to add your new functions info
 
 prompt> git commit -a && git chekout main && git pull & git merge -m "some info" site && onefite upgrade -d --test
+
+or as the last step
+
+propmt> onefite upgrade -systemd-daemon --merge-info="some info"
+
 
 
 
