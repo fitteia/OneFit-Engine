@@ -77,7 +77,8 @@ ofe@bookworm\~$ make install
 
 ofe@bookworm\~$ echo "export PATH=$(pwd)/install/bin:$(pwd)/install/share/perl6/site/bin:\\$PATH" >> ~/.bashrc \
 ofe@bookworm\~$ source ~/.bashrc \
-ofe@bookworm\~$ sudo ln -s $(type rakudo | awk '{print $3}') /usr/local/bin/rakudo
+ofe@bookworm\~$ sudo ln -s $(type rakudo | awk '{print $3}') /usr/local/bin/rakudo \
+ofe@bookworm\~$ sudo ln -s $(type raku | awk '{print $3}') /usr/local/bin/raku
 
 You'll likely want to also install zef module manager:
 
