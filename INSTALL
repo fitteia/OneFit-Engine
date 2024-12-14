@@ -225,8 +225,10 @@ sub install (:$test,:$to-site, :$bindir) {
 
     if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
-	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
-	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
+	my $cmd=shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./",:out).out.slurp(:close);
+	say $cmd;
+#	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
+        my $onefite-bin = "{ $cmd.lines.tail }/onefite";
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	if $to-site {
 	    shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
@@ -238,11 +240,10 @@ sub install (:$test,:$to-site, :$bindir) {
     }
     else {
 	my $cmd=shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./",:out).out.slurp(:close);
-	say $cmd.lines.tail;
+	say $cmd;
 #	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
-my $onefite-bin = "{ $cmd.lines.tail }/onefite";
-say $onefite-bin;
-	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
+        my $onefite-bin = "{ $cmd.lines.tail }/onefite";
+        $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	if $to-site {
 	    shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
