@@ -81,10 +81,7 @@ ofe@bookworm\~$ sudo ln -s $(type rakudo | awk '{print $3}') /usr/local/bin/raku
 
 You'll likely want to also install zef module manager:
 
-ofe@bookworm\~$ cd /tmp/ &&
-ofe@bookworm\~$ git clone https://github.com/ugexe/zef.git &&
-ofe@bookworm\~$ cd zef &&
-ofe@bookworm\~$ raku -Ilib bin/zef install .
+ofe@bookworm\~$ cd /tmp/ && git clone https://github.com/ugexe/zef.git && cd zef && raku -Ilib bin/zef install . \
 ofe@bookworm\~$ sudo ln -s $(type zef | awk '{print $3}') /usr/local/bin/zef
 
 ofe@bookworm:\~$ exit 
