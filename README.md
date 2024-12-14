@@ -67,13 +67,13 @@ ofe@bookworm\~$ cd rakudo-* \
 ofe@bookworm\~$ perl Configure.pl --backend=moar --gen-moar \
 ofe@bookworm\~$ make
 
-If you wish, you can run the tests \
+If you wish, you can run the tests (OPTIONAL)\
 Depending on your machine, they could take over half an hour to run
 
 ofe@bookworm\~$ make test \
 ofe@bookworm\~$ make spectest
 
-ofe@bookworm\~$ make install \
+ofe@bookworm\~$ make install 
 
 ofe@bookworm\~$ echo "export PATH=$(pwd)/install/bin:$(pwd)/install/share/perl6/site/bin:\$PATH" >> ~/.bashrc \
 ofe@bookworm\~$ source ~/.bashrc \
