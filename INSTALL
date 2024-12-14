@@ -222,31 +222,34 @@ sub install (:$test,:$to-site, :$bindir) {
 
     shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.l;
     shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
-    say CompUnit::RepositoryRegistry.repository-for-name("site");
-    say CompUnit::RepositoryRegistry.repository-for-name("home");
+
     if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
-	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./ | tee /tmp/onefite-install.log");
+	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
 #	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
-        my $onefite-bin = "/tmp/onefite-install.log".IO.lines(:close).tail ~ "/onefite";
-	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	if $to-site {
+	    my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
+	    $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	    shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	else {
+	    my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("home") ~ "/bin/onefite";
+	    $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	    shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
     else {
-	shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./ | tee /tmp/onefite-install.log");
+	shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./");
 #        my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
-	my $onefite-bin = "/tmp/onefite-install.log".IO.lines(:close).tail ~ "/onefite";
-        $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	if $to-site {
+	    my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
+            $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	    shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
 	else {
+	    my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("home") ~ "/bin/onefite";
+            $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	    shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
 	}
     }
