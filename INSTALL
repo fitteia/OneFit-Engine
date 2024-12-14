@@ -242,7 +242,7 @@ sub install (:$test,:$to-site, :$bindir) {
 	say "err:" ~  $cmd.err.slurp(:close);
 	say $txt.lines.tail;
 #	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
-my $onefite-bin = $txt.lines.tail;
+my $onefite-bin = "{ $cmd.lines.tail }/onefite";
 say $onefite-bin;
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	if $to-site {
