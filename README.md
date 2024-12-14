@@ -44,11 +44,50 @@ Create a user account, ex: ofe
 
 ofe@bookworm:\~$ su - 
 
-root@bookworm\~# apt install raku git sudo && usermod -a -G sudo ofe && exit
+root@bookworm\~# apt install git sudo && usermod -a -G sudo ofe
 
-ofe@bookworm:\~$ exit 
+INSTALL raku from debian/Ubuntu repositories
+
+root@bookworm\~# apt install raku && exit
+
+OR INSTALL raku from source (build instructions: https://rakudo.org/downloads/rakudo/source)
+
+root@bookworm\~# apt-get install build-essential git libssl-dev && exit
+
+AND
+
+ofe@bookworm\~$ exit
 
 login your guest again
+
+ofe@bookworm\~$ mkdir ~/rakudo && cd $_ \
+ofe@bookworm\~$ curl -LJO https://rakudo.org/latest/rakudo/src \
+ofe@bookworm\~$ tar -xvzf rakudo-*.tar.gz \
+ofe@bookworm\~$ cd rakudo-* \
+ofe@bookworm\~$ perl Configure.pl --backend=moar --gen-moar \
+ofe@bookworm\~$ make
+
+If you wish, you can run the tests \
+Depending on your machine, they could take over half an hour to run
+
+ofe@bookworm\~$ make test \
+ofe@bookworm\~$ make spectest
+
+ofe@bookworm\~$ make install \
+
+ofe@bookworm\~$ echo "export PATH=$(pwd)/install/bin:$(pwd)/install/share/perl6/site/bin:\$PATH" >> ~/.bashrc \
+ofe@bookworm\~$ source ~/.bashrc \
+ofe@bookworm\~$ sudo ln -s $(type rakudo | awk '{print $3}') /usr/local/bin/rakudo
+
+You'll likely want to also install zef module manager:
+
+ofe@bookworm\~$ cd /tmp/ &&
+ofe@bookworm\~$ git clone https://github.com/ugexe/zef.git &&
+ofe@bookworm\~$ cd zef &&
+ofe@bookworm\~$ raku -Ilib bin/zef install .
+ofe@bookworm\~$ sudo ln -s $(type zef | awk '{print $3}') /usr/local/bin/zef
+
+ofe@bookworm:\~$ exit 
 
 ofe@bookworm:\~$ script onefite-install.log \
 (it will record the session until you exit) 

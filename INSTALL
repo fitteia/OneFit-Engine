@@ -117,7 +117,6 @@ sub aptpkgs () {
     zip
     pdftk
     sudo
-    raku
     curl
     libssl-dev
     liblapack3
