@@ -75,7 +75,7 @@ ofe@bookworm\~$ make spectest
 
 ofe@bookworm\~$ make install 
 
-ofe@bookworm\~$ echo "export PATH=$(pwd)/install/bin:$(pwd)/install/share/perl6/site/bin:\$PATH" >> ~/.bashrc \
+ofe@bookworm\~$ echo "export PATH=$(pwd)/install/bin:$(pwd)/install/share/perl6/site/bin:\\$PATH" >> ~/.bashrc \
 ofe@bookworm\~$ source ~/.bashrc \
 ofe@bookworm\~$ sudo ln -s $(type rakudo | awk '{print $3}') /usr/local/bin/rakudo
 
