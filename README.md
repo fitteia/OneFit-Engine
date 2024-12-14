@@ -50,9 +50,9 @@ INSTALL raku from debian/Ubuntu repositories
 
 root@bookworm\~# apt install raku && exit
 
-OR INSTALL raku from source (build instructions: https://rakudo.org/downloads/rakudo/source)
+OR INSTALL raku from source in case of Debian 11 (build instructions: https://rakudo.org/downloads/rakudo/source)
 
-root@bookworm\~# apt-get install build-essential git libssl-dev && exit
+root@bookworm\~# apt-get install build-essential libssl-dev && exit
 
 AND
 
