@@ -237,7 +237,7 @@ sub install (:$test,:$to-site, :$bindir) {
 	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
     else {
-	shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./",:out).out.lines(:close).tail.say;
+	my $txt=shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./",:out).out.lines(:close).slurp(:slose);
 	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 	if $to-site {
