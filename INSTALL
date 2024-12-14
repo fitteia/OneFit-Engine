@@ -222,7 +222,7 @@ sub install (:$test,:$to-site, :$bindir) {
 
     shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.l;
     shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
-
+    say CompUnit::RepositoryRegistry.repository-for-name("site");
     if $test.Bool {
 	"/tmp/OneFit-Engine-test".IO.mkdir;
 	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./ | tee /tmp/onefite-install.log");
