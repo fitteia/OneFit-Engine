@@ -93,6 +93,14 @@
 	"description": "Outer-sphere: Ayant, Belorizky, Hwang, and Freed model. Check: https://sites.google.com/tecnico.ulisboa.pt/nmrdpedia/relaxation-models/paramagnetic-relaxation/",
 	"source": "C/local/R1OSabhf.c"
     },
+    "R1LipSzab": {
+	"devision": "Paramagnetic",
+	"function": "R1LipSzab(f, q, C, ms, rho, S, tm, tR, tv, r, Delta2, Aoh, SLS, tl)",
+	"call": "R1(f[1e3<1e9], q:1[1<6], C:0.78503[0.001<1], ms=1.8e-2, S=3.5, tm:1e-7[1e-10<1e-6], tr:5e-9[1e-10<1e-8], tv:1e-12[1e-12<1e-9], r=2.8e-10, Delta2:1.3e21[1e17<1e22], Aoh=5e6, SLS, tl) = R1LipSzab(f, q, C, ms, rho, S, tm, tR, tv, r, Delta2, Aoh, SLS, tl)",
+	"parameters": "f, q, C, ms, rho, S, tm, tR, tv, r, Delta2, Aoh, SLS, tl",
+	"description": "",
+	"source": "C/local/R1LipSzab.c"
+    },
     "R1Torrey": {
 	"function": "R1Torrey(f,n,d,r,tauD)"
     },

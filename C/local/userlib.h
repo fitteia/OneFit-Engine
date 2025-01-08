@@ -52,3 +52,4 @@ extern double JacobiCN();
 extern double JacobiDN();
 extern double Bcirc();
 extern double Bcoil();
+extern double R1LipSzab();

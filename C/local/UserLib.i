@@ -49,6 +49,7 @@ extern double HavNeg(double x, double A,double tau, double epsilon, double delta
 extern double SDFreed(double x,double d,double n,  double tauD, double NP);
 extern double Bcirc(double x, double z, double miu, double N, double R, double I, double NP, double axis);
 extern double Bcoil(double x, double z, double miu, double nz, double nr, double dz, double R, double I, double NP, double flag);
+extern double R1LipSzab(double f, double q, double C, double ms, double rho, double S, double tm, double tR, double tv, double r, double Delta2, double Aoh, double SLS, double tl)
 %}
 
 extern double BPP(double f,double a,double tauc);
@@ -99,3 +100,4 @@ extern double HavNeg(double x, double A,double tau, double epsilon, double delta
 extern double SDFreed(double x,double d,double n,  double tauD, double NP);
 extern double Bcirc(double x, double z, double miu, double N, double R, double I, double NP, double axis);
 extern double Bcoil(double x, double z, double miu, double nz, double nr, double dz, double R, double I, double NP, double flag);
+extern double R1LipSzab(double f, double q, double C, double ms, double rho, double S, double tm, double tR, double tv, double r, double Delta2, double Aoh, double SLS, double tl);
