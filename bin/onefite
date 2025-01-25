@@ -206,6 +206,7 @@ multi MAIN ('start-web-engine',
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       Username: <input type="text" name="username" value="<username>"><br/>
 		       Num points: <input type="text" name="Num" value="100"><br/>
+		       Symbol size: <input type="text" name="SymbSize" value="1"><br/>
 		       Fit methods: <input type="text" name="fit-methods" value="simp scan min minos"><br/>
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
@@ -277,6 +278,7 @@ HTML
 		my $stelar-hdf5-R1 = "";
 		my $stelar-hdf5-R1-err = "";
 		my $num   = +100;
+		my $ssz   =+1;
 		my $fit-methods = "simp scan min minos";
 		my $file-content = $file.body-blob;
 		my $tmp-folder=10000;
@@ -288,6 +290,7 @@ HTML
 		       $fit-methods	      = $v.Str	   if $k eq "fit-methods";
 		       $function      	      = $v.Str     if $k eq "function";
 		       $num        	      = +$v.Str    if $k eq "Num";
+		       $ssz		      = +$v.Str	   if $k eq "SymbSize";
 		       $username   	      = $v.Str     if $k eq "username";
 		       $autox      	      = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
 		       $autoy      	      = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
@@ -320,8 +323,8 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {	
-		   $txt = "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
-		   $txt ~= shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt ~= shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		else {
 		    $txt = "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
