@@ -101,18 +101,18 @@ class Engine is export {
 		for @arr[1 ..^ @arr.elems].hyper {
 		    $_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
 		    if $All {
-			take Block.new.read('# DATA ' ~ $_,:quiet($quiet)).No($i++).path($!path);
+			take Block.new.read( '# DATA ' ~ $_,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
 		    }
 		    else {
 			if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
 			    if $fit.defined {
-				take Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet)).path($!path);
+				take Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
 			    }
 			    if $plot.defined {
-				take Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet)).path($!path);
+				take Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
 			    }
 			    if none($fit,$plot) {
-				take Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet)).path($!path);
+				take Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
 			    }
 			}
 			else {
