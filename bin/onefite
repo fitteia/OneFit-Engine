@@ -278,7 +278,7 @@ HTML
 		my $stelar-hdf5-R1 = "";
 		my $stelar-hdf5-R1-err = "";
 		my $num   = +100;
-		my $ssz   =+1;
+		my $ssz   = +1.0;
 		my $fit-methods = "simp scan min minos";
 		my $file-content = $file.body-blob;
 		my $tmp-folder=10000;
