@@ -484,7 +484,8 @@ multi MAIN  ('create',
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
 	     Bool :$stelar-hdf5-R1 = False,
-	     Rat  :$stelar-hdf5-R1-err,							     				     
+	     Rat  :$stelar-hdf5-R1-err,
+	     Rat  :SymbSize(:$ssz) = +1 where {$_ > +0},
 	     Str  :save-to(:$to), # write fit settings to json or sav file"
 	     Str  :$work-folder = '.',
              Int  :Num(:$npts) = +100
@@ -501,6 +502,7 @@ multi MAIN  ('create',
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
+    %e<SymbSize>=$ssz;
     my $engine = Engine.new.path("$work-folder").set(%e);
     $engine.blocks(
 	:read,
@@ -546,14 +548,14 @@ multi MAIN  ('random',
 	    %e{'F' ~ $<i>.Str}= "Fix";
 	}
     }
-    my $name = ".";
+    my $name = "ofe-tmp";
     if $zip-to.Bool {
 	$name = $zip-to.subst(/\.zip/,'',:g);
-	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-	"$work-folder/$name".IO.mkdir;
-	for @data-files { $_.IO.move("$work-folder/$name/$_") };
     }
-    my $engine = Engine.new.path("$work-folder").set(%e);
+    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+    "$work-folder/$name".IO.mkdir;
+    for @data-files { $_.IO.copy("$work-folder/$name/$_") };
+    my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
 	:autox($autox or $autoxy),
@@ -586,17 +588,19 @@ multi MAIN  ('fit',
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
 	     Bool :$stelar-hdf5-R1 = False,
-	     Rat  :$stelar-hdf5-R1-err,							     				     
+	     Rat  :$stelar-hdf5-R1-err,
+	     Rat  :SymbSize(:$ssz) = +1 where {$_ > +0},
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts) = +100
 	    ){
-    my $name = ".";
+    my $name = "ofe-tmp";
     if $zip-to.Bool {
 	$name = $zip-to.subst(/\.zip/,'',:g);
-	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-	"$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
     }
+    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+    "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
+
     if any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool,$stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im) {
 	@data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-hdf5-R1-err)
@@ -605,12 +609,13 @@ multi MAIN  ('fit',
 	;
     }
     else {
-	for @data-files { $_.IO.move("$work-folder/$name/$_") };
+	for @data-files { $_.IO.copy("$work-folder/$name/$_") };
     }
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
+    %e<SymbSize>=$ssz;
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
@@ -645,7 +650,7 @@ multi MAIN  ('fit',
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
-	    $input-file.IO.move("$work-folder/$name/$input-file");
+	    $input-file.IO.copy("$work-folder/$name/$input-file");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
 	    $engine.Num($npts) if $npts.Bool;
@@ -679,7 +684,7 @@ multi MAIN  ('plot',
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
-	    $input-file.IO.move("$work-folder/$name/$input-file");
+	    $input-file.IO.copy("$work-folder/$name/$input-file");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 	    #	    my $engine = Engine.new.path("$work-folder").read($input-file);
 	    $engine.Num($npts) if $npts.Bool;
