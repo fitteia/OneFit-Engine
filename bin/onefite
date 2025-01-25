@@ -323,17 +323,17 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "ola: onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt = "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
 		 #  $txt ~= shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
-		    $txt = "opa: onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
+		    $txt = "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
 		    $txt ~= shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
 		my Bool $tmp-folder-was-created = "./$tmp-folder".IO.e;
-   		#shell("rm -fr ./$tmp-folder") if "./$tmp-folder".IO.e;		
+   		shell("rm -fr ./$tmp-folder") if "./$tmp-folder".IO.e;		
  		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $tmp-folder ~ ' removed.' if $tmp-folder-was-created }");
 		$log-fh.flush;
 	    }
