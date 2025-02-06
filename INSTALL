@@ -275,9 +275,9 @@ Type=forking
 ExecStart=/usr/local/bin/onefite service start --ip=$ip --port=$port
 ExecStop=/usr/local/bin /onefite service stop
 Restart=always
-WorkingDirectory=/home/ofe/public_html
-User=ofe
-Group=ofe
+WorkingDirectory=/home/%*ENV<USER>/public_html
+User=%*ENV<USER>
+Group=%*ENV<USER>
 [Install]
 WantedBy=multi-user.target
 ";
