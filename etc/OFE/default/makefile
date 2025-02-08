@@ -25,14 +25,19 @@ CERNLIBPATH=/usr/lib
 CERNMATH=-lmathlib
 CERNPACK=-lpacklib
 F2C=
+
+CERNLIB= -L$(CERNLIBPATH)  $(CERNMATH) $(CERNPACK) $(F2C)
+#MINUIT=$(CERNLIB)
+MINUIT= -lminuit -lgfortran
+
 # versao linux
-LIB=  -L$(DESTDIR)/lib -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -L$(CERNLIBPATH)  $(CERNMATH) $(CERNPACK) $(F2C) -lm 
+LIB=  -L$(DESTDIR)/lib -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm 
 
-FLAGS=  -DLINUX -fPIC -O2 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I$(DESTDIR)/include
+FLAGS=  -DLINUX -fPIC -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I$(DESTDIR)/include
 
-CCFLAGS=-D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O2 -g -fPIC -I\$(PERLROOT)  -I\$(ONEFIT)/include
+CCFLAGS=-D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I\$(PERLROOT)  -I\$(ONEFIT)/include
 
-LDFLAGS=-shared -L/usr/local/lib -fstack-protector -O2 -g
+LDFLAGS=-shared -L/usr/local/lib -fstack-protector -O3 -g
 
 CC = gcc $(FLAGS)
 

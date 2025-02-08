@@ -17,6 +17,7 @@ multi MAIN (
     Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
+    Bool ;$cernlib = False, # by default it will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
     Str  :$ip = '*',
     Int  :$port = 8142,
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
@@ -80,6 +81,7 @@ Usage:
     --to-user      # to install raku module to user ( sets --no-to-site --no-web-server --no-enable-gs  --no-dpkg)
     --bindir       # defaults to $*CWD/../bin (use --bindir=/\$HOME/bin to set another folder for binaries)
     --systemd-daemon # to create and start the onefite daemon service
+    --cernlib      # by default it will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
     --ip = '*'     # creates the onefite.service for all IPv4 interfaces
     --port = 8142  # onefite web service service port defaults to 8142
     --merge-site=<Str> # merge git site files with git main/dev files when updating
@@ -143,15 +145,17 @@ sub install-apt-packages ($cpu) {
     if so @apt-pkgs-to-install {
 	run "sudo", "apt", "install" , @apt-pkgs-to-install; 
     }
-    my @required-cern-pkgs = cernpkgs($cpu);
-    my @cernlib-pkgs-to-install = apt-pkgs-not-installed(@required-cern-pkgs);
-    if so @cernlib-pkgs-to-install {
-	my @pkgs-to-install = gather for @cernlib-pkgs-to-install {
-	    take @required-cern-pkgs.grep(/$_"_"/).head if  @required-cern-pkgs.grep(/$_"_"/);
+    if $cernlib {
+	my @required-cern-pkgs = cernpkgs($cpu);
+	my @cernlib-pkgs-to-install = apt-pkgs-not-installed(@required-cern-pkgs);
+	if so @cernlib-pkgs-to-install {
+	    my @pkgs-to-install = gather for @cernlib-pkgs-to-install {
+		take @required-cern-pkgs.grep(/$_"_"/).head if  @required-cern-pkgs.grep(/$_"_"/);
+	    }
+	    my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/" <<~<< @pkgs-to-install;
+	    shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
+	    shell "cd /tmp && sudo apt install ./" ~ @pkgs-to-install.join(" ./"); 
 	}
-	my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/" <<~<< @pkgs-to-install;
-	shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
-	shell "cd /tmp && sudo apt install ./" ~ @pkgs-to-install.join(" ./"); 
     }
     shell "sudo apt update && sudo apt upgrade && sudo apt autoremove && sudo apt clean";
 }
@@ -184,6 +188,8 @@ sub enable-ghostscript-in-ImageMagick-policy () {
 }
 
 sub compile (:$root,:$arch,:$bindir,:$pv) {
+    say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
+    shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit && cd $*CWD/../minuit && patch -p1 < minuit.patch && make && make install";
     say "install source in $*CWD and binaries with perl version: $pv";
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
     shell "find . -name .precomp -prune -o -name .git -prune -o -name .gitignore -prune -o -name .prove -prune -o -name .travis.yml -prune -o -name Makefile -prune -o -name \"*~\" -prune -o -name bugs -prune -o -type f -print | sort | cut -c 3- > MANIFEST";
