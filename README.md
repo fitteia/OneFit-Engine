@@ -96,7 +96,7 @@ Alternative: start the onefite daemon that starts the onefite service after syst
 
 ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
 
-## CernLib Minuit
+## CERN Lib Minuit
 
 Since version OneFit-Engine version 0.9.0, Minuit is installed from source in a OneFit-Engine parallel folder minuit \
 OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a \
