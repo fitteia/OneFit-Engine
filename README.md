@@ -96,13 +96,13 @@ Alternative: start the onefite daemon that starts the onefite service after syst
 
 ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
 
-## CERNLIB Minuit
+## CernLib Minuit
 
 Since version OneFit-Engine version 0.9.0, Minuit is installed from source in a OneFit-Engine parallel folder minuit \
-OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is not set to work the the libminuit.a \
-installed form source. In order to keep using the debian package version uncomment the appropriate MINUIT tag in the makefile.\
+OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a \
+installed form source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in the makefile.\
 
-To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." accept option "--cernlib"
+To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." raku scripts  accept option "--cernlib"
 
 ## Updates/Upgrades
 
