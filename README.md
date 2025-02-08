@@ -100,7 +100,7 @@ ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon &&
 
 Since version OneFit-Engine version 0.9.0, Minuit is installed from source in a OneFit-Engine parallel folder minuit \
 OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a \
-installed from source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in the makefile.\
+installed from source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in that makefile.\
 
 To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." raku scripts  accept option "--cernlib"
 
