@@ -190,7 +190,8 @@ sub enable-ghostscript-in-ImageMagick-policy () {
 
 sub compile (:$root,:$arch,:$bindir,:$pv) {
     say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
-    shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean" unless "$*CWD/../minuit/".IO.d(:e);
+    shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
+    shell "cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean";
     say "install source in $*CWD and binaries with perl version: $pv";
     shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
     shell "find . -name .precomp -prune -o -name .git -prune -o -name .gitignore -prune -o -name .prove -prune -o -name .travis.yml -prune -o -name Makefile -prune -o -name \"*~\" -prune -o -name bugs -prune -o -type f -print | sort | cut -c 3- > MANIFEST";
