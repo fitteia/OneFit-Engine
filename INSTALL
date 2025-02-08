@@ -43,7 +43,7 @@ multi MAIN (
 
     uninstall() if $Uninstall;
 
-    install-apt-packages($cpu) if $dpkg.Bool and $to-site;
+    install-apt-packages($cpu,:cernlib($cernlib)) if $dpkg.Bool and $to-site;
 
     install-web-server if $web-server and $to-site;
 
@@ -140,7 +140,7 @@ sub apt-pkgs-not-installed (@pkgs) {
     }
 }
 
-sub install-apt-packages ($cpu) {
+sub install-apt-packages ($cpu,:$cernlib) {
     my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
     if so @apt-pkgs-to-install {
 	run "sudo", "apt", "install" , @apt-pkgs-to-install; 
