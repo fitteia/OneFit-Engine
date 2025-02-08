@@ -129,7 +129,7 @@ multi MAIN ('upgrade',
       Bool :u(:$to-user) = False,
       Bool :c(:$compile) = True,
       Bool :d(:$systemd-daemon) = False,
-      Str  :$cernlib = '--/cernlib',
+      Bool :$cernlib = False,
       Str  :$ip = '*',
       Int  :p(:$port) = 8142,
       Str  :$test = '--/test',
@@ -137,7 +137,7 @@ multi MAIN ('upgrade',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } $cernlib ";
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } ";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
