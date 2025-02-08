@@ -156,6 +156,7 @@ sub install-apt-packages ($cpu,:$cernlib) {
 	    shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
 	    shell "cd /tmp && sudo apt install ./" ~ @pkgs-to-install.join(" ./"); 
 	}
+	say "the OneFit-Engine/etc/OFE/default/makefile has to be changed if you plan to use the minuit routine from the debian installed package";
     }
     shell "sudo apt update && sudo apt upgrade && sudo apt autoremove && sudo apt clean";
 }
