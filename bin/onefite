@@ -291,7 +291,7 @@ HTML
 		       $fit-methods	      = $v.Str	   if $k eq "fit-methods";
 		       $function      	      = $v.Str     if $k eq "function";
 		       $num        	      = +$v.Str    if $k eq "Num";
-		       $ssz		      = $v.Str	    if $k eq "SymbSize";
+		       $ssz		      = $v.Rat	    if $k eq "SymbSize";
 		       $username   	      = $v.Str     if $k eq "username";
 		       $autox      	      = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
 		       $autoy      	      = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
