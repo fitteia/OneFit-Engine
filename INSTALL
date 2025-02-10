@@ -61,6 +61,8 @@ multi MAIN (
     systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
 
     add-show-ip-in-issue() if $to-site;
+
+    run-post-install-tests();
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -312,4 +314,48 @@ sub add-show-ip-in-issue() {
     my $issue = "/etc/issue".IO.slurp.subst(/'\l'\s*'\4'*/,'\l \4');
     "/tmp/issue".IO.spurt: $issue ~ "\n\n";
     shell "sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
+}
+
+sub run-post-install-tests() {
+    my $data = q:to/EOT/;
+# DATA dum = 40616
+# TAG = zone12
+# R1 = 16.9554
+2.4 0.4950845801988824 1
+1.60968 0.5030929382053178 1
+1.07962 0.5071383400239955 1
+0.724101 0.5192948321930172 1
+0.485656 0.5160022771910805 1
+0.32573 0.5291235757829099 1
+0.218468 0.5350239458592603 1
+0.146527 0.5898993575693909 1
+0.098276 0.6180204586347606 1
+0.065914 0.6826722682863811 1
+0.044208 0.752954560068173 1
+0.029651 0.8279391722256552 1
+0.019887 0.8918345724621874 1
+0.013338 0.9470250641189731 1
+0.008946 0.9713798167045512 1
+0.006 1.0 1.0 
+EOT
+
+	$data.IO.spurt("/tmp/zone12.dat");
+	my $result = shell("curl -F \"file='@'zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit", :out).out.slurp(:close);
+	say $result;
+	if $result.contains("zone12, 16") {
+	    say "localhost web service works OK";
+	}
+	else {
+	    say "localhost web service error!";
+	}
+
+	my $result = shell("nefite fit "Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
+	say $result;
+	if $result.contains("zone12, 16") {
+	    say "command line onefite OK";
+	}
+	else {
+	    say "command line onefite error!";
+	}
+	
 }
