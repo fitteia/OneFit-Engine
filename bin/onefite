@@ -489,7 +489,7 @@ multi MAIN  ('create',
 	     Bool :$stelar-hdf5-Im = False,
 	     Bool :$stelar-hdf5-R1 = False,
 	     Rat  :$stelar-hdf5-R1-err,
-	     Str  :SymbSize(:$ssz) where {$_.Rat > 0} = +1.0,
+	     Str  :SymbSize(:$ssz) = +1.0,
 	     Str  :save-to(:$to), # write fit settings to json or sav file"
 	     Str  :$work-folder = '.',
              Int  :Num(:$npts) = +100
@@ -506,7 +506,7 @@ multi MAIN  ('create',
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
-    %e<SymbSize>=$ssz;
+    %e<SymbSize>=$ssz.Rat;
     my $engine = Engine.new.path("$work-folder").set(%e);
     $engine.blocks(
 	:read,
@@ -593,7 +593,7 @@ multi MAIN  ('fit',
 	     Bool :$stelar-hdf5-Im = False,
 	     Bool :$stelar-hdf5-R1 = False,
 	     Rat  :$stelar-hdf5-R1-err,
-	     Str  :SymbSize(:$ssz) where {$_.Rat > 0} = +1.0,
+	     Str  :SymbSize(:$ssz) = +1.0,
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts) = +100
@@ -619,7 +619,7 @@ multi MAIN  ('fit',
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
-    %e<SymbSize>=$ssz;
+    %e<SymbSize>=$ssz.Rat;
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
