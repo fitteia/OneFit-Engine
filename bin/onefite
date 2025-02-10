@@ -310,7 +310,6 @@ HTML
 		       }
 		   }
 		}
-
 		
 		if any($stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool,$stelar-hdf5-R1.Bool,$stelar-hdf5-R1-err.Bool) {
 		   $filename.IO(:bin).spurt: $file-content			
