@@ -18,6 +18,7 @@ multi MAIN (
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
     Bool :$cernlib = False, # by default it will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
+    Bool :$git = True, # By default it runs git to pull the package for remote repository
     Str  :$ip = '*',
     Int  :$port = 8142,
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
@@ -27,9 +28,11 @@ multi MAIN (
 		"aarch64" => "arm64"
 		);
 
-    shell "git stash";
-    shell "git pull";
-    shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
+    if $git {
+	shell "git stash";
+	shell "git pull";
+	shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
+    }
     
     $cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless so $cpu;
 
@@ -121,15 +124,19 @@ sub aptpkgs () {
     sudo
     curl
     libssl-dev
-    liblapack3
-    libblas3
-    libblas-dev
-    libatlas-base-dev
-    libatlas3-base
     hdf5-tools
     tasksel>
 }
 
+#### these packages are required by cernlib #####
+#
+#    liblapack3
+#    libblas3
+#    libblas-dev
+#    libatlas-base-dev
+#    libatlas3-base
+#
+#################################################
 
 sub apt-pkgs-not-installed (@pkgs) {
     my @a=shell("apt list --installed",:out,:err).out.lines(:close);
