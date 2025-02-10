@@ -354,10 +354,10 @@ EOT
 	$result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
 	say $result;
 	if $result.contains("zone12, 16") {
-	    say "command line onefite OK";
+	    say "command line onefite OK\n\n";
 	}
 	else {
-	    say "command line onefite error!";
+	    say "command line onefite error!\n\n";
 	}
 	
 }
