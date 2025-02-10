@@ -22,4 +22,4 @@ install: set
 	make -C $(ROOT)/C ROOT=$(ROOT) BINDIR=$(BINDIR) clean
 
 clean:
-	make -C $(RROT)/C ROOT=$(ROOT) clean
+	make -C $(ROOT)/C ROOT=$(ROOT) clean
