@@ -62,7 +62,7 @@ multi MAIN (
 
     add-show-ip-in-issue() if $to-site;
 
-    run-post-install-tests();
+    run-post-install-tests(:service($systemd-daemon));
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -316,7 +316,7 @@ sub add-show-ip-in-issue() {
     shell "sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
 }
 
-sub run-post-install-tests() {
+sub run-post-install-tests(Bool :$service = False) {
     my $data = q:to/EOT/;
 # DATA dum = 40616
 # TAG = zone12
@@ -342,15 +342,16 @@ EOT
 
         say "Running post-install tests...";
 	"/tmp/zone12.dat".IO.spurt: $data;
-	my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit",:out).out.slurp(:close);
-	say $result;
-	if $result.contains("zone12, 16") {
-	    say "localhost web service works OK";
+	if $service {
+	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit",:out).out.slurp(:close);
+	    say $result;
+	    if $result.contains("zone12, 16") {
+		say "localhost web service works OK";
+	    }
+	    else {
+		say "localhost web service error!";
+	    }
 	}
-	else {
-	    say "localhost web service error!";
-	}
-
 	$result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
 	say $result;
 	if $result.contains("zone12, 16") {
