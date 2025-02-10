@@ -576,7 +576,7 @@ multi MAIN  ('random',
 multi MAIN  ('fit',
 	     Str  $function, 
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Str  :SymbSize(:$ssz) = +1.0,
+#	     Str  :SymbSize(:$ssz) = +1.0,
 	     Str  :data-label(:$data-labels),
              Str  :$fit-methods = "simp scan min minos",
 	     Str  :$tags,
@@ -590,8 +590,8 @@ multi MAIN  ('fit',
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
 	     Bool :$stelar-hdf5 = False,
-#	     Bool :$stelar-hdf5-Re = False,
-#	     Bool :$stelar-hdf5-Im = False,
+	     Bool :$stelar-hdf5-Re = False,
+	     Bool :$stelar-hdf5-Im = False,
 	     Bool :$stelar-hdf5-R1 = False,
 	     Rat  :$stelar-hdf5-R1-err,
 	     Str  :$save-to, # write fit settings to json or sav file 
@@ -619,7 +619,7 @@ multi MAIN  ('fit',
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
-    %e<SymbSize>=$ssz.Rat;
+    %e<SymbSize>=+1.0;
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
