@@ -45,9 +45,9 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite help <model> [-q|--quiet]
 	    onefite help <model> <key>] [-q|--quiet]
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-            onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Rat> where \{ <Rat> > 0 \}] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Rat>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Rat> where \{ <Rat> > 0 \}] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Rat>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
@@ -593,7 +593,7 @@ multi MAIN  ('fit',
 	     Bool :$stelar-hdf5-Im = False,
 	     Bool :$stelar-hdf5-R1 = False,
 	     Rat  :$stelar-hdf5-R1-err,
-	     Str  :SymbSize(:$ssz) = +1.0,
+	     Str  :SymbSize(:$s-sz) = +1.0,
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts) = +100
@@ -619,7 +619,7 @@ multi MAIN  ('fit',
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
-    %e<SymbSize>=$ssz.Rat;
+    %e<SymbSize>=$s-sz.Rat;
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
