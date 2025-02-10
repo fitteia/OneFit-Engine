@@ -576,7 +576,7 @@ multi MAIN  ('random',
 multi MAIN  ('fit',
 	     Str  $function, 
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Rat  :SymbSize(:$ssz) = +1.0,
+	     Str  :SymbSize(:$ssz) = "1.0",
 	     Str  :data-label(:$data-labels),
              Str  :$fit-methods = "simp scan min minos",
 	     Str  :$tags,
@@ -619,7 +619,7 @@ multi MAIN  ('fit',
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
-    %e<SymbSize>=$ssz;
+    %e<SymbSize>=$ssz.Rat;
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 	:no-plot($no-plot),
