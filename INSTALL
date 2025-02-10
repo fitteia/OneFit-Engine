@@ -111,8 +111,6 @@ sub aptpkgs () {
     swig
     gcc
     dpkg-dev
-    libgfortran5
-    cfortran
     gfortran
     grace
     imagemagick
@@ -130,6 +128,8 @@ sub aptpkgs () {
 
 #### these packages are required by cernlib #####
 #
+#    libgfortran5
+#    cfortran
 #    liblapack3
 #    libblas3
 #    libblas-dev
