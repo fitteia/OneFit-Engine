@@ -349,7 +349,7 @@ EOT
 	    say "localhost web service error!";
 	}
 
-	my $result = shell("nefite fit "Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
+	my $result = shell("onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
 	say $result;
 	if $result.contains("zone12, 16") {
 	    say "command line onefite OK";
