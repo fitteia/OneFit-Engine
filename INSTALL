@@ -17,7 +17,7 @@ multi MAIN (
     Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)
-    Bool :$git = True, # use git to pull the package for remote repository						     
+    Bool :$no-git = False, # By default it runs git to pull the package for remote repository						     
     Str  :$ip = '*',
     Int  :$port = 8142,
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
@@ -26,7 +26,7 @@ multi MAIN (
     my %cpus = ("x86_64"  => "amd64",
 		"aarch64" => "arm64"
 		);
-    if $git {
+    if $no-git.not {
 	shell "git stash";
 	shell "git pull";
 	shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
