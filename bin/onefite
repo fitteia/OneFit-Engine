@@ -786,7 +786,7 @@ sub zip-fit ($engine,$work-folder,$name) {
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
 }
 
-sub run-post-install-tests(Bool :verbose = False) {
+sub run-post-install-tests(Bool :$verbose = False) {
     my $data = q:to/EOT/;
 # DATA dum = 40616
 # TAG = zone12
