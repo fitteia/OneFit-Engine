@@ -343,7 +343,7 @@ EOT
         say "Running post-install tests...";
 	"/tmp/zone12.dat".IO.spurt: $data;
 	if $service {
-	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log");
+	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log",:err);
 	    $result = "/tmp/ofe-test.log".IO.slurp(:close);
 	    say $result;
 	    if $result.contains("zone12, 16") {
@@ -361,5 +361,5 @@ EOT
 	else {
 	    say "command line onefite error!\n\n";
 	}
-	shell "rm /tmp/zone12.dat /tmp/ofe-test.log" if "/tmp/zone12.dat".IO.e;
+	shell "rm -fr OneFit-Eggine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 }
