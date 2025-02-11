@@ -837,6 +837,6 @@ EOT
 	else {
 	    put "error!\n\n";
 	}
-	shell "rm -fr /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
+	shell "sudo rm -fr /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 }
 
