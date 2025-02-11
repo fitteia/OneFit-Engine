@@ -730,6 +730,7 @@ multi MAIN ('test',
     else {
 	my $proc = run "prove6", "--lib", "$test-path","--err=ignore";
     }
+    run-post-install-tests();
     exit;
 }
 
@@ -771,5 +772,56 @@ sub zip-fit ($engine,$work-folder,$name) {
     "$name.zip".IO(:e).unlink;
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
+}
+
+sub run-post-install-tests() {
+    my $data = q:to/EOT/;
+# DATA dum = 40616
+# TAG = zone12
+# R1 = 16.9554
+2.4 0.4950845801988824 1
+1.60968 0.5030929382053178 1
+1.07962 0.5071383400239955 1
+0.724101 0.5192948321930172 1
+0.485656 0.5160022771910805 1
+0.32573 0.5291235757829099 1
+0.218468 0.5350239458592603 1
+0.146527 0.5898993575693909 1
+0.098276 0.6180204586347606 1
+0.065914 0.6826722682863811 1
+0.044208 0.752954560068173 1
+0.029651 0.8279391722256552 1
+0.019887 0.8918345724621874 1
+0.013338 0.9470250641189731 1
+0.008946 0.9713798167045512 1
+0.006 1.0 1.0 
+EOT
+
+
+        say "Running post-install tests...\n";
+        "/tmp/zone12.dat".IO.spurt: $data;
+	my $service = shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running)");
+	if $service {
+	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit",:out).out.slurp(:close);
+	    say $result;
+	    if $result.contains("zone12, 16") {
+		say "localhost web service works OK";
+	    }
+	    else {
+		say "localhost web service error!";
+	    }
+	}
+	else {
+	    say "onefite service if off in all ports");
+	}
+	my $result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
+	say $result;
+	if $result.contains("zone12, 16") {
+	    say "command line onefite OK\n\n";
+	}
+	else {
+	    say "command line onefite error!\n\n";
+	}
+	
 }
 
