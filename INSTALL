@@ -360,5 +360,5 @@ EOT
 	else {
 	    say "command line onefite error!\n\n";
 	}
-	
+	shell "rm /tmp/zone12.dat" if "/tmp/zone12.dat".IO.e;
 }
