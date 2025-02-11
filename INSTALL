@@ -361,5 +361,5 @@ EOT
 	else {
 	    say "command line onefite error!\n\n";
 	}
-	shell "rm -fr OneFit-Engine-test/ /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
+	shell "rm /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 }
