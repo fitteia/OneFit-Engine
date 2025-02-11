@@ -615,7 +615,7 @@ multi MAIN  ('fit',
     else {
 	if @data-files[0].IO.extension.Str ~~ /zip/ {
 	    shell "unzip @data-files[0] -d $work-folder/$name";
-	    @data-files = "$work-folder".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  })
+	    @data-files = "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  });
 	}
 	else {
 	    for @data-files { $_.IO.copy("$work-folder/$name/$_") };
