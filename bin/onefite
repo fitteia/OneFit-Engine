@@ -815,7 +815,7 @@ EOT
 	my $service = shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running)");
 	if $service {
 	    put "testing localhost onefite web service... ";
-	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log",:out,:err);
+	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output=ofe-test.log",:out,:err);
 	    $result = "/tmp/ofe-test.log".IO.slurp(:close);
 	    say $result unless $verbose;
 	    if $result.contains("zone12, 16") {
