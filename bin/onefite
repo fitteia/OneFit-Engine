@@ -606,7 +606,7 @@ multi MAIN  ('fit',
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 
     if @data-files[0].IO.extension.Str ~~ /zip/ {
-	shell "unzip @data-files[0] -d $work-foder/$name";
+	shell "unzip @data-files[0] -d $work-folder/$name";
     }
     
     if any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool,$stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im) {
