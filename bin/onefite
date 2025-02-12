@@ -310,14 +310,14 @@ HTML
 		       }
 		   }
 		}
-		my $txt;
+		my $txt="";
 		if any($stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool,$stelar-hdf5-R1.Bool,$stelar-hdf5-R1-err.Bool) {
 		   $filename.IO(:bin).spurt: $file-content			
 		}
 		else {		 
-		    my $header = $file.body-blob;
-		    $txt = $header.read(4);
-		    #		    $header.read(4) eq Buf.new(0x50,0x4B,0x03,0x04) ?? $filename.IO(:bin).spurt: $file-content !!
+#		    my $header = $file.body-blob;
+#		    $txt = $header.read(4);
+#		    #		    $header.read(4) eq Buf.new(0x50,0x4B,0x03,0x04) ?? $filename.IO(:bin).spurt: $file-content !!
 		    $filename.IO.spurt: $file-content.decode('UTF-8')
  		}	   
 
