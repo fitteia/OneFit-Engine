@@ -343,7 +343,8 @@ EOT
         say "Running post-install tests...";
 	"/tmp/zone12.dat".IO.spurt: $data;
 	if $service {
-	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit",:out).out.slurp(:close);
+	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log");
+	    $result = "/tmp/ofe-test.log".IO.slurp(:close);
 	    say $result;
 	    if $result.contains("zone12, 16") {
 		say "localhost web service works OK";
@@ -352,6 +353,9 @@ EOT
 		say "localhost web service error!";
 	    }
 	}
+	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
+	</tmp/ofe-tmp>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
+
 	my $result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
 	say $result;
 	if $result.contains("zone12, 16") {
@@ -360,5 +364,9 @@ EOT
 	else {
 	    say "command line onefite error!\n\n";
 	}
-	shell "rm /tmp/zone12.dat" if "/tmp/zone12.dat".IO.e;
+#	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
+#	my $SUDO="";
+#	$SUDO = "sudo" if any( (fileowner("/tmp/ofe-tmp"), fileowner("/tmp/ofe-test.log"), fileowner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"))>>.contains("root"));
+#	shell "$SUDO rm -fr /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
+	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 }

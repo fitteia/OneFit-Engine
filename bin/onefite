@@ -51,7 +51,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
-	    onefite test [<arr> ...]
+	    onefite test [<arr> ...] [--verbose|-v]
   
 	    <input-file>     name of the file to be converted (.sav or .json)
 	    <output-file>    name of the converted file (.sav or .json)
@@ -203,7 +203,8 @@ multi MAIN ('start-web-engine',
             	     <h1>OneFit Engine Web Server</h1>
 
             	     <form action="/fit" method="post" enctype="multipart/form-data">
-            	       Upload file [.json | .sav | .hdf5 | data-file ] <input type="file" name="file"><br/>
+            	     Upload file [.json | .sav | .hdf5 | data-file ] <input type="file" name="file"><br/>
+		       Data file is a zip:&nbsp;</td><td>yes<input name="data-file" type="radio" value="yes">/no<input name="data-file" type="radio" value="no" checked="checked"></br>
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       Username: <input type="text" name="username" value="<username>"><br/>
 		       Num points: <input type="text" name="Num" value="100"><br/>
@@ -278,6 +279,7 @@ HTML
 		my $stelar-hdf5-Im = "";
 		my $stelar-hdf5-R1 = "";
 		my $stelar-hdf5-R1-err = "";
+		my Bool $data-zip= False;
 		my $num   = +100;
 		my $ssz   = +1.0;
 		my $fit-methods = "simp scan min minos";
@@ -303,6 +305,7 @@ HTML
 		       $stelar-hdf5-Im        = "--stelar-hdf5-Im  " if $k eq "stelar-hdf5-Im" and $v eq any("yes",1);
 		       $stelar-hdf5-R1        = "--stelar-hdf5-R1  " if $k eq "stelar-hdf5-R1" and $v eq any("yes",1);
 		       $stelar-hdf5-R1        = "--stelar-hdf5-R1-err={$v.Rat}  " if $k eq "stelar-hdf5-R1-err" and $v.^name eq "Rat";
+		       $data-zip               = True if $k eq "data-zip" and $v eq any("yes",1);
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
 			  elsif $v eq "json" { $file-to-download = "$folder/" ~ $filename.IO.extension('json') }
@@ -310,13 +313,12 @@ HTML
 		       }
 		   }
 		}
-		
-		if any($stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool,$stelar-hdf5-R1.Bool,$stelar-hdf5-R1-err.Bool) {
+		if any($data-zip,$stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool,$stelar-hdf5-R1.Bool,$stelar-hdf5-R1-err.Bool) {
 		   $filename.IO(:bin).spurt: $file-content			
 		}
-		else {
-		   $filename.IO.spurt: $file-content.decode('UTF-8')
- 		}	   
+		else {		 
+		    $filename.IO.spurt: $file-content.decode('UTF-8')
+		}	   
 
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
 		$work-folder = "./$username" if $username.so and $username.IO.e;
@@ -613,13 +615,18 @@ multi MAIN  ('fit',
 	;
     }
     else {
-	if @data-files[0].IO.extension.Str ~~ /zip/ {
-	    shell "unzip @data-files[0] -d $work-folder/$name";
-	    @data-files = "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort;
+	my @files=();
+	for @data-files {
+	    if $_.IO.extension.Str ~~ /zip/ {
+		shell "unzip $_ -d $work-folder/$name";
+		@files.push: "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort.Slip;
+	    }
+	    else {
+		@files.push: $_;
+		$_.IO.copy("$work-folder/$name/$_")
+	    }
 	}
-	else {
-	    for @data-files { $_.IO.copy("$work-folder/$name/$_") };
-	}
+	@data-files= @files;
     }
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
@@ -717,11 +724,14 @@ multi MAIN ('test','list') {
 }	    
 
 multi MAIN ('test',
-	    *@arr
+	    *@arr,
+	    Bool :verbose(:$v) = False
 	   ){
     my $test-path=OFE-PATH ~ "/t";
 #    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
 
+    "/tmp/OneFit-Engine-test".IO.mkdir unless "/tmp/OneFit-Engine-test".IO.d(:e);
+    
     if @arr.elems > 0 {
 	my $fho = open :w, 'tests.log';
 	@arr.race.map(
@@ -736,7 +746,7 @@ multi MAIN ('test',
     else {
 	my $proc = run "prove6", "--lib", "$test-path","--err=ignore";
     }
-    run-post-install-tests();
+    run-post-install-tests(:verbose($v));
     exit;
 }
 
@@ -780,7 +790,7 @@ sub zip-fit ($engine,$work-folder,$name) {
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
 }
 
-sub run-post-install-tests() {
+sub run-post-install-tests(Bool :$verbose = False) {
     my $data = q:to/EOT/;
 # DATA dum = 40616
 # TAG = zone12
@@ -808,26 +818,34 @@ EOT
         "/tmp/zone12.dat".IO.spurt: $data;
 	my $service = shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running)");
 	if $service {
-	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit",:out).out.slurp(:close);
-	    say $result;
+	    put "testing localhost onefite web service... ";
+	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log");
+	    $result = "/tmp/ofe-test.log".IO.slurp(:close);
+	    say $result if $verbose;
 	    if $result.contains("zone12, 16") {
-		say "localhost web service works OK";
+		put "OK\n";
 	    }
 	    else {
-		say "localhost web service error!";
+		put "error!\n";
 	    }
 	}
 	else {
 	    say "onefite service if off in all ports";
 	}
+	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
+	</tmp/ofe-tmp>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
+
+	put "testing command line onefite...";
 	my $result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
-	say $result;
+	say $result if $verbose;
 	if $result.contains("zone12, 16") {
-	    say "command line onefite OK\n\n";
+	    put "OK\n";
 	}
 	else {
-	    say "command line onefite error!\n\n";
+	    put "error!\n\n";
 	}
-	shell "rm /tmp/zone12.dat" if "/tmp/zone12.dat".IO.e;
+#	$SUDO = "sudo" if any( (fileowner("/tmp/ofe-tmp"), fileowner("/tmp/ofe-test.log"), fileowner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"))>>.contains("root"));
+#	shell "$SUDO rm -fr /tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
+	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 }
 
