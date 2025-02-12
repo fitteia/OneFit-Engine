@@ -368,7 +368,7 @@ EOT
 	else {
 	    say "command line onefite error!\n\n";
 	}
-	my $fileowner = { my $file = IO::Path.new($^a) but FileOwner; $file };
+	my $fileowner = { my $file = IO::Path.new($^a) but FileOwner; say $file; $file };
 	my $SUDO="";
 	$SUDO = "sudo" if any( ($fileowner("/tmp/ofe-tmp"), $fileowner("/tmp/OneFit-Engine-test"), $fileowner("/tmp/zone12.dat"))>>.contains("root"));
 	say $fileowner("/tmp/ofe-tmp");
