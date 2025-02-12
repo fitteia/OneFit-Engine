@@ -315,9 +315,9 @@ HTML
 		   $filename.IO(:bin).spurt: $file-content			
 		}
 		else {		 
-		   # my $header = $file.body-blob;
-		    #		    #		    $header.read(4) eq Buf.new(0x50,0x4B,0x03,0x04) ?? $filename.IO(:bin).spurt: $file-content !!
-#		    $filename.IO.spurt: $file-content.decode('UTF-8')
+		    my $header = $file.body-blob;
+		    $txt ~= "zip\n" if $header.read(4) eq Buf.new(0x50,0x4B,0x03,0x04);
+		    #		    $filename.IO.spurt: $file-content.decode('UTF-8')
  		    $filename.IO(:bin).spurt: $file-content
 		}	   
 
