@@ -728,6 +728,8 @@ multi MAIN ('test',
     my $test-path=OFE-PATH ~ "/t";
 #    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
 
+    "/tmp/OneFit-Engine-test".IO.mkdir unless "/tmp/OneFit-Engine-test".IO.d(:e);
+    
     if @arr.elems > 0 {
 	my $fho = open :w, 'tests.log';
 	@arr.race.map(
@@ -840,7 +842,7 @@ EOT
 	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
 	my $SUDO="";
 	$SUDO = "sudo" if any( (fileowner("/tmp/ofe-tmp"), fileowner("/tmp/ofe-test.log"), fileowner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"))>>.contains("root"));
-	shell "$SUDO rm -fr /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
+	shell "$SUDO rm -fr /tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 
 }
 
