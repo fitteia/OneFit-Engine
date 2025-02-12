@@ -304,7 +304,7 @@ HTML
 		       $stelar-hdf5-Im        = "--stelar-hdf5-Im  " if $k eq "stelar-hdf5-Im" and $v eq any("yes",1);
 		       $stelar-hdf5-R1        = "--stelar-hdf5-R1  " if $k eq "stelar-hdf5-R1" and $v eq any("yes",1);
 		       $stelar-hdf5-R1        = "--stelar-hdf5-R1-err={$v.Rat}  " if $k eq "stelar-hdf5-R1-err" and $v.^name eq "Rat";
-		       $data-zip               = True if $k eq "data-zip";
+		       $data-zip               = True if $k eq "data-zip" and and $v eq any("yes",1);
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
 			  elsif $v eq "json" { $file-to-download = "$folder/" ~ $filename.IO.extension('json') }
