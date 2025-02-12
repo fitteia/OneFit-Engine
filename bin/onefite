@@ -204,7 +204,6 @@ multi MAIN ('start-web-engine',
 
             	     <form action="/fit" method="post" enctype="multipart/form-data">
             	     Upload file [.json | .sav | .hdf5 | data-file ] <input type="file" name="file"><br/>
-		       Data file is a zip:&nbsp;</td><td>yes<input name="data-file" type="radio" value="yes">/no<input name="data-file" type="radio" value="no" checked="checked"></br>
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       Username: <input type="text" name="username" value="<username>"><br/>
 		       Num points: <input type="text" name="Num" value="100"><br/>
@@ -279,7 +278,6 @@ HTML
 		my $stelar-hdf5-Im = "";
 		my $stelar-hdf5-R1 = "";
 		my $stelar-hdf5-R1-err = "";
-		my Bool $data-zip= False;
 		my $num   = +100;
 		my $ssz   = +1.0;
 		my $fit-methods = "simp scan min minos";
@@ -305,7 +303,6 @@ HTML
 		       $stelar-hdf5-Im        = "--stelar-hdf5-Im  " if $k eq "stelar-hdf5-Im" and $v eq any("yes",1);
 		       $stelar-hdf5-R1        = "--stelar-hdf5-R1  " if $k eq "stelar-hdf5-R1" and $v eq any("yes",1);
 		       $stelar-hdf5-R1        = "--stelar-hdf5-R1-err={$v.Rat}  " if $k eq "stelar-hdf5-R1-err" and $v.^name eq "Rat";
-		       $data-zip               = True if $k eq "data-zip" and $v eq any("yes",1);
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
 			  elsif $v eq "json" { $file-to-download = "$folder/" ~ $filename.IO.extension('json') }
@@ -313,7 +310,7 @@ HTML
 		       }
 		   }
 		}
-		if any($data-zip,$stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool,$stelar-hdf5-R1.Bool,$stelar-hdf5-R1-err.Bool) {
+		if any($filename.IO.extension.contains("zip"),$stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool,$stelar-hdf5-R1.Bool,$stelar-hdf5-R1-err.Bool) {
 		   $filename.IO(:bin).spurt: $file-content			
 		}
 		else {		 
