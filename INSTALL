@@ -319,6 +319,7 @@ sub add-show-ip-in-issue() {
 role FileOwner {
     method fileowner() {
 	shell("ls { self.d ?? '-ld' !! '-la'} self.Str | awk \{print \$3\}'",:out).out.slurp(:close)
+    }
 }
 
 
