@@ -844,6 +844,6 @@ EOT
 	}
 #	$SUDO = "sudo" if any( (fileowner("/tmp/ofe-tmp"), fileowner("/tmp/ofe-test.log"), fileowner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"))>>.contains("root"));
 #	shell "$SUDO rm -fr /tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
-	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and $fileowner($_).contains("root") ?? shell("sudo rm $_") !! shell("rm $_") });
+	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm $_") !! shell("rm $_") });
 }
 
