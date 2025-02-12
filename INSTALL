@@ -363,7 +363,7 @@ EOT
 	}
 	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
 	my $SUDO="";
-	$SUDO = "sudo" if any( (fileowner("/tmp/ofe-tmp"), fileowner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"))>>.contains("root"));
-	say $SUDO;
+#	$SUDO = "sudo" if any( )>>.contains("root"));
+	say (fileowner("/tmp/ofe-tmp"), fileowner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"));
 	shell "rm -fr /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 }
