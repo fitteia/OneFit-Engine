@@ -315,7 +315,8 @@ HTML
 		   $filename.IO(:bin).spurt: $file-content			
 		}
 		else {
-		   $filename.IO.spurt: $file-content.decode('UTF-8')
+		    my $header = $file-content.read(4);
+		    $header eq Buf.new(0x50,0x4B,0x03,0x04) ?? $filename.IO(:bin).spurt: $file-content !! $filename.IO.spurt: $file-content.decode('UTF-8')
  		}	   
 
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
