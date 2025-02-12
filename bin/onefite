@@ -315,7 +315,7 @@ HTML
 		   $filename.IO(:bin).spurt: $file-content			
 		}
 		else {		 
-		    "$filename-zip".IO(:bin).spurt: $file-content;
+		    "{$filename}-zip".IO(:bin).spurt: $file-content;
 		    $filename.IO.spurt: $file-content.decode('UTF-8')
 		}	   
 
