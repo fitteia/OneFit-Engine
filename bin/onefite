@@ -313,7 +313,7 @@ HTML
 		       }
 		   }
 		}
-		if any($data-zip,$stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool,$stelar-hdf5-R1.Bool,$stelar-hdf5-R1-err.Bool) {
+		if any($filename.IO.extension.contains("zip"),$stelar-hdf5.Bool,$stelar-hdf5-Re.Bool,$stelar-hdf5-Im.Bool,$stelar-hdf5-R1.Bool,$stelar-hdf5-R1-err.Bool) {
 		   $filename.IO(:bin).spurt: $file-content			
 		}
 		else {		 
