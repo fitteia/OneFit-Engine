@@ -204,7 +204,10 @@ multi MAIN ('start-web-engine',
 
             	     <form action="/fit" method="post" enctype="multipart/form-data">
             	     Upload file [.json | .sav | .hdf5 | data-file ] <input type="file" name="file"><br/>
-		       Data file is a zip: <input name="data-file" type="radio" value="yes">/<input name="data-file" type="radio" value="no" checked="checked"></br>
+		       <table>
+		       <tr><td></td><td>yes/no</td></tr>
+		       <tr><td>Data file is a zip:</td><td><input name="data-file" type="radio" value="yes">/<input name="data-file" type="radio" value="no" checked="checked"></td></tr>
+		       </table>
 		       Download: <input type="text" name="download" value="zip"><br/>
 		       Username: <input type="text" name="username" value="<username>"><br/>
 		       Num points: <input type="text" name="Num" value="100"><br/>
