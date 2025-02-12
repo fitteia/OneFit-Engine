@@ -51,7 +51,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
-	    onefite test [<arr> ...] [-v|--verbose]
+	    onefite test [<arr> ...] [--verbose|-v]
   
 	    <input-file>     name of the file to be converted (.sav or .json)
 	    <output-file>    name of the converted file (.sav or .json)
