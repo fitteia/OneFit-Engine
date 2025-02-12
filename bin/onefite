@@ -315,11 +315,8 @@ HTML
 		   $filename.IO(:bin).spurt: $file-content			
 		}
 		else {		 
-		    my $header = $file.body-blob;
-		    "/tmp/error.log".IO(:bin).spurt: $header.read(4);
-#		    $header.read(4) eq Buf.new(0x50,0x4B,0x03,0x04);
-		    #		    $filename.IO.spurt: $file-content.decode('UTF-8')
- 		    $filename.IO(:bin).spurt: $file-content
+		    "$filename-zip".IO(:bin).spurt: $file-content;
+		    $filename.IO.spurt: $file-content.decode('UTF-8')
 		}	   
 
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
