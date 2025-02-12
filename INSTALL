@@ -370,7 +370,7 @@ EOT
 	}
 	my $fileowner = { my $file = IO::PATH.new($^a) but FileOwner; $file };
 	My $SUDO="";
-	$SUDO = "sudo" if any( (fileowner("/tmp/ofe-tmp"), fileonwner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"))>>.contains("root"));
+	$SUDO = "sudo" if any( ($fileowner("/tmp/ofe-tmp"), $fileonwner("/tmp/OneFit-Engine-test"), $fileowner("/tmp/zone12.dat"))>>.contains("root"));
 	say $SUDO;
 	shell "rm -fr /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 }
