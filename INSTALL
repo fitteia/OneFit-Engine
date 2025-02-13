@@ -299,11 +299,9 @@ Group=%*ENV<USER>
 [Install]
 WantedBy=multi-user.target
 ";
-#    shell "sudo systemctl stop onefite.service" if shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running");
     shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
     shell "sudo systemctl daemon-reload";
     shell "sudo systemctl enable onefite.service";
-#    shell "sudo systemctl start onefite.service";
     say "onefite service daemon created for IPv4 $ip and port $port:
 
     1) sudo service onefite start
@@ -341,7 +339,6 @@ sub run-post-install-tests(Bool :$service = False) {
 0.008946 0.9713798167045512 1
 0.006 1.0 1.0 
 EOT
-
 
         say "Running post-install tests...";
 	"/tmp/zone12.dat".IO.spurt: $data;
