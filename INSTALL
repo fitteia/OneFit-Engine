@@ -342,7 +342,7 @@ EOT
 
         say "Running post-install tests...";
         "/tmp/zone12.dat".IO.spurt: $data;
-	my $service = shell("systemctl status onefite.service",:out).out.slupr(:close).contains("active (running)");
+	my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
 	if $service {
 	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log");
 	    $result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
