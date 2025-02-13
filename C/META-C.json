@@ -98,7 +98,7 @@
 	"function": "R1LipSzab(f, q, C, ms, rho, S, tm, tR, tv, r, Delta2, Aoh, SLS, tl)",
 	"call": "R1(f[1e3<1e9], q:1[1<6], C:0.78503[0.001<1], ms=1.8e-2, S=3.5, tm:1e-7[1e-10<1e-6], tr:5e-9[1e-10<1e-8], tv:1e-12[1e-12<1e-9], r=2.8e-10, Delta2:1.3e21[1e17<1e22], Aoh=5e6, SLS, tl) = R1LipSzab(f, q, C, ms, rho, S, tm, tR, tv, r, Delta2, Aoh, SLS, tl)",
 	"parameters": "f, q, C, ms, rho, S, tm, tR, tv, r, Delta2, Aoh, SLS, tl",
-	"description": "",
+	"description": "Lipari-Szabo model-free treatment to describe relaxation processes for macromolecules in solution, where fast internal motions are present beside the overall motions of the whole molecule. Check: J. Am. Chem. Soc. 1982, 104, 17, 4546–4559",
 	"source": "C/local/R1LipSzab.c"
     },
     "R1Torrey": {
