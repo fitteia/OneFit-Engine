@@ -261,6 +261,11 @@ ofe@bookworm:\~$ curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=M
 
 to get just flarmor and R11 and err_R1
 
+For a zip file of compressed data files
+
+ofe@bookworm:\~$ curl -F "file=@filename.zip" -F "stelar-hdf5=no" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://\<IP:8142\>/fit
+
+
 
 # OneFit Engine Virtual Machines
 

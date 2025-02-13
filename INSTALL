@@ -302,10 +302,12 @@ WantedBy=multi-user.target
     shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
     shell "sudo systemctl daemon-reload";
     shell "sudo systemctl enable onefite.service";
+    shell "sudo systemctl start onefite.service";
     say "onefite service daemon created for IPv4 $ip and port $port:
 
     1) sudo service onefite start
     2) sudo onefite upgrade -d (for future upgrades)
+    3) onefite test (when needed)
 
     ";
 }
