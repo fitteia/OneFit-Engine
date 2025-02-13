@@ -299,11 +299,11 @@ Group=%*ENV<USER>
 [Install]
 WantedBy=multi-user.target
 ";
-    shell "sudo systemctl stop onefite.service" if shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running");
+#    shell "sudo systemctl stop onefite.service" if shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running");
     shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
     shell "sudo systemctl daemon-reload";
     shell "sudo systemctl enable onefite.service";
-    shell "sudo systemctl start onefite.service";
+#    shell "sudo systemctl start onefite.service";
     say "onefite service daemon created for IPv4 $ip and port $port:
 
     1) sudo service onefite start
