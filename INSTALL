@@ -62,7 +62,7 @@ multi MAIN (
 
     add-show-ip-in-issue() if $to-site;
 
-    run-post-install-tests(:service($systemd-daemon));
+    run-post-install-tests(:deamon($systemd-daemon));
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -306,6 +306,7 @@ WantedBy=multi-user.target
 
     1) sudo service onefite start
     2) sudo onefite upgrade -d (for future upgrades)
+    3) onefite test (when needed)
 
     ";
 }
@@ -316,7 +317,7 @@ sub add-show-ip-in-issue() {
     shell "sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
 }
 
-sub run-post-install-tests(Bool :$service = False) {
+sub run-post-install-tests(Bool :$deamon = False) {
     my $data = q:to/EOT/;
 # DATA dum = 40616
 # TAG = zone12
@@ -339,12 +340,12 @@ sub run-post-install-tests(Bool :$service = False) {
 0.006 1.0 1.0 
 EOT
 
-
         say "Running post-install tests...";
-	"/tmp/zone12.dat".IO.spurt: $data;
-	if $service {
+        "/tmp/zone12.dat".IO.spurt: $data;
+	my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
+	if $service and $deamon {
 	    my $result = shell("cd /tmp && curl -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log");
-	    $result = "/tmp/ofe-test.log".IO.slurp(:close);
+	    $result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
 	    say $result;
 	    if $result.contains("zone12, 16") {
 		say "localhost web service works OK";
@@ -352,6 +353,9 @@ EOT
 	    else {
 		say "localhost web service error!";
 	    }
+	}
+	else {
+	    say "onefite service not ruuning. Consider: sudo systemctl start onefite.service first";
 	}
 	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
 	</tmp/ofe-tmp>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
