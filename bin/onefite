@@ -493,7 +493,7 @@ multi MAIN  ('create',
 	     Str  :$work-folder = '.',
              Int  :Num(:$npts) = +100
 	    ){
-
+    my $name = "ofe-tmp";
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 
