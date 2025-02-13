@@ -299,6 +299,7 @@ Group=%*ENV<USER>
 [Install]
 WantedBy=multi-user.target
 ";
+    shell "susdo systemctl stop onefite.service" if shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running");
     shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
     shell "sudo systemctl daemon-reload";
     shell "sudo systemctl enable onefite.service";
