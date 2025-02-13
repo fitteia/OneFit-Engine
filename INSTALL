@@ -62,7 +62,7 @@ multi MAIN (
 
     add-show-ip-in-issue() if $to-site;
 
-    run-post-install-tests(:service($systemd-daemon));
+    run-post-install-tests(:deamon($systemd-daemon));
 }
 
 multi MAIN ('help') { MAIN :h }
