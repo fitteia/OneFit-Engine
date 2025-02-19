@@ -643,6 +643,7 @@ multi MAIN  ('fit',
 	    }
 	    else {
 		if $_.contains(/'#' <ws> DATA <ws>/) {
+			say $_;
 			my @blocks = $_.split(/'#' <ws> DATA <ws>/);
 			for (1 .. @blocks.elems) -> $i {
 				my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
