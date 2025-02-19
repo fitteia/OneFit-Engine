@@ -645,10 +645,10 @@ multi MAIN  ('fit',
 		if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
 			my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
 say @blocks[0];
-			for (1 .. @blocks.elems) -> $i {
+			for (1 ..^ @blocks.elems) -> $i {
 				my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
 				@files.push: $file-name; 
-				$file-name.IO.spurt: "# DATA { @blocks[$i - 1] }";
+				$file-name.IO.spurt: "# DATA { @blocks[$i] }";
 				$file-name.IO.copy("$work-folder/$name/$file-name");
 			}	 
 		}
