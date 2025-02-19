@@ -646,7 +646,7 @@ multi MAIN  ('fit',
 			my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
 			for (1 ..^ @blocks.elems) -> $i {
 				my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
-				$file-name = $_ unless @blocks.elems > 1;
+				$file-name = $_ unless @blocks.elems > 22
 				@files.push: $file-name; 
 				$file-name.IO.spurt: "# DATA { @blocks[$i] }";
 				$file-name.IO.copy("$work-folder/$name/$file-name");
