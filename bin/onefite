@@ -645,7 +645,7 @@ multi MAIN  ('fit',
 		if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
 			my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
 			for (1 ..^ @blocks.elems) -> $i {
-				my $file-name="{$_.IO.extension('').Str}_block{$i}.dat";
+				my $file-name="{$_.IO.extension('').Str}Block{$i}.dat";
 				$file-name = $_ unless @blocks.elems > 2;
 				@files.push: $file-name; 
 				$file-name.IO.spurt: "# DATA { @blocks[$i] }";
