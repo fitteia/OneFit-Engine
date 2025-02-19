@@ -642,8 +642,19 @@ multi MAIN  ('fit',
 		@files.push: "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort.Slip;
 	    }
 	    else {
-		@files.push: $_;
-		$_.IO.copy("$work-folder/$name/$_")
+		if $_.contains(/'#' <ws> DATA <ws>/) {
+			my @blocks = $_.split(/'#' <ws> DATA <ws>/);
+			for (1 .. @blocks.elems) -> $i {
+				my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
+				@files.push: $file-name; 
+				$file-name.IO.spurt: "# DATA " ~ @blocks[$i - 1];
+				$file-name.IO.copy("$work-folder/$name/$_");
+			}	 
+		}
+		else {	
+		    @files.push: $_;
+		    $_.IO.copy("$work-folder/$name/$_")
+		}
 	    }
 	}
 	@data-files= @files;
