@@ -643,7 +643,7 @@ multi MAIN  ('fit',
 	    }
 	    else {
 		say "oal" ~ $_;
-		if $_.contains(/'#' <ws> DATA <ws>/) {
+		if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
 			say $_;
 			my @blocks = $_.split(/'#' <ws> DATA <ws>/);
 			for (1 .. @blocks.elems) -> $i {
