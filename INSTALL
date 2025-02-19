@@ -13,7 +13,7 @@ multi MAIN (
     Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
     Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
     Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
-    Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick-6 policy.xml
+    Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick policy.xml
     Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
@@ -191,11 +191,13 @@ sub install-p6-modules ($to-site) {
 }
 
 sub enable-ghostscript-in-ImageMagick-policy () {
-#    say "ATTENTION: editting /etc/ImageMagick-6/policy.xml to enable ghostscript formats";
-    my @policy-file="/etc/ImageMagick-6/policy.xml".IO.lines;
+#    say "ATTENTION: editting /etc/ImageMagick-*/policy.xml to enable ghostscript formats";
+    my $ImageMagick-policy-folder = "/etc".IO.d.grep("ImageMagick-").tail;
+    say $ImageMagic-policy-folder;
+    my @policy-file="$ImageMagick-policy-folder/policy.xml".IO.lines;
     @policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~~ /'<!--'/ });
     "/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
-    shell "sudo cp /etc/ImageMagick-6/policy.xml /etc/ImageMagick-6/policy.xml-bak; sudo mv /tmp/policy.xml /etc/ImageMagick-6/policy.xml";
+    shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
 sub compile (:$root,:$arch,:$bindir,:$pv) {
