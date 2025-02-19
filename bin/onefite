@@ -648,7 +648,7 @@ multi MAIN  ('fit',
 				my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
 				@files.push: $file-name; 
 				$file-name.IO.spurt: "# DATA " ~ @blocks[$i - 1];
-				$file-name.IO.copy("$work-folder/$name/$_");
+				$file-name.IO.copy("$work-folder/$name/$file-name");
 			}	 
 		}
 		else {	
