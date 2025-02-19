@@ -192,7 +192,7 @@ sub install-p6-modules ($to-site) {
 
 sub enable-ghostscript-in-ImageMagick-policy () {
 #    say "ATTENTION: editting /etc/ImageMagick-*/policy.xml to enable ghostscript formats";
-    my $ImageMagick-policy-folder = "/etc".IO.d.grep("ImageMagick-").tail;
+    my $ImageMagick-policy-folder = "/etc".IO.dir.grep("ImageMagick-").tail;
     say $ImageMagick-policy-folder;
     my @policy-file="$ImageMagick-policy-folder/policy.xml".IO.lines;
     @policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~~ /'<!--'/ });
