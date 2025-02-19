@@ -642,6 +642,7 @@ multi MAIN  ('fit',
 		@files.push: "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort.Slip;
 	    }
 	    else {
+		say "oal" ~ $_;
 		if $_.contains(/'#' <ws> DATA <ws>/) {
 			say $_;
 			my @blocks = $_.split(/'#' <ws> DATA <ws>/);
