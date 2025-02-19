@@ -642,10 +642,8 @@ multi MAIN  ('fit',
 		@files.push: "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort.Slip;
 	    }
 	    else {
-		say "oal" ~ $_;
 		if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
-			say $_;
-			my @blocks = $_.split(/'#' <ws> DATA <ws>/);
+			my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
 			for (1 .. @blocks.elems) -> $i {
 				my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
 				@files.push: $file-name; 
