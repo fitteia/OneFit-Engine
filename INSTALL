@@ -81,7 +81,7 @@ Usage:
     --install      # to install OneFit-Engine as a raku modules available to all users
     --Uninstall    # to uninstall: use together with --to-site or --no-to-site
     --p6-modules   # to install raku module Inline::Perl5
-    --enable-gs    # enable ghostsript in ImageMagick-6 policy.xml
+    --enable-gs    # enable ghostsript in ImageMagick policy.xml
     --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise
     --to-user      # to install raku module to user ( sets --no-to-site --no-web-server --no-enable-gs  --no-dpkg)
     --bindir       # defaults to $*CWD/../bin (use --bindir=/\$HOME/bin to set another folder for binaries)
@@ -193,7 +193,6 @@ sub install-p6-modules ($to-site) {
 sub enable-ghostscript-in-ImageMagick-policy () {
 #    say "ATTENTION: editting /etc/ImageMagick-*/policy.xml to enable ghostscript formats";
     my $ImageMagick-policy-folder = "/etc".IO.dir.grep(/ImageMagick/).tail.Str;
-    say $ImageMagick-policy-folder;
     my @policy-file="$ImageMagick-policy-folder/policy.xml".IO.lines;
     @policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~~ /'<!--'/ });
     "/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
