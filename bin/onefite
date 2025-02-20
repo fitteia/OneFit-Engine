@@ -651,8 +651,8 @@ multi MAIN  ('fit',
 				my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
 				$file-name = $_ unless @blocks.elems > 2;
 				@files.push: $file-name; 
-				$file-name.IO.spurt: "# DATA { @blocks[$i] }";
-				$file-name.IO.copy("$work-folder/$name/$file-name");
+				"$work-folder/$name/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
+#				$file-name.IO.copy("$work-folder/$name/$file-name");
 			}	 
 		}
 		else {	
