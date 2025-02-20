@@ -274,7 +274,7 @@ HTML
 		my $autoxy= "";
 		my $logx= "";
 		my $logy= "";
-		mu $global="";
+		my $global="";
 		my $stelar-hdf5 = "";
 		my $stelar-hdf5-Re = "";
 		my $stelar-hdf5-Im = "";
