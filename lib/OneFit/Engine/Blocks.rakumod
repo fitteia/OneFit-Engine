@@ -186,11 +186,12 @@ class Block is export {
 		}
 	    }
 	    try {
-	    	@!E[$_]= +@a[0];
+		my $i = $_;
+	    	@!E[$i]= +@a[0];
 		CATCH {
 			default {
 				say "error setting E: E set to 1.0";
-	    			@!E[$_]= +1.0;
+	    			@!E[$i]= +1.0;
 			}
 		}
 	    }
