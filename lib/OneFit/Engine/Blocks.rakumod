@@ -190,7 +190,7 @@ class Block is export {
 	    	@!E[$i]= +@a[0];
 		CATCH {
 			default {
-				say "error setting E to {@a[0]}: E set to 1.0";
+				say "error setting E to \"{@a[0]}\": E set to 1.0";
 	    			@!E[$i]= +1.0;
 			}
 		}
