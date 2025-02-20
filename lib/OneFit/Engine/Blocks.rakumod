@@ -176,7 +176,15 @@ class Block is export {
 	for (0..^ @!E.elems).hyper {
 	    my @a = @!E[$_].split(" ");
 	    @a.push(0.0) unless @a[1].defined; 
-	    @Ex.push: { $ex.defined ?? +$ex !! +@a[1]}() ;
+	    try {
+	    	@Ex.push: { $ex.defined ?? +$ex !! +@a[1]}() ;
+		CATCH {
+			default {
+				say "error reading Ex: Ex set to 1.0";
+				@Ex.push(1.0);
+			}
+		}
+	    }
 	    @!E[$_]= +@a[0];
 	}	
 	if $ey.defined {
