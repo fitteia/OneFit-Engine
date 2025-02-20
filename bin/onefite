@@ -212,6 +212,7 @@ multi MAIN ('start-web-engine',
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
+		       <tr><td>global fit: </td><td><input name="global" type="radio" value="yes">/<input name="global" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autox: </td><td><input name="autox" type="radio" value="yes">/<input name="autox" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes">/<input name="autoxy" type="radio" value="no" checked="checked"></td></tr>
@@ -273,6 +274,7 @@ HTML
 		my $autoxy= "";
 		my $logx= "";
 		my $logy= "";
+		mu $global="";
 		my $stelar-hdf5 = "";
 		my $stelar-hdf5-Re = "";
 		my $stelar-hdf5-Im = "";
@@ -291,8 +293,9 @@ HTML
 		       $fit-methods	      = $v.Str	   if $k eq "fit-methods";
 		       $function      	      = $v.Str     if $k eq "function";
 		       $num        	      = +$v.Str    if $k eq "Num";
-		       $ssz		      = $v.Str	    if $k eq "SymbSize";
+		       $ssz		      = $v.Str	   if $k eq "SymbSize";
 		       $username   	      = $v.Str     if $k eq "username";
+		       $global      	      = "--global" if $k eq "global"  and $v eq any("yes",1);
 		       $autox      	      = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
 		       $autoy      	      = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
 		       $autoxy     	      = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
@@ -323,12 +326,12 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
-		   $txt ~= shell("onefite fit \"$function\" $filename $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
-		    $txt = "onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
-		    $txt ~= shell("onefite fit $filename $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
+		    $txt ~= shell("onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
