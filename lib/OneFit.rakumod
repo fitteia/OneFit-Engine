@@ -101,7 +101,14 @@ class Engine is export {
 		for @arr[1 ..^ @arr.elems].hyper {
 		    $_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
 		    if $All {
-			take Block.new.read( '# DATA ' ~ $_,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
+			try {
+				take Block.new.read( '# DATA ' ~ $_,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
+				CATCH {
+					default {
+						die "Error reading block" ~.Str;
+					}
+				}
+			}
 		    }
 		    else {
 			if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
