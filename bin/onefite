@@ -663,7 +663,11 @@ multi MAIN  ('fit',
 	@data-files= @files;
     }
     my %alias = from-json( "{ ::('OFE-PATH') }/../etc/alias.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
-    if $function.contains(/^alias':'/) { $function = %alias{ $function.subst("alias:",'').subst(/\s+/,' ') } }
+    if $function.contains(/^alias':'/) { 
+	my $falias = %alias{ $function.subst("alias:",'').subst(/\s+/,' ') };
+	if so $falias { $function = $falias }
+	else { say "function alias not found in { ::('OFE-PATH') }/../etc/alias.json"; say %alias.k;  }
+    }
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
