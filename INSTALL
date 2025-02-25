@@ -290,7 +290,7 @@ sub install (:$test,:$to-site, :$bindir) {
 
 sub install-alias (:$bindir) {
     shell("mkdir $bindir/../etc/") unless "$bindir/../etc/".IO.d;
-    "$*CWD/etc/OFE/defaul/alias.json".IO.copy: "$bindir/../etc/alias.json";
+    "$*CWD/etc/OFE/default/alias.json".IO.copy: "$bindir/../etc/alias.json";
 }
 
 
