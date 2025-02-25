@@ -666,7 +666,7 @@ multi MAIN  ('fit',
     if $function.contains(/^alias <ws> ':' <ws>/) { 
 	my $falias = %alias{ $function.subst(/alias\s*':'\s*/,'').subst(/\s+/,' ') };
 	if so $falias { $function = $falias }
-	else { say "function alias not found in { ::('OFE-PATH') }/../etc/alias.json"; say %alias.k;  }
+	else { say "function alias not found in { ::('OFE-PATH') }/../etc/alias.json"; say %alias.keys;  }
     }
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
