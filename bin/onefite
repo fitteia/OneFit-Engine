@@ -664,7 +664,7 @@ multi MAIN  ('fit',
     }
     my %alias = from-json( "{ ::('OFE-PATH') }/../etc/alias.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
     if $function.contains(/^alias <ws> ':' <ws>/) { 
-	my $falias = %alias{ $function.subst(/alias <ws> ':' <ws>,'').subst(/\s+/,' ') };
+	my $falias = %alias{ $function.subst(/alias\s*':'\s*/,'').subst(/\s+/,' ') };
 	if so $falias { $function = $falias }
 	else { say "function alias not found in { ::('OFE-PATH') }/../etc/alias.json"; say %alias.k;  }
     }
