@@ -58,6 +58,12 @@ multi MAIN (
 
     install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
+    if shell("diff $*CWD/etc/OFE/default/alias.json $bindir/../etc//alias.json",:out).out.slurp(:close).so { 
+	say "$bindir/../etc/alias.json has been changed not updating";
+    }	
+    else {
+        install-alias( binfir => $bindir );
+    }
     systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
 
     add-show-ip-in-issue() if $to-site;
@@ -281,6 +287,12 @@ sub install (:$test,:$to-site, :$bindir) {
     }
 
 }
+
+sub install-alias (:$bindir) {
+    shell("mkdir $bindir/../etc/") unless "$bindir/../etc/".IO.d;
+    "$*CWD/etc/OFE/defaul/alias.json".IO.copy: "$bindir/../etc/alias.json";
+}
+
 
 sub systemd-daemon($ip,$port) {
     "/tmp/onefite.service".IO.spurt: "[Unit]

@@ -1,4 +1,4 @@
-#!/usr/bin/env raku
+#!/usr//bin/env raku
 
 my $time = BEGIN { now }
 END { say "Total execution time (s): " , now - INIT now }
@@ -662,6 +662,8 @@ multi MAIN  ('fit',
 	}
 	@data-files= @files;
     }
+    my %alias = from-json( "{ ::('OFE-PATH') }/../etc/alias.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
+    if $function.contains(/^alias':'/) { $function = %alias{ %function.subst("alias:",'').subst(/\s+/,' ') } }
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
