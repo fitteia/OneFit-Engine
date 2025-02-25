@@ -1,5 +1,5 @@
 {
-	"one exponential": "Mz(t[1e-3<20],M0,Mi,T1i[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)",
-	"two exponentials": "Mz(t[1e-3<20],M0,Mi,c[0.5<1],T11[1e-3<10],T12[1e-3<10])=Mi\+(M0-Mi)*c*exp(-t/T11)\+(Mo-Mi)*(1-c)*exp(-t/T12)",
-	"three exponentials": "Mz(t[1e-3<20],M0,Mi,c[0.5<1],d[0<0,5],T11[1e-3<10],T12[1e-3<10],T13[1e-3<10])=Mi\+(M0-Mi)*c*exp(-t/T11)\+(Mo-Mi)*(1-c)*(1-d)*exp(-t/T12)\+(M0-Mi)*(1-c)*d*exp(-t/T13)", 
+	"one exponential": "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)",
+	"two exponentials": "Mz(t[1e-3<20],M0,Mi,c[0.5<1],T11[1e-3<10],T12[1e-3<10])=Mi\\+(M0-Mi)*c*exp(-t/T11)\\+(Mo-Mi)*(1-c)*exp(-t/T12)",
+	"three exponentials": "Mz(t[1e-3<20],M0,Mi,c[0.5<1],d[0<0,5],T11[1e-3<10],T12[1e-3<10],T13[1e-3<10])=Mi\\+(M0-Mi)*c*exp(-t/T11)\\+(Mo-Mi)*(1-c)*(1-d)*exp(-t/T12)\\+(M0-Mi)*(1-c)*d*exp(-t/T13)" 
 }
