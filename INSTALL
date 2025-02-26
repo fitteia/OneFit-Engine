@@ -58,11 +58,11 @@ multi MAIN (
 
     install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
-    if shell("diff $*CWD/etc/OFE/default/alias.json $bindir/../etc//alias.json",:out).out.slurp(:close).so { 
-	say "$bindir/../etc/alias.json has been changed not updating";
+    if shell("diff $*CWD/etc/OFE/default/aliases.json $bindir/../etc//aliases.json",:out).out.slurp(:close).so { 
+	say "$bindir/../etc/aliases.json has been changed not updating";
     }	
     else {
-        install-alias( bindir => $bindir );
+        install-aliases( bindir => $bindir );
     }
     systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
 
@@ -288,9 +288,9 @@ sub install (:$test,:$to-site, :$bindir) {
 
 }
 
-sub install-alias (:$bindir) {
+sub install-aliases (:$bindir) {
     shell("mkdir $bindir/../etc/") unless "$bindir/../etc/".IO.d;
-    "$*CWD/etc/OFE/default/alias.json".IO.copy: "$bindir/../etc/alias.json";
+    "$*CWD/etc/OFE/default/aliases.json".IO.copy: "$bindir/../etc/aliases.json";
 }
 
 

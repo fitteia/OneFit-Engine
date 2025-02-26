@@ -269,12 +269,12 @@ ofe@bookworm:\~$ curl -F "file=@filename.zip" -F "stelar-hdf5=no" -F "function=M
 
 ## onefite list aliases
 
-The list of function aliases that are included in the alias.json file installed \
+The list of function aliases that are included in the aliases.json file installed \
 at $HOME/.local/etc/
 
 Local changes will not be overwritten and updates have to be held locally. \
 use diff to check what differences you might have, Ex:
-prompt> diff $HOME/.local/etc/alias.json $HOME/.local/OneFit-Engine/etc/OFE/default/alias.json
+prompt> diff $HOME/.local/etc/aliases.json $HOME/.local/OneFit-Engine/etc/OFE/default/aliases.json
 
 ## onefite fit using aliases
 
