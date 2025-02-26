@@ -86,6 +86,11 @@ multi MAIN ('list','models',
 	   MAIN('list');
 }
 
+multi MAIN ('list','alias',
+	   ){
+	say "{ ::('OFE-PATH') }/../etc/alias.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
+}
+
 multi MAIN ('convert',
 	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
 	    Str $output-file, #= name of the converted file (.sav or .json)
