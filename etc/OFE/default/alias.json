@@ -1,5 +1,8 @@
 {
 	"one exponential": "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)",
 	"two exponentials": "Mz(t[1e-3<20],M0,Mi,c[0.5<1],T11[1e-3<10],T12[1e-3<10])=Mi\\+(M0-Mi)*c*exp(-t/T11)\\+(M0-Mi)*(1-c)*exp(-t/T12)",
-	"three exponentials": "Mz(t[1e-3<20],M0,Mi,c[0.5<1],d[0<0.5],T11[1e-3<10],T12[1e-3<10],T13[1e-3<10])=Mi\\+(M0-Mi)*c*exp(-t/T11)\\+(M0-Mi)*(1-c)*(1-d)*exp(-t/T12)\\+(M0-Mi)*(1-c)*d*exp(-t/T13)" 
+	"three exponentials": "Mz(t[1e-3<20],M0,Mi,c[0.5<1],d[0<0.5],T11[1e-3<10],T12[1e-3<10],T13[1e-3<10])=Mi\\+(M0-Mi)*c*exp(-t/T11)\\+(M0-Mi)*(1-c)*(1-d)*exp(-t/T12)\\+(M0-Mi)*(1-c)*d*exp(-t/T13)", 
+	"one BPP": "R1[0.1<1000](f[5e3<5e8],A:1e9[1e6<6e9],tau:1e-9[1e-12<1e-5])=BPP(f,A,tau)",
+	"two BPP": "R1[0.1<1000](f[5e3<5e8],A:1e9[1e6<6e9],c:1[0<1],tau1:1e-9[1e-12<1e-5],tau2:1e-8[1e-12<1e-5])=BPP(f,A*c,tau1) \\+ BPP(f,A*(1-c),tau2)",
+	"three BPP": "R1[0.1<1000](f[5e3<5e8],A:1e9[1e6<6e9],c[0.5<1],d[0<0.5],tau1:1e-9[1e-12<1e-5],tau2:1e-8[1e-12<1e-5], tau3:1e-7[1e-12<1e-5])= BPP(f,A*c,tau1) \\+ BPP(f,A*(1-c)*(1-d),tau2)\\+ BPP(f,A*(1-c)*d,tau3)"
 }
