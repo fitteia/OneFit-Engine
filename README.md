@@ -265,7 +265,25 @@ For a zip file of compressed data files
 
 ofe@bookworm:\~$ curl -F "file=@filename.zip" -F "stelar-hdf5=no" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://\<IP:8142\>/fit
 
+# Working with function aliases
 
+## onefite list aliases
+
+The list of function aliases that are included in the alias.json file installed \
+at $HOME/.local/etc/
+
+Local changes will not be overwritten and updates have to be held locally. \
+use diff to check what differences you might have, Ex:
+prompt> diff $HOME/.local/etc/alias.json $HOME/.local/OneFit-Engine/etc/OFE/default/alias.json
+
+## onefite fit using aliases
+
+To take advantage of aliases pelase consider:\
+host_prompt> onefite fit <datafile> alias:"one exponential" \
+host_prompt> onefite fit <datafile> a:"two exponentials" --logx \
+host_prompt> onefite fit <datafile> "alias: one BPP" \
+host_prompt> onefite fit <datafile> "a: two BPP"
+ 
 
 # OneFit Engine Virtual Machines
 
