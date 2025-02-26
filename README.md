@@ -95,7 +95,7 @@ ofe@bookworm:\~/.local$ git clone https://github.com/fitteia/OneFit-Engine.git &
 
 Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
 
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
+ofe@bookworm:\~$ git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
 
 ## CERN Lib Minuit
 
@@ -245,11 +245,11 @@ ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" -F "download=example
 
 or
 
-ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" -F http://\<IP\>/convert
+ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json"  http://\<IP\>/convert
 
 or
 
-ofe@bookworm:\~$ curl -F "file=@example_06.sav" -F http://\<IP\>/convert
+ofe@bookworm:\~$ curl -F "file=@example_06.sav"  http://\<IP\>/convert
 
 or
 
