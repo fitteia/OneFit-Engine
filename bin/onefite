@@ -89,7 +89,7 @@ multi MAIN ('list','models',
 
 multi MAIN ('list','alias',
 	   ){
-	say "{listing alias \@  ::('OFE-PATH') }/../etc/alias.json"  if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
+	say "{listing alias '@'  ::('OFE-PATH') }/../etc/alias.json"  if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
 	say "{ ::('OFE-PATH') }/../etc/alias.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
 }
 
