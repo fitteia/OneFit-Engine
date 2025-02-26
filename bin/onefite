@@ -37,7 +37,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite service PID
 	    onefite list [-q|--quiet]
 	    onefite list models
-	    onefite list alias
+	    onefite list aliases
 	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
 	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib]
@@ -87,10 +87,10 @@ multi MAIN ('list','models',
 	   MAIN('list');
 }
 
-multi MAIN ('list','alias',
+multi MAIN ('list','aliases',
 	   ){
-	say "listing alias @  { ::('OFE-PATH') }/../etc/alias.json"  if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
-	say "{ ::('OFE-PATH') }/../etc/alias.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
+	say "listing aliases @  { ::('OFE-PATH') }/../etc/aliases.json"  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
+	say "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
 }
 
 multi MAIN ('convert',
@@ -669,11 +669,11 @@ multi MAIN  ('fit',
 	}
 	@data-files= @files;
     }
-    my %alias = from-json( "{ ::('OFE-PATH') }/../etc/alias.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/alias.json".IO.e;
+    my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     if $function.contains(/^a\w*  <ws> ':' <ws>/) { 
-	my $falias = %alias{ $function.subst(/a\w*\s*':'\s*/,'').subst(/\s+/,' ') };
+	my $falias = %aliases{ $function.subst(/a\w*\s*':'\s*/,'').subst(/\s+/,' ') };
 	if so $falias { $function = $falias }
-	else { say "function alias not found in { ::('OFE-PATH') }/../etc/alias.json"; say %alias.keys;  }
+	else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
     }
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
