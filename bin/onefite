@@ -260,6 +260,13 @@ multi MAIN ('start-web-engine',
             	 </html>
 HTML
 	}
+	get -> 'list',*@args {
+	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) list");
+	     $log-fh.flush;
+	     if @args.so { content 'text/plain', "{ MAIN('list',@args.head,:quiet) }\n" }
+	     else { content 'text/plain', "{ MAIN('list',:quiet) }\n" }	
+	}	
+	
 	post -> 'list',*@args {
 	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) list");
 	     $log-fh.flush;
