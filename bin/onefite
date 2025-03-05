@@ -77,7 +77,7 @@ multi MAIN ('list',
 #    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
 #    my $txt = "OneFit Engine Models Library:\n";
 #    $txt ~= @list.join("\n");
-     my $txt = MAIN('list', 'modelos', quiet => True);
+     my $txt = MAIN('list', 'models', quiet => True);
      #my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
     $txt ~= MAIN('list', 'aliases', quiet => True); 
     #$txt ~=  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
