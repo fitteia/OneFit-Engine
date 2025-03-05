@@ -78,7 +78,7 @@ multi MAIN ('list',
 #    my $txt = "OneFit Engine Models Library:\n";
 #    $txt ~= @list.join("\n");
      my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
-    $txt =~  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
+    $txt ~=  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     say $txt unless $quiet;
     $txt;
 }
