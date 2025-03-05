@@ -77,9 +77,9 @@ multi MAIN ('list',
 #    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
 #    my $txt = "OneFit Engine Models Library:\n";
 #    $txt ~= @list.join("\n");
-     my $txt = MAIN('list', 'modelos', quite => True);
+     my $txt = MAIN('list', 'modelos', quiet => True);
      #my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
-    $txt ~= MAIN('list', 'aliases', quite => True); 
+    $txt ~= MAIN('list', 'aliases', quiet => True); 
     #$txt ~=  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     say $txt unless $quiet;
     $txt;
@@ -97,7 +97,7 @@ multi MAIN ('list','aliases',
       	   Bool :q(:$quiet) = False
 	   ){
 	my $txt = "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
-	if not $quite {
+	if not $quiet {
            say "listing aliases @  { ::('OFE-PATH') }/../etc/aliases.json"  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
 	   say $txt;
 	}
