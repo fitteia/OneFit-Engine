@@ -78,13 +78,16 @@ multi MAIN ('list',
 #    my $txt = "OneFit Engine Models Library:\n";
 #    $txt ~= @list.join("\n");
      my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
+    $txt =~  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     say $txt unless $quiet;
     $txt;
 }
 
 multi MAIN ('list','models',
 	   ){
-	   MAIN('list');
+     my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
+     say $txt unless $quiet;
+     $txt;
 }
 
 multi MAIN ('list','aliases',
@@ -249,10 +252,11 @@ multi MAIN ('start-web-engine',
             	 </html>
 HTML
 	}
-	post -> 'list' {
+	post -> 'list',*@args {
 	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) list");
 	     $log-fh.flush;
-	     content 'text/plain', "{ MAIN('list',:quiet) }\n"	
+	     if @args.so { content 'text/plain', "{ MAIN('list',@args.head,:quiet) }\n" }
+	     else { content 'text/plain', "{ MAIN('list',:quiet) }\n" }	
 	}	
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
