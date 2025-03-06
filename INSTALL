@@ -304,7 +304,7 @@ Documentation=https://github.com/fitteia/OneFit-Engine
 [Service]
 Type=forking
 ExecStart=/usr/local/bin/onefite service start --ip=$ip --port=$port
-ExecStop=/usr/local/bin /onefite service stop
+ExecStop=/usr/local/bin/onefite service stop
 Restart=always
 WorkingDirectory=/home/%*ENV<USER>/public_html
 User=%*ENV<USER>
