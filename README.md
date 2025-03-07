@@ -43,45 +43,21 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 ## Instalation
 
-OneFit  Engine package is prepared for instalation in Debian
+	OneFit  Engine package is prepared for instalation in Debian
 
-### Windows
+	** APT based Linux distros (Debian, Ubuntu, Linux Mint,...) **
 
-Install Oracle VM VirtualBox in your Windows host.\
-Download Debian netinst iso file for amd64\
-Creat a new guest VM with at least 4 cores, 6 GB HD and 4 GB of RAM\
-(ATTENTION: select "Skip the Unattended Guest Installation" to avoid a full debian installation)  
-Edit the Network settings and for a NAT network, in Advanced settings -> Port Forwarding add\
-port 8122 to localhost and 22 to guest (for ssh connections using puTTY)\
-port 8180 to localhost and 80 to guest (for html connections)\
-port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using html)\
+	Ex: Debian 12 "bookworm" and Ubuntu 24.04.1 LTS "Noble Numbat"
 
-In the Host: ssh user@localhost -P 8122; http://localhost:8180; http://localhost:8142
+	Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" ("Laptop" might be\
+	an option) all other packages will be installed later.\	
+	Create a user account, ex: ofe
 
-Install suggestion: FileZilla (https://filezilla-project.org) and curl (https://curl.se/windows/).
-	            When using FileZilla use sftp://localhost:8122/ to use ssh protocol
+1.	**First login with username ofe:**
 
-### Mac M2
-
-Install UTM\
-Download Debian for arm64\
-Created a new guest Virtualize VM for Linux Architecture ARM64 (aarch64) with at least 8 GB HD, 4 GB of RAM, default number of cores.
-
-In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
-
-Install suggestion: curl
-
-### APT based Linux distros (Debian, Ubuntu, Linux Mint,...)
-
-Ex: Debian 12 "bookworm" and Ubuntu 24.04.1 LTS "Noble Numbat"
-
-Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" ("Laptop" might be an option) all other packages will be installed later.\
-Create a user account, ex: ofe
-
-#### First login with username ofe
-
-ofe@bookworm:\~$ su - 
-
+	```bash
+	su - 
+	```
 root@bookworm\~# apt install git sudo && usermod -a -G sudo ofe
 
 INSTALL raku from debian/Ubuntu repositories
