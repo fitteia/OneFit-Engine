@@ -228,9 +228,9 @@ onefite service log
 
 	complete install to site with sudo privileges
 	
-	```bash
+``bash
 	cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
-	```
+```
 
 -) install packages, raku Inline::Perl5, and set ghostscript policy settings
 
