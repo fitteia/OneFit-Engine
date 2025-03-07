@@ -7,7 +7,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 - [Prerequisites](#Prerequisites)
 - [Installation](#Installation)
-- [Updates/Upgrades](#Updates/Upgrades)
+- [Upgrades](#Upgrades)
 - [OneFite Engine Web Service](#OneFit Engine Web Service)
 
 ## Prerequisites
@@ -132,7 +132,7 @@ Create a user account, ex: ofe
 
 	To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." raku scripts  accept option "--cernlib"
 
-## Updates/Upgrades
+## Upgrades
 
 use option --no-test or --/test to void runnig the installation tests
 
