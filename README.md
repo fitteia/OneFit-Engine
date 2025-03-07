@@ -143,21 +143,25 @@ Login your guest and set script to record your upgrade log
 	```
 
 Alternatively, upgrade and install systemd-daemon:
+	
 	```bash
 	onefite upgrade -d
 	```
 
 Alternatively, do it by hand:
+	
 	```bash
 	onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
 	```
 
 Alternatively, for the systemd-daemon:
+	
 	```bash
 	sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
 	```
 
-Finally`, to finish recording:
+Finally, to finish recording:
+	
 	```bash
 	exit 
 	```
