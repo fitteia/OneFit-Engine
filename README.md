@@ -7,8 +7,8 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 - [Prerequisites](#Prerequisites)
 - [Installation](#Installation)
-- [Upgrades/Updates](#Upgrades/Updates)
-- [OneFite Engine Service](#OneFit Engine Service)
+- [Updates/Upgrades](#Updates/Upgrades)
+- [OneFite Engine Web Service](#OneFit Engine Web Service)
 
 ## Prerequisites
 
@@ -42,7 +42,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 	In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
 
 
-## Instalation
+## Installation
 
 OneFit  Engine package is prepared for instalation in Debian
 
@@ -162,14 +162,14 @@ Finally, to finish recording:
 exit 
 ```
 
-## OneFit Engine Web Rervice
+## OneFit Engine Web Service
 
 OneFit Engine web service runs on port 8142 by default (you can choose another port number, but be aware of firewall issues) 
 
-	**Start the web service:**
-	```bash
-	onefite service start
-	```
+**Start the web service:**
+```bash
+onefite service start
+```
 or
 ```bash
 cd $HOME/public_html && nohup onefite start-web-engine &
