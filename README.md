@@ -135,11 +135,11 @@ Create a user account, ex: ofe
 
 use option --no-test or --/test to void runnig the installation tests
 
-	Login your guest and set script to record your upgrade log
-	```bash
-	script onefite-upgrade.log 
-	onefite upgrade 
-	```
+Login your guest and set script to record your upgrade log
+```bash
+script onefite-upgrade.log 
+onefite upgrade 
+```
 
 Alternatively, upgrade and install systemd-daemon:
 	```bash
