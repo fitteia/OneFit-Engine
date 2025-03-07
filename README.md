@@ -272,7 +272,7 @@ onefite service log
 Define a bash function rune
 
 ```bash
-rune() { cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/$1-RUN.me; }
+rune() { cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/examples/command-line/$1-RUN.me; }
 ```
 
 Examples of onefite user can found in the examples folder.
