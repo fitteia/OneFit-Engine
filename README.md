@@ -56,7 +56,8 @@ The copyright will be defined at the end of the devolopment process. For now the
 1.	**First login with username ofe:**
 
 	```bash
-	su - 
+	su -
+	apt install git sudo && usermod -a -G sudo ofe
 	```
 root@bookworm\~# apt install git sudo && usermod -a -G sudo ofe
 
