@@ -271,13 +271,24 @@ onefite service log
 
 Define a bash function rune
 
-```bash
-rune() { cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/examples/command-line/$1-raku.me; }
+``bash
+rune() { cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/examples/command-line/$1.me; }
 ```
 
-Examples of onefite user can found in the examples folder.
+Examples of onefite user can found in the examples folder $HOME/.local/OneFit-Engine/examples/command-line/
 
-ofe@bookworm:\~$ cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/xx-RUN.me"
+```bash
+ls $HOME/.local/OneFit-Engine/examples/command-line/
+```
+
+rune the first example
+
+```bash
+rune 01-raku
+```
+***running via curl***
+
+****server side****
 
 Tipically the output will go to example_xx folder.
 
