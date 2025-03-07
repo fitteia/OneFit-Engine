@@ -9,10 +9,10 @@ my $description = qq:to/END_DESCRIPTION/;
 onefite command line: Example 02
 
    1) creates $folder folder
-   2) creates file $folder/lixo.txt with random data
-   3) runs: onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file
+   2) creates file lixo.txt with random data
+   3) runs: onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=$folder --save-to=$folder/$json-file
    4) reads the value of \"a\" from the fit results and keeps it in variable \$a and uses it to set the next fit using a static value in a second independent variable defined as \"a\"
-   5) runs: onefite fit \"y(x,b)=a_2+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file --data-labels=\" a = 1 \$a\"
+   5) runs: onefite fit \"y(x,b)=a_2+b*x\" lixo.txt --work-folder=$folder --save-to=$folder/$json-file --data-labels=\" a = 1 \$a\"
 END_DESCRIPTION
 
 say $description;
@@ -22,7 +22,7 @@ $folder.IO.mkdir;
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)}),
 			     [1..10].map({ $_ = $_ + (1+0.1.rand*(-1)**(0..2).rand.floor)})
 			     ).join("\n");
-shell "onefite fit \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
+shell "onefite fit \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
 
 my $a = from-json("$folder/$json-file".IO.slurp)<fit-results>.split("\n")[1].split(",")[4];
 
