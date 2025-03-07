@@ -3,8 +3,45 @@ The OneFit Engine (onefite) is fitteia's internal fitting core, made available f
 
 The copyright will be defined at the end of the devolopment process. For now the we use the Artistic License 2.0.
 
+## Table of Contents
 
-## Fresh instalation
+- [Prerequisites](#Prerequisites)
+- [Installation](#Installation)
+
+
+## Prerequisites
+
+### Windows
+
+- [VirtualBox](https://www.virtualbox.org)
+- [FilleZilla](https://filezilla-project.org) (suggestion)
+- [Curl](https://curl.se/windows) (suggestion)
+
+	Install Oracle VM VirtualBox in your Windows host.\
+	Download Debian netinst iso file for amd64\
+	Creat a new guest VM with at least 4 cores, 6 GB HD and 4 GB of RAM\
+	(ATTENTION: select "Skip the Unattended Guest Installation" to avoid a full debian installation)  
+	Edit the Network settings and for a NAT network, in Advanced settings -> Port Forwarding add\
+	port 8122 to localhost and 22 to guest (for ssh connections using puTTY)\
+	port 8180 to localhost and 80 to guest (for html connections)\
+	port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using html)\
+
+	In the Host: ssh user@localhost -P 8122; http://localhost:8180; http://localhost:8142
+
+	When using FileZilla use sftp://localhost:8122/ to use ssh protocol
+
+### Mac M2
+
+- [UTM](https://mac.getutm.app)
+
+	Download Debian for arm64\
+	Created a new guest Virtualize VM for Linux Architecture ARM64 (aarch64) with at least 8 GB HD, 4 GB of RAM,\
+	default number of cores.
+
+	In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
+
+
+## Instalation
 
 OneFit  Engine package is prepared for instalation in Debian
 
