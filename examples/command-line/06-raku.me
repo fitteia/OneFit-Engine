@@ -7,16 +7,16 @@ my $description = qq:to/END_DESCRIPTION/;
 onefite command line: Example 06
 
    1) creates $folder folder
-   2) creates file $folder/lixo.txt with data
-   3) runs: onefite create \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file
-   4) runs: onefite fit $json-file --work-folder=$folder --save-to=$folder/$json-file
+   2) creates file lixo.txt with data
+   3) runs: onefite create \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=$folder --save-to=$folder/$json-file
+   4) runs: cd $folder && onefite fit $json-file --save-to=$json-file
 END_DESCRIPTION
 
 say $description;
 shell("rm -fr $folder") if $folder.IO.e;
 $folder.IO.mkdir;
-"$folder/lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
-shell "onefite create \"y(x,a,b)=a+b*x\" $folder/lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
+"lixo.txt".IO.spurt: "1 1\n2 2\n3 3\n4 4\n";
+shell "onefite create \"y(x,a,b)=a+b*x\" lixo.txt --work-folder=$folder --save-to=$folder/$json-file";
 say "$folder/$json-file".IO.slurp;
 shell "cd $folder && onefite fit $json-file --save-to=$json-file";
       
