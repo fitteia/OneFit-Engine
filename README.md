@@ -7,7 +7,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 - [Prerequisites](#Prerequisites)
 - [Installation](#Installation)
-
+- [Upgrades/Updates](#Upgrades/Updates)
 
 ## Prerequisites
 
@@ -129,31 +129,37 @@ Create a user account, ex: ofe
 
 	Since version OneFit-Engine version 0.9.0, Minuit is installed from source in a OneFit-Engine parallel folder minuit OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a installed from source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in that makefile.
 
-To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." raku scripts  accept option "--cernlib"
+	To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." raku scripts  accept option "--cernlib"
 
 ## Updates/Upgrades
 
-Login your guest and
+	use option --no-test or --/test to void runnig the installation tests
 
-ofe@bookworm:\~$ script onefite-upgrade.log \
-(it will record the session until you exit after the upgrade finishes)
+	Login your guest and set script to record your upgrade log
+	```bash
+	script onefite-upgrade.log 
+	```
+	(it will record the session until you exit after the upgrade finishes)
 
-ofe@bookworm:\~$ onefite upgrade 
-
-or
-
-ofe@bookworm:\~$ onefite upgrade -d
-
-or
-
-ofe@bookworm:\~$ onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
-
-or
-
-ofe@bookworm:\~$ sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
-
-ofe@bookworm:\~$ exit \
-(to finish recording the session)
+	```bash
+	onefite upgrade 
+	```
+	Alternatively, upgrade and install systemd-daemon:
+	```bash
+	onefite upgrade -d
+	```
+	Alternatively, do it by hand:
+	```bash
+	onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
+	```
+	Alternatively, for the systemd-daemon:
+	```bash
+	sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
+	```
+	Finally`, to finish recording:
+	```bash
+	exit 
+	```
 
 ## OneFit web service
 
