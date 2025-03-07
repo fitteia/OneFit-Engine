@@ -8,6 +8,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 - [Prerequisites](#Prerequisites)
 - [Installation](#Installation)
 - [Upgrades/Updates](#Upgrades/Updates)
+- [OneFite Engine Service](#OneFit Engine Service)
 
 ## Prerequisites
 
@@ -142,54 +143,55 @@ onefite upgrade
 ```
 
 Alternatively, upgrade and install systemd-daemon:
-	```bash
-	onefite upgrade -d
-	```
+```bash
+onefite upgrade -d
+```
 
 Alternatively, do it by hand:
-	```bash
-	onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
-	```
+```bash
+onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
+```
 
 Alternatively, for the systemd-daemon:
-	```bash
-	sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
-	```
+```bash
+sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
+```
 
 Finally, to finish recording:
+```bash
+exit 
+```
+
+## OneFit Engine Web Rervice
+
+OneFit Engine web service runs on port 8142 by default (you can choose another port number, but be aware of firewall issues) 
+
+	**Start the web service:**
 	```bash
-	exit 
+	onefite service start
 	```
-
-## OneFit web service
-
-OneFit Engine web service runs on port 8142 by default\
-(you can choose another port number, but be aware of firewall issues) 
-
-### Start the web service
-
-ofe@bookworm:\~$ onefite service start
-
 or
+```bash
+cd $HOME/public_html && nohup onefite start-web-engine &
+```
 
-ofe@bookworm:\~$ cd $HOME/public_html && nohup onefite start-web-engine &
-
-### Stop the web service
-
-ofe@bookworm:\~$ onefite service stop
-
+**Stop the web service:**
+```bash
+onefite service stop
+```
 or
-
-ofe@bookworm:\~$ onefite stop-web-engine
-
+```bash
+onefite stop-web-engine
+```
 or
+```bash
+kill -9 "$(ps aux | awk '/onefite/ && !/awk/ {print $2}')" 
+```
 
-ofe@bookworm:\~$ onefite service PID (or ofe@bookworm:\~$ ps aux | grep onefite) \
-ofe@bookworm:\~$ kill -9 \<PID\>
-
-### View web service log
-
-ofe@bookworm:\~$ onefite service log
+**View web service log:**
+```bash
+onefite service log
+```
 
 ## INSTALL usage
 
