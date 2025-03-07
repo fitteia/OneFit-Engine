@@ -11,7 +11,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 ## Prerequisites
 
-### Windows
+ ** Windows: **
 
 - [VirtualBox](https://www.virtualbox.org)
 - [FilleZilla](https://filezilla-project.org) (suggestion)
@@ -30,7 +30,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 	When using FileZilla use sftp://localhost:8122/ to use ssh protocol
 
-### Mac M2
+ ** Mac M2: **
 
 - [UTM](https://mac.getutm.app)
 
