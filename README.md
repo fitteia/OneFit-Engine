@@ -136,26 +136,27 @@ Create a user account, ex: ofe
 use option --no-test or --/test to void runnig the installation tests
 
 Login your guest and set script to record your upgrade log
+	
 	```bash
 	script onefite-upgrade.log 
+	onefite upgrade 
 	```
-(it will record the session until you exit after the upgrade finishes)
 
-	```bash
-onefite upgrade 
-	```
 Alternatively, upgrade and install systemd-daemon:
 	```bash
-onefite upgrade -d
+	onefite upgrade -d
 	```
+
 Alternatively, do it by hand:
 	```bash
-onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
+	onefite service stop && cd $HOME/.local/OneFit-Engine && ./INSTALL && onefite service start
 	```
+
 Alternatively, for the systemd-daemon:
 	```bash
-sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
+	sudo service onefite stop && cd $HOME/.local/OneFit-Engine && ./INSTALL -d && sudo service onefite start
 	```
+
 Finally`, to finish recording:
 	```bash
 	exit 
