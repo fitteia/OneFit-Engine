@@ -8,7 +8,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 - [Prerequisites](#Prerequisites)
 - [Installation](#Installation)
 - [Upgrades](#Upgrades)
-- [OneFite Engine Web Service](#OneFit Engine Web Service)
+- [WebService](#ebService)
 
 ## Prerequisites
 
@@ -162,7 +162,7 @@ Finally, to finish recording:
 exit 
 ```
 
-## OneFit Engine Web Service
+## WebService
 
 OneFit Engine web service runs on port 8142 by default (you can choose another port number, but be aware of firewall issues) 
 
