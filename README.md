@@ -56,16 +56,18 @@ The copyright will be defined at the end of the devolopment process. For now the
 1.	**First login with username ofe:**
 
 	```bash
-	su -
+	su - 
+	```
+	```bash
 	apt install git sudo && usermod -a -G sudo ofe
 	```
-root@bookworm\~# apt install git sudo && usermod -a -G sudo ofe
+	INSTALL raku from debian/Ubuntu repositories
+	
+	````bash
+	apt install raku && exit
+	```
 
-INSTALL raku from debian/Ubuntu repositories
-
-root@bookworm\~# apt install raku && exit
-
-OR INSTALL raku from source in case of Debian 11 (build instructions: https://rakudo.org/downloads/rakudo/source)
+	Aternatively: install raku from source in case of Debian 11 (build instructions: https://rakudo.org/downloads/rakudo/source)
 
 root@bookworm\~# apt-get install curl build-essential libssl-dev
 
