@@ -71,7 +71,7 @@ Create a user account, ex: ofe
 	Aternatively: install raku from source in case of Debian 11 (build instructions: https://rakudo.org/downloads/rakudo/source)
 	```bash
 	apt-get install curl build-essential libssl-dev
-	install -d /opt/rakudo/src && cd #_ 
+	install -d /opt/rakudo/src && cd $_ 
 	curl -LJO https://rakudo.org/latest/rakudo/src 
 	tar -xvzf rakudo-*.tar.gz 
 	cd rakudo-* 
@@ -90,34 +90,44 @@ Create a user account, ex: ofe
 
 	Install the zef module manager:
 	```bash
-	cd /opt && git clone https://github.com/ugexe/zef.git && cd zef && raku -Ilib bin/zef install . \
+	cd /opt && git clone https://github.com/ugexe/zef.git 
+	cd zef && raku -Ilib bin/zef install . 
 	ln -s /usr/local/lib/perl6/site/bin/zef /usr/local/bin/zef
-
-	exit 
+	```
+	Exit superuser mode
+	```bash
+	exit
 	```
 
-ofe@bookworm:\~$ echo "export PATH=/opt/rakudo/bin:/usr/local/lib/perl6/site/bin:\\$PATH" >> ~/.bashrc \
-ofe@bookworm:\~$ source ~/.bashrc \
-ofe@bookworm:\~$ exit
+	Add folder to PATH
+	```bash
+	echo "export PATH=/opt/rakudo/bin:/usr/local/lib/perl6/site/bin:\\$PATH" >> ~/.bashrc \
+	source ~/.bashrc \
+	exit
+	```
 
-LOGIN your Guest
+2. **LOGIN your Guest**
 
-ofe@bookworm:\~$ script onefite-install.log \
-(it will record the session until you exit) 
+	Set script to record your installation log
+	```bash 
+	script onefite-install.log 
+	```
 
-ofe@bookworm:\~$ mkdir $HOME/.local && cd $HOME/.local 
+	(it will record the session until you exit) 
 
-ofe@bookworm:\~/.local$ git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && git branch site && ./INSTALL && onefite service start
+	```bash
+	mkdir $HOME/.local && cd $HOME/.local 
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && git branch site && ./INSTALL && onefite service start
+	```
 
-Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
+	Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
+	```bash
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
+	```
 
-ofe@bookworm:\~$ git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
+	***CERN Lib Minuit***
 
-## CERN Lib Minuit
-
-Since version OneFit-Engine version 0.9.0, Minuit is installed from source in a OneFit-Engine parallel folder minuit \
-OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a \
-installed from source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in that makefile.\
+	Since version OneFit-Engine version 0.9.0, Minuit is installed from source in a OneFit-Engine parallel folder minuit OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a installed from source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in that makefile.
 
 To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." raku scripts  accept option "--cernlib"
 
