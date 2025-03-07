@@ -10,6 +10,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 - [Upgrades](#Upgrades)
 - [WebService](#WebService)
 - [INSTALL-help](#INSTALL-help)
+- [Running](#Running)
 
 ## Prerequisites
 
@@ -224,7 +225,7 @@ onefite service log
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile\
 
 
-1. **Install examples:***
+-   **Install examples:**
 
 	complete install to site with sudo privileges
 	
@@ -232,32 +233,49 @@ onefite service log
 	cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
 	```
 
--) install packages, raku Inline::Perl5, and set ghostscript policy settings
+	install packages, raku Inline::Perl5, and set ghostscript policy settings
 
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -/c -/i -/t
+	```bash
+	cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -/c -/i -/t
+	```
 
--) compile and install raku module in user account (no sudo privileges are required)
+	compile and install raku module in user account (no sudo privileges are required)
+	
+	```bash
+	cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-dpkg --no-enable-gs --no-test --no-to-site --no-web-server
+	```
 
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-dpkg --no-enable-gs --no-test --no-to-site --no-web-server
+	uninstall from site
 
--) uninstall from site
+	```bash
+	cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --uninstall
+	```
 
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --uninstall
+	uninstall from user account
 
--) uninstall from user account
+	```bash
+	cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-to-site -u
+	```
 
-ofe@bookworm:\~$ cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL --no-to-site -u
+- 	**OneFit Engine paths:**
 
-## OneFit Engine paths
+	```bash
+	onefite path
+	```
 
-ofe@bookworm:\~$ onefite path
+	```bash
+	cd $(onefite path --src | awk ´/\//') 
+	```
 
-ofe@bookworm:\~$ cd $(onefite path --src | awk ´/\//') # to got to src file
+## Running
 
+Define a bash function rune
 
-## Running examples
+```bash
+rune() { cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/$1-RUN.me; }
+```
 
-Examples of onefite use can e found in the examples folder.
+Examples of onefite user can found in the examples folder.
 
 ofe@bookworm:\~$ cd $HOME/public_html && raku $HOME/.local/OneFit-Engine/xx-RUN.me"
 
