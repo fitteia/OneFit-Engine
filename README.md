@@ -224,13 +224,13 @@ onefite service log
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile\
 
 
-***Install examples:***
+1. **Install examples:***
 
 	complete install to site with sudo privileges
 	
-``bash
+	```bash
 	cd $HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL
-```
+	```
 
 -) install packages, raku Inline::Perl5, and set ghostscript policy settings
 
