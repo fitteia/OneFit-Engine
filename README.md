@@ -196,7 +196,7 @@ onefite service log
 
 ## INSTALL-help
 
-Usage:
+**Usage:**
 
     ./INSTALL [-h|--help]\
       ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]\ 
@@ -224,7 +224,7 @@ Usage:
     ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile\
 
 
-### Install examples:
+***Install examples:***
 
 -) complete install to site with sudo privileges
 
