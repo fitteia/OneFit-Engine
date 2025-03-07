@@ -69,7 +69,6 @@ Create a user account, ex: ofe
 	```
 
 	Aternatively: install raku from source in case of Debian 11 (build instructions: https://rakudo.org/downloads/rakudo/source)
-
 	```bash
 	apt-get install curl build-essential libssl-dev
 	install -d /opt/rakudo/src && cd #_ 
@@ -79,23 +78,23 @@ Create a user account, ex: ofe
 	perl Configure.pl --backend=moar --gen-moar --prefix=/opt/rakudo --perl6-home=/usr/local/lib/perl6 
 	make
 	```
-If you wish, you can run the tests (OPTIONAL)\
-Depending on your machine, they could take over half an hour to run
+	If you wish, you can run the tests (OPTIONAL)\
+	Depending on your machine, they could take over half an hour to run
+	```bash
+	make test 
+	make spectest
+	make install 
+	ln -s /opt/rakudo/bin/rakudo /usr/local/bin/rakudo 
+	ln -s /opt/rakudo/bin/raku /usr/local/bin/raku
+    ```
 
-root@bookworm\~# make test \
-root@bookworm\~# make spectest
+	Install the zef module manager:
+	```bash
+	cd /opt && git clone https://github.com/ugexe/zef.git && cd zef && raku -Ilib bin/zef install . \
+	ln -s /usr/local/lib/perl6/site/bin/zef /usr/local/bin/zef
 
-root@bookworm\~# make install 
-
-root@bookworm\~# ln -s /opt/rakudo/bin/rakudo /usr/local/bin/rakudo \
-root@bookworm\~# ln -s /opt/rakudo/bin/raku /usr/local/bin/raku
-
-Install the zef module manager:
-
-root@bookworm\~# cd /opt && git clone https://github.com/ugexe/zef.git && cd zef && raku -Ilib bin/zef install . \
-root@bookworm\~# ln -s /usr/local/lib/perl6/site/bin/zef /usr/local/bin/zef
-
-root@bookworm:\~# exit 
+	exit 
+	```
 
 ofe@bookworm:\~$ echo "export PATH=/opt/rakudo/bin:/usr/local/lib/perl6/site/bin:\\$PATH" >> ~/.bashrc \
 ofe@bookworm:\~$ source ~/.bashrc \
