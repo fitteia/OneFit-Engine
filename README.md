@@ -35,7 +35,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 - [UTM](https://mac.getutm.app)
 
 	Download Debian for arm64\
-	Created a new guest Virtualize VM for Linux Architecture ARM64 (aarch64) with at least 8 GB HD, 4 GB of RAM,\
+	Created a new guest Virtualize VM for Linux Architecture ARM64 (aarch64) with at least 8 GB HD, 4 GB of RAM,
 	default number of cores.
 
 	In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
@@ -43,16 +43,16 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 ## Instalation
 
-	OneFit  Engine package is prepared for instalation in Debian
+OneFit  Engine package is prepared for instalation in Debian
 
-	** APT based Linux distros (Debian, Ubuntu, Linux Mint,...) **
+** APT based Linux distros (Debian, Ubuntu, Linux Mint,...) **
 
-	Ex: Debian 12 "bookworm" and Ubuntu 24.04.1 LTS "Noble Numbat"
+Ex: Debian 12 "bookworm" and Ubuntu 24.04.1 LTS "Noble Numbat"
 
-	Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" 
-	("Laptop" might be an option) all other packages will be installed later.	
-	
-	Create a user account, ex: ofe
+Suggestion: minimal installation; when at tasksel stage select "SSH server" and "Web server" 
+("Laptop" might be an option) all other packages will be installed later.	
+
+Create a user account, ex: ofe
 
 1.	**First login with username ofe:**
 
