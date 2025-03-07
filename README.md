@@ -63,21 +63,21 @@ The copyright will be defined at the end of the devolopment process. For now the
 	```
 	INSTALL raku from debian/Ubuntu repositories
 	
-	````bash
+	```bash
 	apt install raku && exit
 	```
 
 	Aternatively: install raku from source in case of Debian 11 (build instructions: https://rakudo.org/downloads/rakudo/source)
 
-root@bookworm\~# apt-get install curl build-essential libssl-dev
-
-root@bookworm\~# install -d /opt/rakudo/src && cd #_ \
-root@bookworm\~# curl -LJO https://rakudo.org/latest/rakudo/src \
-root@bookworm\~# tar -xvzf rakudo-*.tar.gz \
-root@bookworm\~# cd rakudo-* \
-root@bookworm\~# perl Configure.pl --backend=moar --gen-moar --prefix=/opt/rakudo --perl6-home=/usr/local/lib/perl6 \
-root@bookworm\~# make
-
+	```bash
+	apt-get install curl build-essential libssl-dev
+	install -d /opt/rakudo/src && cd #_ 
+	curl -LJO https://rakudo.org/latest/rakudo/src 
+	tar -xvzf rakudo-*.tar.gz 
+	cd rakudo-* 
+	perl Configure.pl --backend=moar --gen-moar --prefix=/opt/rakudo --perl6-home=/usr/local/lib/perl6 
+	make
+	```
 If you wish, you can run the tests (OPTIONAL)\
 Depending on your machine, they could take over half an hour to run
 
