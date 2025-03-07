@@ -42,7 +42,7 @@ char **env;
 #endif
 
   fprintf(stderr,"OneFit accesses non-linear fitting parameters through their names\nindependently of their order in the parameter file.\nYou may find it usefull to use X1fit (OneFit GUI) to manage OneFit\n\n");
-  fprintf(stderr,"Copyright (C) 1990-2024, Pedro Jos%c Oliveira Sebasti%co\n\n",233,227);
+  fprintf(stderr,"Copyright (C) 1990-2025, Pedro Jos%c Oliveira Sebasti%co\n\n",233,227);
 /*  fprintf(stderr,"\n(The idea used in the first version of this program");
   fprintf(stderr,"\n was the result of a suggestion of Carlos Cruz");
   fprintf(stderr,"\n Thank you Carlos for that challenge)\n\n");
