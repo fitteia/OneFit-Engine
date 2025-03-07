@@ -281,63 +281,52 @@ Examples of onefite user can found in the examples folder $HOME/.local/OneFit-En
 ls $HOME/.local/OneFit-Engine/examples/command-line/
 ```
 
-rune the first example
+rune the first example and continue with the remaning examples
 
 ```bash
 rune 01-raku
 ```
 ***running via curl***
 
+In your host (in the case of a server running in a virtual machine)
+start a web browser, check your server IP, and access it using the
+URL http://\<IP\>/~ofe/ 
+
+This will allow you to monitor your tests
+
 ****server side****
 
-Tipically the output will go to example_xx folder.
+```bash
+ip -4 -br add
+cd $HOME/public_html && mkdir ofe && raku $HOME/.local/OneFit-Engine/examples/command-line/06.raku.me
+curl -F "file=@example_06/example_06.json" http://127.0.0.1:8142/fit
+curl -F "file=@example_06/example_06.json" -F "download=zip" http://127.0.0.1:8142/fit | tar zxvf -
+curl -F "file=@example_06/example_06.json" -F "download=All.pdf" http://127.0.0.1:8142/fit --output All.pdf
+curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "username=ofe" http://127.0.0.1:8142/fit
+curl -F "file=@example_06/example_06.json" -F "download=example_06.json" http://127.0.0.1:8142/fit/ofe
+curl -F "file=@example_06/example_06.json"  http://127.0.0.1:8142/convert > example_06.sav
+curl -F "file=@example_06.sav"  http://127.0.0.1:8142/convert
+```
+More examples:
 
-ofe@bookworm:\~$ ip -4 -br add
+```bash
+cd $HOME/.local/OneFite-Engine/examples/command-line/test-data
+curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://127.0.0.1:8142/fit 
+```
 
-to get the IP address
+Alternatively:
 
-Use a browser to access the http://\<IP\>/~ofe/ folder.
-
-## TRY:
-ofe@bookworm:\~$ raku $HOME/.local/OneFit-Engine/06-raku.me
-
-and
-
-ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" http://\<IP\>/fit
-
-or
-
-ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" -F "download=zip" http://\<IP\>/fit | tar zxvf -
-
-or
-
-ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" -F "download=All.pdf" http://\<IP\>/fit > All.pdf
-
-or
-
-ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "username=\<username\>" http://\<IP\>/fit
-
-or
-
-ofe@bookworm:\~$ curl -F "file=@example_06/example_06.json"  http://\<IP\>/convert
-
-or
-
-ofe@bookworm:\~$ curl -F "file=@example_06.sav"  http://\<IP\>/convert
-
-or
-
-ofe@bookworm:\~$ curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://\<IP:8142\>/fit 
-
-or
-
-ofe@bookworm:\~$ curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://\<IP:8142\>/fit | awk -F ', ' '/^zone/ {print $4 " " 1/$11 " " 0.05/$11}'
+```bash
+curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://127.0.0.1:8142/fit | awk -F ', ' '/^zone/ {print $4 " " 1/$11 " " 0.05/$11}'
+```
 
 to get just flarmor and R11 and err_R1
 
 For a zip file of compressed data files
 
-ofe@bookworm:\~$ curl -F "file=@filename.zip" -F "stelar-hdf5=no" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://\<IP:8142\>/fit
+```bash
+curl -F "file=@filename.zip" -F "stelar-hdf5=no" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://127.0.0.1:8142/fit
+```
 
 # Working with function aliases
 
