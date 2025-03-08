@@ -197,7 +197,7 @@ onefite service log
 
 ## INSTALL-help
 
-**Usage:**
+ **Usage:**
 
 	./INSTALL [-h|--help]\
       	./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]\ 
