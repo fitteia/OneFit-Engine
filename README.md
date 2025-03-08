@@ -300,31 +300,33 @@ This will allow you to monitor your tests
 ip -4 -br add
 cd $HOME/public_html && mkdir ofe && raku $HOME/.local/OneFit-Engine/examples/command-line/06.raku.me
 curl -F "file=@example_06/example_06.json" http://127.0.0.1:8142/fit
-curl -F "file=@example_06/example_06.json" -F "download=zip" http://127.0.0.1:8142/fit | tar zxvf -
-curl -F "file=@example_06/example_06.json" -F "download=All.pdf" http://127.0.0.1:8142/fit --output All.pdf
-curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "username=ofe" http://127.0.0.1:8142/fit
-curl -F "file=@example_06/example_06.json" -F "download=example_06.json" http://127.0.0.1:8142/fit/ofe
-curl -F "file=@example_06/example_06.json"  http://127.0.0.1:8142/convert > example_06.sav
-curl -F "file=@example_06.sav"  http://127.0.0.1:8142/convert
+curl -F "file=@example_06/example_06.json" -F "download=zip" http://127.0.0.1:8142/fit -s --output tmp.zip && unzip tmp.zip && rm tmp.zip
+curl -F "file=@example_06/example_06.json" -F "download=All.pdf" http://127.0.0.1:8142/fit -s --output All.pdf
+curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -F "username=ofe" -s http://127.0.0.1:8142/fit
+curl -F "file=@example_06/example_06.json" -F "download=example_06.json" -s http://127.0.0.1:8142/fit/ofe
+curl -F "file=@example_06/example_06.json"  http://127.0.0.1:8142/convert -s > example_06.sav
+curl -F "file=@example_06.sav"  http://127.0.0.1:8142/convert -s
 ```
 More examples:
 
 ```bash
-cd $HOME/.local/OneFite-Engine/examples/command-line/test-data
+cd $HOME/public_html && unzip $HOME/.local/OneFite-Engine/examples/command-line/test-data/C12-60.zip
 curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://127.0.0.1:8142/fit 
 ```
 
 Alternatively:
 
 ```bash
-curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://127.0.0.1:8142/fit | awk -F ', ' '/^zone/ {print $4 " " 1/$11 " " 0.05/$11}'
+cd $HOME/public_html && unzip $HOME/.local/OneFit-Engine/examples/command-line/test-data/C12-60.zip
+curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t[1e-3<10],a,b,c=1[0.5\<1],T11:0.05[0\<4],T12:0.05[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://127.0.0.1:8142/fit/ofe | awk -F ', ' '/^zone/ {print $4 " " 1/$11 " " sqrt($3)*$12/$11/$11}'
 ```
 
-to get just flarmor and R11 and err_R1
+to get just Larmor frequency and R11 and err_R1
 
 For a zip file of compressed data files
 
 ```bash
+cd $HOME/public_html/ofe/C12-60 && zip filename.zip zone*.dat 
 curl -F "file=@filename.zip" -F "stelar-hdf5=no" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://127.0.0.1:8142/fit
 ```
 
