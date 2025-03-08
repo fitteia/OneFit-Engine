@@ -199,30 +199,30 @@ onefite service log
 
 **Usage:**
 
-    ./INSTALL [-h|--help]\
-      ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]\ 
+	./INSTALL [-h|--help]\
+      	./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]\ 
                 [-w|--web-server] [-U|--Uninstall] [--to-site] [--bindir=<Str>] [--systemd-daemon] [-u|--to-user]\ 
-    --dpkg         # to install required debian packages\
-    --web-server   # to run tasksel install web-server\
-    --cpu          # cpu [amd64|arm64] defaults to automatic detection based on "uname -a"\
-    --compile      # to comlipe and install the OneFit engine core (use [-/c|--no-c|--/compile|--no-compile] to skip compiling)\
-    --test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)\
-    --install      # to install OneFit-Engine as a raku modules available to all users\
-    --Uninstall    # to uninstall: use together with --to-site or --no-to-site\
-    --p6-modules   # to install raku module Inline::Perl5\
-    --enable-gs    # enable ghostsript in ImageMagick policy.xml\
-    --to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise\
-    --to-user      # to install raku module to user ( sets --no-to-site --no-web-server --no-enable-gs  --no-dpkg)\
-    --bindir       # defaults to /home/ofe/public_html/../bin (use --bindir=/$HOME/bin to set another folder for binaries)\
-    --systemd-daemon # to create and start the onefite daemon service\
-    --cernlib      # by default it will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings\
-    --git          # by default it runs git pull. Use --no-git to avoid git pull \
-    --ip = '*'     # creates the onefite.service for all IPv4 interfaces\
-    --port = 8142  # onefite web service service port defaults to 8142\
-    --merge-site=<Str> # merge git site files with git main/dev files when updating\
+    	--dpkg         # to install required debian packages\
+    	--web-server   # to run tasksel install web-server\
+    	--cpu          # cpu [amd64|arm64] defaults to automatic detection based on "uname -a"\
+    	--compile      # to comlipe and install the OneFit engine core (use [-/c|--no-c|--/compile|--no-compile] to skip compiling)\
+    	--test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)\
+    	--install      # to install OneFit-Engine as a raku modules available to all users\
+    	--Uninstall    # to uninstall: use together with --to-site or --no-to-site\
+    	--p6-modules   # to install raku module Inline::Perl5\
+    	--enable-gs    # enable ghostsript in ImageMagick policy.xml\
+    	--to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise\
+    	--to-user      # to install raku module to user ( sets --no-to-site --no-web-server --no-enable-gs  --no-dpkg)\
+    	--bindir       # defaults to /home/ofe/public_html/../bin (use --bindir=/$HOME/bin to set another folder for binaries)\
+    	--systemd-daemon # to create and start the onefite daemon service\
+    	--cernlib      # by default it will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings\
+    	--git          # by default it runs git pull. Use --no-git to avoid git pull \
+    	--ip = '*'     # creates the onefite.service for all IPv4 interfaces\
+    	--port = 8142  # onefite web service service port defaults to 8142\
+    	--merge-site=<Str> # merge git site files with git main/dev files when updating\
 		 
-    negated options:\
-    ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile\
+    	negated options:\
+    	ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile\
 
 
 -   **Install examples:**
