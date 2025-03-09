@@ -10,7 +10,7 @@ OneFit accesses non-linear fitting parameters through their names
 independently of their order in the parameter file.
 You may find it usefull to use X1fit (OneFit GUI) to manage OneFit
 
-Copyright (C) 1990-2024, Pedro José Oliveira Sebastião
+Copyright (C) 1990-2025, Pedro José Oliveira Sebastião
 
 9 functions in memory during the gfitn run.
 12 functions in memory during the gfitn run.
