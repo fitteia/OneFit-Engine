@@ -180,7 +180,7 @@ sub install-apt-packages ($cpu,:$cernlib) {
 sub install-web-server () {
     "$*HOME/public_html".IO.mkdir unless "$*HOME/public_html".IO.d;
     "$*HOME/public_html/ofe".IO.mkdir unless "$*HOME/public_html/ofe".IO.d;
-    shell "chmod 711 $*HOME && chmod 755 $*HOME/public_htmli && chmod 755 $*HOME/public_html/ofe";
+    shell "chmod 711 $*HOME && chmod 755 $*HOME/public_html && chmod 755 $*HOME/public_html/ofe";
     my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
     do {
 	say "tasksel install Web-server and SSH-server";
