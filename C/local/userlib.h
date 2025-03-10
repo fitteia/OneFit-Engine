@@ -46,6 +46,7 @@ extern double EllipticF();
 extern double EllipticE();
 extern double HavNeg();
 extern double SDFreed();
+extern double SDFreedHF();
 extern double factorial();
 extern double JacobiSN();
 extern double JacobiCN();

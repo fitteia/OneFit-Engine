@@ -132,8 +132,11 @@
 	"devision": "Rotations",
 	"function": "RotWoessner(f,S0,A0,A1,A2,ts,tl,delta)"
     },
-    "SDFreed": {
+     "SDFreed": {
     "function": "SDFreed(x,d,n,tauD,NP)"
+    },
+    "SDFreedHF": {
+    "function": "SDFreedHF(f1,f2,d,n,tauD,NP)"
     },
     "SDN11_2_DllDp2": {
 	"function": "SDN11_2_DllDp2(f,d,n,tauD,delta)"
