@@ -26,14 +26,14 @@ double SDFreed(double f, double tau, double n, double d, double NP)
 
 double SDFreedHF(double f1, double f2, double tau, double n, double d, double NP)
 {
-    double __JSDFreed();
+    double __JSDFreed_();
     double Kdd1=1.70888e-49;  /* 3/10*(mu0/(4*pi))^2*gamma^4*hbar^2 */
     double RSD;
    
     RSD=Kdd1/3.0*n*tau*pow(d,-3.0)*(
-             __JSDFreed(fabs(f1-f2),tau,NP) + 
-           3*__JSDFreed(f1,tau,NP) + 
-           6*__JSDFreed(f1+f2,tau,NP)
+             __JSDFreed_(fabs(f1-f2),tau,NP) + 
+           3*__JSDFreed_(f1,tau,NP) + 
+           6*__JSDFreed_(f1+f2,tau,NP)
     );
     /* printf("%g %g %g\n", f1, f2, RSD); */
     return RSD;
