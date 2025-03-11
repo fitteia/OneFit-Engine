@@ -102,6 +102,7 @@
 	"source": "C/local/R1LipSzab.c"
     },
     "R1Torrey": {
+	"devision": "Diffusion",
 	"function": "R1Torrey(f,n,d,r,tauD)"
     },
     "RMTDnum": {
@@ -133,10 +134,15 @@
 	"function": "RotWoessner(f,S0,A0,A1,A2,ts,tl,delta)"
     },
      "SDFreed": {
-    "function": "SDFreed(x,d,n,tauD,NP)"
+	"devision": "Diffusion",
+    	"function": "SDFreed(x,d,n,tauD,NP)",
+	"source": "C/local/SDFreed.c"
     },
     "SDFreedHF": {
-    "function": "SDFreedHF(f1,f2,d,n,tauD,NP)"
+	"devision": "Diffusion",
+	"function": "SDFreedHF(f1,f2,d,n,tauD,NP)",
+	"Description": "f1 : 1H f2 : 19F. (multiply by (gammaF/gammaH)^2 to get the proper pre-factor",
+	"source": "C/local/SDFreed.c"
     },
     "SDN11_2_DllDp2": {
 	"function": "SDN11_2_DllDp2(f,d,n,tauD,delta)"
