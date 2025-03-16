@@ -49,6 +49,8 @@ multi MAIN (
 
     install-apt-packages($cpu,:cernlib($cernlib)) if $dpkg.Bool and $to-site;
 
+    shellinabox($shell); 
+
     install-web-server if $web-server and $to-site;
 
     install-p6-modules($to-site) if $p6-modules.Bool;
@@ -67,8 +69,6 @@ multi MAIN (
     }
 
     systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
-
-    shellinabox($shell); 
 
     add-show-ip-in-issue() if $to-site;
 
