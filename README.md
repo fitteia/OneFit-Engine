@@ -205,7 +205,7 @@ kill -9 "$(ps aux | awk '/onefite/ && !/awk/ {print $2}')"
 onefite service log
 ```
 
-Shell acces via Web
+Shell acces via Web start/stop
 ```bash
 service shellinabox stop
 ```
