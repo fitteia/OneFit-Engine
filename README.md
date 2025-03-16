@@ -28,10 +28,11 @@ The copyright will be defined at the end of the devolopment process. For now the
 	port 8122 to localhost and 22 to guest (for ssh connections using puTTY)\
 	port 8180 to localhost and 80 to guest (for html connections)\
 	port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using html)\
+	port 4200 to localhost and 4200 for guest (if you want to use the a web based shell, access)
 
 	In the Host: ssh user@localhost -P 8122; http://localhost:8180; http://localhost:8142
 
-	When using FileZilla use sftp://localhost:8122/ to use ssh protocol
+	When using FileZilla use sftp://localhost:8122/ for encripted acces with ssh 
 
  ** Mac M2: **
 
@@ -134,6 +135,15 @@ Create a user account, ex: ofe
 
 	To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." raku scripts  accept option "--cernlib"
 
+	```bash
+	service shellinabox stop 
+	```
+	(to stop serving shhel acces through port 4200.
+	```bash		
+	sudo apt purge shelloinabox 
+	```
+	(to remove shellinabox dor the system)
+
 ## Upgrades
 
 use option --no-test or --/test to void runnig the installation tests
@@ -164,7 +174,7 @@ Finally, to finish recording:
 exit 
 ```
 
-## WebService
+## WebServicea
 
 OneFit Engine web service runs on port 8142 by default (you can choose another port number, but be aware of firewall issues) 
 
@@ -193,6 +203,11 @@ kill -9 "$(ps aux | awk '/onefite/ && !/awk/ {print $2}')"
 **View web service log:**
 ```bash
 onefite service log
+```
+
+Shell acces via Web
+```bash
+service shellinabox stop
 ```
 
 ## INSTALL-help
