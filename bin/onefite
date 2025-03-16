@@ -40,7 +40,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list aliases [-q|--quiet]
 	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
-	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib]
+	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell]
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
@@ -148,6 +148,7 @@ multi MAIN ('upgrade',
       Bool :c(:$compile) = True,
       Bool :d(:$systemd-daemon) = False,
       Bool :$cernlib = False,
+      Bool :$shell = False,
       Str  :$ip = '*',
       Int  :p(:$port) = 8142,
       Str  :$test = '--/test',
@@ -155,7 +156,7 @@ multi MAIN ('upgrade',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } ";
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell' if $shell }";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
