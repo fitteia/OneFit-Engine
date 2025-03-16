@@ -17,7 +17,8 @@ multi MAIN (
     Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
-    Bool :$cernlib = False, # by default it will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
+    Bool :$cernlib = False, # by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
+    Bool :$shell = False, # by default it NOT will install shellinabox
     Bool :$git = True, # By default it runs git to pull the package for remote repository
     Str  :$ip = '*',
     Int  :$port = 8142,
@@ -64,7 +65,10 @@ multi MAIN (
     else {
         install-aliases( bindir => $bindir );
     }
+
     systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
+
+    shellinabox($shell); 
 
     add-show-ip-in-issue() if $to-site;
 
@@ -92,7 +96,8 @@ Usage:
     --to-user      # to install raku module to user ( sets --no-to-site --no-web-server --no-enable-gs  --no-dpkg)
     --bindir       # defaults to $*CWD/../bin (use --bindir=/\$HOME/bin to set another folder for binaries)
     --systemd-daemon # to create and start the onefite daemon service
-    --cernlib      # by default it will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
+    --cernlib      # False by default it will NOT install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
+    --shell        # False by default it will NOT install shellinabox
     --git          # by default it runs git pull. Use --no-git to avoid git pull 
     --ip = '*'     # creates the onefite.service for all IPv4 interfaces
     --port = 8142  # onefite web service service port defaults to 8142
@@ -130,7 +135,6 @@ sub aptpkgs () {
     pdftk
     sudo
     curl
-    shellinabox
     libssl-dev
     hdf5-tools
     tasksel>
@@ -332,6 +336,17 @@ sub add-show-ip-in-issue() {
     "/tmp/issue".IO.spurt: $issue ~ "\n\n";
     shell "sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
 }
+
+sub shellinabox(Bool $shell) {
+	if $shell {
+		say "\nInstalling shellinabox as a web service in port 4200";
+		shell("sudo apt install shellinabox");
+	}
+}
+
+
+
+
 
 sub run-post-install-tests(Bool :$deamon = False) {
     my $data = q:to/EOT/;
