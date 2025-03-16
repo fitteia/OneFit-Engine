@@ -130,6 +130,7 @@ sub aptpkgs () {
     pdftk
     sudo
     curl
+    shellinabox
     libssl-dev
     hdf5-tools
     tasksel>
