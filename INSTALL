@@ -350,7 +350,8 @@ sub shellinabox(Bool $shell, $shell-port) {
 			shell "sudo service shellinabox stop";
 		}
 		my $port = "/etc/default/shellinabox".IO.lines(:close).grep(/PORT/).split("=").tail;
-		shell("sudo sed -i 's/$port/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload") if "/etc/default/shellinabox".IO.slurp(:close).contains(/4200/); 
+		say "sudo sed -i 's/$port/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload"; 
+		shell("sudo sed -i 's/$port/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload"); 
 		shell "sudo service shellinabox start";
 	}
 	else {
