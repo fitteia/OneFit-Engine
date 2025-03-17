@@ -28,7 +28,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 	port 8122 to localhost and 22 to guest (for ssh connections using puTTY)\
 	port 8180 to localhost and 80 to guest (for html connections)\
 	port 8142 to localhost and 8142 for guest (for OneFit-Engine connection using html)\
-	port 4200 to localhost and 4200 for guest (if you want to use the a web based shell, access)
+	port 8100 to localhost and 8100 for guest (if you want to use the a web based shell, access)
 
 	In the Host: ssh user@localhost -P 8122; http://localhost:8180; http://localhost:8142
 
@@ -138,7 +138,7 @@ Create a user account, ex: ofe
 	```bash
 	service shellinabox stop 
 	```
-	(to stop serving shhel acces through port 4200.
+	(to stop serving shell acces through port 8100 .
 	```bash		
 	sudo apt purge shelloinabox 
 	```
