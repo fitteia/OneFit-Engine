@@ -346,7 +346,7 @@ sub shellinabox(Bool $shell, $shell-port) {
 			say "\nInstalling shellinabox as a web service in port 8100";
 			shell("sudo apt install shellinabox && sudo service shellinabox stop");
 		}
-		shell("sudo sed -i 's/4200/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload && sudo service shellinabox start") if "/etc/default/shellinabox",IO.slurp(:close).contains(/4200/); 
+		shell("sudo sed -i 's/4200/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload && sudo service shellinabox start") if "/etc/default/shellinabox".IO.slurp(:close).contains(/4200/); 
 	}
 	else {
 		shell("sudo apt purge shellinabox") if $shellinabox-installed-is;
