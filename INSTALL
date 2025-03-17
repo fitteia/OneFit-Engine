@@ -18,10 +18,11 @@ multi MAIN (
     Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
     Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
     Bool :$cernlib = False, # by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
-    Bool :$shell = False, # by default it NOT will install shellinabox
+    Bool :$shell = False, # by default it NOT will install shellinabox service in port 8100
     Bool :$git = True, # By default it runs git to pull the package for remote repository
     Str  :$ip = '*',
     Int  :$port = 8142,
+    Int  :$shell-port = 8100,
     Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
     Str  :m(:$merge-site)='', # if merge string then merge site branch (it it exits) into current branch
 ){
@@ -49,7 +50,7 @@ multi MAIN (
 
     install-apt-packages($cpu,:cernlib($cernlib)) if $dpkg.Bool and $to-site;
 
-    shellinabox($shell); 
+    shellinabox($shell, $shell-port); 
 
     install-web-server if $web-server and $to-site;
 
@@ -97,7 +98,8 @@ Usage:
     --bindir       # defaults to $*CWD/../bin (use --bindir=/\$HOME/bin to set another folder for binaries)
     --systemd-daemon # to create and start the onefite daemon service
     --cernlib      # False by default it will NOT install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
-    --shell        # False by default it will NOT install shellinabox
+    --shell        # False by default it will NOT install shellinabox service
+    --shell-port   # shellinabox service port (defaults to 8100)
     --git          # by default it runs git pull. Use --no-git to avoid git pull 
     --ip = '*'     # creates the onefite.service for all IPv4 interfaces
     --port = 8142  # onefite web service service port defaults to 8142
@@ -337,14 +339,14 @@ sub add-show-ip-in-issue() {
     shell "sudo cp \/tmp\/issue /etc" unless "/etc/issue".IO.slurp(:close).contains('\4'); 
 }
 
-sub shellinabox(Bool $shell) {
+sub shellinabox(Bool $shell, $shell-port) {
     	my $shellinabox-installed-is=shell("apt list --installed",:out,:err).out.slurp(:close).contains(/shellinabox/).Bool;
 	if $shell {
 		if not $shellinabox-installed-is {
 			say "\nInstalling shellinabox as a web service in port 8100";
 			shell("sudo apt install shellinabox && sudo service shellinabox stop");
 		}
-		shell("sudo sed -i 's/4200/8100/g' /etc/default/shellinabox && sudo systemctl daemon-reload && sudo service shellinabox start") if "/etc/default/shellinabox",IO.slurp(:close),contains(/4200/); 
+		shell("sudo sed -i 's/4200/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload && sudo service shellinabox start") if "/etc/default/shellinabox",IO.slurp(:close).contains(/4200/); 
 	}
 	else {
 		shell("sudo apt purge shellinabox") if $shellinabox-installed-is;
