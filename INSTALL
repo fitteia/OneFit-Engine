@@ -338,13 +338,14 @@ sub add-show-ip-in-issue() {
 }
 
 sub shellinabox(Bool $shell) {
-	if $shell {
-		say "\nInstalling shellinabox as a web service in port 4200";
-		shell("sudo apt install shellinabox");
+    	my $shellinabox-installed-is=shell("apt list --installed",:out,:err).out.slurp(:close).contains(/shellinabox/).Bool;
+	if $shell and not $shellinabox-installed-is {
+		say "\nInstalling shellinabox as a web service in port 8100";
+		shell("sudo apt install shellinabox && sudo service shellinabox stop");
+		shell("sudo -i sed 's/4200/8100/g' /etc/default/shellinabox && sudo systemctl daemon-reload && sudo service shellinabox start");
 	}
 	else {
-    		my $shellinabox-installed=shell("apt list --installed",:out,:err).out.slurp(:close).contains(/shellinabox/);
-		shell("sudo apt purge shellinabox") if so $shellinabox-installed;
+		shell("sudo apt purge shellinabox") if $shellinabox-installed-is;
 		say "shellinabox package removed";
 	}
 }
