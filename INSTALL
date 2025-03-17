@@ -345,7 +345,7 @@ sub shellinabox(Bool $shell) {
 	else {
     		my $shellinabox-installed=shell("apt list --installed",:out,:err).out.slurp(:close).contains(/shellinabox/);
 		shell("sudo apt purge shellinabox") if so $shellinabox-installed;
-		say "shellinabox package removed");
+		say "shellinabox package removed";
 	}
 }
 
