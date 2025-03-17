@@ -349,6 +349,7 @@ sub shellinabox(Bool $shell, $shell-port) {
 		else {
 			shell "sudo service shellinabox stop";
 		}
+		say "sudo sed -i 's/\$(awk -F '=' '/PORT/ \{print \$2\}')/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload";
 		shell("sudo sed -i 's/\$(awk -F '=' '/PORT/ \{print \$2\}')/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload") if "/etc/default/shellinabox".IO.slurp(:close).contains(/4200/); 
 		shell "sudo service shellinabox start";
 	}
