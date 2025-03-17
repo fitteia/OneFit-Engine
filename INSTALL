@@ -339,10 +339,12 @@ sub add-show-ip-in-issue() {
 
 sub shellinabox(Bool $shell) {
     	my $shellinabox-installed-is=shell("apt list --installed",:out,:err).out.slurp(:close).contains(/shellinabox/).Bool;
-	if $shell and not $shellinabox-installed-is {
-		say "\nInstalling shellinabox as a web service in port 8100";
-		shell("sudo apt install shellinabox && sudo service shellinabox stop");
-		shell("sudo -i sed 's/4200/8100/g' /etc/default/shellinabox && sudo systemctl daemon-reload && sudo service shellinabox start");
+	if $shell {
+		if not $shellinabox-installed-is {
+			say "\nInstalling shellinabox as a web service in port 8100";
+			shell("sudo apt install shellinabox && sudo service shellinabox stop");
+			shell("sudo -i sed 's/4200/8100/g' /etc/default/shellinabox && sudo systemctl daemon-reload && sudo service shellinabox start");
+		}
 	}
 	else {
 		shell("sudo apt purge shellinabox") if $shellinabox-installed-is;
