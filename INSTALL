@@ -5,75 +5,75 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 our $SUDO = "sudo";
 
 multi MAIN (
-    Bool :$dpkg = True, # to install required debian packages
-    Bool :w(:$web-server) = True, # to run tasksel install web-server
-    Str  :$cpu is copy, # [amd64|arm64| defaults to "uname -a" detection 
-    Bool :c(:$compile) = True, # to compile and install the OneFit engine core
-    Bool :t(:$test) = True, # to run raku module tests
-    Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
-    Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
-    Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
-    Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick policy.xml
-    Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
-    Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
-    Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
-    Bool :$cernlib = False, # by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
-    Bool :$shell = False, # by default it NOT will install shellinabox service in port 8100
-    Bool :$git = True, # By default it runs git to pull the package for remote repository
-    Str  :$ip = '*',
-    Int  :$port = 8142,
-    Int  :$shell-port = 8100,
-    Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
-    Str  :m(:$merge-site)='', # if merge string then merge site branch (it it exits) into current branch
-){
-    my %cpus = ("x86_64"  => "amd64",
-		"aarch64" => "arm64"
-		);
+ 	Bool :$dpkg = True, # to install required debian packages
+   	Bool :w(:$web-server) = True, # to run tasksel install web-server
+   	Str  :$cpu is copy, # [amd64|arm64| defaults to "uname -a" detection 
+   	Bool :c(:$compile) = True, # to compile and install the OneFit engine core
+   	Bool :t(:$test) = True, # to run raku module tests
+   	Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
+   	Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
+   	Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
+   	Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick policy.xml
+   	Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
+   	Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
+   	Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
+   	Bool :$cernlib = False, # by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
+   	Bool :$shell = False, # by default it NOT will install shellinabox service in port 8100
+   	Bool :$git = True, # By default it runs git to pull the package for remote repository
+   	Str  :$ip = '*',
+   	Int  :$port = 8142,
+   	Int  :$shell-port = 8100,
+  	Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
+   	Str  :m(:$merge-site)='', # if merge string then merge site branch (it it exits) into current branch
+	){
+   	my %cpus = ("x86_64"  => "amd64",
+	"aarch64" => "arm64"
+	);
 
-    if $git {
-	shell "git stash";
-	shell "git pull";
-	shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
-    }
-    
-    $cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless so $cpu;
+   	if $git {
+		shell "git stash";
+		shell "git pull";
+		shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
+   	}
+   
+  	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless so $cpu;
+	
+   	my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
+   	my $arch= shell("arch",:out).out.lines(:close).head;
+   	my $root=$*CWD;
 
-    my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
-    my $arch= shell("arch",:out).out.lines(:close).head;
-    my $root=$*CWD;
+   	$to-site = False if $to-user;
+   
+   	$SUDO = "" unless $to-site;
 
-    $to-site = False if $to-user;
-    
-    $SUDO = "" unless $to-site;
+   	uninstall() if $Uninstall;
 
-    uninstall() if $Uninstall;
+   	install-apt-packages($cpu,:cernlib($cernlib)) if $dpkg.Bool and $to-site;
 
-    install-apt-packages($cpu,:cernlib($cernlib)) if $dpkg.Bool and $to-site;
+   	shellinabox($shell, $shell-port); 
 
-    shellinabox($shell, $shell-port); 
+   	install-web-server if $web-server and $to-site;
 
-    install-web-server if $web-server and $to-site;
+   	install-p6-modules($to-site) if $p6-modules.Bool;
 
-    install-p6-modules($to-site) if $p6-modules.Bool;
+   	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-    enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
+   	compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
-    compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
+   	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
-    install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
+   	if shell("diff $*CWD/etc/OFE/default/aliases.json $bindir/../etc//aliases.json",:out).out.slurp(:close).so { 
+		say "$bindir/../etc/aliases.json has been changed not updating";
+   	}	
+   	else {
+		install-aliases( bindir => $bindir );
+   	}	
 
-    if shell("diff $*CWD/etc/OFE/default/aliases.json $bindir/../etc//aliases.json",:out).out.slurp(:close).so { 
-	say "$bindir/../etc/aliases.json has been changed not updating";
-    }	
-    else {
-        install-aliases( bindir => $bindir );
-    }
+   	systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
 
-    systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
+   	add-show-ip-in-issue() if $to-site;
 
-    add-show-ip-in-issue() if $to-site;
-
-    run-post-install-tests(:deamon($systemd-daemon));
+   	run-post-install-tests(:deamon($systemd-daemon));
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -111,35 +111,39 @@ END_HELP
 }
 
 sub cernpkgs ($cpu) {
-    my @a = <cernlib-base_20061220+dfsg3-4.4_all.deb
-	     cernlib-base-dev_20061220+dfsg3-4.4_all.deb
-	     libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb
-	     libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb
-	     libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb
-	     libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb
-	     libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
-	     libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb>;
-    @a.map( { .subst("amd64",$cpu) })
+	my @a = <
+		cernlib-base_20061220+dfsg3-4.4_all.deb
+		cernlib-base-dev_20061220+dfsg3-4.4_all.deb
+     	libkernlib1-gfortran_20061220+dfsg3-4.4_amd64.deb
+     	libkernlib1-dev_20061220+dfsg3-4.4_amd64.deb
+     	libpacklib1-gfortran_20061220+dfsg3-4.4_amd64.deb
+     	libmathlib2-gfortran_20061220+dfsg3-4.4_amd64.deb
+    	libpacklib1-dev_20061220+dfsg3-4.4_amd64.deb
+     	libmathlib2-dev_20061220+dfsg3-4.4_amd64.deb
+		>;
+    	@a.map( { .subst("amd64",$cpu) })
 }
 
 sub aptpkgs () {
-    <libperl-dev
-    swig
-    gcc
-    dpkg-dev
-    gfortran
-    grace
-    imagemagick
-    texlive-font-utils
-    ghostscript
-    libcgi-pm-perl
-    zip
-    pdftk
-    sudo
-    curl
-    libssl-dev
-    hdf5-tools
-    tasksel>
+   	<
+	libperl-dev
+   	swig
+   	gcc
+   	dpkg-dev
+   	gfortran
+   	grace
+   	imagemagick
+   	texlive-font-utils
+   	ghostscript
+   	libcgi-pm-perl
+   	zip
+   	pdftk
+   	sudo
+   	curl
+   	libssl-dev
+   	hdf5-tools
+   	tasksel
+	>
 }
 
 #### these packages are required by cernlib #####
@@ -155,144 +159,144 @@ sub aptpkgs () {
 #################################################
 
 sub apt-pkgs-not-installed (@pkgs) {
-    my @a=shell("apt list --installed",:out,:err).out.lines(:close);
-    @a.map({ $_ = $_.split("/").head });
-    gather for @pkgs {
+   	my @a=shell("apt list --installed",:out,:err).out.lines(:close);
+   	@a.map({ $_ = $_.split("/").head });
+   	gather for @pkgs {
 	my $pkg = $_.split("_").head;
-	take $pkg unless grep($pkg,@a)
+		take $pkg unless grep($pkg,@a)
     }
 }
 
 sub install-apt-packages ($cpu,:$cernlib) {
-    my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
-    if so @apt-pkgs-to-install {
-	run "sudo", "apt", "install" , @apt-pkgs-to-install; 
-    }
-    if $cernlib {
-	my @required-cern-pkgs = cernpkgs($cpu);
-	my @cernlib-pkgs-to-install = apt-pkgs-not-installed(@required-cern-pkgs);
-	if so @cernlib-pkgs-to-install {
-	    my @pkgs-to-install = gather for @cernlib-pkgs-to-install {
-		take @required-cern-pkgs.grep(/$_"_"/).head if  @required-cern-pkgs.grep(/$_"_"/);
-	    }
-	    my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/" <<~<< @pkgs-to-install;
-	    shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
-	    shell "cd /tmp && sudo apt install ./" ~ @pkgs-to-install.join(" ./"); 
-	}
-	say "the OneFit-Engine/etc/OFE/default/makefile has to be changed if you plan to use the minuit routine from the debian installed package";
+ 	my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
+   	if so @apt-pkgs-to-install {
+		run "sudo", "apt", "install" , @apt-pkgs-to-install; 
+   	}	
+   	if $cernlib {
+		my @required-cern-pkgs = cernpkgs($cpu);
+		my @cernlib-pkgs-to-install = apt-pkgs-not-installed(@required-cern-pkgs);
+		if so @cernlib-pkgs-to-install {
+	    		my @pkgs-to-install = gather for @cernlib-pkgs-to-install {
+				take @required-cern-pkgs.grep(/$_"_"/).head if  @required-cern-pkgs.grep(/$_"_"/);
+	    	}
+	    	my @pkgs-to-download = "http://ftp.de.debian.org/debian/pool/main/c/cernlib/" <<~<< @pkgs-to-install;
+	    	shell "cd /tmp && curl -O " ~ @pkgs-to-download.join(" -O ");
+	    	shell "cd /tmp && sudo apt install ./" ~ @pkgs-to-install.join(" ./"); 
+		}
+		say "the OneFit-Engine/etc/OFE/default/makefile has to be changed if you plan to use the minuit routine from the debian installed package";
     }
     shell "sudo apt update && sudo apt upgrade && sudo apt autoremove && sudo apt clean";
 }
 
 sub install-web-server () {
-    "$*HOME/public_html".IO.mkdir unless "$*HOME/public_html".IO.d;
-    "$*HOME/public_html/ofe".IO.mkdir unless "$*HOME/public_html/ofe".IO.d;
-    shell "chmod 711 $*HOME && chmod 755 $*HOME/public_html && chmod 755 $*HOME/public_html/ofe";
-    my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
-    do {
-	say "tasksel install Web-server and SSH-server";
-	shell "sudo apt install task-ssh-server task-web-server";
-    } unless $is-installed;
-    shell "sudo a2enmod userdir";
-    shell "sudo systemctl restart apache2";
+   	"$*HOME/public_html".IO.mkdir unless "$*HOME/public_html".IO.d;
+   	"$*HOME/public_html/ofe".IO.mkdir unless "$*HOME/public_html/ofe".IO.d;
+   	shell "chmod 711 $*HOME && chmod 755 $*HOME/public_html && chmod 755 $*HOME/public_html/ofe";
+   	my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
+   	do {
+		say "tasksel install Web-server and SSH-server";
+		shell "sudo apt install task-ssh-server task-web-server";
+   	} unless $is-installed;
+   	shell "sudo a2enmod userdir";
+   	shell "sudo systemctl restart apache2";
 }
 
 
 sub install-p6-modules ($to-site) {
-    say "Install raku modules. This may take some time....";
-    shell("$SUDO zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
-    shell("$SUDO zef install --/test cro { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
+	say "Install raku modules. This may take some time....";
+   	shell("$SUDO zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
+   	shell("$SUDO zef install --/test cro { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
 }
 
 sub enable-ghostscript-in-ImageMagick-policy () {
 #    say "ATTENTION: editting /etc/ImageMagick-*/policy.xml to enable ghostscript formats";
-    my $ImageMagick-policy-folder = "/etc".IO.dir.grep(/ImageMagick/).tail.Str;
-    my @policy-file="$ImageMagick-policy-folder/policy.xml".IO.lines;
-    @policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~~ /'<!--'/ });
-    "/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
-    shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
+   	my $ImageMagick-policy-folder = "/etc".IO.dir.grep(/ImageMagick/).tail.Str;
+   	my @policy-file="$ImageMagick-policy-folder/policy.xml".IO.lines;
+   	@policy-file.map( { $_ = "\<!-- $_ --\>" if $_.contains(any(<"PS" "PS2" "PS3" "EPS" "PDF" "XPS">)) and $_ !~~ /'<!--'/ });
+   	"/tmp/policy.xml".IO.spurt(@policy-file.join("\n") ~ "\n");
+   	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
 sub compile (:$root,:$arch,:$bindir,:$pv) {
-    say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
-    shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
+   	say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
+   	shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
-    shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && make install && make clean";
-    say "install source in $*CWD and binaries with perl version: $pv";
-    shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
-    shell "find . -name .precomp -prune -o -name .git -prune -o -name .gitignore -prune -o -name .prove -prune -o -name .travis.yml -prune -o -name Makefile -prune -o -name \"*~\" -prune -o -name bugs -prune -o -type f -print | sort | cut -c 3- > MANIFEST";
+   	shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && make install && make clean";
+   	say "install source in $*CWD and binaries with perl version: $pv";
+  	shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
+   	shell "find . -name .precomp -prune -o -name .git -prune -o -name .gitignore -prune -o -name .prove -prune -o -name .travis.yml -prune -o -name Makefile -prune -o -name \"*~\" -prune -o -name bugs -prune -o -type f -print | sort | cut -c 3- > MANIFEST";
 }
 
 sub uninstall () {
-    shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
-    shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
-    my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
-    for @binaries.splice(1,@binaries.elems-2).push('pcop') {
-	shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } ";
-    }
-    shell "$SUDO zef uninstall OneFit-Engine && zef uninstall OneFit-Engine";
-    exit;
+   	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
+   	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
+   	my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
+   	for @binaries.splice(1,@binaries.elems-2).push('pcop') {
+		shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } ";
+   	}
+   	shell "$SUDO zef uninstall OneFit-Engine && zef uninstall OneFit-Engine";
+   	exit;
 }
 
 sub install (:$test,:$to-site, :$bindir) {
     if $to-site {
-	"Installing to site".say
+		"Installing to site".say
     }
     else {
-	"Installing to user".say
+		"Installing to user".say
     }
     "$*CWD/../log".IO.mkdir unless "$*CWD/../log".IO.e;
     my @previous = shell("zef locate OneFit-Engine",:out).out.slurp(:close).lines;
     for @previous {
-	if $_.Bool {
-	    do {
-		my $yesno='y';
-		$yesno = prompt "$_ located, do you wish to remove it [y|n]?";
-		shell "$SUDO zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
-		shell "$SUDO rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
-	    } unless $_.contains("Nothing located");
-	}
-    }
+		if $_.Bool {
+	   		do {
+				my $yesno='y';
+				$yesno = prompt "$_ located, do you wish to remove it [y|n]?";
+				shell "$SUDO zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
+				shell "$SUDO rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
+	   		} unless $_.contains("Nothing located");
+		}
+   	}
 
-    shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.l;
-    shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
+   	shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.l;
+   	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
 
     if $test.Bool {
-	"/tmp/OneFit-Engine-test".IO.mkdir;
-	shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
+		"/tmp/OneFit-Engine-test".IO.mkdir;
+		shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
 #	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
-	if $to-site {
-	    my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
-	    $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
-	}
-	else {
-	    my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("home") ~ "/bin/onefite";
-	    $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
-	}
-	shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
+		if $to-site {
+	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
+	    	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
+	    	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
+		}
+		else {
+	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("home") ~ "/bin/onefite";
+	    	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
+	    	shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
+		}
+		shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
     else {
-	shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./");
+		shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./");
 #        my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
-	if $to-site {
-	    my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
+		if $to-site {
+	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
             $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
-	}
-	else {
-	    my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("home") ~ "/bin/onefite";
+	    	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
+		}
+		else {
+	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("home") ~ "/bin/onefite";
             $onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
-	}
+	    	shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
+		}
     }
 
     my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
     if $to-site {
-	for @binaries.splice(1,@binaries.elems-2).push('pcop') {
-	    shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
-	}
+		for @binaries.splice(1,@binaries.elems-2).push('pcop') {
+	    	shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
+		}
     }
 
 }
@@ -340,7 +344,7 @@ sub add-show-ip-in-issue() {
 }
 
 sub shellinabox(Bool $shell, $shell-port) {
-    	my $shellinabox-installed-is=shell("apt list --installed",:out,:err).out.slurp(:close).contains(/shellinabox/).Bool;
+    my $shellinabox-installed-is=shell("apt list --installed",:out,:err).out.slurp(:close).contains(/shellinabox/).Bool;
 	if $shell {
 		if not $shellinabox-installed-is {
 			say "\nInstalling shellinabox as a web service in port $shell-port";
@@ -386,8 +390,8 @@ sub run-post-install-tests(Bool :$deamon = False) {
 0.006 1.0 1.0 
 EOT
 
-        say "Running post-install tests...";
-        "/tmp/zone12.dat".IO.spurt: $data;
+    say "Running post-install tests...";
+    "/tmp/zone12.dat".IO.spurt: $data;
 	my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
 	if $service and $deamon {
 	    my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
@@ -396,10 +400,10 @@ EOT
 	    $result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
 	    say $result;
 	    if $result.contains("zone12, 16") {
-		say "localhost web service works OK";
+			say "localhost web service works OK";
 	    }
 	    else {
-		say "localhost web service error!";
+			say "localhost web service error!";
 	    }
 	}
 	else {
