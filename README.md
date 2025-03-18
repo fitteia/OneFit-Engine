@@ -384,11 +384,19 @@ prompt> diff $HOME/.local/etc/aliases.json $HOME/.local/OneFit-Engine/etc/OFE/de
 
 ## onefite fit using aliases
 
-To take advantage of aliases pelase consider:\
-host_prompt> onefite fit <datafile> alias:"one exponential" \
-host_prompt> onefite fit <datafile> a:"two exponentials" --logx \
-host_prompt> onefite fit <datafile> "alias: one BPP" \
-host_prompt> onefite fit <datafile> "a: two BPP"
+To take advantage of aliases pelase consider:
+```bash
+onefite fit <datafile> alias:"one exponential" 
+```
+```bash
+onefite fit <datafile> a:"two exponentials" --logx 
+```
+```bash
+onefite fit <datafile> "alias: one BPP" 
+```
+```bash
+onefite fit <datafile> "a: two BPP"
+```
  
 
 # OneFit Engine Virtual Machines
@@ -398,58 +406,81 @@ host_prompt> onefite fit <datafile> "a: two BPP"
 ### Windows host running VirtualBox VM, guest NAT with port forwarding
 
 
+```bash
 host_prompt> VBoxManage startvm onefit-e
-
+```
+```bash
 host_prompt> VBoxManage controlvm onefit-e poweroff
 
-host_prompt> ssh ofe@localhost -P 8122
+```
 
+```bash
+ssh ofe@localhost -P 8122
+```
 ### Mac OS host running UTM
 
-host_prompt> echo "/Applications/UTM/Contents/MacOS/" | sudo tee /etc/paths.d/50-UTM && exit
-
-host_prompt> utmctl start onefit-e [--disposable]
-
-host_prompt> utmctl stop onefit-e
-
-Host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/\./ {print $1}')
-
-host_prompt> ssh ofe@$ONEFITE
-
+```bash
+echo "/Applications/UTM/Contents/MacOS/" | sudo tee /etc/paths.d/50-UTM && exit
+```
+```bash
+utmctl start onefit-e [--disposable]
+```
+```bash
+utmctl stop onefit-e
+```
+```bash
+export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/\./ {print $1}')
+```
+```bash
+ssh ofe@$ONEFITE
+```
 ## Running OneFit-Engine as a standalone service in the backgound on a virtual machine
 
 ### Windows running VirtualBox, guest NAT, with port forwarding
 
-host_prompt> VBoxManage startvm onefit-e --type=headless
+```bash
+VBoxManage startvm onefit-e --type=headless
+```
+```bash
+putty.exe -ssh ofe@localhost -P 8122
+```
+```bash
+curl.exe -F "file=@datafile.name" -F "function=..." -F "autox=yes" -F "autoy=yes" -F "logx=yes" -F "download=zip" http://localhost:8142/fit
+```
 
-host_prompt> putty.exe -ssh ofe@localhost -P 8122
+.....
 
-host_prompt> curl.exe -F "file=@datafile.name" -F "function=..." -F "autox=yes" -F "autoy=yes" -F "logx=yes" -F "download=zip" http://localhost:8142/fit
 
-host_prompt> .....
-
-host_prompt> VBoxManage controlvm onefit-e poweroff
-
+```bash
+VBoxManage controlvm onefit-e poweroff
+```
 ### MacOS runnig UTM, guest "shared network"
 
 Edit VM settings and remove Display interface (you can get it back when necessary).
 
-host_prompt> echo "/Applications/UTM/Contents/MacOS/" | sudo tee /etc/paths.d/50-UTM && exit
+```bash
+echo "/Applications/UTM/Contents/MacOS/" | sudo tee /etc/paths.d/50-UTM && exit
+```
+```bash
+utmctl start onefit-e --disposable
+```
+```bash
+utmctl stop onefit-e
+```
+```bash
+export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/\./ {print $1}')
+```
+```bash
+ssh ofe@$ONEFITE
+```
+```bash
+curl.exe -F "file=@datafile.name" -F "function=..." -F "autox=yes" -F "autoy=yes" -F "logx=yes" -F "download=zip" http://$ONEFITE:8142/fit
+```
+....
 
-host_prompt> utmctl start onefit-e --disposable
-
-host_prompt> utmctl stop onefit-e
-
-host_prompt> export ONEFITE=$(/Applications/UTM/Contents/MacOS/utmctl ip-address onefit-e | awk '/\./ {print $1}')
-
-host_prompt> ssh ofe@$ONEFITE
-
-_prompt> curl.exe -F "file=@datafile.name" -F "function=..." -F "autox=yes" -F "autoy=yes" -F "logx=yes" -F "download=zip" http://$ONEFITE:8142/fit
-
-host_prompt> ..
-
-host_prompt> utmctl stop onefit-e
-
+```bash
+utmctl stop onefit-e
+```
 
 # Managing a site git repository in you onefite box
 
@@ -459,27 +490,32 @@ Assuming that your OneFit-Engine.git clone repository is in $HOME/.local/OneFit-
 
 ### First Time
 
-prompt> cd $HOME/.local/OneFit-Engine/C/local && git checkout -b site
-
-prompt> git config user.email "your email" && git config user.name "your name"
-
+```bash
+cd $HOME/.local/OneFit-Engine/C/local && git checkout -b site
+```
+```bash
+git config user.email "your email" && git config user.name "your name"
+```
 (creates a new branch "site" and check it out)
 
 ### Further changes/updates
 
-prompt> cd $HOME/.local/OneFit-Engine/C/local && git checkout site
-
+```bash
+cd $HOME/.local/OneFit-Engine/C/local && git checkout site
+```
 1. Create new model functions using an existing one as a template.\
 2. Edit userlib.h and add your new functions according to existing examples.\
 3: Edit Usrelib.i and add the your functions signatures using the existing ones as examples\don't forget that there two planes in the file where the new functions signatures have to be added.
 4: Edit the META-C.json in the $HOME/.local/OneFit-Engine/C folder to add your new functions info
 
-prompt> git commit -a && git chekout main && git pull & git merge -m "some info" site && onefite upgrade -d --test
-
+```bash
+git commit -a && git chekout main && git pull & git merge -m "some info" site && onefite upgrade -d --test
+```
 or as the last step
 
-propmt> onefite upgrade -systemd-daemon --merge-info="some info"
-
+```bash
+onefite upgrade -systemd-daemon --merge-info="some info"
+```
 
 
 
