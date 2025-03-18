@@ -331,7 +331,25 @@ More examples:
 
 ```bash
 cd $HOME/public_html && unzip $HOME/.local/OneFite-Engine/examples/command-line/test-data/C12-60.zip
-curl -F "file=@C12-60.hdf5" -F "stelar-hdf5=yes" -F "function=Mz(t,a,b,c[0\<0.5],T11[0\<4],T12[0\<4])[-1.5\<1.5] = a\+ b\*c\*exp(-t/T11)\+b*(1-c)*exp(-t/T12)" -F "autox=yes"  -F "logx=yes" http://127.0.0.1:8142/fit 
+curl http://127.0.0.1:8142/fit 			\
+	-F "file=@C12-60.hdf5" 			\
+	-F "stelar-hdf5=yes" 			\
+	-F "function=				\
+		Mz [-1.5\<1.5] (		\
+			t[1e-3<10],		\
+			a,			\
+			b,			\
+			c=1 [0.5\<1],		\
+			T11:0.05 [0\<4],	\
+			T12:0.01 [0\<4]		\
+		)=				\
+		a			\+	\ 
+		b\*c\*exp(-t/T11)	\+	\
+		b*(1-c)*exp(-t/T12)" 		\
+	-F "autox=yes"				\  
+	-F "autoy=yes"				\
+	-F "logx=yes"				\
+	--silent
 ```
 
 Alternatively:
