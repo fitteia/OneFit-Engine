@@ -331,7 +331,8 @@ More examples:
 
 ```bash
 cd $HOME/public_html && unzip $HOME/.local/OneFit-Engine/examples/command-line/test-data/C12-60.zip
-curl http://127.0.0.1:8142/fit/ofe 			\
+
+curl http://127.0.0.1:8142/fit/			\
 	-F "file=@C12-60.hdf5" 			\
 	-F "stelar-hdf5=yes" 			\
 	-F "function=				\
