@@ -129,6 +129,11 @@ Create a user account, ex: ofe
 	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
 	```
 
+	Alternative: install also a web shell access (linuxinabox) and start the onefite daemon that starts the onefite service after system boot and keeps it running
+	```bash
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon --shell && sudo service onefite start
+	```
+
 	***CERN Lib Minuit***
 
 	Since version OneFit-Engine version 0.9.0, Minuit is installed from source in a OneFit-Engine parallel folder minuit OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a installed from source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in that makefile.
