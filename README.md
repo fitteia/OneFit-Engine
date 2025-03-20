@@ -79,7 +79,7 @@ Create a user account, ex: ofe
 	curl -LJO https://rakudo.org/latest/rakudo/src 
 	tar -xvzf rakudo-*.tar.gz 
 	cd rakudo-* 
-	perl Configure.pl --backend=moar --gen-moar --prefix=/opt/rakudo --perl6-home=/usr/local/lib/perl6 
+	perl Configure.pl --backends=moar --gen-moar --prefix=/opt/rakudo --perl6-home=/usr/local/lib/perl6 
 	make
 	```
 	If you wish, you can run the tests (OPTIONAL)\
