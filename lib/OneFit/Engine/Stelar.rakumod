@@ -12,7 +12,7 @@ role Stelar {
 
     multi method path () { $!path }
 
-    multi method filename ($file) { $!stelar- = $file; self }
+    multi method filename ($file) { $!stelar = $file; self }
 
     multi method filename () { $!stelar }
     
