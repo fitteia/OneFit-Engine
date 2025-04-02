@@ -23,7 +23,7 @@ class Stelar-hdf5 does Stelar is export {
 	method Mz (Bool :$Re, Bool :$Im) {
 		my $stelar-hdf5 = self.filename();
 		my $path = self.path();
-		$stelar-hdf5.IO.copy: "$path/$stelar";
+		$stelar-hdf5.IO.copy: "$path/$stelar-hdf5";
 		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @data-files;
 		for ( 1 .. @zones.elems ).race {
