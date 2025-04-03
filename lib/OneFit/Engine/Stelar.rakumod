@@ -125,11 +125,11 @@ class Stelar-sdf does Stelar is export {
 					@m.push: @c[2];
 				}
 	    	}
-			say @r;
+			say @m;
 	    	for (1 .. $ntaus) { 
-				@Re_.push: @r.splice(0,$ntaus).sum/$ntaus;
-				@Im_.push: @i.splice(0,$ntaus).sum/$ntaus;
-				@y.push: @m.splice(0,$ntaus).sum/$ntaus;
+				@Re_.push: @r.splice(0,$BS).sum/$BS;
+				@Im_.push: @i.splice(0,$BS).sum/$BS;
+				@y.push: @m.splice(0,$BS).sum/$BS;
 		   	}
 	    	@y = @y.map({ $_ / @y.max }) if !$Re and !$Im;
 	    	@y = @Re_.map({ $_ / @Re_.max }) if $Re;
