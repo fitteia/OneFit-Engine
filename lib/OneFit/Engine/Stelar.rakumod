@@ -98,10 +98,10 @@ class Stelar-sdf does Stelar is export {
 		say "$taui $tauf $ntaus";
 		my @data-files;
 		for ( 1 .. @zones.elems ).race {
-			say $_;
 			my $buf=@zones[$_];
 			my $index=$buf.words.head.subst('.','_');
-	    	my $datafile = "zone{$index}.dat";
+	    	say $index;
+			my $datafile = "zone{$index}.dat";
 			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/).words.head.Rat;
 	    	my $header = "# DATA dum = " ~
 				$buf.split(/BR <ws> '=' <ws>/).words.head.Rat * 1e6
@@ -125,6 +125,7 @@ class Stelar-sdf does Stelar is export {
 					@m.push: @c[2];
 				}
 	    	}
+			say @r;
 	    	for (1 .. $ntaus) { 
 				@Re_.push: @r.splice(0,$ntaus).sum/$ntaus;
 				@Im_.push: @i.splice(0,$ntaus).sum/$ntaus;
