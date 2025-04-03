@@ -127,13 +127,13 @@ class Stelar-sdf does Stelar is export {
 	    	}
 			say @m;
 	    	for (1 .. $ntaus) { 
-				@Re_.push: @r.Array.splice(0,$BS).sum/$BS;
-				@Im_.push: @i.Array.splice(0,$BS).sum/$BS;
-				@y.push: @m.Array.splice(0,$BS).sum/$BS;
+				@Re_.push: @r.splice(0,$BS.Int).sum/$BS;
+				@Im_.push: @i.splice(0,$BS.Int).sum/$BS;
+				@y.push: @m.splice(0,$BS.Int).sum/$BS;
 		   	}
-	    	@y = @y.Array.map({ $_ / @y.max }) if !$Re and !$Im;
-	    	@y = @Re_.Array.map({ $_ / @Re_.max }) if $Re;
-	    	@y = @Im_.Array.map({ $_ / @Im_.max }) if $Im;
+	    	@y = @y.map({ $_ / @y.max }) if !$Re and !$Im;
+	    	@y = @Re_.map({ $_ / @Re_.max }) if $Re;
+	    	@y = @Im_.map({ $_ / @Im_.max }) if $Im;
 	    	my @err = (1 .. @x.elems).map({1});
 
 	    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
