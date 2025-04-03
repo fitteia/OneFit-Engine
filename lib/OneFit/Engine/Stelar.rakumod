@@ -88,14 +88,11 @@ class Stelar-sdf does Stelar is export {
 	    my $buf = $stelar-sdf.IO.slurp(:close);
 		my @zones = $buf.split(/ZONE/);
 		my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
-		say $BS;
 		my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.trans([ "[", "]" ] => "").split(':');
-		say @aux;
 		@aux.shift;
 		my $tauf = @aux.shift.subst('*T1MAX','').Rat;
 		my $taui = @aux.shift.subst('*T1MAX','').Rat;
 		my $ntaus = @aux.tail;
-		say "$taui $tauf $ntaus";
 		my @data-files;
 		for ( 1 ..^ @zones.elems ).race {
 			my $buf=@zones[$_];
@@ -110,7 +107,7 @@ class Stelar-sdf does Stelar is export {
 				~
 				$T1MAX;	
 
-			my @x = (0 ..^$ntaus).map({ $taui*$T1MAX * ($tauf/$taui) ** ($_/$ntaus) });
+			my @x = (0 ..^$ntaus).map({ 1e-6 * $taui * $T1MAX * ($tauf/$taui) ** ($_/$ntaus) });
 	    	my @Re_;
 	    	my @Im_;
 			my @y;
