@@ -112,9 +112,9 @@ class Stelar-sdf does Stelar is export {
 	    	my @Im_;
 			my @y;
 	    	for $buf.lines {
-				if $_.contains(/^'-'?\d+/){
+				if $_.contains(/^'-'?\d+/) {
 					my @c = $_.words;
-					@Re_.push: @c[0];
+					]Re_.push: @c[0];
 					@Im_.push: @c[1];
 					@y.push: @c[2];
 				}
