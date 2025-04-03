@@ -98,6 +98,7 @@ class Stelar-sdf does Stelar is export {
 		say "$taui $tauf $ntaus";
 		my @data-files;
 		for ( 1 .. @zones.elems ).race {
+			say $_;
 			my $buf=@zones[$_];
 			my $index=$buf.words.head.subst('.','_');
 	    	say $index;
