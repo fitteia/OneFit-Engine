@@ -48,7 +48,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
             onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
@@ -238,6 +238,9 @@ multi MAIN ('start-web-engine',
 		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes">/<input name="autoxy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="logx" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="logy" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sdf: </td><td><input name="stelar-sdf" type="radio" value="yes">/<input name="stelar-hdf5" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sdf-Re: </td><td><input name="stelar-sdf-Re" type="radio" value="yes">/<input name="stelar-hdf5-Re" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sdf-Im: </td><td><input name="stelar-sdf-Im" type="radio" value="yes">/<input name="stelar-hdf5-Im" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-hdf5: </td><td><input name="stelar-hdf5" type="radio" value="yes">/<input name="stelar-hdf5" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-hdf5-Re: </td><td><input name="stelar-hdf5-Re" type="radio" value="yes">/<input name="stelar-hdf5-Re" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-hdf5-Im: </td><td><input name="stelar-hdf5-Im" type="radio" value="yes">/<input name="stelar-hdf5-Im" type="radio" value="no" checked="checked"></td></tr>
@@ -315,6 +318,9 @@ HTML
 		my $logx= "";
 		my $logy= "";
 		my $global="";
+		my $stelar-sdf = "";
+		my $stelar-sdf-Re = "";
+		my $stelar-sdf-Im = "";
 		my $stelar-hdf5 = "";
 		my $stelar-hdf5-Re = "";
 		my $stelar-hdf5-Im = "";
@@ -341,6 +347,9 @@ HTML
 		       $autoxy     	      = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
 		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
+			   $stelar-sdf           = "--stelar-sdf  " if $k eq "stelar-sdf" and $v eq any("yes",1);
+		       $stelar-sdf-Re        = "--stelar-sdf-Re  " if $k eq "stelar-sdf-Re" and $v eq any("yes",1);
+		       $stelar-sdf-Im        = "--stelar-sdf-Im  " if $k eq "stelar-sdf-Im" and $v eq any("yes",1);
 		       $stelar-hdf5           = "--stelar-hdf5  " if $k eq "stelar-hdf5" and $v eq any("yes",1);
 		       $stelar-hdf5-Re        = "--stelar-hdf5-Re  " if $k eq "stelar-hdf5-Re" and $v eq any("yes",1);
 		       $stelar-hdf5-Im        = "--stelar-hdf5-Im  " if $k eq "stelar-hdf5-Im" and $v eq any("yes",1);
@@ -366,8 +375,8 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
-		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
 		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
@@ -477,22 +486,22 @@ multi MAIN ('start-engine',
 	    $f.IO.move("$work-folder/$name/$file");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
 	    if $cmd ~~ /plot/ {
-		my $time = now;
-		say "start plotting $file";
-		$engine.plot;
-		say "finished plotting $file:", now - $time;
+			my $time = now;
+			say "start plotting $file";
+			$engine.plot;
+			say "finished plotting $file:", now - $time;
 	    }
 	    elsif $cmd ~~ /only/ {
-		my $time = now;
-		say "start fitting $file";
-		$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
-		say "finished fitting $file:", now - $time;
+			my $time = now;
+			say "start fitting $file";
+			$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
+			say "finished fitting $file:", now - $time;
 	    }
 	    else {
-		my $time = now;
-		say "start fitting $file";
-		$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
-		say "finished fitting $file:", now - $time;
+			my $time = now;
+			say "start fitting $file";
+			$engine.fit(:no-plot($no-plot),:quiet($quiet)).save("$work-folder/$name/$name" ~ "-fit.json");
+			say "finished fitting $file:", now - $time;
 	    }
 	    zip-fit($engine,$work-folder,$name);
 	}
@@ -526,6 +535,9 @@ multi MAIN  ('create',
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
+	     Bool :$stelar-sdf  = False,
+	     Bool :$stelar-sdf-Re  = False,
+	     Bool :$stelar-sdf-Im  = False,
 	     Bool :$stelar-hdf5 = False,
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
@@ -541,31 +553,27 @@ multi MAIN  ('create',
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 
     if any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool,$stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im) {
-	@data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
-			 Stelar-hdf5.new.path("$work-folder").filename(@data-files[0]).R1(err => $stelar-hdf5-R1-err)
-			 !!
-			 Stelar-hdf5.new.path("$work-folder").filename(@data-files[0]).Mz;
-    }
-    
-    if any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool,$stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im) {
-	@data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
+		@data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-hdf5-R1-err)
 			 !!
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-hdf5-Re),:Im($stelar-hdf5-Im));
     }
-    else {
-	my @files=();
-	for @data-files {
-	    if $_.IO.extension.Str ~~ /zip/ {
-		shell "unzip $_ -d $work-folder/$name";
-		@files.push: "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort.Slip;
-	    }
-	    else {
-		@files.push: $_;
-		$_.IO.copy("$work-folder/$name/$_")
-	    }
+	elsif any($stelar-sdf,$stelar-sdf-Re,$stelar-sdf-Im) {
+		@data-files = Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-sdf-Re),:Im($stelar-sdf-Im));
 	}
-	@data-files= @files;
+    else {
+		my @files=();
+		for @data-files {
+	    	if $_.IO.extension.Str ~~ /zip/ {
+				shell "unzip $_ -d $work-folder/$name";
+				@files.push: "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort.Slip;
+	    	}
+	    	else {
+				@files.push: $_;
+				$_.IO.copy("$work-folder/$name/$_")
+	    	}
+		}
+		@data-files= @files;
     }
 
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
