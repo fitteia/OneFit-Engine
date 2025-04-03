@@ -78,3 +78,58 @@ class Stelar-hdf5 does Stelar is export {
     }
 
 }
+
+class Stelar-sdf does Stelar is export {
+    
+	method Mz (Bool :$Re, Bool :$Im) {
+		my $stelar-sdf = self.filename();
+		my $path = self.path();
+		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
+	    my $buf = $stelar-sdf.IO.slurp(:close);
+		my @zones = $buf.split(/ZONE/);
+		my $BS = @zones[0].split(/BS <ws> = <ws>/)[1].words.head.Rat;
+		say $BS;
+		my @aux = @zones[0].split(/TAU <ws> = <ws>/)[1].words.head.subst(/'['|']'/,'':g).split(':');
+		my $tauf = @aux.splice(0,1).subst('*T1MAX','').Num;
+		my $taui = @aux.splice(0,1).subst('*T1MAX','').Num;
+		my $ntaus = @aux.tail;
+		say "$taui $tauf $ntaus";
+		my @data-files;
+		for ( 1 .. @zones.elems ).race {
+			my $buf=@zones[$_];
+			my $index=$buf.words.head.subst('.','_');
+	    	my $datafile = "zone{$index}.dat";
+			my $T1MAX =	$buf.split(/T1MAX <ws> = <ws>/).words.head.Rat;
+	    	my $header = "# DATA dum = " ~
+				$buf.split(/BR <ws> = <ws>/).words.head.Rat * 1e6;;
+				~
+				"\n# TAG = zone{$index}\n# T1MAX = "
+				~
+				$T1MAX;	
+
+			my @x = (0 ..^$ntaus).map({ $taui*$T1MAX * ($tauf/$taui) ** ($_/$ntaus) });
+	    	my @Re_;
+	    	my @Im_;
+			my @y;
+	    	for $buf.lines {
+				if $_.contains(/^'-'?\d+/){
+					my @c = $_.words;
+					@Re_.push: @c[0);
+					@Im_.push: @c[1];
+					@y.push: @c[2];
+				}
+	    	}
+	    
+	    	@y = @y.map({ $_ / @y.max }) if !$Re and !$Im;
+	    	@y = @Re_.map({ $_ / @Re_.max }) if $Re;
+	    	@y = @Im_.map({ $_ / @Im_.max }) if $Im;
+	    	my @err = (1 .. @x.elems).map({1});
+
+	    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
+	    	@data-files.push: $datafile;
+		}
+		"$path/$stelar-sdf".IO.unlink;
+		return @data-files;
+    }
+
+}

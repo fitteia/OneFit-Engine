@@ -654,6 +654,9 @@ multi MAIN  ('fit',
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
+	     Bool :$stelar-sdf  = False,
+	     Bool :$stelar-sdf-Re  = False,
+	     Bool :$stelar-sdf-Im  = False,
 	     Bool :$stelar-hdf5 = False,
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
@@ -666,47 +669,50 @@ multi MAIN  ('fit',
 	    ){
     my $name = "ofe-tmp";
     if $zip-to.Bool {
-	$name = $zip-to.subst(/\.zip/,'',:g);
+		$name = $zip-to.subst(/\.zip/,'',:g);
     }
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
     
     if any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool,$stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im) {
-	@data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
+		@data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-hdf5-R1-err)
 			 !!
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-hdf5-Re),:Im($stelar-hdf5-Im));
     }
-    else {
-	my @files=();
-	for @data-files {
-	    if $_.IO.extension.Str ~~ /zip/ {
-		shell "unzip $_ -d $work-folder/$name";
-		@files.push: "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort.Slip;
-	    }
-	    else {
-		if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
-			my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
-			for (1 ..^ @blocks.elems) -> $i {
-				my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
-				$file-name = $_ unless @blocks.elems > 2;
-				@files.push: $file-name; 
-				"$work-folder/$name/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
-			}	 
-		}
-		else {	
-		    @files.push: $_;
-		    $_.IO.copy("$work-folder/$name/$_")
-		}
-	    }
+	elsif any($stelar-sdf,$stelar-sdf-Re,$stelar-sdf-Im) {
+		@data-files = Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-sdf-Re),:Im($stelar-sdf-Im));
 	}
-	@data-files= @files;
+    else {
+		my @files=();
+		for @data-files {
+	    	if $_.IO.extension.Str ~~ /zip/ {
+				shell "unzip $_ -d $work-folder/$name";
+				@files.push: "$work-folder/$name".IO.dir>>.Str.map({ $_.subst("$work-folder/$name/",'')  }).sort.Slip;
+	    	}
+	    	else {
+				if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
+					my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
+					for (1 ..^ @blocks.elems) -> $i {
+						my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
+						$file-name = $_ unless @blocks.elems > 2;
+						@files.push: $file-name; 
+						"$work-folder/$name/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
+					}		 
+				}	
+				else {	
+		    		@files.push: $_;
+		    		$_.IO.copy("$work-folder/$name/$_")
+				}
+	    	}
+		}
+		@data-files= @files;
     }
     my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     if $function.contains(/^a\w*  <ws> ':' <ws>/) { 
-	my $falias = %aliases{ $function.subst(/a\w*\s*':'\s*/,'').subst(/\s+/,' ') };
-	if so $falias { $function = $falias }
-	else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
+		my $falias = %aliases{ $function.subst(/a\w*\s*':'\s*/,'').subst(/\s+/,' ') };
+		if so $falias { $function = $falias }
+		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
     }
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
