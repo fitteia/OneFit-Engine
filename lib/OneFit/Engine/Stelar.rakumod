@@ -108,7 +108,7 @@ class Stelar-sdf does Stelar is export {
 
 			my @x;
 			if $type eq "log" { @x = (0 ..^$ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/$ntaus) }) }
-			else { @x = (1 .. $ntaus).map({ $taui + ($tauf - $taui) * ($_ - 1)/($ntaus-1)  * $T1MAX) }) }
+			else { @x = (1 .. $ntaus).map({ ($taui + ($tauf - $taui) * ($_ - 1)/($ntaus - 1) ) * $T1MAX }) }
 	    	my @Re_;
 	    	my @Im_;
 			my @y;
