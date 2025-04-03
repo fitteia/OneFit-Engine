@@ -89,7 +89,7 @@ class Stelar-sdf does Stelar is export {
 		my @zones = $buf.split(/ZONE/);
 		my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
 		say $BS;
-		my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.subst(/'['|']'/,"":g).split(':');
+		my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.trans(["[" | "]"] => "").split(':');
 		my $tauf = @aux.splice(0,1).subst('*T1MAX','').Num;
 		my $taui = @aux.splice(0,1).subst('*T1MAX','').Num;
 		my $ntaus = @aux.tail;
