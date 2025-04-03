@@ -102,9 +102,9 @@ class Stelar-sdf does Stelar is export {
 			my $index=$buf.words.head.subst('.','_');
 	    	say $index;
 			my $datafile = "zone{$index}.dat";
-			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/).words[1].Rat;
+			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat;
 	    	my $header = "# DATA dum = " ~
-				$buf.split(/BR <ws> '=' <ws>/).words[1].Rat * 1e6
+				$buf.split(/BR <ws> '=' <ws>/)i[1].words.head.Rat * 1e6
 				~
 				"\n# TAG = zone{$index}\n# T1MAX = "
 				~
