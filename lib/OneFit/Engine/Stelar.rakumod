@@ -97,8 +97,7 @@ class Stelar-sdf does Stelar is export {
 		my $ntaus = @aux.tail;
 		say "$taui $tauf $ntaus";
 		my @data-files;
-		for ( 1 .. @zones.elems ).race {
-			say $_;
+		for ( 1 ..^ @zones.elems ).race {
 			my $buf=@zones[$_];
 			my $index=$buf.words.head.subst('.','_');
 	    	say $index;
@@ -126,7 +125,6 @@ class Stelar-sdf does Stelar is export {
 					@m.push: @c[2];
 				}
 	    	}
-			say @m;
 	    	for (1 .. $ntaus) { 
 				@Re_.push: @r.splice(0,$BS.Int).sum/$BS;
 				@Im_.push: @i.splice(0,$BS.Int).sum/$BS;
