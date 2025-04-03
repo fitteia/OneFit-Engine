@@ -98,12 +98,13 @@ class Stelar-sdf does Stelar is export {
 		say "$taui $tauf $ntaus";
 		my @data-files;
 		for ( 1 .. @zones.elems ).race {
+			say $_;
 			my $buf=@zones[$_];
 			my $index=$buf.words.head.subst('.','_');
 	    	my $datafile = "zone{$index}.dat";
 			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/).words.head.Rat;
 	    	my $header = "# DATA dum = " ~
-				$buf.split(/BR <ws> '=' <ws>/).words.head.Rat * 1e6;;
+				$buf.split(/BR <ws> '=' <ws>/).words.head.Rat * 1e6
 				~
 				"\n# TAG = zone{$index}\n# T1MAX = "
 				~
@@ -113,15 +114,22 @@ class Stelar-sdf does Stelar is export {
 	    	my @Re_;
 	    	my @Im_;
 			my @y;
+			my @r;
+			my @i;
+			my @m;
 	    	for $buf.lines {
 				if $_.contains(/^'-'?\d+/) {
 					my @c = $_.words;
-					@Re_.push: @c[0];
-					@Im_.push: @c[1];
-					@y.push: @c[2];
+					@r.push: @c[0];
+					@i.push: @c[1];
+					@m.push: @c[2];
 				}
 	    	}
-	    
+	    	for (1 .. $ntaus) { 
+				@Re_.push: @r.splice(0,$ntaus).sum/$ntaus;
+				@Im.push: @i.splice(0,$ntaus).sum/$ntaus;
+				@y.push: @m.splice(0,$ntaus).sum/$ntaus;
+		   	}
 	    	@y = @y.map({ $_ / @y.max }) if !$Re and !$Im;
 	    	@y = @Re_.map({ $_ / @Re_.max }) if $Re;
 	    	@y = @Im_.map({ $_ / @Im_.max }) if $Im;
