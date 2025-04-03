@@ -99,7 +99,7 @@ class Stelar-sdf does Stelar is export {
 			my $index=$buf.words.head.subst('.','_');
 	    	say $index;
 			my $datafile = "zone{$index}.dat";
-			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat;
+			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
 	    	my $header = "# DATA dum = " ~
 				$buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6
 				~
@@ -107,7 +107,7 @@ class Stelar-sdf does Stelar is export {
 				~
 				$T1MAX;	
 
-			my @x = (0 ..^$ntaus).map({ 1e-6 * $taui * $T1MAX * ($tauf/$taui) ** ($_/$ntaus) });
+			my @x = (0 ..^$ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/$ntaus) });
 	    	my @Re_;
 	    	my @Im_;
 			my @y;
