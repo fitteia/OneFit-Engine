@@ -89,7 +89,7 @@ class Stelar-sdf does Stelar is export {
 		my @zones = $buf.split(/ZONE/);
 		my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
 		my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.trans([ "[", "]" ] => "").split(':');
-		@aux.shift;
+		my $type = @aux.shift;
 		my $tauf = @aux.shift.subst('*T1MAX','').Rat;
 		my $taui = @aux.shift.subst('*T1MAX','').Rat;
 		my $ntaus = @aux.tail;
@@ -97,7 +97,6 @@ class Stelar-sdf does Stelar is export {
 		for ( 1 ..^ @zones.elems ).race {
 			my $buf=@zones[$_];
 			my $index=$buf.words.head.subst('.','_');
-	    	say $index;
 			my $datafile = "zone{$index}.dat";
 			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
 	    	my $header = "# DATA dum = " ~
@@ -107,7 +106,9 @@ class Stelar-sdf does Stelar is export {
 				~
 				$T1MAX;	
 
-			my @x = (0 ..^$ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/$ntaus) });
+			my @x;
+			if $type eq "log" { @x = (0 ..^$ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/$ntaus) }) }
+			else { @x = (1 .. $ntaus).map({ $taui + ($tauf - $taui) * ($_ - 1)/($ntaus-1)  * $T1MAX) }) }
 	    	my @Re_;
 	    	my @Im_;
 			my @y;
