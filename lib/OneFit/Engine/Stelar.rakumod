@@ -87,9 +87,9 @@ class Stelar-sdf does Stelar is export {
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
 	    my $buf = $stelar-sdf.IO.slurp(:close);
 		my @zones = $buf.split(/ZONE/);
-		my $BS = @zones[0].split(/BS <ws> = <ws>/)[1].words.head.Rat;
+		my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
 		say $BS;
-		my @aux = @zones[0].split(/TAU <ws> = <ws>/)[1].words.head.subst(/'['|']'/,'':g).split(':');
+		my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.subst(/'['|']'/,'':g).split(':');
 		my $tauf = @aux.splice(0,1).subst('*T1MAX','').Num;
 		my $taui = @aux.splice(0,1).subst('*T1MAX','').Num;
 		my $ntaus = @aux.tail;
@@ -99,9 +99,9 @@ class Stelar-sdf does Stelar is export {
 			my $buf=@zones[$_];
 			my $index=$buf.words.head.subst('.','_');
 	    	my $datafile = "zone{$index}.dat";
-			my $T1MAX =	$buf.split(/T1MAX <ws> = <ws>/).words.head.Rat;
+			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/).words.head.Rat;
 	    	my $header = "# DATA dum = " ~
-				$buf.split(/BR <ws> = <ws>/).words.head.Rat * 1e6;;
+				$buf.split(/BR <ws> '=' <ws>/).words.head.Rat * 1e6;;
 				~
 				"\n# TAG = zone{$index}\n# T1MAX = "
 				~
