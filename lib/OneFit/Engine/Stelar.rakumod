@@ -80,7 +80,6 @@ class Stelar-hdf5 does Stelar is export {
 }
 
 class Stelar-sdf does Stelar is export {
-    
 	method Mz (Bool :$Re, Bool :$Im) {
 		my $stelar-sdf = self.filename();
 		my $path = self.path();
@@ -102,34 +101,20 @@ class Stelar-sdf does Stelar is export {
 	    	my $header = "# DATA dum = " ~
 				$buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6
 				~
-				"\n# TAG = zone{$index}\n# T1MAX = ";
+				"\n# TAG = zone{$index}\n";
 
 			my @x;
+			my @y;
+			my @m;
 			if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/($ntaus-1)) }) }
 			else { @x = (0 ..^ $ntaus).map({ ($taui + ($tauf - $taui) * $_/($ntaus - 1) ) * $T1MAX }) }
-	    	my @Re_;
-	    	my @Im_;
-			my @y;
-			my @r;
-			my @i;
-			my @m;
+
 			@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
-			#	    	for $buf.lines {
-				#	if $_.contains(/^'-'?\d+/) {
-					#	my @c = $_.words;
-					#@r.push: @c[0];
-					#@i.push: @c[1];
-					#@m.push: @c[2];
-					#}
-					#}
+
 	    	for (1 .. $ntaus) { 
-				@Re_.push: @r.splice(0,$BS.Int).sum/$BS;
-				@Im_.push: @i.splice(0,$BS.Int).sum/$BS;
 				@y.push: @m.splice(0,$BS.Int).sum/$BS;
 		   	}
-	    	@y = @y.map({ $_ / @y.max }) if !$Re and !$Im;
-	    	@y = @Re_.map({ $_ / @Re_.max }) if $Re;
-	    	@y = @Im_.map({ $_ / @Im_.max }) if $Im;
+	    	@y = @y.map({ $_ / @y.max });
 	    	my @err = (1 .. @x.elems).map({1});
 
 	    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
@@ -139,4 +124,10 @@ class Stelar-sdf does Stelar is export {
 		return @data-files;
     }
 
+    method R1 (Rat :$err) {
+		my $stelar-sdf = self.filename();
+		my @R1 = gather for $stela-sdf.IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\d+/) } .map({ [$_[0]*1e6,$_[1]] }).Array;
+		$stelar-sdf.IO.extension('dat').spurt:  @R1.join("\n") ~ "\n\n";
+		return $stelar-sdf.IO.extension('dat').Str;
+    }
 }
