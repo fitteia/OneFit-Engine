@@ -538,6 +538,7 @@ multi MAIN  ('create',
 	     Bool :$stelar-sdf  = False,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
+	     Rat  :$stelar-sdf-R1-err,
 	     Bool :$stelar-hdf5 = False,
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
@@ -558,10 +559,11 @@ multi MAIN  ('create',
 			 !!
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-hdf5-Re),:Im($stelar-hdf5-Im));
     }
-	elsif any($stelar-sdf,$stelar-sdf-Re,$stelar-sdf-Im) {
-		@data-files = Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-sdf-Re),:Im($stelar-sdf-Im));
-	}
-    else {
+	elsif any($stelar-sdf,$stelar-sdf-R1,$stelar-sdf-R1-err.Bool,$stelar-sdf-Re,$stelar-sdf-Im) {
+		@data-files = any($stelar-sdf-R1,$stelar-sdf-R1-err.Bool) ?? 
+			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-sdf-R1-err)) 
+			!! 
+			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-sdf-Re),:Im($stelar-sdf-Im));
 		my @files=();
 		for @data-files {
 	    	if $_.IO.extension.Str ~~ /zip/ {
@@ -665,6 +667,7 @@ multi MAIN  ('fit',
 	     Bool :$stelar-sdf  = False,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
+	     Rat  :$stelar-sdf-R1-err,
 	     Bool :$stelar-hdf5 = False,
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
@@ -688,8 +691,11 @@ multi MAIN  ('fit',
 			 !!
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-hdf5-Re),:Im($stelar-hdf5-Im));
     }
-	elsif any($stelar-sdf,$stelar-sdf-Re,$stelar-sdf-Im) {
-		@data-files = Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-sdf-Re),:Im($stelar-sdf-Im));
+	elsif any($stelar-sdf,i$stelar-sdf-R1,$stelar-sdf-R1-err.Bool,$stelar-sdf-Re,$stelar-sdf-Im) {
+		@data-files = any($stelar-sdf-R1,$stelar-sdf-R1-err.Bool) ?? 
+			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-sdf-R1-err)) 
+			!! 
+			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-sdf-Re),:Im($stelar-sdf-Im));
 	}
     else {
 		my @files=();
