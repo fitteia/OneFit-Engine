@@ -127,7 +127,7 @@ class Stelar-sdf does Stelar is export {
     method R1 (Rat :$err) {
 		my $stelar-sdf = self.filename();
 		my @R1 = gather for $stelar-sdf.IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\d+/) } .map({ [$_[0]*1e6,$_[1]] }).Array;
-		$stelar-sdf.IO.extension('dat').spurt:  @R1.join("\n") ~ "\n\n";
+		$stelar-sdf.IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1] * (($err.Bool) ?? $err !! 0.05)  })).join("\n") ~ "\n\n";
 		return $stelar-sdf.IO.extension('dat').Str;
     }
 }
