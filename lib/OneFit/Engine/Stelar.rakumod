@@ -62,18 +62,20 @@ class Stelar-hdf5 does Stelar is export {
 
     method R1 (Rat :$err) {
 		my $stelar-hdf5 = self.filename();
-		my @zones = gather for shell("h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
+		my $path = self.path;
+		$stelar-hdf5.IO.copy: "$path/$stelar-hdf5";
+		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @BR;
 		my @R1;
 		for @zones.hyper {
-	    	for shell("h5dump -d $_ $stelar-hdf5",:out).out.slurp(:close) {
+	    	for shell("cd $path && h5dump -d $_ $stelar-hdf5",:out).out.slurp(:close) {
 				my @c = $_.split: "ATTRIBUTE";
 				@c = gather for @c { take $_  if $_.contains(/'"BR"'|'"R1"'/) }
 				@BR.push: @c[0].split('(0):')[1].words.head;
 				@R1.push: @c[1].split('(0):')[1].words.head;
 	    	}
 		}
-		$stelar-hdf5.IO.extension('dat').spurt:  (@BR.map({ $_ * 1e6 }) Z @R1 Z @R1.map({ $_ * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
+		"$path/$stelar-hdf5".IO.extension('dat').spurt:  (@BR.map({ $_ * 1e6 }) Z @R1 Z @R1.map({ $_ * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
@@ -126,8 +128,10 @@ class Stelar-sdf does Stelar is export {
 
     method R1 (Rat :$err) {
 		my $stelar-sdf = self.filename();
-		my @R1 = gather for $stelar-sdf.IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\d+/) } .map({ [$_[0]*1e6,$_[1]] }).Array;
-		$stelar-sdf.IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1] * (($err.Bool) ?? $err !! 0.05)  })).join("\n") ~ "\n\n";
+		my $path = self.path();
+		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
+		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\d+/) } .map({ [$_[0]*1e6,$_[1]] }).Array;
+		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1] * (($err.Bool) ?? $err !! 0.05)  })).join("\n") ~ "\n\n";
 		return $stelar-sdf.IO.extension('dat').Str;
     }
 }
