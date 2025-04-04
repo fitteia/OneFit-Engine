@@ -39,7 +39,7 @@ class Stelar-hdf5 does Stelar is export {
 	    	}
 	    	my $datafile = "zone{$_}.dat";
 	    	my $header = "# DATA dum = " ~
-				$buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6
+				($buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6).round(0.0001)
 				~
 				"\n# TAG = zone{$_}\n# R1 = "
 				~
@@ -75,7 +75,7 @@ class Stelar-hdf5 does Stelar is export {
 				@R1.push: @c[1].split('(0):')[1].words.head;
 	    	}
 		}
-		"$path/$stelar-hdf5".IO.extension('dat').spurt:  (@BR.map({ $_.Num * 1e6 }) Z @R1 Z @R1.map({ $_.Num * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
+		"$path/$stelar-hdf5".IO.extension('dat').spurt:  (@BR.map({ ($_.Num * 1e6).round(0.0001) }) Z @R1 Z @R1.map({ $_.Num * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
@@ -101,7 +101,7 @@ class Stelar-sdf does Stelar is export {
 			my $datafile = "zone{$index}.dat";
 			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
 	    	my $header = "# DATA dum = " ~
-				$buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6
+				($buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6).round(0.0001)
 				~
 				"\n# TAG = zone{$index}";
 
