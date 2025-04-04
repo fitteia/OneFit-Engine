@@ -101,7 +101,7 @@ class Stelar-sdf does Stelar is export {
 	    	my $header = "# DATA dum = " ~
 				$buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6
 				~
-				"\n# TAG = zone{$index}\n";
+				"\n# TAG = zone{$index}";
 
 			my @x;
 			my @y;
