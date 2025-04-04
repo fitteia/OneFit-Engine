@@ -107,7 +107,7 @@ class Stelar-sdf does Stelar is export {
 				$T1MAX;	
 
 			my @x;
-			if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/$ntaus) }) }
+			if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/($ntaus-1)) }) }
 			else { @x = (0 ..^ $ntaus).map({ ($taui + ($tauf - $taui) * $_/($ntaus - 1) ) * $T1MAX }) }
 	    	my @Re_;
 	    	my @Im_;
@@ -115,6 +115,7 @@ class Stelar-sdf does Stelar is export {
 			my @r;
 			my @i;
 			my @m;
+			@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
 	    	for $buf.lines {
 				if $_.contains(/^'-'?\d+/) {
 					my @c = $_.words;
