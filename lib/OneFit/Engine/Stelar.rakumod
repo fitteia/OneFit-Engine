@@ -102,9 +102,7 @@ class Stelar-sdf does Stelar is export {
 	    	my $header = "# DATA dum = " ~
 				$buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6
 				~
-				"\n# TAG = zone{$index}\n# T1MAX = "
-				~
-				$T1MAX;	
+				"\n# TAG = zone{$index}\n# T1MAX = ";
 
 			my @x;
 			if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/($ntaus-1)) }) }
@@ -116,14 +114,14 @@ class Stelar-sdf does Stelar is export {
 			my @i;
 			my @m;
 			@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
-	    	for $buf.lines {
-				if $_.contains(/^'-'?\d+/) {
-					my @c = $_.words;
-					@r.push: @c[0];
-					@i.push: @c[1];
-					@m.push: @c[2];
-				}
-	    	}
+			#	    	for $buf.lines {
+				#	if $_.contains(/^'-'?\d+/) {
+					#	my @c = $_.words;
+					#@r.push: @c[0];
+					#@i.push: @c[1];
+					#@m.push: @c[2];
+					#}
+					#}
 	    	for (1 .. $ntaus) { 
 				@Re_.push: @r.splice(0,$BS.Int).sum/$BS;
 				@Im_.push: @i.splice(0,$BS.Int).sum/$BS;
