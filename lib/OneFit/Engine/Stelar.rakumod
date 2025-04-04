@@ -75,7 +75,7 @@ class Stelar-hdf5 does Stelar is export {
 				@R1.push: @c[1].split('(0):')[1].words.head;
 	    	}
 		}
-		"$path/$stelar-hdf5".IO.extension('dat').spurt:  (@BR.map({ $_ * 1e6 }) Z @R1 Z @R1.map({ $_ * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
+		"$path/$stelar-hdf5".IO.extension('dat').spurt:  (@BR.map({ $_.Num * 1e6 }) Z @R1 Z @R1.map({ $_.Num * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
@@ -130,8 +130,8 @@ class Stelar-sdf does Stelar is export {
 		my $stelar-sdf = self.filename();
 		my $path = self.path();
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
-		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\d+/) } .map({ [+$_[0] * 1e6,$_[1]] }).Array;
-		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1] * (($err.Bool) ?? $err !! 0.05)  })).join("\n") ~ "\n\n";
+		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\d+/) } .map({ [$_[0].Num * 1e6,$_[1]] }).Array;
+		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1].Num * (($err.Bool) ?? $err !! 0.05)  })).join("\n") ~ "\n\n";
 		return $stelar-sdf.IO.extension('dat').Str;
     }
 }
