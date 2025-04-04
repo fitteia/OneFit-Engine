@@ -239,10 +239,10 @@ multi MAIN ('start-web-engine',
 		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="logx" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="logy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-sdf: </td><td><input name="stelar-sdf" type="radio" value="yes">/<input name="stelar-hdf5" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-sdf-Re: </td><td><input name="stelar-sdf-Re" type="radio" value="yes">/<input name="stelar-hdf5-Re" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-sdf-Im: </td><td><input name="stelar-sdf-Im" type="radio" value="yes">/<input name="stelar-hdf5-Im" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-sdf-R1: </td><td><input name="stelar-hdf5-R1" type="radio" value="yes">/<input name="stelar-hdf5-R1" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-sdf-R1-err: </td><td><input name="stelar-hdf5-R1-err" type="text" value="">(float number)</td></tr>
+		       <tr><td>stelar-sdf-Re: </td><td><input name="stelar-sdf-Re" type="radio" value="yes">/<input name="stelar-sdf-Re" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sdf-Im: </td><td><input name="stelar-sdf-Im" type="radio" value="yes">/<input name="stelar-sdf-Im" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sdf-R1: </td><td><input name="stelar-sdf-R1" type="radio" value="yes">/<input name="stelar-sdf-R1" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sdf-R1-err: </td><td><input name="stelar-sdf-R1-err" type="text" value="">(float number)</td></tr>
 		       <tr><td>stelar-hdf5: </td><td><input name="stelar-hdf5" type="radio" value="yes">/<input name="stelar-hdf5" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-hdf5-Re: </td><td><input name="stelar-hdf5-Re" type="radio" value="yes">/<input name="stelar-hdf5-Re" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-hdf5-Im: </td><td><input name="stelar-hdf5-Im" type="radio" value="yes">/<input name="stelar-hdf5-Im" type="radio" value="no" checked="checked"></td></tr>
