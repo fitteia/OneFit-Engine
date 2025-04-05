@@ -46,9 +46,9 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite help <model> [-q|--quiet]
 	    onefite help <model> <key>] [-q|--quiet]
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-            onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sdf-R1] [--stelar-sdf-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sdf-R1] [--stelar-sdf-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
@@ -241,8 +241,8 @@ multi MAIN ('start-web-engine',
 		       <tr><td>stelar-sdf: </td><td><input name="stelar-sdf" type="radio" value="yes">/<input name="stelar-sdf" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-sdf-Re: </td><td><input name="stelar-sdf-Re" type="radio" value="yes">/<input name="stelar-sdf-Re" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-sdf-Im: </td><td><input name="stelar-sdf-Im" type="radio" value="yes">/<input name="stelar-sdf-Im" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-sdf-R1: </td><td><input name="stelar-sdf-R1" type="radio" value="yes">/<input name="stelar-sdf-R1" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-sdf-R1-err: </td><td><input name="stelar-sdf-R1-err" type="text" value="">(float number)</td></tr>
+		       <tr><td>stelar-sef-R1: </td><td><input name="stelar-sef-R1" type="radio" value="yes">/<input name="stelar-sef-R1" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sef-R1-err: </td><td><input name="stelar-sef-R1-err" type="text" value="">(float number)</td></tr>
 		       <tr><td>stelar-hdf5: </td><td><input name="stelar-hdf5" type="radio" value="yes">/<input name="stelar-hdf5" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-hdf5-Re: </td><td><input name="stelar-hdf5-Re" type="radio" value="yes">/<input name="stelar-hdf5-Re" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-hdf5-Im: </td><td><input name="stelar-hdf5-Im" type="radio" value="yes">/<input name="stelar-hdf5-Im" type="radio" value="no" checked="checked"></td></tr>
@@ -323,8 +323,8 @@ HTML
 		my $stelar-sdf = "";
 		my $stelar-sdf-Re = "";
 		my $stelar-sdf-Im = "";
-		my $stelar-sdf-R1 = "";
-		my $stelar-sdf-R1-err = "";
+		my $stelar-sef-R1 = "";
+		my $stelar-sef-R1-err = "";
 		my $stelar-hdf5 = "";
 		my $stelar-hdf5-Re = "";
 		my $stelar-hdf5-Im = "";
@@ -354,8 +354,8 @@ HTML
 			   $stelar-sdf           = "--stelar-sdf  " if $k eq "stelar-sdf" and $v eq any("yes",1);
 		       $stelar-sdf-Re        = "--stelar-sdf-Re  " if $k eq "stelar-sdf-Re" and $v eq any("yes",1);
 		       $stelar-sdf-Im        = "--stelar-sdf-Im  " if $k eq "stelar-sdf-Im" and $v eq any("yes",1);
-		       $stelar-sdf-R1        = "--stelar-sdf-R1  " if $k eq "stelar-sdf-R1" and $v eq any("yes",1);
-		       $stelar-sdf-R1-err    = "--stelar-sdf-R1-err={$v.Rat}  " if $k eq "stelar-sdf-R1-err" and $v.^name eq "Rat";
+		       $stelar-sef-R1        = "--stelar-sef-R1  " if $k eq "stelar-sef-R1" and $v eq any("yes",1);
+		       $stelar-sef-R1-err    = "--stelar-sef-R1-err={$v.Rat}  " if $k eq "stelar-sef-R1-err" and $v.^name eq "Rat";
 		       $stelar-hdf5           = "--stelar-hdf5  " if $k eq "stelar-hdf5" and $v eq any("yes",1);
 		       $stelar-hdf5-Re        = "--stelar-hdf5-Re  " if $k eq "stelar-hdf5-Re" and $v eq any("yes",1);
 		       $stelar-hdf5-Im        = "--stelar-hdf5-Im  " if $k eq "stelar-hdf5-Im" and $v eq any("yes",1);
@@ -381,8 +381,8 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-sdf-R1 $stelar-sdf-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
-		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im  $stelar-sdf-R1 $stelar-sdf-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-sef-R1 $stelar-sef-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im  $stelar-sef-R1 $stelar-sef-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
 		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
@@ -544,8 +544,8 @@ multi MAIN  ('create',
 	     Bool :$stelar-sdf  = False,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
-	     Bool :$stelar-sdf-R1  = False,
-	     Rat  :$stelar-sdf-R1-err,
+	     Bool :$stelar-sef-R1  = False,
+	     Rat  :$stelar-sef-R1-err,
 	     Bool :$stelar-hdf5 = False,
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
@@ -566,9 +566,9 @@ multi MAIN  ('create',
 			 !!
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-hdf5-Re),:Im($stelar-hdf5-Im));
     }
-	elsif any($stelar-sdf,$stelar-sdf-R1,$stelar-sdf-R1-err.Bool,$stelar-sdf-Re,$stelar-sdf-Im) {
-		@data-files = any($stelar-sdf-R1,$stelar-sdf-R1-err.Bool) ?? 
-			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-sdf-R1-err) 
+	elsif any($stelar-sdf,$stelar-sef-R1,$stelar-sef-R1-err.Bool,$stelar-sdf-Re,$stelar-sdf-Im) {
+		@data-files = any($stelar-sef-R1,$stelar-sef-R1-err.Bool) ?? 
+			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-sef-R1-err) 
 			!! 
 			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-sdf-Re),:Im($stelar-sdf-Im));
 		my @files=();
@@ -674,8 +674,8 @@ multi MAIN  ('fit',
 	     Bool :$stelar-sdf  = False,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
-	     Bool :$stelar-sdf-R1  = False,
-	     Rat  :$stelar-sdf-R1-err,
+	     Bool :$stelar-sef-R1  = False,
+	     Rat  :$stelar-sef-R1-err,
 	     Bool :$stelar-hdf5 = False,
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
@@ -699,9 +699,9 @@ multi MAIN  ('fit',
 			 !!
 			 Stelar-hdf5.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-hdf5-Re),:Im($stelar-hdf5-Im));
     }
-	elsif any($stelar-sdf,$stelar-sdf-R1,$stelar-sdf-R1-err.Bool,$stelar-sdf-Re,$stelar-sdf-Im) {
-		@data-files = any($stelar-sdf-R1,$stelar-sdf-R1-err.Bool) ?? 
-			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-sdf-R1-err)
+	elsif any($stelar-sdf,$stelar-sef-R1,$stelar-sef-R1-err.Bool,$stelar-sdf-Re,$stelar-sdf-Im) {
+		@data-files = any($stelar-sef-R1,$stelar-sef-R1-err.Bool) ?? 
+			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).R1(err => $stelar-sef-R1-err)
 			!! 
 			Stelar-sdf.new.path("$work-folder/$name").filename(@data-files[0]).Mz(:Re($stelar-sdf-Re),:Im($stelar-sdf-Im));
 	}
