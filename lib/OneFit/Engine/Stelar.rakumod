@@ -25,7 +25,7 @@ class Import is export {
 
 	multi method input-files () { @!Input-Files }
 
-	multi method input-files ( @files ) {} @!Input-files= @files; self }
+	multi method input-files ( @files ) { @!Input-files= @files; self }
 
     multi method filename () { $!Input-files[0] }
     
