@@ -163,7 +163,6 @@ class Import is export {
 			my $tauf = @a.max; 
 			my $taui = @a.min;
 			my $ntaus = @aux.tail;
-			say @a;
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
 				my $index=$buf.words.head.subst('.','_');
