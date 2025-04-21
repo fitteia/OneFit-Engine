@@ -34,6 +34,7 @@ class Import is export {
 		%!options = %!options, %options;
 		say %!options;
 		say %!options.kv;
+		say %!options.values.grep(*.so).elems ; 
 		given %!options.values.grep(*.so).elems  {
 			with 0 { self.import()}
 		    with 1 {	
