@@ -200,7 +200,7 @@ self.import($k) }
 		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\d+/) } .map({ [ ($_[0] * 1e6).round(0.0001) ,$_[1]] }).Array;
 		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1].Rat * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
 		say   $stelar-sdf.IO.extension('dat').Str;
-		return $stelar-sdf.IO.extension('dat').Str;
+		return $stelar-sdf.IO.extension('dat').Str.Array
     }
 }
 
