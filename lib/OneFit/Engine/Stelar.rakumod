@@ -33,22 +33,13 @@ class Import is export {
 	method filter-with (%options) {
 		my @files=();
 		%!options = %!options, %options;
-		say %!options;
-		say %!options.kv;
-		say %!options.values.grep(*.so).elems ; 
 		given %!options.values.grep(*.so).elems  {
 			when 0 { @files = self.import() }
 		    when 1 {	
 				for %!options.kv -> $k,$v {
 					if $v.so { 
-						if $k.contains(/err/) { 
-							say "$k, {$v.so}";
-							@files = self.import($k, :err($v)) 
-						}	
-						else  { 
-							say "no err $k, {$v.so}";
-							@files = self.import($k) 
-						}
+						if $k.contains(/err/) { @files = self.import($k, :err($v)) }	
+						else  { @files = self.import($k) }
 					}
 				}
 			}
