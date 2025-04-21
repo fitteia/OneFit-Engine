@@ -13,8 +13,8 @@ class Import is export {
 					'stelra-sdf'	 	=> False,
 					'stelar-sdf-Re'	 	=> False,
 					'stelar-sdf-Im'	 	=> False,
-					'stelar-sdf-R1'	 	=> False,
-					'stelar-sdf-R1-err'	=> "";
+					'stelar-sef-R1'	 	=> False,
+					'stelar-sef-R1-err'	=> "";
 
      multi method path ($folder) { 
 		$!path = $folder;
@@ -54,8 +54,8 @@ class Import is export {
 	multi method import ('stelar-sdf') { self!stelar-sdf-Mz() }
 	multi method import ('stelar-sdf-Re') { self!stelar-sdf-Mz( Re => True ) }
 	multi method import ('stelar-sdf-Im') { self!stelar-sdf-Mz( Im => True ) }
-	multi method import ('stelar-sdf-R1') { self!stelar-sdf-R1 }
-	multi method import ('stelar-sdf-R1-err', :$err) { self!stelar-sdf-R1( err => $err ) }
+	multi method import ('stelar-sef-R1') { self!stelar-sef-R1 }
+	multi method import ('stelar-sef-R1-err', :$err) { self!stelar-sef-R1( err => $err ) }
 
 	multi method import () {
 		my @files=();
@@ -187,7 +187,7 @@ class Import is export {
 		return @data-files;
     }
 
-    method !stelar-sdf-R1 (Rat :$err) {
+    method !stelar-sef-R1 (Rat :$err) {
 		my $stelar-sdf = self.filename();
 		my $path = self.path();
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
