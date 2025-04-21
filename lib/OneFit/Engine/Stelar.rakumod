@@ -33,6 +33,7 @@ class Import is export {
 	method filter-with (%options) {
 		%!options = %!options, %options;
 		say %!options;
+		say %!options.kv;
 		given %!options.values.grep(*.so).elems  {
 			with 0 { self.import()}
 		    with 1 {	
