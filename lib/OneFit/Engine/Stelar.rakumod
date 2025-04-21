@@ -38,7 +38,7 @@ class Import is export {
 		    with 1 {	
 				for %!options -> $k,$v {
 					if $v.so { 
-						say "$k, $v";
+						say "$k, {$v.so}";
 						if $k.Str.contains(/err/) { self.import($k.Str, :err($v)) }
 						else  { self.import($k.Str) }
 					}
