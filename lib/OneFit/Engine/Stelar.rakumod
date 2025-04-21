@@ -31,7 +31,7 @@ class Import is export {
     multi method filename () { @!Input-files[0] }
     
 	method filter-with (%options) {
-		my @file=();
+		my @files=();
 		%!options = %!options, %options;
 		say %!options;
 		say %!options.kv;
