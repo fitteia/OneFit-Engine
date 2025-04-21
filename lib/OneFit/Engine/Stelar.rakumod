@@ -34,10 +34,10 @@ class Import is export {
 
 		for %!options -> $k,$v {
 			if $v.so { 
-				if $k.contains(/err/) { self!import($k, :err($v)) }
-				else  { self!import($k) }
+				if $k.contains(/err/) { self.import($k, :err($v)) }
+				else  { self.import($k) }
 			}
-			else { self!import() }
+			else { self.import() }
 		}
 	}
 	
