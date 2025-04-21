@@ -7,9 +7,9 @@ class Import is export {
 	has $!path = '.';
 	has %!options = 'stelar-hdf5' 	 	=> False,
 					'stelar-hdf5-Re' 	=> False,
-					'stelar-hdf5-Im' 	=> False.
-					'stelar-hdf5-R1' 	=> False.
-					'stelar-hdf5-R1-err'=> "".
+					'stelar-hdf5-Im' 	=> False,
+					'stelar-hdf5-R1' 	=> False,
+					'stelar-hdf5-R1-err'=> "",
 					'stelra-sdf'	 	=> False,
 					'stelar-sdf-Re'	 	=> False,
 					'stelar-sdf-Im'	 	=> False,
