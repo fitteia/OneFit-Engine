@@ -704,8 +704,7 @@ multi MAIN  ('fit',
 					'stelar-sef-R1'	 	=> $stelar-sef-R1,
 					'stelar-sef-R1-err' => $stelar-sef-R1-err;
 
-	@data-files = Import.new.path($work-folder/$name).input-files(@data-files).filter-with(%options);	
-
+	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
 
 #    if any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool,$stelar-hdf5,$stelar-hdf5-Re,$stelar-hdf5-Im) {
 #		@data-files = any($stelar-hdf5-R1,$stelar-hdf5-R1-err.Bool) ??
