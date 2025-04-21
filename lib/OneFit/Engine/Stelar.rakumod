@@ -10,7 +10,7 @@ class Import is export {
 					'stelar-hdf5-Im' 	=> False,
 					'stelar-hdf5-R1' 	=> False,
 					'stelar-hdf5-R1-err'=> "",
-					'stelra-sdf'	 	=> False,
+					'stelar-sdf'	 	=> False,
 					'stelar-sdf-Re'	 	=> False,
 					'stelar-sdf-Im'	 	=> False,
 					'stelar-sef-R1'	 	=> False,
@@ -37,8 +37,8 @@ class Import is export {
 			with 0 { self.import()}
 		    with 1 {	
 				for %!options -> $k,$v {
-					say "$k, $v";
 					if $v.so { 
+						say "$k, $v";
 						if $k.Str.contains(/err/) { self.import($k.Str, :err($v)) }
 						else  { self.import($k.Str) }
 					}
