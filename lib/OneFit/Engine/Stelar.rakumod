@@ -27,7 +27,7 @@ class Import is export {
 
 	multi method input-files ( @files ) { @!Input-files= @files; self }
 
-    multi method filename () { $!Input-files[0] }
+    multi method filename () { @!Input-files[0] }
     
 	method filter-with (%options) {
 		%!options = %!options, %options;
