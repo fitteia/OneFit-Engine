@@ -158,7 +158,7 @@ class Import is export {
  			my @zones = $buf.split(/ZONE/);
 			my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
 			my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.trans([ "[", "]" ] => "").split(':');
-			my $type = @aux.shift;
+			my $type = @aux.head
 			@aux[1,2].map({  .subst('*T1MAX','').Rat });
 			my $tauf = @aux[1,2].max; 
 			my $taui = @aux[1,2].min;
