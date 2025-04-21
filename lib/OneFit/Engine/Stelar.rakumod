@@ -151,40 +151,46 @@ class Import is export {
 		my $path = self.path();
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
 	    my $buf = $stelar-sdf.IO.slurp(:close);
-		my @zones = $buf.split(/ZONE/);
-		my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
-		my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.trans([ "[", "]" ] => "").split(':');
-		my $type = @aux.shift;
-		my $tauf = @aux.shift.subst('*T1MAX','').Rat;
-		my $taui = @aux.shift.subst('*T1MAX','').Rat;
-		my $ntaus = @aux.tail;
+		my @tau-zones = $buf.split(/TAU <ws> '='/);
 		my @data-files;
-		for ( 1 ..^ @zones.elems ).race {
-			my $buf=@zones[$_];
-			my $index=$buf.words.head.subst('.','_');
-			my $datafile = "zone{$index}.dat";
-			my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
-	    	my $header = "# DATA dum = " ~
-				($buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6).round(0.0001)
-				~
-				"\n# TAG = zone{$index}";
+		for @tau-zones[1..*] {
+			my $buf = "TAU = $_";
+ 			my @zones = $buf.split(/ZONE/);
+			my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
+			my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.trans([ "[", "]" ] => "").split(':');
+			my $type = @aux.shift;
+			@aux[1,2].map({  .subst('*T1MAX','').Rat });
+			my $tauf = @aux[1,2].max; 
+			my $taui = @aux[1,2].min;
+			my $ntaus = @aux.tail;
+			say @aux[1,2];
+			for ( 1 ..^ @zones.elems ).race {
+				my $buf=@zones[$_];
+				my $index=$buf.words.head.subst('.','_');
+				my $datafile = "zone{$index}.dat";
+				my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
+		    	my $header = "# DATA dum = " ~
+					($buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6).round(0.0001)
+					~
+					"\n# TAG = zone{$index}";
+	
+				my @x;
+				my @y;
+				my @m;
+				if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/($ntaus-1)) }) }
+				else { @x = (0 ..^ $ntaus).map({ ($taui + ($tauf - $taui) * $_/($ntaus - 1) ) * $T1MAX }) }
+	
+				@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
+	
+		    	for (1 .. $ntaus) { 
+					@y.push: @m.splice(0,$BS.Int).sum/$BS;
+			   	}
+		    	@y = @y.map({ $_ / @y.max });
+		    	my @err = (1 .. @x.elems).map({1});
 
-			my @x;
-			my @y;
-			my @m;
-			if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/($ntaus-1)) }) }
-			else { @x = (0 ..^ $ntaus).map({ ($taui + ($tauf - $taui) * $_/($ntaus - 1) ) * $T1MAX }) }
-
-			@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
-
-	    	for (1 .. $ntaus) { 
-				@y.push: @m.splice(0,$BS.Int).sum/$BS;
-		   	}
-	    	@y = @y.map({ $_ / @y.max });
-	    	my @err = (1 .. @x.elems).map({1});
-
-	    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
-	    	@data-files.push: $datafile;
+		    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
+		    	@data-files.push: $datafile;
+			}
 		}
 		"$path/$stelar-sdf".IO.unlink;
 		return @data-files;
