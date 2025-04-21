@@ -32,6 +32,9 @@ class Import is export {
 	method filter-with (%options) {
 		%!options = %!options, %options;
 
+		say "Error: too many stelar options selected" if %!options.values.grep(*.so).elems > 1;
+
+
 		for %!options -> $k,$v {
 			if $v.so { 
 				if $k.contains(/err/) { self.import($k, :err($v)) }
