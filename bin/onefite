@@ -743,7 +743,6 @@ multi MAIN  ('fit',
 #		}
 #		@data-files= @files;
 #    }
-	say @data-files;
     my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     if $function.contains(/^a\w*  <ws> ':' <ws>/) { 
 		my $falias = %aliases{ $function.subst(/a\w*\s*':'\s*/,'').subst(/\s+/,' ') };
