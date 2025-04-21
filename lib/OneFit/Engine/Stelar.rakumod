@@ -150,8 +150,8 @@ class Import is export {
 		my $stelar-sdf = self.filename();
 		my $path = self.path();
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
-	    my $buf = $stelar-sdf.IO.slurp(:close);
-		my @tau-zones = $buf.split(/TAU <ws> '='/);
+	    my $buf1 = $stelar-sdf.IO.slurp(:close);
+		my @tau-zones = $buf1.split(/TAU <ws> '='/);
 		my @data-files;
 		for @tau-zones[1..*] {
 			my $buf = "TAU = $_";
