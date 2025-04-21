@@ -36,8 +36,8 @@ class Import is export {
 		say %!options.kv;
 		say %!options.values.grep(*.so).elems ; 
 		given %!options.values.grep(*.so).elems  {
-			with 0 { self.import()}
-		    with 1 {	
+			when 0 { self.import()}
+		    when 1 {	
 				for %!options -> $k,$v {
 					if $v.so { 
 						say "$k, {$v.so}";
