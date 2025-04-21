@@ -40,9 +40,9 @@ class Import is export {
 		    when 1 {	
 				for %!options -> $k,$v {
 					if $v.so { 
-						if $k.Str.contains(/err/) { say "$k, {$v.so}";
+						if $k.Str.contains(/err/) { say "$k.Str, {$v.so}";
 self.import($k.Str, :err($v)) }
-						else  { say "no err $k, {$v.so}";
+						else  { say "no err $k.Str, {$v.so}";
 self.import($k.Str) }
 					}
 				}
