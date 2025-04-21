@@ -13,7 +13,8 @@ class Import is export {
 					'stelra-sdf'	 	=> False,
 					'stelar-sdf-Re'	 	=> False,
 					'stelar-sdf-Im'	 	=> False,
-					'stelar-sdf-R1'	 	=> False;
+					'stelar-sdf-R1'	 	=> False,
+					'stelar-sdf-R1-err'	=> "";
 
      multi method path ($folder) { 
 		$!path = $folder;
