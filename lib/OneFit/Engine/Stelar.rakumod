@@ -38,12 +38,12 @@ class Import is export {
 		given %!options.values.grep(*.so).elems  {
 			when 0 { self.import()}
 		    when 1 {	
-				for %!options -> $k,$v {
+				for %!options.kv -> $k,$v {
 					if $v.so { 
-						if $k.Str.contains(/err/) { say "$k.Str, {$v.so}";
-self.import($k.Str, :err($v)) }
-						else  { say "no err $k.Str, {$v.so}";
-self.import($k.Str) }
+						if $k.contains(/err/) { say "$k, {$v.so}";
+self.import($k, :err($v)) }
+						else  { say "no err $k, {$v.so}";
+self.import($k) }
 					}
 				}
 			}
