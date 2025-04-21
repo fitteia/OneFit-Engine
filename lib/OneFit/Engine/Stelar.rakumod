@@ -194,6 +194,7 @@ self.import($k) }
     }
 
     method !stelar-sef-R1 (Rat :$err) {
+		say "ola";
 		my $stelar-sdf = self.filename();
 		my $path = self.path();
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
