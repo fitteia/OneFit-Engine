@@ -159,7 +159,7 @@ class Import is export {
 			my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
 			my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.trans([ "[", "]" ] => "").split(':');
 			my $type = @aux.head;
-			@aux[1,2].map({  .subst('*T1MAX','').Rat });
+			@aux[1,2].map({  $_.subst('*T1MAX','').Rat });
 			my $tauf = @aux[1,2].max; 
 			my $taui = @aux[1,2].min;
 			my $ntaus = @aux.tail;
