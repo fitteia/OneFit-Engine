@@ -32,11 +32,12 @@ class Import is export {
     
 	method filter-with (%options) {
 		%!options = %!options, %options;
-
+		say %!options;
 		given %!options.values.grep(*.so).elems  {
 			with 0 { self.import()}
 		    with 1 {	
 				for %!options -> $k,$v {
+					say "$k, $v";
 					if $v.so { 
 						if $k.Str.contains(/err/) { self.import($k.Str, :err($v)) }
 						else  { self.import($k.Str) }
