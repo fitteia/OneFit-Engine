@@ -104,7 +104,7 @@ class Import is export {
 				@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 				@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    	}
-	    	my $datafile = "zone{ sprintf('%03d',$_.Int) ) }.dat";
+	    	my $datafile = "zone{ sprintf('%03d',$_.Int) }.dat";
 	    	my $header = "# DATA dum = " ~
 				($buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6).round(0.0001)
 				~
