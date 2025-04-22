@@ -23,7 +23,7 @@
     "OneFit::Engine::Parameters": "lib/OneFit/Engine/Parameters.rakumod",
     "OneFit::Engine::Parfiles": "lib/OneFit/Engine/Parfiles.rakumod",
     "OneFit::Engine::Stpfiles": "lib/OneFit/Engine/Stpfiles.rakumod",
-    "OneFit::Engine::Stelar": "lib/OneFit/Engine/Stelar.rakumod",
+    "OneFit::Engine::Import": "lib/OneFit/Engine/Import.rakumod",
     "OneFit::Engine::Titles": "lib/OneFit/Engine/Titles.rakumod"
   },
   "repo-type": "git",
