@@ -159,9 +159,9 @@ class Import is export {
 			my $BS = @zones[0].split(/BS <ws> '=' <ws>/)[1].words.head.Rat;
 			my @aux = @zones[0].split(/TAU <ws> '=' <ws>/)[1].words.head.trans([ "[", "]" ] => "").split(':');
 			my $type = @aux.head;
-			my @a = @aux[1,2].map({  $_.subst('*T1MAX','').Rat });
-			my $tauf = @a.max; 
-			my $taui = @a.min;
+			my @range = @aux[1,2].map({  $_.subst('*T1MAX','').Rat });
+			my $tauf = @range.max; 
+			my $taui = @range.min;
 			my $ntaus = @aux.tail;
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
@@ -178,7 +178,8 @@ class Import is export {
 				my @m;
 				if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/($ntaus-1)) }) }
 				else { @x = (0 ..^ $ntaus).map({ ($taui + ($tauf - $taui) * $_/($ntaus - 1) ) * $T1MAX }) }
-	
+				@x = @x.reverse if @range[1] < @range[0];
+
 				@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
 	
 		    	for (1 .. $ntaus) { 
