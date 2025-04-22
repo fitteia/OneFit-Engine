@@ -71,7 +71,7 @@ class Import is export {
 				if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
 					my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
 					for (1 ..^ @blocks.elems) -> $i {
-						my $file-name="{$_.IO.extension('').Str}-block{$i}.dat";
+						my $file-name="{$_.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
 						$file-name = $_ unless @blocks.elems > 2;
 						@files.push: $file-name; 
 						"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
@@ -104,7 +104,7 @@ class Import is export {
 				@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 				@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    	}
-	    	my $datafile = "zone{$_}.dat";
+	    	my $datafile = "zone{ sprintf('%03d',$_.Int) ) }.dat";
 	    	my $header = "# DATA dum = " ~
 				($buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6).round(0.0001)
 				~
