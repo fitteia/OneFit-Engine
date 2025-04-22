@@ -165,7 +165,7 @@ class Import is export {
 			my $ntaus = @aux.tail;
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
-				my $index=$buf.words.head.split('.').map({ sprintf('%d03',$_) }),join('_');
+				my $index=$buf.words.head.split('.').map({ sprintf('%d03',$_.Int) }).join('_');
 				my $datafile = "zone{$index}.dat";
 				my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
 		    	my $header = "# DATA dum = " ~
