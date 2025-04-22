@@ -529,7 +529,7 @@ multi MAIN ('start-engine',
 }
 
 multi MAIN  ('create',
-	     Str  $function,
+	     Str  $function is copy,
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
 	     Str  :data-label(:$data-labels),
              Str  :$fit-methods = "simp scan min minos",
