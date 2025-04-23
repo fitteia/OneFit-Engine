@@ -223,9 +223,13 @@ class Import is export {
 		my @taus  = gather for @aux[1].lines { take $_.split(',')[5] }
 		my @lines = @aux[0].lines.map({ $_.split(',')[2,3].join(' ') });
 		for (0..^@taus.elems) {
+			say $_;
 			my @zone = @lines.splice(0,@taus[$_].Int);
+			say @zone;
 			my $datafile = "zone{ sprintf('%03d',$_) }.dat";
+			say $datafile;
 			my $header = "# DATA dum = @modes[$_] @freqs[$_] \n# TAG = @freqs[$_]";
+			say $header;
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 		}
