@@ -221,7 +221,7 @@ class Import is export {
 		my @freqs = gather for @aux[1].lines { take $_.split(',')[2] }
 		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
 		my @ntaus  = gather for @aux[1].lines { take $_.split(',')[5] }
-		my @taus; = @aux[0].lines.map({ $_.split(',')[2] });
+		my @taus;
 		my @Mz;
 	   	for @aux[0].lines {
 			my @a = $_.split(',')[2,3];
