@@ -666,7 +666,10 @@ multi MAIN  ('fit',
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
-	     Bool :$stelar-sdf  = False,
+		 Bool :$ffc1 = False,
+		 Bool :$ffc1-R1 = False,
+		 Bool :$ffc1-R1-err,
+		 Bool :$stelar-sdf  = False,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
 	     Bool :$stelar-sef-R1  = False,
@@ -697,7 +700,10 @@ multi MAIN  ('fit',
 					'stelar-sdf-Re'	 	=> $stelar-sdf-Re,
 					'stelar-sdf-Im'	 	=> $stelar-sdf-Im,
 					'stelar-sef-R1'	 	=> $stelar-sef-R1,
-					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False;
+					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False
+					'ffc1'				=> $ffc1,
+					'ffc1-R1'			=> $ffc1-R1,
+					'ffc1-R1-err' 		=> $ffc1-R1-err.so ?? $ffc1-R1-err !! False;
 
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
 

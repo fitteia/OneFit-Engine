@@ -14,7 +14,10 @@ class Import is export {
 					'stelar-sdf-Re'	 	=> False,
 					'stelar-sdf-Im'	 	=> False,
 					'stelar-sef-R1'	 	=> False,
-					'stelar-sef-R1-err'	=> "";
+					'stelar-sef-R1-err'	=> "",
+					'ffc1'				=> False,
+					'ffc1-R1'			=> False,
+					'ffc1-R1-err'		=> "";
 
      multi method path ($folder) { 
 		$!path = $folder;
@@ -51,14 +54,18 @@ class Import is export {
 	multi method import ('stelar-hdf5') { self!stelar-hdf5-Mz() }
 	multi method import ('stelar-hdf5-Re') { self!stelar-hdf5-Mz( Re => True ) }
 	multi method import ('stelar-hdf5-Im') { self!stelar-hdf5-Mz( Im => True ) }
-	multi method import ('stelar-hdf5-R1') { self!stelar-hdf5-R1 }
+	multi method import ('stelar-hdf5-R1') { self!stelar-hdf5-R1() }
 	multi method import ('stelar-hdf5-R1-err', :$err) { self!stelar-hdf5-R1( err => $err ) }
 
 	multi method import ('stelar-sdf') { self!stelar-sdf-Mz() }
 	multi method import ('stelar-sdf-Re') { self!stelar-sdf-Mz( Re => True ) }
 	multi method import ('stelar-sdf-Im') { self!stelar-sdf-Mz( Im => True ) }
-	multi method import ('stelar-sef-R1') { self!stelar-sef-R1 }
+	multi method import ('stelar-sef-R1') { self!stelar-sef-R1() }
 	multi method import ('stelar-sef-R1-err', :$err) { self!stelar-sef-R1( err => $err ) }
+
+	multi method import ('ffc1') { self!ffc1() }
+	#	multi method import ('ffc1-R1') { self!ffc1-R1() }
+	#	multi method import ('ffc1-R1-err	') { self!ffc1-R1( err => $err ) }
 
 	multi method import () {
 		my @files=();
@@ -204,6 +211,27 @@ class Import is export {
 		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1].Rat * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
 		return $stelar-sdf.IO.extension('dat').Str
     }
+
+	method ffc1 () {
+		my $ffc = self.filename();
+		my $path = self.path();
+		$ffc.IO.copy: "$path/$ffc";
+		my @files;
+		my @aux = "$path/$ffc".IO.slurp(:close).split(/endtau|shiFdt/)[(0,1];	
+		my @freqs = gather for @aux[1].lines { take $_.split(',')[2] }
+		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
+		my @taus  = gather for @aux[1].lines { take $_.split(',')[5] }
+		my @lines = @aux[0].lines.map({ $_.split(',')[2,3].join(' ') });
+		for (0..^@taus.elems) {
+			my @zone = @lines.splice(0,@taus[$_]);
+			my $datafile = "zone{ sprintf('%03d',$_) }.dat";
+			my $header = "# DATA dum = @modes[$_] @freqs[$_] \n# TAG = @freqs[$_]"
+			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
+			@files.push: $datafile;
+		}
+		return @files
+	}
+
 }
 
 
