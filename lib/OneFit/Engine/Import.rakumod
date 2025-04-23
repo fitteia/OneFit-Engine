@@ -224,8 +224,7 @@ class Import is export {
 		my @lines = @aux[0].lines.map({ $_.split(',')[2,3].join(' ') });
 		for (1 .. @taus.elems) {
 			say $_;
-			#	my @zone = @lines.splice(0,@taus[$_-1].Int);
-			my @zone;
+			my @zone = @lines.splice(0,@taus[$_-1].Int);
 			say @zone;
 			my $datafile = "zone{ sprintf('%03d',$_) }.dat";
 			say $datafile;
