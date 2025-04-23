@@ -217,7 +217,7 @@ class Import is export {
 		my $path = self.path();
 		$ffc.IO.copy: "$path/$ffc";
 		my @files;
-		my @aux = "$path/$ffc".IO.slurp(:close).split(/endtau|shiFdt/)[(0,1];	
+		my @aux = "$path/$ffc".IO.slurp(:close).split(/endtau|shiFdt/)[0,1];	
 		my @freqs = gather for @aux[1].lines { take $_.split(',')[2] }
 		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
 		my @taus  = gather for @aux[1].lines { take $_.split(',')[5] }
