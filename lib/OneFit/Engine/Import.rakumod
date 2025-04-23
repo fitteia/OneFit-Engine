@@ -220,13 +220,19 @@ class Import is export {
 		my @aux = "$path/$ffc".IO.slurp(:close).split(/endtau\n|shiFdt/)[0,1];	
 		my @freqs = gather for @aux[1].lines { take $_.split(',')[2] }
 		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
-		my @taus  = gather for @aux[1].lines { take $_.split(',')[5] }
-		my @lines = @aux[0].lines.map({ $_.split(',')[2,3].join(' ') });
-		for (1 .. @taus.elems) {
-			my @zone = @lines.splice(0,@taus[$_-1].Int);
+		my @ntaus  = gather for @aux[1].lines { take $_.split(',')[5] }
+		my @taus; = @aux[0].lines.map({ $_.split(',')[2] });
+		my @Mz;
+	   	for @aux[0].lines {
+			my @a = $_.split(',')[2,3];
+			@taus.push: @a[0]*1e-6;
+			@Mz.push: @a[1];
+		}
+		for (1 .. @ntaus.elems) {
+			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
 			my $datafile = "zone{ sprintf('%03d',$_) }.dat";
 			my $header = "# DATA dum = @modes[$_-1] @freqs[$_-1]\n# TAG = zone{ sprintf('%03d',$_) }";
-			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
+			"$path/$datafile".IO.spurt: "$header\n" ~ (@taus Z @Mz).join("\n") ~ "\n\n";
 			@files.push: $datafile;
 		}
 		return @files
