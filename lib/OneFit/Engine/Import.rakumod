@@ -229,7 +229,7 @@ class Import is export {
 			say @zone;
 			my $datafile = "zone{ sprintf('%03d',$_) }.dat";
 			say $datafile;
-			my $header = "# DATA dum = @modes[$_-1] @freqs[$_-1] \n# TAG = @freqs[$_-1]";
+			my $header = "# DATA dum = @modes[$_-1]\n# TAG = @freqs[$_-1]";
 			say $header;
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
