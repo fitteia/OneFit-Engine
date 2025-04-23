@@ -225,7 +225,7 @@ class Import is export {
 		for (0..^@taus.elems) {
 			my @zone = @lines.splice(0,@taus[$_]);
 			my $datafile = "zone{ sprintf('%03d',$_) }.dat";
-			my $header = "# DATA dum = @modes[$_] @freqs[$_] \n# TAG = @freqs[$_]"
+			my $header = "# DATA dum = @modes[$_] @freqs[$_] \n# TAG = @freqs[$_]";
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 		}
