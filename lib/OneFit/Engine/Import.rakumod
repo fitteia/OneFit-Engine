@@ -212,7 +212,7 @@ class Import is export {
 		return $stelar-sdf.IO.extension('dat').Str
     }
 
-	method ffc1 () {
+	method !ffc1 () {
 		my $ffc = self.filename();
 		my $path = self.path();
 		$ffc.IO.copy: "$path/$ffc";
