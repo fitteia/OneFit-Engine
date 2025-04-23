@@ -700,7 +700,7 @@ multi MAIN  ('fit',
 					'stelar-sdf-Re'	 	=> $stelar-sdf-Re,
 					'stelar-sdf-Im'	 	=> $stelar-sdf-Im,
 					'stelar-sef-R1'	 	=> $stelar-sef-R1,
-					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False
+					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False,
 					'ffc1'				=> $ffc1,
 					'ffc1-R1'			=> $ffc1-R1,
 					'ffc1-R1-err' 		=> $ffc1-R1-err.so ?? $ffc1-R1-err !! False;
