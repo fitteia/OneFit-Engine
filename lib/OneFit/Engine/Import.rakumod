@@ -221,14 +221,15 @@ class Import is export {
 		my @freqs = gather for @aux[1].lines { take $_.split(',')[2] }
 		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
 		my @taus  = gather for @aux[1].lines { take $_.split(',')[5] }
+		say @freqs, @taus, @modes;
 		my @lines = @aux[0].lines.map({ $_.split(',')[2,3].join(' ') });
-		for (0..^@taus.elems) {
+		for (1 .. @taus.elems) {
 			say $_;
-			my @zone = @lines.splice(0,@taus[$_].Int);
+			my @zone = @lines.splice(0,@taus[$_-1].Int);
 			say @zone;
 			my $datafile = "zone{ sprintf('%03d',$_) }.dat";
 			say $datafile;
-			my $header = "# DATA dum = @modes[$_] @freqs[$_] \n# TAG = @freqs[$_]";
+			my $header = "# DATA dum = @modes[$_-1] @freqs[$_-1] \n# TAG = @freqs[$_-1]";
 			say $header;
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
