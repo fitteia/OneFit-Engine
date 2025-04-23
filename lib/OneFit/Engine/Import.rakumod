@@ -223,9 +223,11 @@ class Import is export {
 		my @taus  = gather for @aux[1].lines { take $_.split(',')[5] }
 		say @freqs, @taus, @modes;
 		my @lines = @aux[0].lines.map({ $_.split(',')[2,3].join(' ') });
+		say @lines;
 		for (1 .. @taus.elems) {
 			say $_;
-			my @zone = @lines.splice(0,@taus[$_-1].Int);
+			#	my @zone = @lines.splice(0,@taus[$_-1].Int);
+			my @zone;
 			say @zone;
 			my $datafile = "zone{ sprintf('%03d',$_) }.dat";
 			say $datafile;
