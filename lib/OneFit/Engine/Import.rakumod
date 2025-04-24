@@ -63,9 +63,9 @@ class Import is export {
 	multi method import ('stelar-sef-R1') { self!stelar-sef-R1() }
 	multi method import ('stelar-sef-R1-err', :$err) { self!stelar-sef-R1( err => $err ) }
 
-	multi method import ('ffc1') { self!ffc1() }
-	#	multi method import ('ffc1-R1') { self!ffc1-R1() }
-	#	multi method import ('ffc1-R1-err	') { self!ffc1-R1( err => $err ) }
+	multi method import ('ist-ffc1') { self!ist-ffc1() }
+	#	multi method import ('ist-ffc1-R1') { self!ist-ffc1-R1() }
+	#	multi method import ('ist-ffc1-R1-err	') { self!ist-ffc1-R1( err => $err ) }
 
 	multi method import () {
 		my @files=();
@@ -212,7 +212,7 @@ class Import is export {
 		return $stelar-sdf.IO.extension('dat').Str
     }
 
-	method !ffc1 () {
+	method !ist-ffc1 () {
 		my $ffc = self.filename();
 		my $path = self.path();
 		$ffc.IO.copy: "$path/$ffc";
