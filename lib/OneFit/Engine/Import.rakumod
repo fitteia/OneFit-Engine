@@ -29,9 +29,7 @@ class Import is export {
 
 	multi method input-files () { @!Input-files }
 
-	multi method input-files ( @files ) { @!Input-files= @files; 
-		say @files;
-	self }
+	multi method input-files ( @files ) { @!Input-files= @files; self }
 
     multi method filename () { @!Input-files[0] }
     
@@ -74,10 +72,8 @@ class Import is export {
 		for @!Input-files -> $file {
 #			say is-type($_);
 #		   exit;
-			say $file;
 
 			given is-type($file) {
-				say $_;
 				when 'zip' {
 					shell "unzip $file -d {self.path}";
 					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
@@ -115,7 +111,6 @@ class Import is export {
 #				}
 #	    	}
 		}
-		say @files;
 		return @files; 
 	}
 
@@ -168,7 +163,6 @@ class Import is export {
 	    	@data-files.push: $datafile;
 		}
 		"$path/$stelar-hdf5".IO.unlink;
-		say 'ola',@data-files;
 		return @data-files;
     }
 
