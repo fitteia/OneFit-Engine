@@ -115,6 +115,7 @@ class Import is export {
 #				}
 #	    	}
 		}
+		say @files;
 		return @files; 
 	}
 
