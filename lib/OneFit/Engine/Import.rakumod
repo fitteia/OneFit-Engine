@@ -30,9 +30,7 @@ class Import is export {
 	multi method input-files () { @!Input-files }
 
 	multi method input-files ( @files ) { @!Input-files= @files; 
-	
-	#		say (is-hdf5(@files[0]),is-zip(@files[0]),is-sdf(@files[0]),is-block(@files[0]),is-ffc(@files[0]));
-	
+		sqy @files;
 	self }
 
     multi method filename () { @!Input-files[0] }
