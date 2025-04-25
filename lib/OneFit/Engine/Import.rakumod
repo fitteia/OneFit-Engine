@@ -74,7 +74,8 @@ class Import is export {
 	multi method import () {
 		my @files=();
 		for @!Input-files {
-			say is-type($_); 
+			say is-type($_);
+		   exit;	
 	    	if $_.IO.extension.Str ~~ /zip/ {
 				shell "unzip $_ -d {self.path}";
 				@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
