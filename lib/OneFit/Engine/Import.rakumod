@@ -74,20 +74,19 @@ class Import is export {
 		for @!Input-files -> $file {
 #			say is-type($_);
 #		   exit;
-			say $file;
+			
 			given is-type($file) {
 				when 'zip' {
 					shell "unzip $file -d {self.path}";
 					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
-				when 'stelar-hdf5' 		{ @files = self.import('stelar-hdf5') }
-				when 'stelar-sdf'  		{ @files = self.import('stelar-sdf') }
-				when 'ist-ffc'			{ @files = self.import('ist-ffc') }
+				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5').Slip }
+				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf').Slip }
+				when 'ist-ffc'			{ @files.push: self.import('ist-ffc').Slip }
 				default {
 		   			@files.push: $file;
 		   			$file.IO.copy("{self.path}/$file");
-					say @files;
 				}
 			}
 
