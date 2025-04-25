@@ -73,22 +73,22 @@ class Import is export {
 
 	multi method import () {
 		my @files=();
-		for @!Input-files {
+		for @!Input-files -> $file {
 #			say is-type($_);
 #		   exit;
 
-			given is-type($_) {
+			given is-type($file) {
 				when 'zip' {
-					shell "unzip $_ -d {self.path}";
-					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
+					shell "unzip $file -d {self.path}";
+					@files.push: self.path.IO.dir>>.Str.map({ $file.subst("{self.path}/",'')  }).sort.Slip;
 	    		}	
-				when 'fitteia-blocks' 	{ @files = self!fitteia-blocks($_) }
+				when 'fitteia-blocks' 	{ @files = self!fitteia-blocks($file) }
 				when 'stelar-hdf5' 		{ @files = self!stelar-hdf5-Mz }
 				when 'stelar-sdf'  		{ @files = self!stelar-sdf-Mz }
 				when 'ist-ffc'			{ @files = self!ist-ffc }
 				default {
-		   			@files.push: $_;
-		   			$_.IO.copy("{self.path}/$_")
+		   			@files.push: $file;
+		   			$file.IO.copy("{self.path}/$file")
 				}
 			}
 
