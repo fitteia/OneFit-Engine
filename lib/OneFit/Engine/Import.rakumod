@@ -15,9 +15,9 @@ class Import is export {
 					'stelar-sdf-Im'	 	=> False,
 					'stelar-sef-R1'	 	=> False,
 					'stelar-sef-R1-err'	=> "",
-					'ffc1'				=> False,
-					'ffc1-R1'			=> False,
-					'ffc1-R1-err'		=> "";
+					'ist-ffc'			=> False,
+					'ist-ffc-R1'		=> False,
+					'ist-ffc-R1-err'	=> "";
 
      multi method path ($folder) { 
 		$!path = $folder;
@@ -63,13 +63,14 @@ class Import is export {
 	multi method import ('stelar-sef-R1') { self!stelar-sef-R1() }
 	multi method import ('stelar-sef-R1-err', :$err) { self!stelar-sef-R1( err => $err ) }
 
-	multi method import ('ist-ffc1') { self!ist-ffc1() }
+	multi method import ('ist-ffc') { self!ist-ffc() }
 	#	multi method import ('ist-ffc1-R1') { self!ist-ffc1-R1() }
 	#	multi method import ('ist-ffc1-R1-err	') { self!ist-ffc1-R1( err => $err ) }
 
 	multi method import () {
 		my @files=();
 		for @!Input-files {
+			say (is-hdf5($_),is-zip($_),is-sdf($_),is-block($_),is-ffc($_);
 	    	if $_.IO.extension.Str ~~ /zip/ {
 				shell "unzip $_ -d {self.path}";
 				@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
@@ -212,7 +213,7 @@ class Import is export {
 		return $stelar-sdf.IO.extension('dat').Str
     }
 
-	method !ist-ffc1 () {
+	method !ist-ffc () {
 		my $ffc = self.filename();
 		my $path = self.path();
 		$ffc.IO.copy: "$path/$ffc";
@@ -235,6 +236,22 @@ class Import is export {
 		}
 		return @files
 	}
+
+	sub is-hdf5 ($file) {
+    	my $fio = $file.IO.open(:bin);
+    	my $magic = $handle.read(8);
+    	$fio.close;
+    	return $magic eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A);
+	}
+	sub is-zip($file) {
+    	my $fio = $file.IO.open(:bin);
+    	my $magic = $fio.read(4);
+    	$fio.close;
+    	return $magic eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04);
+	}
+	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
+	sub is-sdf ($file) 	 { return $file.IO.slurp(:close).contains(/TAU/) }
+	sub is-ffc ($file) 	 { return $file.IO.slurp(:close).contains(/endtau/) }
 
 }
 
