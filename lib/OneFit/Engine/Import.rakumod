@@ -31,7 +31,7 @@ class Import is export {
 
 	multi method input-files ( @files ) { @!Input-files= @files; 
 	
-			say (is-hdf5(@files[0]),is-zip(@files[0]),is-sdf(@files[0]),is-block(@files[0]),is-ffc(@files[0]));
+	#		say (is-hdf5(@files[0]),is-zip(@files[0]),is-sdf(@files[0]),is-block(@files[0]),is-ffc(@files[0]));
 	
 	self }
 
@@ -74,6 +74,7 @@ class Import is export {
 	multi method import () {
 		my @files=();
 		for @!Input-files {
+			say (is-hdf5($_[0]),is-zip($_[0]),is-sdf($_[0]),is-block$_[0]),is-ffc($_[0]));
 	    	if $_.IO.extension.Str ~~ /zip/ {
 				shell "unzip $_ -d {self.path}";
 				@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
