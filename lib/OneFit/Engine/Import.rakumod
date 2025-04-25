@@ -275,7 +275,7 @@ class Import is export {
 	}
 
 	sub is-type ($file)  {
-	   	return is-hdf5($file) ?? 'stelar-df5' !! is-zip($file) ?? 'zip' !! is-sdf($file) ?? "stelar-sdf" !! is-block($file) ?? 'fitteia-blocks' !! is-ffc($file) ?? 'ist-ffc' !! "";	
+	   	return is-hdf5($file) ?? 'stelar-hdf5' !! is-zip($file) ?? 'zip' !! is-sdf($file) ?? "stelar-sdf" !! is-block($file) ?? 'fitteia-blocks' !! is-ffc($file) ?? 'ist-ffc' !! "";	
 	}
 
 	sub is-hdf5 ($file)  { return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) }
