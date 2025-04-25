@@ -80,7 +80,7 @@ class Import is export {
 			given is-type($file) {
 				when 'zip' {
 					shell "unzip $file -d {self.path}";
-					@files.push: self.path.IO.dir>>.Str.map({ $file.subst("{self.path}/",'')  }).sort.Slip;
+					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
 	    		}	
 				when 'fitteia-blocks' 	{ @files = self!fitteia-blocks($file) }
 				when 'stelar-hdf5' 		{ @files = self.import('stelar-hdf5') }
