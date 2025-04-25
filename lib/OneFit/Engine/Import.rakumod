@@ -167,7 +167,7 @@ class Import is export {
 	    	@data-files.push: $datafile;
 		}
 		"$path/$stelar-hdf5".IO.unlink;
-		say @data-files;
+		say 'ola',@data-files;
 		return @data-files;
     }
 
