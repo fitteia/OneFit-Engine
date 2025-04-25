@@ -88,7 +88,7 @@ class Import is export {
 				when 'ist-ffc'			{ @files = self.import('ist-ffc') }
 				default {
 		   			@files.push: $file;
-		   			$file.IO.copy("{self.path}/$file")
+		   			$file.IO.copy("{self.path}/$file");
 					say @files;
 				}
 			}
