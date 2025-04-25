@@ -105,8 +105,8 @@ class Import is export {
 		my @files;
 		my @blocks = $file.IO.slurp.split(/'#' <ws> DATA <ws>/);
 		for (1 ..^ @blocks.elems) -> $i {
-			my $file-name="{$_.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
-			$file-name = $_ unless @blocks.elems > 2;
+			my $file-name="{$file.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
+			$file-name = $file unless @blocks.elems > 2;
 			@files.push: $file-name; 
 			"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
 		}
