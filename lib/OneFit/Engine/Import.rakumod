@@ -74,7 +74,7 @@ class Import is export {
 	multi method import () {
 		my @files=();
 		for @!Input-files {
-			say (is-hdf5($_),is-zip($_),is-sdf($_),is-block$_),is-ffc($_));
+			say (is-hdf5($_),is-zip($_),is-sdf($_),is-block($_),is-ffc($_));
 	    	if $_.IO.extension.Str ~~ /zip/ {
 				shell "unzip $_ -d {self.path}";
 				@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
