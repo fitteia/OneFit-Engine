@@ -30,7 +30,7 @@ class Import is export {
 	multi method input-files () { @!Input-files }
 
 	multi method input-files ( @files ) { @!Input-files= @files; 
-		sqy @files;
+		say @files;
 	self }
 
     multi method filename () { @!Input-files[0] }
