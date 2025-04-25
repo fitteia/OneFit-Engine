@@ -90,7 +90,7 @@ class Import is export {
 		   			@files.push: $_;
 		   			$_.IO.copy("{self.path}/$_")
 				}
-
+			}
 
 #
 #	    	if $_.IO.extension.Str ~~ /zip/ {
