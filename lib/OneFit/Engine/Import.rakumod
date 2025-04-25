@@ -77,6 +77,7 @@ class Import is export {
 			say $file;
 
 			given is-type($file) {
+				say $_;
 				when 'zip' {
 					shell "unzip $file -d {self.path}";
 					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
