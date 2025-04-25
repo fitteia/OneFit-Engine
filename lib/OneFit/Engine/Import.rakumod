@@ -82,7 +82,7 @@ class Import is export {
 	    	}	
 	    	else {
 				if is-type($_) eq 'fitteia-blocks' {
-				self!fitteia-blocks($_);			
+					@files = self!fitteia-blocks($_);			
 #				if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
 #					my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
 #					for (1 ..^ @blocks.elems) -> $i {
