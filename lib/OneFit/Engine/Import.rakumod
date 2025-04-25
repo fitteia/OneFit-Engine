@@ -83,9 +83,9 @@ class Import is export {
 					@files.push: self.path.IO.dir>>.Str.map({ $file.subst("{self.path}/",'')  }).sort.Slip;
 	    		}	
 				when 'fitteia-blocks' 	{ @files = self!fitteia-blocks($file) }
-				when 'stelar-hdf5' 		{ @files = self!stelar-hdf5-Mz }
-				when 'stelar-sdf'  		{ @files = self!stelar-sdf-Mz }
-				when 'ist-ffc'			{ @files = self!ist-ffc }
+				when 'stelar-hdf5' 		{ @files = self.import('stelar-hdf5') }
+				when 'stelar-sdf'  		{ @files = self.import('stelar-sdf') }
+				when 'ist-ffc'			{ @files = self.import('ist-ffc' }
 				default {
 		   			@files.push: $file;
 		   			$file.IO.copy("{self.path}/$file")
