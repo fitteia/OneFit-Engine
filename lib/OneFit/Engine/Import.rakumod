@@ -85,7 +85,7 @@ class Import is export {
 				when 'fitteia-blocks' 	{ @files = self!fitteia-blocks($file) }
 				when 'stelar-hdf5' 		{ @files = self.import('stelar-hdf5') }
 				when 'stelar-sdf'  		{ @files = self.import('stelar-sdf') }
-				when 'ist-ffc'			{ @files = self.import('ist-ffc' }
+				when 'ist-ffc'			{ @files = self.import('ist-ffc') }
 				default {
 		   			@files.push: $file;
 		   			$file.IO.copy("{self.path}/$file")
