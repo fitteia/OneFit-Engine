@@ -74,7 +74,8 @@ class Import is export {
 		for @!Input-files -> $file {
 #			say is-type($_);
 #		   exit;
-			
+			say $file;
+
 			given is-type($file) {
 				when 'zip' {
 					shell "unzip $file -d {self.path}";
@@ -166,6 +167,7 @@ class Import is export {
 	    	@data-files.push: $datafile;
 		}
 		"$path/$stelar-hdf5".IO.unlink;
+		say @data-files;
 		return @data-files;
     }
 
