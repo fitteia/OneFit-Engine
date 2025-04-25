@@ -75,28 +75,45 @@ class Import is export {
 		my @files=();
 		for @!Input-files {
 #			say is-type($_);
-#		   exit;	
-	    	if $_.IO.extension.Str ~~ /zip/ {
-				shell "unzip $_ -d {self.path}";
-				@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
-	    	}	
-	    	else {
-				if is-type($_) eq 'fitteia-blocks' {
-					@files = self!fitteia-blocks($_);			
-#				if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
-#					my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
-#					for (1 ..^ @blocks.elems) -> $i {
-#						my $file-name="{$_.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
-#						$file-name = $_ unless @blocks.elems > 2;
-#						@files.push: $file-name; 
-#						"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
-#					}		 
-				}	
-				else {	
+#		   exit;
+
+			given is-type($_) {
+				when 'zip' {
+					shell "unzip $_ -d {self.path}";
+					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
+	    		}	
+				when 'fitteia-blocks' 	{ @files = self!fitteia-blocks($_) }
+				when 'stelar-hdf5' 		{ @files = self!stelar-hdf5-Mz }
+				whed 'stelar-sdf'  		{ @files = self!stelar-sdf-Mz }
+				when 'ist-ffc'			{ @files = self!ist-ffc }
+				default {
 		   			@files.push: $_;
 		   			$_.IO.copy("{self.path}/$_")
 				}
-	    	}
+
+
+#
+#	    	if $_.IO.extension.Str ~~ /zip/ {
+#				shell "unzip $_ -d {self.path}";
+#				@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
+#	    	}	
+#	    	else {
+#				if is-type($_) eq 'fitteia-blocks' {
+#					@files = self!fitteia-blocks($_);			
+##				if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
+##					my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
+##					for (1 ..^ @blocks.elems) -> $i {
+##						my $file-name="{$_.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
+##						$file-name = $_ unless @blocks.elems > 2;
+##						@files.push: $file-name; 
+##						"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
+##					}		 
+#				}	
+#				else {	
+#		   			@files.push: $_;
+#		   			$_.IO.copy("{self.path}/$_")
+#				}
+#	    	}
 		}
 		return @files; 
 	}
