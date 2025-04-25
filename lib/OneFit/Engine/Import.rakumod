@@ -74,7 +74,7 @@ class Import is export {
 		for @!Input-files -> $file {
 #			say is-type($_);
 #		   exit;
-
+			say $file;
 			given is-type($file) {
 				when 'zip' {
 					shell "unzip $file -d {self.path}";
