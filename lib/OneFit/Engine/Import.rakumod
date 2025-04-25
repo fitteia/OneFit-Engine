@@ -74,21 +74,23 @@ class Import is export {
 	multi method import () {
 		my @files=();
 		for @!Input-files {
-			say is-type($_);
-		   exit;	
+#			say is-type($_);
+#		   exit;	
 	    	if $_.IO.extension.Str ~~ /zip/ {
 				shell "unzip $_ -d {self.path}";
 				@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
 	    	}	
 	    	else {
-				if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
-					my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
-					for (1 ..^ @blocks.elems) -> $i {
-						my $file-name="{$_.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
-						$file-name = $_ unless @blocks.elems > 2;
-						@files.push: $file-name; 
-						"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
-					}		 
+				if is-type($_) eq 'fitteia-blocks' {
+				self!fitteia-blocks($_);			
+#				if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
+#					my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
+#					for (1 ..^ @blocks.elems) -> $i {
+#						my $file-name="{$_.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
+#						$file-name = $_ unless @blocks.elems > 2;
+#						@files.push: $file-name; 
+#						"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
+#					}		 
 				}	
 				else {	
 		   			@files.push: $_;
@@ -99,6 +101,17 @@ class Import is export {
 		return @files; 
 	}
 
+	method !fitteia-blocks ($file) {
+		my @files;
+		my @blocks = $file.IO.slurp.split(/'#' <ws> DATA <ws>/);
+		for (1 ..^ @blocks.elems) -> $i {
+			my $file-name="{$_.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
+			$file-name = $_ unless @blocks.elems > 2;
+			@files.push: $file-name; 
+			"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
+		}
+		return @files;	
+	}
 
 	method !stelar-hdf5-Mz (Bool :$Re, Bool :$Im) {
 		my $stelar-hdf5 = self.filename();
@@ -243,14 +256,14 @@ class Import is export {
 	}
 
 	sub is-type ($file)  {
-	   	return is-hdf5($file) ?? 'hdf5' !! is-zip($file) ?? 'zip' !! is-sdf($file) ?? "sdf" !! is-block($file) ?? 'blocks' !! is-ffc($file) ?? 'ffc' !! "";	
+	   	return is-hdf5($file) ?? 'stelar-df5' !! is-zip($file) ?? 'zip' !! is-sdf($file) ?? "stelar-sdf" !! is-block($file) ?? 'fitteia-blocks' !! is-ffc($file) ?? 'ist-ffc' !! "";	
 	}
 
 	sub is-hdf5 ($file)  { return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) }
 	sub is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
 	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
 	sub is-sdf ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/TAU/) }
-	sub is-ffc ($file) 	 { say "last"; return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
+	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
 
 }
 
