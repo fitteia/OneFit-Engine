@@ -84,7 +84,7 @@ class Import is export {
 	    		}	
 				when 'fitteia-blocks' 	{ @files = self!fitteia-blocks($_) }
 				when 'stelar-hdf5' 		{ @files = self!stelar-hdf5-Mz }
-				whed 'stelar-sdf'  		{ @files = self!stelar-sdf-Mz }
+				when 'stelar-sdf'  		{ @files = self!stelar-sdf-Mz }
 				when 'ist-ffc'			{ @files = self!ist-ffc }
 				default {
 		   			@files.push: $_;
