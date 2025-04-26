@@ -85,8 +85,8 @@ class Import is export {
 	multi method import ('stelar-sef-R1-err', :$err) { self!stelar-sef-R1( err => $err ) }
 
 	multi method import ('ist-ffc') { self!ist-ffc() }
-	#	multi method import ('ist-ffc1-R1') { self!ist-ffc1-R1() }
-	#	multi method import ('ist-ffc1-R1-err	') { self!ist-ffc1-R1( err => $err ) }
+	multi method import ('ist-ffc1-R1') { self!ist-ffc1-R1() }
+	multi method import ('ist-ffc1-R1-err	') { self!ist-ffc1-R1( err => $err ) }
 
 	method !fitteia-blocks ($file) {
 		my @files;
@@ -241,6 +241,24 @@ class Import is export {
 		}
 		return @files
 	}
+    method !ist-ffc-R1 (Rat :$err) {
+		my $ist-ffc = self.filename();
+		my $path = self.path;
+		my @f;
+		my @R1;
+		my @err;
+		$st-ffc.IO.copy: "$path/$ist-ffc";
+		for "$ist-ffc".IO.lines {
+			my @words = $_.split(',')[1,2,3];
+			@f.push: @a[0];
+			@R1.push: 1e6/@a[1];
+			@err.push: $err.Bool ?? 1e6/@a[1]*$err !! @a[2]/@a[1]*1e6/@a[1];
+		}
+			
+		"$path/$ist-ffc".IO.extension('dat').spurt:  (@f  Z @R1 Z @err @R1).join("\n") ~ "\n\n";
+		return $ist-ffc.IO.extension('dat').Str;
+    }
+
 
 	sub is-type ($file)  {
 	   	return is-hdf5($file) ?? 'stelar-hdf5' !! is-zip($file) ?? 'zip' !! is-sdf($file) ?? "stelar-sdf" !! is-block($file) ?? 'fitteia-blocks' !! is-ffc($file) ?? 'ist-ffc' !! "";	
