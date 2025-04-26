@@ -86,7 +86,7 @@ class Import is export {
 
 	multi method import ('ist-ffc') { self!ist-ffc() }
 	multi method import ('ist-ffc1-R1') { self!ist-ffc1-R1() }
-	multi method import ('ist-ffc1-R1-err	') { self!ist-ffc1-R1( err => $err ) }
+	multi method import ('ist-ffc1-R1-err',:$err) { self!ist-ffc1-R1( err => $err ) }
 
 	method !fitteia-blocks ($file) {
 		my @files;
