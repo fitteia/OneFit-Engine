@@ -249,7 +249,7 @@ class Import is export {
 		my @err;
 		$ist-ffc.IO.copy: "$path/$ist-ffc";
 		for "$ist-ffc".IO.lines {
-			my @words = $_.split(',')[1,2,3];
+			my @a = $_.split(',')[1,2,3];
 			@f.push: @a[0];
 			@R1.push: 1e6/@a[1];
 			@err.push: $err.Bool ?? 1e6/@a[1]*$err !! @a[2]/@a[1]*1e6/@a[1];
