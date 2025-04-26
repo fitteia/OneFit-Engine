@@ -50,7 +50,28 @@ class Import is export {
 		}
 		return @files;
 	}
-	
+	multi method import () {
+		my @files=();
+		for @!Input-files -> $file {
+			given is-type($file) {
+				when 'zip' {
+					shell "unzip $file -d {self.path}";
+					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
+	    		}	
+				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
+				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5').Slip }
+				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf').Slip }
+				when 'ist-ffc'			{ @files.push: self.import('ist-ffc').Slip }
+				default {
+		   			@files.push: $file;
+		   			$file.IO.copy("{self.path}/$file");
+				}
+			}
+		}
+		return @files; 
+	}
+
+
 	multi method import ('stelar-hdf5') { self!stelar-hdf5-Mz() }
 	multi method import ('stelar-hdf5-Re') { self!stelar-hdf5-Mz( Re => True ) }
 	multi method import ('stelar-hdf5-Im') { self!stelar-hdf5-Mz( Im => True ) }
@@ -66,53 +87,6 @@ class Import is export {
 	multi method import ('ist-ffc') { self!ist-ffc() }
 	#	multi method import ('ist-ffc1-R1') { self!ist-ffc1-R1() }
 	#	multi method import ('ist-ffc1-R1-err	') { self!ist-ffc1-R1( err => $err ) }
-
-	multi method import () {
-		my @files=();
-		for @!Input-files -> $file {
-#			say is-type($_);
-#		   exit;
-
-			given is-type($file) {
-				when 'zip' {
-					shell "unzip $file -d {self.path}";
-					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
-	    		}	
-				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
-				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5').Slip }
-				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf').Slip }
-				when 'ist-ffc'			{ @files.push: self.import('ist-ffc').Slip }
-				default {
-		   			@files.push: $file;
-		   			$file.IO.copy("{self.path}/$file");
-				}
-			}
-
-#
-#	    	if $_.IO.extension.Str ~~ /zip/ {
-#				shell "unzip $_ -d {self.path}";
-#				@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
-#	    	}	
-#	    	else {
-#				if is-type($_) eq 'fitteia-blocks' {
-#					@files = self!fitteia-blocks($_);			
-##				if $_.IO.slurp.contains(/'#' <ws> DATA <ws>/) {
-##					my @blocks = $_.IO.slurp.split(/'#' <ws> DATA <ws>/);
-##					for (1 ..^ @blocks.elems) -> $i {
-##						my $file-name="{$_.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
-##						$file-name = $_ unless @blocks.elems > 2;
-##						@files.push: $file-name; 
-##						"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
-##					}		 
-#				}	
-#				else {	
-#		   			@files.push: $_;
-#		   			$_.IO.copy("{self.path}/$_")
-#				}
-#	    	}
-		}
-		return @files; 
-	}
 
 	method !fitteia-blocks ($file) {
 		my @files;

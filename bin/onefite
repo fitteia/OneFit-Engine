@@ -541,7 +541,10 @@ multi MAIN  ('create',
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
-	     Bool :$stelar-sdf  = False,
+	 	 Bool :$ist-ffc = False,
+		 Bool :$ist-ffc-R1 = False,
+		 Bool :$ist-ffc-R1-err,
+	   	 Bool :$stelar-sdf  = False,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
 	     Bool :$stelar-sef-R1  = False,
@@ -569,7 +572,11 @@ multi MAIN  ('create',
 					'stelar-sdf-Re'	 	=> $stelar-sdf-Re,
 					'stelar-sdf-Im'	 	=> $stelar-sdf-Im,
 					'stelar-sef-R1'	 	=> $stelar-sef-R1,
-					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False;
+					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False,
+					'ist-ffc'			=> $ist-ffc,
+					'ist-ffc-R1'		=> $ist-ffc-R1,
+					'ist-ffc-R1-err' 	=> $ist-ffc-R1-err.so ?? $ist-ffc-R1-err !! False;
+
 
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
 
@@ -736,7 +743,7 @@ multi MAIN  ('fit',
 
 multi MAIN  ('fit',
 	     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the (.sav or .json) to compile
-             Str  :$fit-methods = "simp scan min minos",
+         Str  :$fit-methods = "simp scan min minos",
 	     Bool :$no-plot,
 	     Bool :$autox,
 	     Bool :$autoy,
