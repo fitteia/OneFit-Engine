@@ -532,7 +532,7 @@ multi MAIN  ('create',
 	     Str  $function is copy,
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
 	     Str  :data-label(:$data-labels),
-             Str  :$fit-methods = "simp scan min minos",
+         Str  :$fit-methods = "simp scan min minos",
 	     Str  :$tags,
 	     Bool :$autox,
 	     Bool :$autoy,
@@ -587,7 +587,7 @@ multi MAIN  ('create',
 		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
     }
  
-    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
+    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
@@ -662,7 +662,7 @@ multi MAIN  ('fit',
 	     Str  $function is copy, 
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
 	     Str  :data-label(:$data-labels),
-             Str  :$fit-methods = "simp scan min minos",
+         Str  :$fit-methods = "simp scan min minos",
 	     Str  :$tags,
 	     Str  :$zip-to,
 	     Bool :$no-plot,
