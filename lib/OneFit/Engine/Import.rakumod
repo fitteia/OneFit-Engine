@@ -255,7 +255,7 @@ class Import is export {
 			@err.push: $err.Bool ?? 1e6/@a[1]*$err !! @a[2]/@a[1]*1e6/@a[1];
 		}
 			
-		"$path/$ist-ffc".IO.extension('dat').spurt:  (@f  Z @R1 Z @err @R1).join("\n") ~ "\n\n";
+		"$path/$ist-ffc".IO.extension('dat').spurt:  (@f  Z @R1 Z @err).join("\n") ~ "\n\n";
 		return $ist-ffc.IO.extension('dat').Str;
     }
 
