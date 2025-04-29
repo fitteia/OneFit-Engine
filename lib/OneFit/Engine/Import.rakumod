@@ -61,7 +61,7 @@ class Import is export {
 					my @files-in-zip;
 					@files-in-zip.push: "{self.path}/tmp/".IO.dir>>.Str.map({ $_.subst("{self.path}/tmp/",'')  }).sort.Slip;
 					shell "unzip $file && rm -fr {self.path}/tmp/";
-					@files.push: self.import( infiles => @files-in-zip );
+					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
 				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5').Slip }
