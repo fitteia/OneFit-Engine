@@ -10,6 +10,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 - [Upgrades](#Upgrades)
 - [WebService](#WebService)
 - [INSTALL-help](#INSTALL-help)
+- [Data file type](#Data File Types)
 - [Running](#Running)
 
 ## Prerequisites
@@ -287,6 +288,28 @@ service shellinabox stop
 	cd $(onefite path --src | awk ´/\//') 
 	```
 
+## Data file types
+
+### Standard
+
+- Ascii file with two (or three) columns separated by spaces: x y or (z y ey)
+
+### Specific
+
+- IST ffc data file with magnetizatin decays: call onefite with option [--ist-ffc]
+
+- IST ffc data file with R1 profile: call onefite with option [--ist-ffc-R1] or [--ist-ffc-R1-err=<Rat>]
+
+- Stelar hdf5 file: call onefite with options [--stelar-hdf5] or [--stelar-hdf5-R1] of [--stelar-hdf5-R1-err=<Rat>] 
+
+- Stelar sdf file: call onefite with options [--stelar-sdf] or [--stelar-sdf-R1] of [--stelar-sdf-R1-err=<Rat>] 
+
+- Stelar sef file: call onefite with options [--stelar-sef-R1] of [--stelar-sef-R1-err=<Rat>]
+
+### ZIP files
+
+zip files containg any of the above 
+
 ## Running
 
 Define a bash function rune
@@ -386,16 +409,16 @@ prompt> diff $HOME/.local/etc/aliases.json $HOME/.local/OneFit-Engine/etc/OFE/de
 
 To take advantage of aliases pelase consider:
 ```bash
-onefite fit <datafile> alias:"one exponential" 
+onefite fit alias:"one exponential" <datafile> 
 ```
 ```bash
-onefite fit <datafile> a:"two exponentials" --logx 
+onefite fit a:"two exponentials" <datafile> --logx 
 ```
 ```bash
-onefite fit <datafile> "alias: one BPP" 
+onefite fit "alias: one BPP" <datafile> 
 ```
 ```bash
-onefite fit <datafile> "a: two BPP"
+onefite fit "a: two BPP" <datafile> 
 ```
  
 
