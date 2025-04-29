@@ -53,7 +53,7 @@ class Import is export {
 	multi method import (:@infiles) {
 		my @input-files = @infiles.so ?? @infiles !! @!Input-files;
 		my @files=();
-		for @!input-files -> $file {
+		for @input-files -> $file {
 			given is-type($file) {
 				when 'zip' {
 					"{self.path}/tmp".IO.mkdir unless "{self.path}/tmp".IO.e;
