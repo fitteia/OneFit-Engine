@@ -590,7 +590,7 @@ multi MAIN  ('create',
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
 
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
-    if $function.contains(/^a?\w* <ws> ':' <ws>/) { 
+    if $function.contains(/^ <ws> a?\w* <ws> ':' <ws>/) { 
 		my $falias = %aliases{ $function.subst(/\w*\s*':'\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
@@ -724,7 +724,7 @@ multi MAIN  ('fit',
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
 
     my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
-    if $function.contains(/^a?\w* <ws> ':' <ws>/) { 
+    if $function.contains(/^ <ws> a?\w* <ws> ':' <ws>/) { 
 		my $falias = %aliases{ $function.subst(/\w*\s*':'\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
