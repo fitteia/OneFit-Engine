@@ -59,8 +59,8 @@ class Import is export {
 					"{self.path}/tmp".IO.mkdir unless "{self.path}/tmp".IO.e;
 					shell "unzip $file -d {self.path}/tmp/";
 					my @files-in-zip;
-					@files-in-zip.push: "{self.path}/tmp/".IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
-					shell "unzip $file && rm -fr ./tmp/";
+					@files-in-zip.push: "{self.path}/tmp/".IO.dir>>.Str.map({ $_.subst("{self.path}/tmp/",'')  }).sort.Slip;
+					shell "unzip $file && rm -fr {self.path}/tmp/";
 					@files.push: self.import( infiles => @files-in-zip );
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
