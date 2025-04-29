@@ -50,17 +50,23 @@ class Import is export {
 		}
 		return @files;
 	}
-	multi method import () {
+	multi method import (:@infiles) {
+		my @input-files = @infiles.so ?? @infiles !! @!Input-files;
 		my @files=();
-		for @!Input-files -> $file {
+		for @!input-files -> $file {
 			given is-type($file) {
 				when 'zip' {
-					shell "unzip $file -d {self.path}";
-					@files.push: self.path.IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
+					"{self.path}/tmp".IO.mkdir unless "{self.path}/tmp".IO.e;
+					shell "unzip $file -d {self.path}/tmp/";
+					my @files-in-zip;
+					@files-in-zip.push: "{self.path}/tmp/".IO.dir>>.Str.map({ $_.subst("{self.path}/",'')  }).sort.Slip;
+					shell "unzip $file && rm -fr ./tmp/";
+					@files.push: self.import( infiles => @files-in-zip );
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
 				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5').Slip }
 				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf').Slip }
+				when 'stelar-sef'  		{ @files.push: self.import('stelar-sef-R1', file => $file).Slip }
 				when 'ist-ffc'			{ @files.push: self.import('ist-ffc').Slip }
 				default {
 		   			@files.push: $file;
@@ -81,8 +87,8 @@ class Import is export {
 	multi method import ('stelar-sdf') { self!stelar-sdf-Mz() }
 	multi method import ('stelar-sdf-Re') { self!stelar-sdf-Mz( Re => True ) }
 	multi method import ('stelar-sdf-Im') { self!stelar-sdf-Mz( Im => True ) }
-	multi method import ('stelar-sef-R1') { self!stelar-sef-R1() }
-	multi method import ('stelar-sef-R1-err', :$err) { self!stelar-sef-R1( err => $err ) }
+	multi method import ('stelar-sef-R1', :$file) { self!stelar-sef-R1( file => $file ) }
+	multi method import ('stelar-sef-R1-err', :$file, :$err) { self!stelar-sef-R1( file => $file, err => $err ) }
 
 	multi method import ('ist-ffc') { self!ist-ffc() }
 	multi method import ('ist-ffc-R1') { self!ist-ffc-R1() }
@@ -209,11 +215,13 @@ class Import is export {
 		return @data-files;
     }
 
-    method !stelar-sef-R1 (Rat :$err) {
+    method !stelar-sef-R1 (Str :$file, Rat :$err) {
 		my $stelar-sdf = self.filename();
+		say $file;
+		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
-		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\d+/) } .map({ [ ($_[0] * 1e6).round(0.0001) ,$_[1]] }).Array;
+		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\s*\d+/) } .map({ [ ($_[0] * 1e6).round(0.0001) ,$_[1]] }).Array;
 		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1].Rat * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
 		return $stelar-sdf.IO.extension('dat').Str
     }
@@ -261,13 +269,14 @@ class Import is export {
 
 
 	sub is-type ($file)  {
-	   	return is-hdf5($file) ?? 'stelar-hdf5' !! is-zip($file) ?? 'zip' !! is-sdf($file) ?? "stelar-sdf" !! is-block($file) ?? 'fitteia-blocks' !! is-ffc($file) ?? 'ist-ffc' !! "";	
+	   	return is-hdf5($file) ?? 'stelar-hdf5' !! is-zip($file) ?? 'zip' !! is-sdf($file) ?? "stelar-sdf" !! is-block($file) ?? 'fitteia-blocks' !! is-ffc($file) ?? 'ist-ffc' !! is-sef($file) ?? "stelar-sef" !! "";	
 	}
 
 	sub is-hdf5 ($file)  { return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) }
 	sub is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
 	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
 	sub is-sdf ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/TAU/) }
+	sub is-sef ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) }
 	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
 
 }
