@@ -218,7 +218,7 @@ class Import is export {
 		return @data-files;
     }
 
-    method !stelar-sef-R1 (Str :$file, Rat :$err) {
+    method !stelar-sef-R1 (:$file, Rat :$err) {
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
@@ -228,7 +228,7 @@ class Import is export {
 		return $stelar-sdf.IO.extension('dat').Str
     }
 
-    method !stelar-sef-Mz (Str :$file) {
+    method !stelar-sef-Mz (:$file) {
 		my $stelar-sef = self.filename();
 		$stelar-sef = $file if $file.so;
 		my $path = self.path();
