@@ -307,7 +307,7 @@ class Import is export {
 	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
 	sub is-sdf ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) }
 	sub is-sef ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) }
-	sub is-sef-Mz ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/BRLX__\n/) }
+	sub is-sef-Mz ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) }
 	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
 
 }
