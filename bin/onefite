@@ -46,9 +46,9 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite help <model> [-q|--quiet]
 	    onefite help <model> <key>] [-q|--quiet]
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-            onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
@@ -329,6 +329,7 @@ HTML
 		my $stelar-sdf = "";
 		my $stelar-sdf-Re = "";
 		my $stelar-sdf-Im = "";
+		my $stelar-sef    = "";
 		my $stelar-sef-R1 = "";
 		my $stelar-sef-R1-err = "";
 		my $stelar-hdf5 = "";
@@ -363,6 +364,7 @@ HTML
 			   $stelar-sdf           = "--stelar-sdf  " if $k eq "stelar-sdf" and $v eq any("yes",1);
 		       $stelar-sdf-Re        = "--stelar-sdf-Re  " if $k eq "stelar-sdf-Re" and $v eq any("yes",1);
 		       $stelar-sdf-Im        = "--stelar-sdf-Im  " if $k eq "stelar-sdf-Im" and $v eq any("yes",1);
+		       $stelar-sef           = "--stelar-sef  " if $k eq "stelar-sef" and $v eq any("yes",1);
 		       $stelar-sef-R1        = "--stelar-sef-R1  " if $k eq "stelar-sef-R1" and $v eq any("yes",1);
 		       $stelar-sef-R1-err    = "--stelar-sef-R1-err={$v.Rat}  " if $k eq "stelar-sef-R1-err" and $v.^name eq "Rat";
 		       $stelar-hdf5           = "--stelar-hdf5  " if $k eq "stelar-hdf5" and $v eq any("yes",1);
@@ -390,8 +392,8 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $ist-ffc $ist-ffc-R1 $ist-ffc-R1-err $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-sef-R1 $stelar-sef-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
-		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $ist-ffc $ist-ffc-R1 $ist-ffc-R1-err $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im  $stelar-sef-R1 $stelar-sef-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $ist-ffc $ist-ffc-R1 $ist-ffc-R1-err $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-sef $stelar-sef-R1 $stelar-sef-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json";
+		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $ist-ffc $ist-ffc-R1 $ist-ffc-R1-err $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-sef $stelar-sef-R1 $stelar-sef-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
 		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
@@ -556,9 +558,10 @@ multi MAIN  ('create',
 	   	 Bool :$stelar-sdf  = False,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
+	     Bool :$stelar-sef     = False,
 	     Bool :$stelar-sef-R1  = False,
 	     Rat  :$stelar-sef-R1-err,
-	     Bool :$stelar-hdf5 = False,
+	     Bool :$stelar-hdf5    = False,
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
 	     Bool :$stelar-hdf5-R1 = False,
@@ -580,6 +583,7 @@ multi MAIN  ('create',
 					'stelar-sdf'	 	=> $stelar-sdf,
 					'stelar-sdf-Re'	 	=> $stelar-sdf-Re,
 					'stelar-sdf-Im'	 	=> $stelar-sdf-Im,
+					'stelar-sef'	 	=> $stelar-sef,
 					'stelar-sef-R1'	 	=> $stelar-sef-R1,
 					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False,
 					'ist-ffc'			=> $ist-ffc,
@@ -591,7 +595,6 @@ multi MAIN  ('create',
 
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) { 
-		say $function;
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
@@ -689,9 +692,10 @@ multi MAIN  ('fit',
 		 Bool :$stelar-sdf  = False,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
+	     Bool :$stelar-sef     = False,
 	     Bool :$stelar-sef-R1  = False,
 	     Rat  :$stelar-sef-R1-err,
-	     Bool :$stelar-hdf5 = False,
+	     Bool :$stelar-hdf5    = False,
 	     Bool :$stelar-hdf5-Re = False,
 	     Bool :$stelar-hdf5-Im = False,
 	     Bool :$stelar-hdf5-R1 = False,
@@ -716,6 +720,7 @@ multi MAIN  ('fit',
 					'stelar-sdf'	 	=> $stelar-sdf,
 					'stelar-sdf-Re'	 	=> $stelar-sdf-Re,
 					'stelar-sdf-Im'	 	=> $stelar-sdf-Im,
+					'stelar-sef'	 	=> $stelar-sef,
 					'stelar-sef-R1'	 	=> $stelar-sef-R1,
 					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False,
 					'ist-ffc'			=> $ist-ffc,
@@ -726,7 +731,6 @@ multi MAIN  ('fit',
 
     my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) {
-		say $function;	
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
