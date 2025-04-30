@@ -55,6 +55,7 @@ class Import is export {
 		my @files=();
 		for @input-files -> $file {
 			given is-type($file) {
+				say "file type: ",$_;
 				when 'zip' {
 					"{self.path}/tmp".IO.mkdir unless "{self.path}/tmp".IO.e;
 					shell "unzip $file -d {self.path}/tmp/";
