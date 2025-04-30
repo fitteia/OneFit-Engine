@@ -55,6 +55,7 @@ class Import is export {
 		my @files=();
 		for @input-files -> $file {
 			given is-type($file) {
+				say $_;
 				when 'zip' {
 					"{self.path}/tmp".IO.mkdir unless "{self.path}/tmp".IO.e;
 					shell "unzip $file -d {self.path}/tmp/";
@@ -88,7 +89,7 @@ class Import is export {
 	multi method import ('stelar-sdf') { self!stelar-sdf-Mz() }
 	multi method import ('stelar-sdf-Re') { self!stelar-sdf-Mz( Re => True ) }
 	multi method import ('stelar-sdf-Im') { self!stelar-sdf-Mz( Im => True ) }
-	multi method import ('stelar-sef', :$file) { self!stelar-sef-Mz( file=> $file ) }
+	multi method import ('stelar-sef', :$file) { self!stelar-sef-Mz( file => $file ) }
 	multi method import ('stelar-sef-R1', :$file) { self!stelar-sef-R1( file => $file ) }
 	multi method import ('stelar-sef-R1-err', :$file, :$err) { self!stelar-sef-R1( file => $file, err => $err ) }
 
