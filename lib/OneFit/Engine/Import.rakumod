@@ -55,7 +55,6 @@ class Import is export {
 		my @files=();
 		for @input-files -> $file {
 			given is-type($file) {
-				say "file type ", $_;
 				when 'zip' {
 					"{self.path}/tmp".IO.mkdir unless "{self.path}/tmp".IO.e;
 					shell "unzip $file -d {self.path}/tmp/";
@@ -306,8 +305,8 @@ class Import is export {
 	sub is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
 	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
 	sub is-sdf ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) }
-	sub is-sef ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) }
-	sub is-sef-Mz ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) }
+	sub is-sef ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/^_BRLX__/) }
+	sub is-sef-Mz ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/^BRLX__/) }
 	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
 
 }
