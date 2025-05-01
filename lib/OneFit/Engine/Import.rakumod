@@ -126,7 +126,7 @@ class Import is export {
 				@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 				@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    	}
-	    	my $datafile = "{$stelar-hdf5.IO.extension('').Str}-zone{ sprintf('%03d',$_.Int) }.dat";
+	    	my $datafile = "{$stelar-hdf5.IO.extension('').Str}-z{ sprintf('%03d',$_.Int) }.dat";
 	    	my $header = "# DATA dum = " ~
 				($buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6).round(0.0001)
 				~
@@ -188,7 +188,7 @@ class Import is export {
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
 				my $index=$buf.words.head.split('.').map({ sprintf('%03d',$_.Int) }).join('_');
-				my $datafile = "{$stelar-sdf.IO.extension('').Str}-zone{$index}.dat";
+				my $datafile = "{$stelar-sdf.IO.extension('').Str}-z{$index}.dat";
 				my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
 		    	my $header = "# DATA dum = " ~
 					($buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6).round(0.0001)
@@ -244,8 +244,8 @@ class Import is export {
 			}	
 			my $max = @Mz.max;
 			@zones[$_] = (@tau Z @Mz.map({ $_/$max}))>>.join(" ").join("\n");
-			"{self.path}/{$stelar-sef.IO.extension('').Str}-zone{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = zone{$_+1}\n" ~ @zones[$_].join("\n");
-			@files.push: "{$stelar-sef.IO.extension('').Str}-zone{sprintf('%03d',$_+1)}.dat"  
+			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = zone{$_+1}\n" ~ @zones[$_].join("\n");
+			@files.push: "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat"  
 		}
 		return  @files;
     }
@@ -266,7 +266,7 @@ class Import is export {
 		}
 		for (1 .. @ntaus.elems) {
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
-			my $datafile = "{$ffc.IO.extension('').Str}-zone{ sprintf('%03d',$_) }.dat";
+			my $datafile = "{$ffc.IO.extension('').Str}-z{ sprintf('%03d',$_) }.dat";
 			my $header = "# DATA dum = @modes[$_-1] @freqs[$_-1]\n# TAG = zone{ sprintf('%03d',$_) }";
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;

@@ -27,7 +27,6 @@ multi MAIN (Bool :h(:help($))) {
 
 #    my $p= shell "onefite", :err;
 #    say $p.err.slurp(:close);
-	shell "onefite help";
 	note qq:to/END_USAGE/;
     Usage:
             onefite [-h|--help]
