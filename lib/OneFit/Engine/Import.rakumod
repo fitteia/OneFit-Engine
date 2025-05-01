@@ -188,7 +188,7 @@ class Import is export {
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
 				my $index=$buf.words.head.split('.').map({ sprintf('%03d',$_.Int) }).join('_');
-				my $datafile = "{$slelar-sdf.IO.extension('').Str}-zone{$index}.dat";
+				my $datafile = "{$stelar-sdf.IO.extension('').Str}-zone{$index}.dat";
 				my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
 		    	my $header = "# DATA dum = " ~
 					($buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6).round(0.0001)
