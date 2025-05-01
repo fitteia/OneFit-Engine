@@ -27,7 +27,8 @@ multi MAIN (Bool :h(:help($))) {
 
 #    my $p= shell "onefite", :err;
 #    say $p.err.slurp(:close);
-    note qq:to/END_USAGE/;
+	shell "onefite help";
+	note qq:to/END_USAGE/;
     Usage:
             onefite [-h|--help]
 	    onefite uninstall
