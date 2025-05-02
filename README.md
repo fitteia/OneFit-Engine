@@ -292,7 +292,7 @@ service shellinabox stop
 
 ### Standard
 
-- Ascii file with two (or three) columns separated by spaces: x y or (z y ey)
+- Ascii files with two (or three) columns separated by spaces: x y or (z y ey)
 
 ### Specific
 
