@@ -87,7 +87,7 @@ class Import is export {
 	multi method import ('stelar-hdf5-R1', :$file) { self!stelar-hdf5-R1( file => $file ) }
 	multi method import ('stelar-hdf5-R1-err', :$file, :$err) { self!stelar-hdf5-R1( err => $err, file => $file ) }
 
-	multi method import ('stelar-sdf', :$file,) { self!stelar-sdf-Mz( file => $file)) }
+	multi method import ('stelar-sdf', :$file,) { self!stelar-sdf-Mz( file => $file ) }
 	multi method import ('stelar-sdf-Re', :$file,) { self!stelar-sdf-Mz( Re => True, file => $file  ) }
 	multi method import ('stelar-sdf-Im', :$file,) { self!stelar-sdf-Mz( Im => True, file => $file  ) }
 	multi method import ('stelar-sef-Mz', :$file) { self!stelar-sef-Mz( file => $file ) }
