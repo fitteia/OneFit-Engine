@@ -25,8 +25,8 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 multi MAIN (Bool :h(:help($))) {
 #        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
 
-#    my $p= shell "onefite", :err;
-#    say $p.err.slurp(:close);
+    my $p= shell "onefite help", :err;
+    say $p.err.slurp(:close);
 	note qq:to/END_USAGE/;
     Usage:
             onefite [-h|--help]
