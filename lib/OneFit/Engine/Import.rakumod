@@ -65,7 +65,7 @@ class Import is export {
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
-				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5').Slip }
+				when 'stelar-hdf5' 		{ say $file, $_; @files.push: self.import('stelar-hdf5').Slip }
 				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf').Slip }
 				when 'stelar-sef'  		{ @files.push: self.import('stelar-sef-R1', file => $file).Slip }
 				when 'stelar-sef-Mz'  	{ @files.push: self.import('stelar-sef', file => $file).Slip }
