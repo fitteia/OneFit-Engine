@@ -10,7 +10,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 - [Upgrades](#Upgrades)
 - [WebService](#WebService)
 - [INSTALL-help](#INSTALL-help)
-- [Data file type](#Data File Types)
+- [Data-file-types](#Data File Types)
 - [Running](#Running)
 
 ## Prerequisites
