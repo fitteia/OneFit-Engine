@@ -114,7 +114,7 @@ class Import is export {
 		my $stelar-hdf5 = self.filename();
 		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path();
-		say "stelar-hdf5: ",$stelar-hdf5;
+		say "$file stelar-hdf5: ",$stelar-hdf5;
 		$stelar-hdf5.IO.copy: "$path/$stelar-hdf5";
 		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @data-files;
