@@ -81,22 +81,22 @@ class Import is export {
 	}
 
 
-	multi method import ('stelar-hdf5') { self!stelar-hdf5-Mz() }
-	multi method import ('stelar-hdf5-Re') { self!stelar-hdf5-Mz( Re => True ) }
-	multi method import ('stelar-hdf5-Im') { self!stelar-hdf5-Mz( Im => True ) }
-	multi method import ('stelar-hdf5-R1') { self!stelar-hdf5-R1() }
-	multi method import ('stelar-hdf5-R1-err', :$err) { self!stelar-hdf5-R1( err => $err ) }
+	multi method import ('stelar-hdf5', :$file) { self!stelar-hdf5-Mz( file => $file ) }
+	multi method import ('stelar-hdf5-Re', :$file) { self!stelar-hdf5-Mz( Re => True, file => $file ) }
+	multi method import ('stelar-hdf5-Im', :$file) { self!stelar-hdf5-Mz( Im => True, file => $file ) }
+	multi method import ('stelar-hdf5-R1', :$file) { self!stelar-hdf5-R1( file => $file ) }
+	multi method import ('stelar-hdf5-R1-err', :$file, :$err) { self!stelar-hdf5-R1( err => $err, file => $file ) }
 
-	multi method import ('stelar-sdf') { self!stelar-sdf-Mz() }
-	multi method import ('stelar-sdf-Re') { self!stelar-sdf-Mz( Re => True ) }
-	multi method import ('stelar-sdf-Im') { self!stelar-sdf-Mz( Im => True ) }
+	multi method import ('stelar-sdf', :$file,) { self!stelar-sdf-Mz( file => $file)) }
+	multi method import ('stelar-sdf-Re', :$file,) { self!stelar-sdf-Mz( Re => True, file => $file  ) }
+	multi method import ('stelar-sdf-Im', :$file,) { self!stelar-sdf-Mz( Im => True, file => $file  ) }
 	multi method import ('stelar-sef-Mz', :$file) { self!stelar-sef-Mz( file => $file ) }
 	multi method import ('stelar-sef-R1', :$file) { self!stelar-sef-R1( file => $file ) }
 	multi method import ('stelar-sef-R1-err', :$file, :$err) { self!stelar-sef-R1( file => $file, err => $err ) }
 
-	multi method import ('ist-ffc') { self!ist-ffc() }
-	multi method import ('ist-ffc-R1') { self!ist-ffc-R1() }
-	multi method import ('ist-ffc-R1-err',:$err) { self!ist-ffc-R1( err => $err ) }
+	multi method import ('ist-ffc', :$file) { self!ist-ffc( file => $file ) }
+	multi method import ('ist-ffc-R1', :$file) { self!ist-ffc-R1( file => $file ) }
+	multi method import ('ist-ffc-R1-err', :$file, :$err) { self!ist-ffc-R1( err => $err, file => $file  ) }
 
 	method !fitteia-blocks ($file) {
 		my @files;
@@ -110,8 +110,9 @@ class Import is export {
 		return @files;	
 	}
 
-	method !stelar-hdf5-Mz (Bool :$Re, Bool :$Im) {
+	method !stelar-hdf5-Mz (:$file, Bool :$Re, Bool :$Im) {
 		my $stelar-hdf5 = self.filename();
+		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path();
 		say "stelar-hdf5: ",$stelar-hdf5;
 		$stelar-hdf5.IO.copy: "$path/$stelar-hdf5";
@@ -151,8 +152,9 @@ class Import is export {
 		return @data-files;
     }
 
-    method !stelar-hdf5-R1 (Rat :$err) {
+    method !stelar-hdf5-R1 (:$file, Rat :$err) {
 		my $stelar-hdf5 = self.filename();
+		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path;
 		$stelar-hdf5.IO.copy: "$path/$stelar-hdf5";
 		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
@@ -170,8 +172,9 @@ class Import is export {
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
-	method !stelar-sdf-Mz (Bool :$Re, Bool :$Im) {
+	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im) {
 		my $stelar-sdf = self.filename();
+		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
 	    my $buf = $stelar-sdf.IO.slurp(:close);
@@ -252,8 +255,9 @@ class Import is export {
 		return  @files;
     }
 
-	method !ist-ffc () {
+	method !ist-ffc (:$file) {
 		my $ffc = self.filename();
+		$ffc = $file if $file.so;
 		my $path = self.path();
 		$ffc.IO.copy: "$path/$ffc";
 		my @files;
@@ -275,8 +279,9 @@ class Import is export {
 		}
 		return @files
 	}
-    method !ist-ffc-R1 (Rat :$err) {
+    method !ist-ffc-R1 (:$file, Rat :$err) {
 		my $ist-ffc = self.filename();
+		$ist-ffc = $file if $file.so;
 		my $path = self.path;
 		my @f;
 		my @R1;
