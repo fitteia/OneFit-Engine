@@ -66,7 +66,7 @@ class Import is export {
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
-				when 'stelar-hdf5' 		{ say $file, $_; @files.push: self.import('stelar-hdf5', file => $file).Slip }
+				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5', file => $file).Slip }
 				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf', file => $file).Slip }
 				when 'stelar-sef-Mz'  		{ @files.push: self.import('stelar-sef-Mz', file => $file).Slip }
 				when 'stelar-sef-R1'  	{ @files.push: self.import('stelar-sef-R1', file => $file).Slip }
@@ -114,7 +114,6 @@ class Import is export {
 		my $stelar-hdf5 = self.filename();
 		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path();
-		say "$file stelar-hdf5: ",$stelar-hdf5;
 		$stelar-hdf5.IO.copy: "$path/$stelar-hdf5";
 		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @data-files;
