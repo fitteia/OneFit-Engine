@@ -13,6 +13,7 @@ class Import is export {
 					'stelar-sdf'	 	=> False,
 					'stelar-sdf-Re'	 	=> False,
 					'stelar-sdf-Im'	 	=> False,
+					'stelar-sef'	 	=> False,
 					'stelar-sef-R1'	 	=> False,
 					'stelar-sef-R1-err'	=> "",
 					'ist-ffc'			=> False,
@@ -67,8 +68,8 @@ class Import is export {
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
 				when 'stelar-hdf5' 		{ say $file, $_; @files.push: self.import('stelar-hdf5').Slip }
 				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf').Slip }
-				when 'stelar-sef'  		{ @files.push: self.import('stelar-sef-R1', file => $file).Slip }
-				when 'stelar-sef-Mz'  	{ @files.push: self.import('stelar-sef', file => $file).Slip }
+				when 'stelar-sef-Mz'  		{ @files.push: self.import('stelar-sef-Mz', file => $file).Slip }
+				when 'stelar-sef-R1'  	{ @files.push: self.import('stelar-sef-R1', file => $file).Slip }
 				when 'ist-ffc'			{ @files.push: self.import('ist-ffc').Slip }
 				default {
 		   			@files.push: $file;
@@ -89,7 +90,7 @@ class Import is export {
 	multi method import ('stelar-sdf') { self!stelar-sdf-Mz() }
 	multi method import ('stelar-sdf-Re') { self!stelar-sdf-Mz( Re => True ) }
 	multi method import ('stelar-sdf-Im') { self!stelar-sdf-Mz( Im => True ) }
-	multi method import ('stelar-sef', :$file) { self!stelar-sef-Mz( file => $file ) }
+	multi method import ('stelar-sef-Mz', :$file) { self!stelar-sef-Mz( file => $file ) }
 	multi method import ('stelar-sef-R1', :$file) { self!stelar-sef-R1( file => $file ) }
 	multi method import ('stelar-sef-R1-err', :$file, :$err) { self!stelar-sef-R1( file => $file, err => $err ) }
 
@@ -299,16 +300,16 @@ class Import is export {
 			is-sdf($file) ?? "stelar-sdf" !! 
 			is-block($file) ?? 'fitteia-blocks' !! 
 			is-ffc($file) ?? 'ist-ffc' !! 
-			is-sef($file) ?? "stelar-sef" !! 
-			is-sef-Mz($file) ?? "stelar-sef-Mz" !! "";	
+			is-sef($file) ?? "stelar-sef-Mz" !! 
+			is-sef-R1($file) ?? "stelar-sef-R1" !! "";	
 	}
 
 	sub is-hdf5 ($file)  { return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) }
 	sub is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
 	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
 	sub is-sdf ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) }
-	sub is-sef ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) }
-	sub is-sef-Mz ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) }
+	sub is-sef-R1 ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) }
+	sub is-sef ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) }
 	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
 
 }
