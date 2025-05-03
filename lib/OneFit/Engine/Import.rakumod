@@ -62,7 +62,7 @@ class Import is export {
 					shell "unzip $file -d {self.path}/tmp/";
 					my @files-in-zip;
 					@files-in-zip.push: "{self.path}/tmp/".IO.dir>>.Str.map({ $_.subst("{self.path}/tmp/",'')  }).sort.Slip;
-					shell "unzip $file && rm -fr {self.path}/tmp/";
+					shell "unzip -o $file && rm -fr {self.path}/tmp/";
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
