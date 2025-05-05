@@ -58,11 +58,13 @@ class Import is export {
 			given is-type($file) {
 				say "file $file is type: ",$_;
 				when 'zip' {
-					"{self.path}/tmp".IO.mkdir unless "{self.path}/tmp".IO.e;
-					shell "unzip $file -d {self.path}/tmp/";
-					my @files-in-zip;
-					@files-in-zip.push: "{self.path}/tmp/".IO.dir>>.Str.map({ $_.subst("{self.path}/tmp/",'')  }).sort.Slip;
-					shell "unzip -o $file && rm -fr {self.path}/tmp/";
+					#					"{self.path}/tmp".IO.mkdir unless "{self.path}/tmp".IO.e;
+					#					shell "unzip $file -d {self.path}/tmp/";
+					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so }
+					#					@files-in-zip.push: "{self.path}/tmp/".IO.dir>>.Str.map({ $_.subst("{self.path}/tmp/",'')  }).sort.Slip;
+
+					#shell "unzip -jo $file && rm -fr {self.path}/tmp/";
+					shell "unzip -jo $file";
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
