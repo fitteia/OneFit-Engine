@@ -67,7 +67,8 @@ class Import is export {
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sterlar-sef-R1> }
 					shell "unzip -jo $file";
-					@files.push: self.import( infiles => @files-in-zip ).Slip
+					@files.push: self.import( infiles => @files-in-zip ).Slip;
+					say @files;
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
 				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5', file => $file).Slip }
