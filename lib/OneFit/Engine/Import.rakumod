@@ -325,7 +325,7 @@ class Import is export {
 		my @BR = gather for $R1-file.IO.lines(:close) { take $_.words.head if $_.contains(/^\s*\d/) }
 		for 0 ..^ @files.elems {
 		   	my $file = @files[$_];	
-			$file = $file.subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int);
+			$file = $file.subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int));
 			shell("sed -E -i -e 's/dum = [0-9]+/BR = @BR[$_]/' @files[$_]");
 		   	@files[$_].IO.rename: $file;
 			@files[$_]= $file
