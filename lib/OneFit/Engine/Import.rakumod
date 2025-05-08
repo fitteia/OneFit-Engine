@@ -48,11 +48,7 @@ class Import is export {
 				}
 			}
 			when 2 {
-				if %!options<stelar-sef-Mz> and %!options<stelar-sef-R1>.so {
-					@files = gather for self.import() { take $_ unless  $_ eq %!options<stelar-sef-R1> }
-				   say @files;	
-					@files = merge(self.path,%!options<stelar-sef-R1>,@files);
-				}
+				if %!options<stelar-sef-Mz> and %!options<stelar-sef-R1>.so { @files = merge(self.path,%!options<stelar-sef-R1>,self.import()) }
 			   	else { say "too many stelar options selected!" }	
 			}
 			default { say "too many stelar options selected!" }
@@ -82,7 +78,6 @@ class Import is export {
 				}
 			}
 		}
-		say @files;
 		return @files; 
 	}
 
