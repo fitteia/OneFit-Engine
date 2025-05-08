@@ -51,7 +51,7 @@ class Import is export {
 			say "I have two options";
 				if %!options<stelar-sef-Mz> and %!options<stelar-sef-R1>.so {
 					@files = self.import("stelar-sef-Mz");
-					@files = merge(self.path,!options<stelar-sef-R1>,@files)
+					@files = merge(self.path(),!options<stelar-sef-R1>,@files)
 				}
 			   	else { say "too many stelar options selected!" }	
 			}
