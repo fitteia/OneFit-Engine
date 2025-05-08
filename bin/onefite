@@ -350,7 +350,7 @@ HTML
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 
 		if $file2.so {
-			my $R1-file-content = $R1-file.body-blob 
+			my $R1-file-content = $R1-file.body-blob; 
 			$R1-file.IO.spurt: $R1-file-content.decode('UTF-8')
 		}		
 		if so %rest.kv {
