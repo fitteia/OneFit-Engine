@@ -327,7 +327,7 @@ class Import is export {
 		for 0 ..^ @files.elems { 
 			my $new-file = @files[$_].subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int);
 			shell("sed -E -i -e 's/dum = [0-9]+/BR = @BR[$_]/' @files[$_]"); 
-			@files[$_].IO.move: $new-file;
+			@files[$_].IO.rename: $new-file;
 			@new-files.push: $new-file
 		}
 		@new-files
