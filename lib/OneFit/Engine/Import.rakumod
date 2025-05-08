@@ -51,7 +51,7 @@ class Import is export {
 			say "I have two options";
 				if %!options<stelar-sef-Mz> and %!options<stelar-sef-R1>.so {
 					@files = self.import("stelar-sef-Mz");
-					@files = merge($!path,!options<stelar-sef-R1>,@files)
+					@files = merge(self.path,%!options<stelar-sef-R1>,@files)
 				}
 			   	else { say "too many stelar options selected!" }	
 			}
@@ -322,7 +322,7 @@ class Import is export {
 	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
 
 
-	sub merge ($path,$R1-file,@files is copy) {
+	sub merge ($path, $R1-file, @files is copy) {
 		my @BR = gather for $R1-file.IO.lines(:close) { take $_.words.head if $_.contains(/^\s*\d/) }
 		for 0 ..^ @files.elems {
 		   	my $file = @files[$_];	
