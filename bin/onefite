@@ -310,12 +310,10 @@ HTML
 	}
 	
 	post -> 'fit',*@args {
-            request-body -> (:$file,:$file1,:$file2, *%rest) {
+            request-body -> (:$file,*%rest) {
 	        my $username = "";
 	        my $time = now;
-    		my $filename = $file.filename || $file1.filename;
-			my $R1-file = $file2.filename if $file2.so;
-
+    		my $filename = $file.filename;
 		my $folder = $filename.IO.extension('').Str;
 		my $zip-file = $filename.IO.extension('zip').Str;		
 		my $file-to-download = ""; 
@@ -348,11 +346,6 @@ HTML
 		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
 		my $work-folder = "./$tmp-folder";
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
-
-		if $file2.so {
-			my $R1-file-content = $R1-file.body-blob; 
-			$R1-file.IO.spurt: $R1-file-content.decode('UTF-8')
-		}		
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
 		       $fit-methods	      = $v.Str	   if $k eq "fit-methods";
