@@ -331,7 +331,7 @@ class Import is export {
 		   	"$path/@files[$_]".IO.rename: "$path/$file";
 			@files[$_]= $file
 		}
-		return @files;
+		return @files.sort.reverse;
 	}
 
 
