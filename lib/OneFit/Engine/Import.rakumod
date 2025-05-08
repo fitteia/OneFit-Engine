@@ -49,7 +49,7 @@ class Import is export {
 			}
 			when 2 {
 				if %!options<stelar-sef-Mz> and %!options<stelar-sef-R1>.so {
-					@files = self.import("stelar-sef-Mz");
+					@files = self.import();
 					@files = merge(self.path,%!options<stelar-sef-R1>,@files);
 				}
 			   	else { say "too many stelar options selected!" }	
