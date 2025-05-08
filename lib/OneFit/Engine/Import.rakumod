@@ -10,11 +10,11 @@ class Import is export {
 					'stelar-hdf5-Im' 	=> False,
 					'stelar-hdf5-R1' 	=> False,
 					'stelar-hdf5-R1-err'=> "",
-					'stelar-sdf'	 	=> False,
+					'stelar-sdf-Mz'	 	=> False,
 					'stelar-sdf-Re'	 	=> False,
 					'stelar-sdf-Im'	 	=> False,
-					'stelar-sef'	 	=> False,
-					'stelar-sef-R1'	 	=> False,
+					'stelar-sef-Mz'	 	=> False,
+					'stelar-sef-R1'	 	=> "",
 					'stelar-sef-R1-err'	=> "",
 					'ist-ffc'			=> False,
 					'ist-ffc-R1'		=> False,
@@ -47,6 +47,13 @@ class Import is export {
 					}
 				}
 			}
+			when 2 {
+				if %!option<stelar-sef> and %!options<stelar-sef-R1>.so {
+					@files = self.import("stelar-sef-Mz");
+					@files = merge(%!options<stelar-sef-R1>,@files)
+				}
+			   	else { say "too many stelar options selected!" }	
+			}
 			default { say "too many stelar options selected!" }
 		}
 		return @files;
@@ -65,7 +72,7 @@ class Import is export {
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
 				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5', file => $file).Slip }
 				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf', file => $file).Slip }
-				when 'stelar-sef-Mz'  		{ @files.push: self.import('stelar-sef-Mz', file => $file).Slip }
+				when 'stelar-sef-Mz'  	{ @files.push: self.import('stelar-sef-Mz', file => $file).Slip }
 				when 'stelar-sef-R1'  	{ @files.push: self.import('stelar-sef-R1', file => $file).Slip }
 				when 'ist-ffc'			{ @files.push: self.import('ist-ffc', file => $file).Slip }
 				default {
@@ -312,6 +319,18 @@ class Import is export {
 	sub is-sef-R1 ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) }
 	sub is-sef ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) }
 	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
+
+
+	sub merge ($R1-file,@files is copy) {
+		my @BR = gather for $R1-file.IO.lines(:close) { take $_.words.head if $_.contains(/^\s*\d/) }
+		for 0 ..^ @files.elems { 
+			my $new-file = @files[$_].subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int);
+			shell("sed -E -i -e 's/dum = [0-9]+/BR = @BR[$_]/' @files[$_]"); 
+			@files[$_].IO.move: $new-file;
+			@files[$_] = $new-file
+		}
+	}
+
 
 }
 
