@@ -244,7 +244,8 @@ multi MAIN ('start-web-engine',
 		       <tr><td>stelar-sdf: </td><td><input name="stelar-sdf" type="radio" value="yes">/<input name="stelar-sdf" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-sdf-Re: </td><td><input name="stelar-sdf-Re" type="radio" value="yes">/<input name="stelar-sdf-Re" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-sdf-Im: </td><td><input name="stelar-sdf-Im" type="radio" value="yes">/<input name="stelar-sdf-Im" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-sef-R1: </td><td><input name="stelar-sef-R1" type="radio" value="yes">/<input name="stelar-sef-R1" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sef-Mz: </td><td><input name="stelar-sef-Mz" type="radio" value="yes">/<input name="stelar-sef-Mz" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sef-R1: </td><td><input name="stelar-sef-R1" type="text" value="">(stelar sef profile filename</td></tr>
 		       <tr><td>stelar-sef-R1-err: </td><td><input name="stelar-sef-R1-err" type="text" value="">(float number)</td></tr>
 		       <tr><td>stelar-hdf5: </td><td><input name="stelar-hdf5" type="radio" value="yes">/<input name="stelar-hdf5" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-hdf5-Re: </td><td><input name="stelar-hdf5-Re" type="radio" value="yes">/<input name="stelar-hdf5-Re" type="radio" value="no" checked="checked"></td></tr>
@@ -329,7 +330,7 @@ HTML
 		my $stelar-sdf = "";
 		my $stelar-sdf-Re = "";
 		my $stelar-sdf-Im = "";
-		my $stelar-sef    = "";
+		my $stelar-sef-Mz  = "";
 		my $stelar-sef-R1 = "";
 		my $stelar-sef-R1-err = "";
 		my $stelar-hdf5 = "";
@@ -364,8 +365,9 @@ HTML
 			   $stelar-sdf           = "--stelar-sdf  " if $k eq "stelar-sdf" and $v eq any("yes",1);
 		       $stelar-sdf-Re        = "--stelar-sdf-Re  " if $k eq "stelar-sdf-Re" and $v eq any("yes",1);
 		       $stelar-sdf-Im        = "--stelar-sdf-Im  " if $k eq "stelar-sdf-Im" and $v eq any("yes",1);
-		       $stelar-sef           = "--stelar-sef  " if $k eq "stelar-sef" and $v eq any("yes",1);
+		       $stelar-sef-Mz         = "--stelar-sef-Mz  " if $k eq "stelar-sef-Mz" and $v eq any("yes",1);
 		       $stelar-sef-R1        = "--stelar-sef-R1  " if $k eq "stelar-sef-R1" and $v eq any("yes",1);
+		       $stelar-sef-R1        = "--stelar-sef-R1={$v.Str}  " if $k eq "stelar-sef-R1" and $v.so and $v not eq any("yes",1);
 		       $stelar-sef-R1-err    = "--stelar-sef-R1-err={$v.Rat}  " if $k eq "stelar-sef-R1-err" and $v.^name eq "Rat";
 		       $stelar-hdf5           = "--stelar-hdf5  " if $k eq "stelar-hdf5" and $v eq any("yes",1);
 		       $stelar-hdf5-Re        = "--stelar-hdf5-Re  " if $k eq "stelar-hdf5-Re" and $v eq any("yes",1);
