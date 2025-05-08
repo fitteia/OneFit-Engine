@@ -57,7 +57,6 @@ class Import is export {
 			}
 			default { say "too many stelar options selected!" }
 		}
-		say @files;
 		return @files;
 	}
 	multi method import (:@infiles) {
@@ -83,6 +82,7 @@ class Import is export {
 				}
 			}
 		}
+		say @files;
 		return @files; 
 	}
 
