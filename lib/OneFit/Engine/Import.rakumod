@@ -49,7 +49,8 @@ class Import is export {
 			}
 			when 2 {
 				if %!options<stelar-sef-Mz> and %!options<stelar-sef-R1>.so {
-					@files = gather for self.import() { take $_ unless  $_ eq %!options<stelar-sef-R1> } 
+					@files = gather for self.import() { take $_ unless  $_ eq %!options<stelar-sef-R1> }
+				   say @files;	
 					@files = merge(self.path,%!options<stelar-sef-R1>,@files);
 				}
 			   	else { say "too many stelar options selected!" }	
@@ -66,7 +67,7 @@ class Import is export {
 			given is-type($file) {
 				say "file $file is type: ",$_;
 				when 'zip' {
-					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so }
+					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<stelar-sef-Mz> }
 					shell "unzip -jo $file";
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
