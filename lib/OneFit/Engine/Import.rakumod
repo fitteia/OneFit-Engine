@@ -51,7 +51,8 @@ class Import is export {
 			say "I have two options";
 				if %!options<stelar-sef-Mz> and %!options<stelar-sef-R1>.so {
 					@files = self.import("stelar-sef-Mz");
-					@files = merge(self.path,%!options<stelar-sef-R1>,@files)
+					@files = merge(self.path,%!options<stelar-sef-R1>,@files);
+					say @files;
 				}
 			   	else { say "too many stelar options selected!" }	
 			}
@@ -327,10 +328,12 @@ class Import is export {
 		for 0 ..^ @files.elems {
 		   	my $file = @files[$_];	
 			$file = $file.subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int));
-			shell("sed -E -i -e 's/dum = [0-9]+/BR = @BR[$_]/' $path/@files[$_]");
+			shell("sed -E -i -e 's/dum = [0-9]+/BR = { @BR[$_]*§1e6 }/' $path/@files[$_]");
 		   	"$path/@files[$_]".IO.rename: "$path/$file";
 			@files[$_]= $file
 		}
+		say @files;
+		return @files;
 	}
 
 
