@@ -321,12 +321,14 @@ class Import is export {
 	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
 
 
-	sub merge ($R1-file,@files is copy) {
+	sub merge ($R1-file,@filesi is copy) {
 		my @BR = gather for $R1-file.IO.lines(:close) { take $_.words.head if $_.contains(/^\s*\d/) }
-		for 0 ..^ @files.elems { 
-			my $nfile = @files[$_].subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int);
-			shell("sed -E -i -e 's/dum = [0-9]+/BR = @BR[$_]/' @files[$_] && mv @files[$_] $nfile"); 
-			@files[$_]= $nfile
+		for 0 ..^ @files.elems {
+		   	my $file = @files[$_];	
+			$file = $file.subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int);
+			shell("sed -E -i -e 's/dum = [0-9]+/BR = @BR[$_]/' @files[$_]");
+		   	@files[$_].IO.rename: $file;
+			@files[$_]= $file
 		}
 	}
 
