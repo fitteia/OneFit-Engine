@@ -66,7 +66,7 @@ class Import is export {
 			given is-type($file) {
 				say "file $file is type: ",$_;
 				when 'zip' {
-					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<stelar-sef-Mz> }
+					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<stelar-sef-R1> }
 					shell "unzip -jo $file";
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
