@@ -322,15 +322,15 @@ class Import is export {
 
 
 	sub merge ($R1-file,@files) {
-		my @new-files;
+		my @newfiles;
 		my @BR = gather for $R1-file.IO.lines(:close) { take $_.words.head if $_.contains(/^\s*\d/) }
 		for 0 ..^ @files.elems { 
-			my $new-file = @files[$_].subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int);
+			my $newfile = @files[$_].subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int);
 			shell("sed -E -i -e 's/dum = [0-9]+/BR = @BR[$_]/' @files[$_]"); 
-			@files[$_].IO.rename: $new-file;
+			@files[$_].IO.rename: $newfile;
 			@new-files.push: $new-file
 		}
-		@new-files
+		@newfiles
 	}
 
 
