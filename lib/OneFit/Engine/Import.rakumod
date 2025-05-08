@@ -321,7 +321,7 @@ class Import is export {
 	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
 
 
-	sub merge ($R1-file,@filesi is copy) {
+	sub merge ($R1-file,@files is copy) {
 		my @BR = gather for $R1-file.IO.lines(:close) { take $_.words.head if $_.contains(/^\s*\d/) }
 		for 0 ..^ @files.elems {
 		   	my $file = @files[$_];	
