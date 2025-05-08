@@ -367,7 +367,7 @@ HTML
 		       $stelar-sdf-Im        = "--stelar-sdf-Im  " if $k eq "stelar-sdf-Im" and $v eq any("yes",1);
 		       $stelar-sef-Mz         = "--stelar-sef-Mz  " if $k eq "stelar-sef-Mz" and $v eq any("yes",1);
 		       $stelar-sef-R1        = "--stelar-sef-R1  " if $k eq "stelar-sef-R1" and $v eq any("yes",1);
-		       $stelar-sef-R1        = "--stelar-sef-R1={$v.Str}  " if $k eq "stelar-sef-R1" and $v.so and $v not eq any("yes",1);
+		       $stelar-sef-R1        = "--stelar-sef-R1={$v.Str}  " if $k eq "stelar-sef-R1" and $v.so and $v eq none("yes",1);
 		       $stelar-sef-R1-err    = "--stelar-sef-R1-err={$v.Rat}  " if $k eq "stelar-sef-R1-err" and $v.^name eq "Rat";
 		       $stelar-hdf5           = "--stelar-hdf5  " if $k eq "stelar-hdf5" and $v eq any("yes",1);
 		       $stelar-hdf5-Re        = "--stelar-hdf5-Re  " if $k eq "stelar-hdf5-Re" and $v eq any("yes",1);
