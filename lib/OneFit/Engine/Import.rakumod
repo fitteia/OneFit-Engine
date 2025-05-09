@@ -324,8 +324,6 @@ class Import is export {
 		}
 		return @files.sort.reverse;
 	}
-
-
 }
 
 
