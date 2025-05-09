@@ -129,11 +129,9 @@ class Import is export {
 				@Re_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(1\,\d+\)/);
 				@Im_.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(2\,\d+\)/);
 	    	}
-	    	my $datafile = "{$stelar-hdf5.IO.extension('').Str}-z{ sprintf('%03d',$_.Int) }.dat";
-	    	my $header = "# DATA dum = " ~
-				($buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6).round(0.0001)
-				~
-				"\n# TAG = zone{$_}\n# R1 = "
+			my $BR = ($buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6).round(0.0001);
+	    	my $datafile = "{$stelar-hdf5.IO.extension('').Str}-{ sprintf('%09d',$BR.Int) }-z{ sprintf('%03d',$_.Int) }.dat";
+	    	my $header = "# DATA dum = $BR\n# TAG = zone{$_}\n# R1 = "
 				~
 				$buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
 
@@ -149,7 +147,7 @@ class Import is export {
 	    	@data-files.push: $datafile;
 		}
 		"$path/$stelar-hdf5".IO.unlink;
-		return @data-files;
+		return @data-files.sort.reverse;
     }
 
     method !stelar-hdf5-R1 (:$file, Rat :$err) {
@@ -192,14 +190,11 @@ class Import is export {
 			my $ntaus = @aux.tail;
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
+				my $BR = ($buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6).round(0.0001);
 				my $index=$buf.words.head.split('.').map({ sprintf('%03d',$_.Int) }).join('_');
-				my $datafile = "{$stelar-sdf.IO.extension('').Str}-z{$index}.dat";
+				my $datafile = "{$stelar-sdf.IO.extension('').Str}-{ sprintf('%09d',$BR.Int) }-z{ $index }.dat";
 				my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
-		    	my $header = "# DATA dum = " ~
-					($buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6).round(0.0001)
-					~
-					"\n# TAG = zone{$index}";
-	
+		    	my $header = "# DATA dum = $BR\n# TAG = zone{ $index }";
 				my @x;
 				my @y;
 				my @m;
@@ -220,7 +215,7 @@ class Import is export {
 			}
 		}
 		"$path/$stelar-sdf".IO.unlink;
-		return @data-files;
+		return @data-files.sort.reverse;
     }
 
     method !stelar-sef-R1 (:$file, Rat :$err) {
@@ -272,12 +267,12 @@ class Import is export {
 		}
 		for (1 .. @ntaus.elems) {
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
-			my $datafile = "{$ffc.IO.extension('').Str}-z{ sprintf('%03d',$_) }.dat";
+			my $datafile = "{ $ffc.IO.extension('').Str }-{ sprintf('%09d',@freqs[$_-1].Int) }-z{ sprintf('%03d',$_) }.dat";
 			my $header = "# DATA dum = @modes[$_-1] @freqs[$_-1]\n# TAG = zone{ sprintf('%03d',$_) }";
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 		}
-		return @files
+		return @files.sort.reverse
 	}
     method !ist-ffc-R1 (:$file, Rat :$err) {
 		my $ist-ffc = self.filename();
@@ -322,7 +317,7 @@ class Import is export {
 		my @BR = gather for $R1-file.IO.lines(:close) { take $_.words.head if $_.contains(/^\s*\d/) }
 		for 0 ..^ @files.elems {
 		   	my $file = @files[$_];	
-			$file = $file.subst(/z\d+/,sprintf("%09d",(@BR[$_]*1e6).Int));
+			$file = $file.subst(/z\d+/,sprintf("%09d-z%03d",(@BR[$_]*1e6).Int,$_+1));
 			shell("sed -E -i -e 's/dum = [0-9]+/BR = { @BR[$_]*1e6 }/' $path/@files[$_]");
 		   	"$path/@files[$_]".IO.rename: "$path/$file";
 			@files[$_]= $file
