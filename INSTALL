@@ -140,6 +140,7 @@ sub aptpkgs () {
    	pdftk
    	sudo
    	curl
+	jq
    	libssl-dev
    	hdf5-tools
    	tasksel
