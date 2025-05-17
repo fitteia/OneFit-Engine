@@ -143,7 +143,6 @@ sub aptpkgs () {
 	jq
    	libssl-dev
    	hdf5-tools
-	raku-zef
    	tasksel
 	>
 }
