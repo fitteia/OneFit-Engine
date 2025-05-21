@@ -297,8 +297,8 @@ class Import is export {
 	sub is-type ($file)  {
 	   	return is-hdf5($file) ?? 'stelar-hdf5' !! 
 			is-zip($file) ?? 'zip' !! 
-			is-sdf($file) ?? "stelar-sdf" !! 
 			is-block($file) ?? 'fitteia-blocks' !! 
+			is-sdf($file) ?? "stelar-sdf" !! 
 			is-ffc($file) ?? 'ist-ffc' !! 
 			is-sef($file) ?? "stelar-sef-Mz" !! 
 			is-sef-R1($file) ?? "stelar-sef-R1" !! "";	
