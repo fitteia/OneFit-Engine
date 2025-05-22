@@ -211,7 +211,6 @@ class Import is export {
 					my $i = @window-range[0];
 					my $f = @window-range[1].subst("end",$BS-1); 
 					my $N = $f - $i + 1;
-							say $i, $f, $N, $BS;
 					@y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N;
 			   	}
 		    	@y = @y.map({ $_ / @y.max });
