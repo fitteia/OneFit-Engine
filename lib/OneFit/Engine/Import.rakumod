@@ -191,6 +191,11 @@ class Import is export {
 			my $tauf = @range.max; 
 			my $taui = @range.min;
 			my $ntaus = @aux.tail;
+			my $i = @window-range[0];
+			my $f = @window-range[1].subst("end",$BS-1); 
+			my $N = $f - $i + 1;
+			say "$i $f $N $BS";
+
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
 				my $BR = ($buf.split(/BR <ws> '=' <ws>/)[1].words.head.Rat * 1e6).round(0.0001);
@@ -208,9 +213,6 @@ class Import is export {
 				@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
 	
 		    	for (1 .. $ntaus) { 
-					my $i = @window-range[0];
-					my $f = @window-range[1].subst("end",$BS-1); 
-					my $N = $f - $i + 1;
 					@y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N;
 			   	}
 		    	@y = @y.map({ $_ / @y.max });
