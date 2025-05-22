@@ -214,8 +214,8 @@ class Import is export {
 	
 		    	for (1 .. $ntaus) { 
 					my @a = @m.splice(0,$BS.Int);
-					say "$i $f $N $BS ",@a.sum, " ", @a[$i .. $f].sum;
-					@y.push: @a[$i .. $f].sum/$N;
+					say "$i $f $N $BS ",@a.sum, " ", @a[$i.Int .. $f.Int].sum, " ", @a.splice(0,$BS.Int).sum, " ", @a.splice($i.Int,$f.Int).sum;
+					@y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N;
 			   	}
 		    	@y = @y.map({ $_ / @y.max });
 		    	my @err = (1 .. @x.elems).map({1});
