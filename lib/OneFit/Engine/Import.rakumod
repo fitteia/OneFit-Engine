@@ -193,6 +193,8 @@ class Import is export {
 			my $ntaus = @aux.tail;
 			my $i = @window-range[0].Int;
 			my $f = @window-range[1].subst("end",$BS-1).Int; 
+			$i = 0 if $i < 0;
+			$f = $BS - 1 if $f >= $BS;
 			my $N = $f - $i + 1;
 
 			for ( 1 ..^ @zones.elems ).race {
