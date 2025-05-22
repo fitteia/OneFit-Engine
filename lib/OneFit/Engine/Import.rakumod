@@ -213,7 +213,6 @@ class Import is export {
 				@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
 	
 		    	for (1 .. $ntaus) { 
-					my @a = @m.splice(0,$BS.Int);
 					say "$i $f $N $BS ",@a.sum, " ", @a[$i .. $f].sum;
 					@y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N;
 			   	}
