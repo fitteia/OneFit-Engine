@@ -362,7 +362,7 @@ HTML
 		       $ist-ffc		         = "--ist-ffc  " if $k eq "ist-ffc" and $v eq any("yes",1);
 		       $ist-ffc-R1        = "--ist-ffc-R1  " if $k eq "ist-ffc-R1" and $v eq any("yes",1);
 		       $ist-ffc-R1-err    = "--ist-ffc-R1-err={$v.Rat}  " if $k eq "ist-ffc-R1-err" and $v.^name eq "Rat";
-			   $stelar-sdf           = "--stelar-sdf{ $v eq any('yes',1) ?? '' !! '={' ~ $v.Str } " if $k eq "stelar-sdf";
+			   $stelar-sdf           = "--stelar-sdf{ $v eq any('yes',1) ?? '' !! '=' ~ $v.Str } " if $k eq "stelar-sdf";
 		       $stelar-sdf-Re        = "--stelar-sdf-Re  " if $k eq "stelar-sdf-Re" and $v eq any("yes",1);
 		       $stelar-sdf-Im        = "--stelar-sdf-Im  " if $k eq "stelar-sdf-Im" and $v eq any("yes",1);
 		       $stelar-sef-Mz         = "--stelar-sef-Mz  " if $k eq "stelar-sef-Mz" and $v eq any("yes",1);
