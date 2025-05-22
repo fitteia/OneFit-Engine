@@ -194,7 +194,6 @@ class Import is export {
 			my $i = @window-range[0].Int;
 			my $f = @window-range[1].subst("end",$BS-1).Int; 
 			my $N = $f - $i + 1;
-			say "$i $f $N $BS";
 
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
@@ -212,11 +211,8 @@ class Import is export {
 
 				@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
 	
-		    	for (1 .. $ntaus) { 
-					my @a = @m.splice(0,$BS.Int);
-					say "$i $f $N $BS ",@a.sum, " ", @a[$i .. $f].sum;
-					@y.push: @a.splice($i,$f).sum/$N;
-			   	}
+		    	for (1 .. $ntaus) { @y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; }
+
 		    	@y = @y.map({ $_ / @y.max });
 		    	my @err = (1 .. @x.elems).map({1});
 
