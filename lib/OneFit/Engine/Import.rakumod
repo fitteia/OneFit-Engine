@@ -214,7 +214,7 @@ class Import is export {
 	
 		    	for (1 .. $ntaus) { 
 					my @a = @m.splice(0,$BS.Int);
-					say @a.sum, " ", @a[$i .. $f].sum;
+					say "$i $f $N $BS ",@a.sum, " ", @a[$i .. $f].sum;
 					@y.push: @a[$i .. $f].sum/$N;
 			   	}
 		    	@y = @y.map({ $_ / @y.max });
