@@ -10,7 +10,7 @@ class Import is export {
 					'stelar-hdf5-Im' 	=> False,
 					'stelar-hdf5-R1' 	=> False,
 					'stelar-hdf5-R1-err'=> "",
-					'stelar-sdf-Mz'	 	=> False,
+					'stelar-sdf-Mz'	 	=> "",
 					'stelar-sdf-Re'	 	=> False,
 					'stelar-sdf-Im'	 	=> False,
 					'stelar-sef-Mz'	 	=> False,
@@ -43,6 +43,7 @@ class Import is export {
 				for %!options.kv -> $k,$v {
 					if $v.so { 
 						if $k.contains(/err/) { @files = self.import($k, :err($v)) }	
+						elsif $k.contains(/sdf'-'Mz/ and $v.so { @files = self.import($k, :range($v)) }
 						else  { @files = self.import($k) }
 					}
 				}
@@ -88,9 +89,9 @@ class Import is export {
 	multi method import ('stelar-hdf5-R1', :$file) { self!stelar-hdf5-R1( file => $file ) }
 	multi method import ('stelar-hdf5-R1-err', :$file, :$err) { self!stelar-hdf5-R1( err => $err, file => $file ) }
 
-	multi method import ('stelar-sdf', :$file,) { self!stelar-sdf-Mz( file => $file ) }
-	multi method import ('stelar-sdf-Re', :$file,) { self!stelar-sdf-Mz( Re => True, file => $file  ) }
-	multi method import ('stelar-sdf-Im', :$file,) { self!stelar-sdf-Mz( Im => True, file => $file  ) }
+	multi method import ('stelar-sdf', :$file, :$range) { self!stelar-sdf-Mz( file => $file, range => $range ) }
+	multi method import ('stelar-sdf-Re', :$file) { self!stelar-sdf-Mz( Re => True, file => $file  ) }
+	multi method import ('stelar-sdf-Im', :$file) { self!stelar-sdf-Mz( Im => True, file => $file  ) }
 	multi method import ('stelar-sef-Mz', :$file) { self!stelar-sef-Mz( file => $file ) }
 	multi method import ('stelar-sef-R1', :$file) { self!stelar-sef-R1( file => $file ) }
 	multi method import ('stelar-sef-R1-err', :$file, :$err) { self!stelar-sef-R1( file => $file, err => $err ) }
@@ -170,7 +171,8 @@ class Import is export {
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
-	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im) {
+	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$wrange) {
+		my @window-range = $wrange.so ?? $wrange.split(/D/) !! <0 end>;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
@@ -205,7 +207,11 @@ class Import is export {
 				@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
 	
 		    	for (1 .. $ntaus) { 
-					@y.push: @m.splice(0,$BS.Int).sum/$BS;
+					my $i = @window-range[0];
+					my $f = @window-range[1].subst("end",$BS-1); 
+					my $N = $f - $i + 1;
+					say $i, $f, $N, $BS;
+					@y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N;
 			   	}
 		    	@y = @y.map({ $_ / @y.max });
 		    	my @err = (1 .. @x.elems).map({1});
