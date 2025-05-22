@@ -241,7 +241,7 @@ multi MAIN ('start-web-engine',
 		       <tr><td>ist-ffc: </td><td><input name="ist-ffc" type="radio" value="yes">/<input name="ist-ffc" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>ist-ffc-R1: </td><td><input name="ist-ffc-R1" type="radio" value="yes">/<input name="ist-ffc-R1" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>ist-ffc-R1-err: </td><td><input name="ist-ffc-R1-err" type="text" value="">(float number)</td></tr>
-		       <tr><td>stelar-sdf: </td><td><input name="stelar-sdf" type="radio" value="yes">/<input name="stelar-sdf" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>stelar-sdf: </td><td><input name="stelar-sdf" type="text" value="">(window range: 0:end)</td></tr>
 		       <tr><td>stelar-sdf-Re: </td><td><input name="stelar-sdf-Re" type="radio" value="yes">/<input name="stelar-sdf-Re" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-sdf-Im: </td><td><input name="stelar-sdf-Im" type="radio" value="yes">/<input name="stelar-sdf-Im" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>stelar-sef-Mz: </td><td><input name="stelar-sef-Mz" type="radio" value="yes">/<input name="stelar-sef-Mz" type="radio" value="no" checked="checked"></td></tr>
