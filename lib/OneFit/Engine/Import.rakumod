@@ -194,6 +194,7 @@ class Import is export {
 			my $i = @window-range[0].Int;
 			my $f = @window-range[1].subst("end",$BS-1).Int; 
 			my $N = $f - $i + 1;
+			say "$i $f $N $BS";
 
 			for ( 1 ..^ @zones.elems ).race {
 				my $buf=@zones[$_];
