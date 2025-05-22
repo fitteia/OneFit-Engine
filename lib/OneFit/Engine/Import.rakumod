@@ -173,6 +173,7 @@ class Import is export {
     }
 
 	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$wrange) {
+		say $wrange;
 		my @window-range = $wrange.so ?? $wrange.split(/D/) !! <0 end>;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
@@ -211,7 +212,7 @@ class Import is export {
 					my $i = @window-range[0];
 					my $f = @window-range[1].subst("end",$BS-1); 
 					my $N = $f - $i + 1;
-					say $i, $f, $N, $BS;
+					#		say $i, $f, $N, $BS;
 					@y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N;
 			   	}
 		    	@y = @y.map({ $_ / @y.max });
