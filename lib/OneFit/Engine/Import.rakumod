@@ -43,7 +43,7 @@ class Import is export {
 				for %!options.kv -> $k,$v {
 					if $v.so { 
 						if $k.contains(/err/) { @files = self.import($k, :err($v)) }	
-						elsif $k.contains(/sdf'-'Mz/) and $v.so { @files = self.import($k, :range($v)) }
+						elsif $k.contains(/sdf'-'Mz/) and $v.so { say $v; @files = self.import($k, :wrange($v)) }
 						else  { @files = self.import($k) }
 					}
 				}
@@ -89,8 +89,8 @@ class Import is export {
 	multi method import ('stelar-hdf5-R1', :$file) { self!stelar-hdf5-R1( file => $file ) }
 	multi method import ('stelar-hdf5-R1-err', :$file, :$err) { self!stelar-hdf5-R1( err => $err, file => $file ) }
 
-	multi method import ('stelar-sdf', :$file, :$range) { self!stelar-sdf-Mz( file => $file, range => $range ) }
-	multi method import ('stelar-sdf-Mz', :$file, :$range) { self!stelar-sdf-Mz( file => $file, range => $range ) }
+	multi method import ('stelar-sdf', :$file, :$wrange) { self!stelar-sdf-Mz( file => $file, wrange => $wrange ) }
+	multi method import ('stelar-sdf-Mz', :$file, :$wrange) { self!stelar-sdf-Mz( file => $file, wrange => $wrange ) }
 	multi method import ('stelar-sdf-Re', :$file) { self!stelar-sdf-Mz( Re => True, file => $file  ) }
 	multi method import ('stelar-sdf-Im', :$file) { self!stelar-sdf-Mz( Im => True, file => $file  ) }
 	multi method import ('stelar-sef-Mz', :$file) { self!stelar-sef-Mz( file => $file ) }
