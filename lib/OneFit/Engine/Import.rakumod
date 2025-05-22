@@ -191,8 +191,8 @@ class Import is export {
 			my $tauf = @range.max; 
 			my $taui = @range.min;
 			my $ntaus = @aux.tail;
-			my $i = @window-range[0];
-			my $f = @window-range[1].subst("end",$BS-1); 
+			my $i = @window-range[0].Int;
+			my $f = @window-range[1].subst("end",$BS-1).Int 
 			my $N = $f - $i + 1;
 			say "$i $f $N $BS";
 
@@ -214,7 +214,7 @@ class Import is export {
 	
 		    	for (1 .. $ntaus) { 
 					my @a = @m.splice(0,$BS.Int);
-					say "$i $f $N $BS ",@a.sum, " ", @a[$i.Int .. $f.Int].sum, " ", @a.splice(0,$BS.Int).sum, " ", @a.splice($i.Int,$f.Int).sum;
+					say "$i $f $N $BS ",@a.sum, " ", @a[$i .. $f].sum;
 					@y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N;
 			   	}
 		    	@y = @y.map({ $_ / @y.max });
