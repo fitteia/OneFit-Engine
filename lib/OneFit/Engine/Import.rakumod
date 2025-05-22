@@ -43,7 +43,7 @@ class Import is export {
 				for %!options.kv -> $k,$v {
 					if $v.so { 
 						if $k.contains(/err/) { @files = self.import($k, :err($v)) }	
-						elsif $k.contains(/sdf'-'Mz/) and $v.so { say $v; @files = self.import($k, :wrange($v)) }
+						elsif $k.contains(/sdf'-'Mz/) and $v.so { @files = self.import($k, :wrange($v)) }
 						else  { @files = self.import($k) }
 					}
 				}
@@ -173,8 +173,8 @@ class Import is export {
     }
 
 	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$wrange) {
-		say $wrange;
 		my @window-range = $wrange.so ?? $wrange.split(/D/) !! <0 end>;
+		say @window-range;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
