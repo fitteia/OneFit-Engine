@@ -43,7 +43,7 @@ class Import is export {
 				for %!options.kv -> $k,$v {
 					if $v.so { 
 						if $k.contains(/err/) { @files = self.import($k, :err($v)) }	
-						elsif $k.contains(/sdf'-'Mz/) and $v.so { @files = self.import($k, :range($v)) }
+						elsif $k.contains(/sdf'-'Mz/) and $v.so { say $v; @files = self.import($k, :range($v)) }
 						else  { @files = self.import($k) }
 					}
 				}
