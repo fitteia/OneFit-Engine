@@ -213,8 +213,8 @@ class Import is export {
 				my @Re;
 				my @Im;
 				@m = gather for $buf.lines { 
-					@Re.push: $_.words[0] if $_,contains(/^'-'?\d+/);
-					@Im.push: $_.words[1] if $_,contains(/^'-'?\d+/);
+					@Re.push: $_.words[0] if $_.contains(/^'-'?\d+/);
+					@Im.push: $_.words[1] if $_.contains(/^'-'?\d+/);
 					take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) 
 				};
 		    	
