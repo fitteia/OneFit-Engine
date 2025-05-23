@@ -210,10 +210,20 @@ class Import is export {
 				if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/($ntaus-1)) }) }
 				else { @x = (0 ..^ $ntaus).map({ ($taui + ($tauf - $taui) * $_/($ntaus - 1) ) * $T1MAX }) }
 				@x = @x.reverse if @range[1] < @range[0];
-
-				@m = gather for $buf.lines { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) };
-	
-		    	for (1 .. $ntaus) { @y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; }
+				my @Re;
+				my @Im;
+				@m = gather for $buf.lines { 
+					@Re.push: $_.words[0] if $_,contains(/^'-'?\d+/);
+					@Im.push: $_.words[1] if $_,contains(/^'-'?\d+/);
+					take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) 
+				};
+		    	
+				for (1 .. $ntaus) { 
+					my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
+					my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
+					@y.push: $re*cos(atan2($im,$re))+$im*sin(atan2($im,$re));
+					# @y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; 
+				}
 
 		    	@y = @y.map({ $_ / @y.max });
 		    	my @err = (1 .. @x.elems).map({1});
