@@ -191,6 +191,7 @@ class Import is export {
 			my $tauf = @range.max; 
 			my $taui = @range.min;
 			my $ntaus = @aux.tail;
+
 			my $i = @window-range[0].Int;
 			my $f = @window-range[1].subst("end",$BS-1).Int; 
 			$i = 0 if $i < 0;
