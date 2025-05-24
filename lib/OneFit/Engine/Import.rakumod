@@ -173,6 +173,7 @@ class Import is export {
     }
 
 	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$wrange) {
+		say $wrange;
 		my @window-range = $wrange.so ?? $wrange.split(/':'/) !! <0 end>;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
