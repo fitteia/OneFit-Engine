@@ -203,7 +203,7 @@ class Import is export {
 				my $index=$buf.words.head.split('.').map({ sprintf('%03d',$_.Int) }).join('_');
 				my $datafile = "{$stelar-sdf.IO.extension('').Str}-{ sprintf('%09d',$BR.Int) }-z{ $index }.dat";
 				my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
-		    	my $header = "# DATA dum = $BR\n# TAG = zone{ $index }\n{ @window-rang.tail if @window-range.elems > 2}";
+		    	my $header = "# DATA dum = $BR\n# TAG = zone{ $index }\n{ @window-range.tail if @window-range.elems > 2}";
 				my @x;
 				my @y;
 				my @m;
