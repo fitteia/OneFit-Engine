@@ -180,9 +180,7 @@ class Import is export {
 			%options<fit-if> =$v if $k.contains(/^f/);
 			%options<plot-if>=$v if $k.contains(/^p/);
 		}
-		say %options;
 		my @window-range = %options<range>.so ?? %options<range>.split(/\D+/) !! <0 end>;
-		say @window-range;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
