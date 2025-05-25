@@ -173,7 +173,10 @@ class Import is export {
     }
 
 	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$wrange) {
-		my @window-range = $wrange.so ?? $wrange.split(/':'/) !! <0 end>;
+		my %options = $wrange.so ?? $wrange.split(':') !! ("range","0..end")
+		say %options;
+		my @window-range = %options<range>.split(/\D+/);
+		say @window-range;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
@@ -204,7 +207,10 @@ class Import is export {
 				my $index=$buf.words.head.split('.').map({ sprintf('%03d',$_.Int) }).join('_');
 				my $datafile = "{$stelar-sdf.IO.extension('').Str}-{ sprintf('%09d',$BR.Int) }-z{ $index }.dat";
 				my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
-		    	my $header = "# DATA dum = $BR\n# TAG = zone{ $index }\n{ @window-range[2 .. *].join("\n") if @window-range.elems > 2}";
+		    	my 	$header = "# DATA dum = $BR\n# TAG = zone{ $index }\n";
+					$header ~= "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
+					$header ~= "# plot if " ~ %options<plot-if> ~ "\n" if %options<plot-if>.so;
+				say $header;
 				my @x;
 				my @y;
 				my @m;
