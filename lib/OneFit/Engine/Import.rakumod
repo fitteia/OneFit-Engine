@@ -173,7 +173,13 @@ class Import is export {
     }
 
 	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$wrange) {
-		my %options = $wrange.so ?? $wrange.split(':') !! ("range","0..end");
+		my %aux = $wrange.so ?? $wrange.split(':') !! ("range","0..end");
+		my %options;
+	   	for %aux.kv -> $k,$v { 
+			%options<range>  =$v if $k.contains(/^r/);
+			%options<fit-if> =$v if $k.contains(/^f/);
+			%options<plot-if>=$v if $k.contains(/^p/);
+		}
 		say %options;
 		my @window-range = %options<range>.so ?? %options<range>.split(/\D+/) !! <0 end>;
 		say @window-range;
