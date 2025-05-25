@@ -173,7 +173,7 @@ class Import is export {
     }
 
 	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$wrange) {
-		my %options = $wrange.so ?? $wrange.split(':') !! ("range","0..end")
+		my %options = $wrange.so ?? $wrange.split(':') !! ("range","0..end");
 		say %options;
 		my @window-range = %options<range>.split(/\D+/);
 		say @window-range;
