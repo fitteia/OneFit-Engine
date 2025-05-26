@@ -115,7 +115,6 @@ class Import is export {
 	}
 
 	method !stelar-hdf5-Mz (:$file, Bool :$Re, Bool :$Im, :$fpoptions) {
-		say $fpoptions;
 		my %options;
 		if $fpoptions.so {
 			my %aux = $fpoptions.split(':');
@@ -124,7 +123,6 @@ class Import is export {
 				%options<plot-if>=$v if $k.contains(/^p/);
 			}
 		}	
-		say %options;
 		my $stelar-hdf5 = self.filename();
 		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path();
@@ -147,7 +145,7 @@ class Import is export {
 	    	my 	$header = "# DATA dum = $BR\n# TAG = zone{$_}\n# R1 = "
 					~
 					$buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
-				$header ~= "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
+				$header ~= "\n# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
 				$header ~= "# plot if " ~ %options<plot-if> ~ "\n" if %options<plot-if>.so;
 
 	    	my $sqr =  { $^a.map({ $_ ** 2 }) };
