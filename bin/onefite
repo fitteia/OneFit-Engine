@@ -813,6 +813,7 @@ multi MAIN  ('fit',
 					'ist-ffc'			=> $ist-ffc,
 					'ist-ffc-R1'		=> $ist-ffc-R1,
 					'ist-ffc-R1-err' 	=> $ist-ffc-R1-err.so ?? $ist-ffc-R1-err !! False;
+say $stelar-hdf5;
 say %options;
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
     
