@@ -115,6 +115,7 @@ class Import is export {
 	}
 
 	method !stelar-hdf5-Mz (:$file, Bool :$Re, Bool :$Im, :$fpoptions) {
+		say $fpoptions;
 		my %options;
 		if $fpoptions.so {
 			my %aux = $fpoptions.split(':');
