@@ -43,7 +43,8 @@ class Import is export {
 				for %!options.kv -> $k,$v {
 					if $v.so { 
 						if $k.contains(/err/) { @files = self.import($k, :err($v)) }	
-						elsif $k.contains(/sdf/) and $v.so { @files = self.import($k, :wrange($v)) }
+						elsif $k.contains(/sdf/) and $v.so { @files = self.import($k, :rfpoptions($v)) }
+						elsif $k.contains(/hdf5/) and $v.so { @files = self.import($k, :fpoptions($v)) }
 						else  { @files = self.import($k) }
 					}
 				}
@@ -83,16 +84,16 @@ class Import is export {
 	}
 
 
-	multi method import ('stelar-hdf5', :$file) { self!stelar-hdf5-Mz( file => $file ) }
-	multi method import ('stelar-hdf5-Re', :$file) { self!stelar-hdf5-Mz( Re => True, file => $file ) }
-	multi method import ('stelar-hdf5-Im', :$file) { self!stelar-hdf5-Mz( Im => True, file => $file ) }
-	multi method import ('stelar-hdf5-R1', :$file) { self!stelar-hdf5-R1( file => $file ) }
-	multi method import ('stelar-hdf5-R1-err', :$file, :$err) { self!stelar-hdf5-R1( err => $err, file => $file ) }
+	multi method import ('stelar-hdf5', :$file, :$fpotions ) { self!stelar-hdf5-Mz( file => $file, ftpoptions => $fpoptions ) }
+	multi method import ('stelar-hdf5-Re', :$file, :$fpotions ) { self!stelar-hdf5-Mz( Re => True, file => $file, ftpoptions => $fpoptions ) }
+	multi method import ('stelar-hdf5-Im', :$file, :$fpotions ) { self!stelar-hdf5-Mz( Im => True, file => $file, ftpoptions => $fpoptions ) }
+	multi method import ('stelar-hdf5-R1', :$file, :$fpotions ) { self!stelar-hdf5-R1( file => $file, ftpoptions => $fpoptions ) }
+	multi method import ('stelar-hdf5-R1-err', :$file, :$err ) { self!stelar-hdf5-R1( err => $err, file => $file ) }
 
-	multi method import ('stelar-sdf', :$file, :$wrange) { self!stelar-sdf-Mz( file => $file, wrange => $wrange ) }
-	multi method import ('stelar-sdf-Mz', :$file, :$wrange) { self!stelar-sdf-Mz( file => $file, wrange => $wrange ) }
-	multi method import ('stelar-sdf-Re', :$file, :$wrange) { self!stelar-sdf-Mz( Re => True, file => $file, wrange => $wrange ) }
-	multi method import ('stelar-sdf-Im', :$file, :$wrange) { self!stelar-sdf-Mz( Im => True, file => $file, wrange => $wrange ) }
+	multi method import ('stelar-sdf', :$file, :$rfpoptions) { self!stelar-sdf-Mz( file => $file, rftpoptions => $rfpoptions ) }
+	multi method import ('stelar-sdf-Mz', :$file, :$rfpoptions) { self!stelar-sdf-Mz( file => $file, rfpoptions => $rfpoptions ) }
+	multi method import ('stelar-sdf-Re', :$file, :$rfpoptions) { self!stelar-sdf-Mz( Re => True, file => $file, rfpoptions => $rfpoptions ) }
+	multi method import ('stelar-sdf-Im', :$file, :$rfpoptions) { self!stelar-sdf-Mz( Im => True, file => $file, rfpoptions => $rfpoptions ) }
 	multi method import ('stelar-sef-Mz', :$file) { self!stelar-sef-Mz( file => $file ) }
 	multi method import ('stelar-sef-R1', :$file) { self!stelar-sef-R1( file => $file ) }
 	multi method import ('stelar-sef-R1-err', :$file, :$err) { self!stelar-sef-R1( file => $file, err => $err ) }
@@ -113,7 +114,15 @@ class Import is export {
 		return @files;	
 	}
 
-	method !stelar-hdf5-Mz (:$file, Bool :$Re, Bool :$Im) {
+	method !stelar-hdf5-Mz (:$file, Bool :$Re, Bool :$Im, :$fpoptions) {
+		my %options;
+		if $fpoptions.so {
+			my %aux = $fpoptions.split(':');
+		   	for %aux.kv -> $k,$v { 
+				%options<fit-if> =$v if $k.contains(/^f/);
+				%options<plot-if>=$v if $k.contains(/^p/);
+			}
+		}	
 		my $stelar-hdf5 = self.filename();
 		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path();
@@ -133,9 +142,11 @@ class Import is export {
 	    	}
 			my $BR = ($buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6).round(0.0001);
 	    	my $datafile = "{$stelar-hdf5.IO.extension('').Str}-{ sprintf('%09d',$BR.Int) }-z{ sprintf('%03d',$_.Int) }.dat";
-	    	my $header = "# DATA dum = $BR\n# TAG = zone{$_}\n# R1 = "
-				~
-				$buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
+	    	my 	$header = "# DATA dum = $BR\n# TAG = zone{$_}\n# R1 = "
+					~
+					$buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
+				$header ~= "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
+				$header ~= "# plot if " ~ %options<plot-if> ~ "\n" if %options<plot-if>.so;
 
 	    	my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    	my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
@@ -172,8 +183,8 @@ class Import is export {
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
-	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$wrange) {
-		my %aux = $wrange.so ?? $wrange.split(':') !! ("range","0..end");
+	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$rfpoptions) {
+		my %aux = $rfpoptions.so ?? $rfpoptions.split(':') !! ("range","0..end");
 		my %options;
 	   	for %aux.kv -> $k,$v { 
 			%options<range>  =$v if $k.contains(/^r/);
@@ -214,7 +225,6 @@ class Import is export {
 		    	my 	$header = "# DATA dum = $BR\n# TAG = zone{ $index }\n";
 					$header ~= "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
 					$header ~= "# plot if " ~ %options<plot-if> ~ "\n" if %options<plot-if>.so;
-				say $header;
 				my @x;
 				my @y;
 				my @m;
