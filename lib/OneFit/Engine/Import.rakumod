@@ -123,6 +123,7 @@ class Import is export {
 				%options<plot-if>=$v if $k.contains(/^p/);
 			}
 		}	
+		say %fpoptions;
 		my $stelar-hdf5 = self.filename();
 		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path();
