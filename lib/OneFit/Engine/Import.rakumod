@@ -84,7 +84,7 @@ class Import is export {
 	}
 
 
-	multi method import ('stelar-hdf5', :$file, :$fpotions ) { self!stelar-hdf5-Mz( file => $file, ftpoptions => $fpoptions ) }
+	multi method import ('stelar-hdf5', :$file, :$fpoptions ) { self!stelar-hdf5-Mz( file => $file, ftpoptions => $fpoptions ) }
 	multi method import ('stelar-hdf5-Re', :$file, :$fpotions ) { self!stelar-hdf5-Mz( Re => True, file => $file, ftpoptions => $fpoptions ) }
 	multi method import ('stelar-hdf5-Im', :$file, :$fpotions ) { self!stelar-hdf5-Mz( Im => True, file => $file, ftpoptions => $fpoptions ) }
 	multi method import ('stelar-hdf5-R1', :$file, :$fpotions ) { self!stelar-hdf5-R1( file => $file, ftpoptions => $fpoptions ) }
