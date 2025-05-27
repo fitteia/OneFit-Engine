@@ -82,11 +82,11 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit U<function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf[=<Str>]] [--stelar-sdf-Re[=<Str>]] [--stelar-sdf-Im[=<Str>]] [--stelar-sef] [--stelar-sef-R1[=<Str>]] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf[=<Str>]] [--stelar-sdf-Re[=<Str>]] [--stelar-sdf-Im[=<Str>]] [--stelar-sef] [--stelar-sef-R1[=<Str>]] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <input-filename> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]
 
-onefite plot <input-filename> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
 =end code
 
@@ -99,8 +99,8 @@ onefite test [<arr> ...] [--verbose|-v]
 =end code
 =PARAMETERS
 =head2 File parameters
-=item input-filename - name of the file to be converted (.sav or .json)
-=input output-filename - name of the converted file (.sav or .json)
+=item input-file- name of the file to be converted ('.sav' or '.json')
+=item output-file- name of the converted file ('.sav' or '.json')
 
 =head2 Fit methods
 =item fit-methods - simp scan min minos
