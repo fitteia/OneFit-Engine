@@ -232,8 +232,8 @@ class Import is export {
 				if $type eq "log" { @x = (0 ..^ $ntaus).map({ $taui * $T1MAX * ($tauf/$taui) ** ($_/($ntaus-1)) }) }
 				else { @x = (0 ..^ $ntaus).map({ ($taui + ($tauf - $taui) * $_/($ntaus - 1) ) * $T1MAX }) }
 				@x = @x.reverse if @range[1] < @range[0];
-				#				my @Re;
-				#				my @Im;
+				my @Re;
+				my @Im;
 				@m = gather for $buf.lines {
 					if %options<gfilt>.so {
 						@Re.push: $_.words[0] if $_.contains(/^'-'?\d+/);
