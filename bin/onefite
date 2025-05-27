@@ -2,7 +2,7 @@
 
 =begin pod
 
-=TITLE onefite is the Raku script interface to the OneFit-Engine
+=NAME onefite is the Raku script interface to the OneFit-Engine
 
 =head1 I<Usage>
 
@@ -34,6 +34,10 @@
 	    U<input-file>     name of the file to be converted (.sav or .json)
 	    U<output-file>    name of the converted file (.sav or .json)
 	    fit-methods: simp scan min minos
+
+
+=DESCRIPTION 
+		this is it
 =end pod
 
 
