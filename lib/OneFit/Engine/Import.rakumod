@@ -250,6 +250,7 @@ class Import is export {
 						my @re =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo{$_}.dat",:out).out.lines(:close) ; 
 						"/tmp/lixo1{$_}.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
 						my @im =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo1{$_}.dat",:out).out.lines(:close) ; 
+						shell("rm /tmp/lixo*.dat");
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
 	    
