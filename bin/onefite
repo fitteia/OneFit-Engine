@@ -2,9 +2,10 @@
 
 =begin pod
 
-=NAME onefite is the Raku script interface to the OneFit-Engine
+=NAME 
+	onefite is the Raku script interface to the OneFit-Engine
 
-=head1 I<Usage>
+=head1 B<Usage>
 
         onefite [-h|--help]
 	    onefite uninstall
