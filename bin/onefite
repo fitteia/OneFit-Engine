@@ -99,8 +99,8 @@ onefite test [<arr> ...] [--verbose|-v]
 =end code
 =PARAMETERS
 =head2 File parameters
-=item input-file- name of the file to be converted (\.sav or \.json)
-=item output-file- name of the converted file (\.sav or \.json)
+=item input-file- name of the file to be converted (file extensions: sav or json)
+=item output-file- name of the converted file (file extensions: sav or json)
 
 =head2 Fit methods
 =item fit-methods - simp scan min minos
