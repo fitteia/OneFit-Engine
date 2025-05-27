@@ -247,9 +247,9 @@ class Import is export {
 						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N;  
 						"/tmp/lixo.dat".IO.spurt: @Re.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						my @re =  shell("gfilt $N { %options<gfilt> } /tmp/lixo.dat",:out).out.lines(:close) ; 
+						my @re =  shell("gfilt $N { %options{'gfilt'} } /tmp/lixo.dat",:out).out.lines(:close) ; 
 						"/tmp/lixo1.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						my @$im =  shell("gfilt $N { %options<gfilt> } /tmp/lixo1.dat",:out).out.lines(:close) ; 
+						my @$im =  shell("gfilt $N { %options{'gfilt'} } /tmp/lixo1.dat",:out).out.lines(:close) ; 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
 	    
