@@ -31,8 +31,8 @@
 	    onefite test list
 	    onefite test [<arr> ...] [--verbose|-v]
   
-	    C<input-file>     name of the file to be converted (.sav or .json)
-	    C<output-file>    name of the converted file (.sav or .json)
+	    U<input-file>     name of the file to be converted (.sav or .json)
+	    U<output-file>    name of the converted file (.sav or .json)
 	    fit-methods: simp scan min minos
 =end pod
 
