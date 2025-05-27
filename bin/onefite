@@ -63,7 +63,7 @@ use JSON::Fast;
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
-multi MAIN (Bool :m(:$man!)) {
+multi MAIN (Bool :$man!) {
 	say pod2text $=rakudoc;
 }
 
