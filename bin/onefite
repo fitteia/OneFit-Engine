@@ -224,8 +224,8 @@ multi MAIN ('list','aliases',
 }
 
 multi MAIN ('convert',
-	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (.sav or .json)
-	    Str $output-file, #= name of the converted file (.sav or .json)
+	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (\.sav or \.json)
+	    Str $output-file, #= name of the converted file (\.sav or \.json)
             Str :$work-folder = "."
 	   ) {
     my $eng = Engine.new.path($work-folder).read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
@@ -963,7 +963,7 @@ multi MAIN  ('fit',
 }
 
 multi MAIN  ('fit',
-	     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the (.sav or .json) to compile
+	     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the (\.sav or \.json) to compile
          Str  :$fit-methods = "simp scan min minos",
 	     Bool :$no-plot,
 	     Bool :$autox,
@@ -1001,7 +1001,7 @@ multi MAIN  ('fit',
 
 
 multi MAIN  ('plot',
-	     Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the (.sav or .json) to compile
+	     Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the (\.sav or \.json) to compile
 	     Bool :$autox,
 	     Bool :$autoy,
 	     Bool :$autoxy,
