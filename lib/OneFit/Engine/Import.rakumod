@@ -251,7 +251,7 @@ class Import is export {
 						"/tmp/lixo1.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
 						my $im =  shell("gfilt $N { %options<gfilt> } /tmp/lixo1.dat",:out).out.lines(:close) ; 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
-	    				my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
+	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
 	    
 						@y.push: @module.sum/$N;
 					}
