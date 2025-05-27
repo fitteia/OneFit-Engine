@@ -1,6 +1,6 @@
 #!/usr//bin/env raku
 
-=begin rakudoc
+=begin pod
 
 =TITLE onefite is the Raku script interface to the OneFit-Engine
 
@@ -36,7 +36,7 @@
 	    <output-file>    name of the converted file (.sav or .json)
 	    fit-methods: simp scan min minos
 
-=end rakudoc
+=end pod
 
 
 
@@ -64,7 +64,7 @@ use JSON::Fast;
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 multi MAIN (Bool :$man!) {
-	say pod2text $=rakudoc;
+	say pod2text $=pod;
 }
 
 
