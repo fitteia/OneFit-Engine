@@ -242,7 +242,7 @@ class Import is export {
 					else { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) }
 				};
 		    	
-				for (1 .. $ntaus) { 
+				for (1 .. $ntaus).race { 
 					if %options<gfilt>.so {
 						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
