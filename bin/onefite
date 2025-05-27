@@ -34,7 +34,6 @@
 	    <input-file>     name of the file to be converted (.sav or .json)
 	    <output-file>    name of the converted file (.sav or .json)
 	    fit-methods: simp scan min minos
-
 =end pod
 
 
@@ -62,7 +61,7 @@ use JSON::Fast;
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
-multi MAIN (Bool :$man!) {
+multi MAIN (Bool :m(:$man)!) {
 	say pod2text $=pod;
 }
 
