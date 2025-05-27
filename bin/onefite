@@ -972,7 +972,7 @@ multi MAIN  ('fit',
 	     Bool :logy(:$linlog),
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
-	     Str  :save-to(:$to), # write fit settings to json or sav file 	     
+	     Str  :save-to(:$to), #= write fit settings to json or sav file 	     
 	     Str  :$zip-to = $input-file.IO.extension('').Str,
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts)
