@@ -4,10 +4,9 @@
 
 =TITLE onefite is the Raku script interface to the OneFit-Engine
 
-=head1 Usage
+=head1 I<Usage>
 
-    Usage:
-            onefite [-h|--help]
+        onefite [-h|--help]
 	    onefite uninstall
 	    onefite service start
 	    onefite service stop
