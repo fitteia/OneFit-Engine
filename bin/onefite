@@ -33,8 +33,8 @@
 	    onefite test [<arr> ...] [--verbose|-v]
   
 =item1 <input-file> name of the file to be converted (.sav or .json)
-=item2 <output-file> name of the converted file (.sav or .json)
-=item3 fit-methods: simp scan min minos
+=item1 <output-file> name of the converted file (.sav or .json)
+=item1 fit-methods: simp scan min minos
 
 
 =DESCRIPTION 
