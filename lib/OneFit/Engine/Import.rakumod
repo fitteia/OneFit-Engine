@@ -190,6 +190,7 @@ class Import is export {
 			%options<range>  =$v if $k.contains(/^r/);
 			%options<fit-if> =$v if $k.contains(/^f/);
 			%options<plot-if>=$v if $k.contains(/^p/);
+			%options<gfilt>=$v if $k.contains(/^g/);
 		}
 		my @window-range = %options<range>.so ?? %options<range>.split(/\D+/) !! <0 end>;
 		my $stelar-sdf = self.filename();
@@ -233,17 +234,28 @@ class Import is export {
 				@x = @x.reverse if @range[1] < @range[0];
 				#				my @Re;
 				#				my @Im;
-				@m = gather for $buf.lines { 
-					#					@Re.push: $_.words[0] if $_.contains(/^'-'?\d+/);
-					#					@Im.push: $_.words[1] if $_.contains(/^'-'?\d+/);
-					take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) 
+				@m = gather for $buf.lines {
+					if %options<gfilt>.so {
+						@Re.push: $_.words[0] if $_.contains(/^'-'?\d+/);
+						@Im.push: $_.words[1] if $_.contains(/^'-'?\d+/);
+					}
+					else { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) }
 				};
 		    	
 				for (1 .. $ntaus) { 
-					#					my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
-					#					my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
-					#					@y.push: $re*cos(atan2($im,$re))+$im*sin(atan2($im,$re));
-					@y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; 
+					if %options<gfilt>.so {
+						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
+						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N;  
+						"/tmp/lixo.dat".IO.spurt: @Re.splice(0,$BS.Int)[$i .. $f].join("\n"); 
+						my $re =  shell("gfilt $N { %options<gfilt> } /tmp/lixo.dat",:out).out.lines(:close) ; 
+						"/tmp/lixo1.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
+						my $im =  shell("gfilt $N { %options<gfilt> } /tmp/lixo1.dat",:out).out.lines(:close) ; 
+						my $sqr =  { $^a.map({ $_ ** 2 }) };
+	    				my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
+	    
+						@y.push: @module.sum/$N;
+					}
+					else { @y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; }
 				}
 
 		    	@y = @y.map({ $_ / @y.max });
