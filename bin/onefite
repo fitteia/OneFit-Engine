@@ -99,8 +99,8 @@ onefite test [<arr> ...] [--verbose|-v]
 =end code
 =PARAMETERS
 =head2 File parameters
-=item input-file- name of the file to be converted ('.sav' or '.json')
-=item output-file- name of the converted file ('.sav' or '.json')
+=item input-file- name of the file to be converted (\.sav or \.json)
+=item output-file- name of the converted file (\.sav or \.json)
 
 =head2 Fit methods
 =item fit-methods - simp scan min minos
@@ -173,8 +173,8 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite test list
 	    onefite test [<arr> ...] [--verbose|-v]
   
-	    <input-file>     name of the file to be converted (.sav or .json)
-	    <output-file>    name of the converted file (.sav or .json)
+	    <input-file>     name of the file to be converted (\.sav or \.json)
+	    <output-file>    name of the converted file (\.sav or \.json)
 	    fit-methods: simp scan min minos
 
 	    <function> syntax alternatives:
