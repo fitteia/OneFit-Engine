@@ -385,7 +385,7 @@ class Import is export {
 			say $start, " ", $end;
 			for ($start .. $end) -> $j {
 				my $exp=exp( -( ($i-$j)/(2*$npts) )**2 );
-				@z[$i] += @a[$j]*$exp;
+				@z[$i] += @a[$j-1]*$exp;
 				$sum += $exp;
 			}
 		}	
