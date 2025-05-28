@@ -247,14 +247,14 @@ class Import is export {
 						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 			
-						"/tmp/lixo{$_}.dat".IO.spurt: @Re.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						my @re =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo{$_}.dat",:out).out.lines(:close) ; 
-						"/tmp/lixo1{$_}.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						my @im =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo1{$_}.dat",:out).out.lines(:close) ; 
-						shell("rm /tmp/lixo*.dat");
+						#			"/tmp/lixo{$_}.dat".IO.spurt: @Re.splice(0,$BS.Int)[$i .. $f].join("\n"); 
+						#my @re =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo{$_}.dat",:out).out.lines(:close) ; 
+						#"/tmp/lixo1{$_}.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
+						#my @im =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo1{$_}.dat",:out).out.lines(:close) ; 
+						#shell("rm /tmp/lixo*.dat");
 			
-						#				my @re = gfilt(@Re.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
-						#				my @im = gfilt(@Im.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
+										my @re = gfilt(@Re.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
+										my @im = gfilt(@Im.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
 	  say "tau $_";
