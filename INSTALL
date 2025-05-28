@@ -74,6 +74,8 @@ multi MAIN (
    	add-show-ip-in-issue() if $to-site;
 
    	run-post-install-tests(:deamon($systemd-daemon));
+
+	install-manpage();
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -365,7 +367,14 @@ sub shellinabox(Bool $shell, $shell-port) {
 	}
 }
 
-
+sub install-manpage() {
+	shell("raku --doc=Man $*CWD/bin/onefite | gzip -9 > onefite.1.gz");
+	say "onefite man page: onefite.1.gz";
+	if $SUDO {
+   		shell("$SUDO cp onefite.1.gz /usr/share/man/man1/";	
+		say "onefite.1.gz man page install in /usr/share/man/man1/";
+	}
+}
 
 
 
