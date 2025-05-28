@@ -371,7 +371,7 @@ sub install-manpage() {
 	shell("raku --doc=Man $*CWD/bin/onefite | gzip -9 > onefite.1.gz");
 	say "onefite man page: onefite.1.gz";
 	if $SUDO {
-   		shell("$SUDO cp onefite.1.gz /usr/share/man/man1/";	
+   		shell("$SUDO cp onefite.1.gz /usr/share/man/man1/");	
 		say "onefite.1.gz man page install in /usr/share/man/man1/";
 	}
 }
