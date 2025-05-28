@@ -246,23 +246,8 @@ class Import is export {
 					if %options<gfilt>.so {
 						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
-						my $gfilt = { 
-							my @z;
-							my $n = @^a.elems;
-							for (0 ..^ $n) -> $i {
-								my $sum=0;
-								my $start= [1,$i-5*$^b].max;
-								my $end =  [$i+5*$^b,$n].min; 
-								for ($start .. $end) -> $j {
-									my $exp=exp( -( ($i-$j)/(2*$^b) )**2 );
-									@z[$i] += @^a[$j]*$exp;
-									$sum += $exp;
-								}
-							}	
-							return @z
-						};
-						my @re = $gfilt(@Re,%options<gfilt>); 
-						my @im = $gfilt(@Im,%options<gfilt>); 
+						my @re = gfilt(@Re,%options<gfilt>); 
+						my @im = gfilt(@Im,%options<gfilt>); 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
 	    
@@ -388,6 +373,23 @@ class Import is export {
 		}
 		return @files.sort.reverse;
 	}
+	
+	sub gfilt(@a,$npts)  { 
+		my @z;
+		my $n = @a.elems;
+		for (0 ..^ $n) -> $i {
+			my $sum=0;
+			my $start= [1,$i-5*$npts].max;
+			my $end =  [$i+5*$npts,$n].min; 
+			for ($start .. $end) -> $j {
+				my $exp=exp( -( ($i-$j)/(2*$npts) )**2 );
+				@z[$i] += @a[$j]*$exp;
+				$sum += $exp;
+			}
+		}	
+		return @z
+	}	
+	
 }
 
 
