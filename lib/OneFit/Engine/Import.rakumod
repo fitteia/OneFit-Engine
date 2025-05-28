@@ -241,7 +241,7 @@ class Import is export {
 					}
 					else { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) }
 				};
-		    	
+		    say "zone $_";	
 				for (1 .. $ntaus).race { 
 					if %options<gfilt>.so {
 						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
@@ -250,7 +250,7 @@ class Import is export {
 						my @im = gfilt(@Im.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
-	  say $_;
+	  say "tau $_";
 						@y.push: @module.sum/$N;
 					}
 					else { @y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; }
