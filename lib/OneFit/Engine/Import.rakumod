@@ -246,8 +246,8 @@ class Import is export {
 					if %options<gfilt>.so {
 						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
-						my @re = gfilt(@Re,%options<gfilt>); 
-						my @im = gfilt(@Im,%options<gfilt>); 
+						my @re = gfilt(@Re.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
+						my @im = gfilt(@Re.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
 	    
