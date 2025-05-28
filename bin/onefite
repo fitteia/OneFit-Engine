@@ -2,7 +2,8 @@
 
 =begin pod
 
-=NAME onefite - Raku script interface to the OneFit-Engine
+=NAME 
+	onefite - Raku script interface to the OneFit-Engine
 
 =SYNOPSIS
 =begin code :lang<bash>
@@ -31,6 +32,11 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 onefite test list
 onefite test [<arr> ...] [--verbose|-v]
 =end code
+
+=NOTE
+	This man page is expected to help you to take full advanatge of onefite both on the server and on the client sides
+	
+
 
 =DESCRIPTION 
 		this is it
@@ -89,6 +95,16 @@ onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
 =end code
+
+=head2 Version upgrade
+=begin code
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+=end code
+
+prompt> onefite updatde -d --shell --test will 
+
+
+
 
 =head2 Test commands
 
