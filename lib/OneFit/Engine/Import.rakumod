@@ -382,7 +382,6 @@ class Import is export {
 			my $start= [0,$i-5*$npts].max;
 			my $end =  [$i+5*$npts,$n1].min; 
 			@z[$i]=0;
-			say $start, " ", $end;
 			for ($start .. $end) -> $j {
 				my $exp=exp( -( ($i-$j)/(2*$npts) )**2 );
 				@z[$i] += @a[$j]*$exp;
