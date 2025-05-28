@@ -1,138 +1,5 @@
 #!/usr//bin/env raku
 
-=begin pod
-
-=NAME 
-	onefite - Raku script interface to the OneFit-Engine
-
-=SYNOPSIS
-=begin code :lang<bash>
-onefite [-h|--help]
-onefite uninstall
-onefite service start
-onefite service stop
-onefite service log
-onefite service PID
-onefite list [-q|--quiet]
-onefite list models [-q|--quiet]
-onefite list aliases [-q|--quiet]
-onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
-onefite convert <input-file> <output-file> [--work-folder=<Str>]
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
-onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
-onefite stop-web-engine
-onefite help <model> [-q|--quiet]
-onefite help <model> <key>] [-q|--quiet]
-onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf[=<Str>]] [--stelar-sdf-Re[=<Str>]] [--stelar-sdf-Im[=<Str>]] [--stelar-sef] [--stelar-sef-R1[=<Str>]] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite test list
-onefite test [<arr> ...] [--verbose|-v]
-=end code
-
-=NOTE
-	This man page is expected to help you to take full advanatge of onefite both on the server and on the client sides
-	
-
-
-=DESCRIPTION 
-		this is it
-
-=USAGE
-
-=head2 Basic commands
-
-=begin code :lang<bash>
-
-onefite [-h|--help]
-onefite uninstall
-onefite help <model> [-q|--quiet]
-onefite help <model> <key>] [-q|--quiet]
-onefite list [-q|--quiet]
-onefite list models [-q|--quiet]
-onefite list aliases [-q|--quiet]
-onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
-
-=end code
-
-=head2 Convert sav and json files
-=begin code :lang<bash>
-onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
-=end code
-
-=head2 Service commands
-
-=begin code :lang<bash>
-
-onefite service start
-onefite service stop
-onefite service log
-onefite service PID
-onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
-onefite stop-web-engine
-onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-
-=end code
-
-=head2 Create command
-=begin code :lang<bash>
-onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-=end code
-
-=head2 Fit commands
-=begin code :lang<bash>
-onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-
-onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf[=<Str>]] [--stelar-sdf-Re[=<Str>]] [--stelar-sdf-Im[=<Str>]] [--stelar-sef] [--stelar-sef-R1[=<Str>]] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]
-
-onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
-
-=end code
-
-=head2 Version upgrade
-=begin code
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
-=end code
-
-	At the host prompt run I<onefite updatde -d --shell --test>  
-
-	This will upgrade the current (main or dev) version of the OneFit-Engine. github.com/fitteia/OneFit-Engine.git 
-	is downloaded and expanded. OneFit-Engine/INSTALL is called with options --system-daemon and --shell an --test options.  
-	Port 8142 will be open to onefite requests.
-	Port 8100 will be open to shell command accces via a web browser 
-
-
-
-=head2 Test commands
-
-=begin code :lang<bash>
-onefite test list
-
-onefite test [<arr> ...] [--verbose|-v]
-=end code
-=PARAMETERS
-=head2 File parameters
-=item input-file- name of the file to be converted (file extensions: sav or json)
-=item output-file- name of the converted file (file extensions: sav or json)
-
-=head2 Fit methods
-=item fit-methods - simp scan min minos
-
-
-=para 
-this is the first example
-
-=end pod
-
-
-
 my $time = BEGIN { now }
 END { say "Total execution time (s): " , now - INIT now }
 
@@ -1184,4 +1051,137 @@ EOT
 #	shell "$SUDO rm -fr /tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 }
+
+
+=begin pod
+
+=NAME 
+	onefite - Raku script interface to the OneFit-Engine
+
+=SYNOPSIS
+=begin code :lang<bash>
+onefite [-h|--help]
+onefite uninstall
+onefite service start
+onefite service stop
+onefite service log
+onefite service PID
+onefite list [-q|--quiet]
+onefite list models [-q|--quiet]
+onefite list aliases [-q|--quiet]
+onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
+onefite convert <input-file> <output-file> [--work-folder=<Str>]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
+onefite stop-web-engine
+onefite help <model> [-q|--quiet]
+onefite help <model> <key>] [-q|--quiet]
+onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
+onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf[=<Str>]] [--stelar-sdf-Re[=<Str>]] [--stelar-sdf-Im[=<Str>]] [--stelar-sef] [--stelar-sef-R1[=<Str>]] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite test list
+onefite test [<arr> ...] [--verbose|-v]
+=end code
+
+=NOTE
+	This man page is expected to help you to take full advanatge of onefite both on the server and on the client sides
+	
+
+
+=DESCRIPTION 
+		this is it
+
+=USAGE
+
+=head2 Basic commands
+
+=begin code :lang<bash>
+
+onefite [-h|--help]
+onefite uninstall
+onefite help <model> [-q|--quiet]
+onefite help <model> <key>] [-q|--quiet]
+onefite list [-q|--quiet]
+onefite list models [-q|--quiet]
+onefite list aliases [-q|--quiet]
+onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
+
+=end code
+
+=head2 Convert sav and json files
+=begin code :lang<bash>
+onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
+=end code
+
+=head2 Service commands
+
+=begin code :lang<bash>
+
+onefite service start
+onefite service stop
+onefite service log
+onefite service PID
+onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
+onefite stop-web-engine
+onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
+
+=end code
+
+=head2 Create command
+=begin code :lang<bash>
+onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+=end code
+
+=head2 Fit commands
+=begin code :lang<bash>
+onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--stelar-hdf5] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf] [--stelar-sdf-Re] [--stelar-sdf-Im] [--stelar-sef] [--stelar-sef-R1] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+
+onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--ist-ffc] [--ist-ffc-R1] [--ist-ffc-R1-err=<Rat>] [--stelar-sdf[=<Str>]] [--stelar-sdf-Re[=<Str>]] [--stelar-sdf-Im[=<Str>]] [--stelar-sef] [--stelar-sef-R1[=<Str>]] [--stelar-sef-R1-err=<Rat>] [--stelar-hdf5] [--stelar-hdf5-Re] [--stelar-hdf5-Im] [--stelar-hdf5-R1] [--stelar-hdf5-R1-err=<Rat>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]
+
+onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
+
+=end code
+
+=head2 Version upgrade
+=begin code
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+=end code
+
+	At the host prompt run I<onefite updatde -d --shell --test>  
+
+	This will upgrade the current (main or dev) version of the OneFit-Engine. github.com/fitteia/OneFit-Engine.git 
+	is downloaded and expanded. OneFit-Engine/INSTALL is called with options --system-daemon and --shell an --test options.  
+	Port 8142 will be open to onefite requests.
+	Port 8100 will be open to shell command accces via a web browser 
+
+
+
+=head2 Test commands
+
+=begin code :lang<bash>
+onefite test list
+
+onefite test [<arr> ...] [--verbose|-v]
+=end code
+=PARAMETERS
+=head2 File parameters
+=item input-file- name of the file to be converted (file extensions: sav or json)
+=item output-file- name of the converted file (file extensions: sav or json)
+
+=head2 Fit methods
+=item fit-methods - simp scan min minos
+
+
+=para 
+this is the first example
+
+=end pod
+
 
