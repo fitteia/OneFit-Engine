@@ -377,7 +377,7 @@ class Import is export {
 	sub gfilt(@a,$npts)  { 
 		my @z;
 		my $n = @a.elems;
-		for (0 ..^ $n) -> $i {
+		for (0 ..^ $n).race -> $i {
 			my $sum=0;
 			my $start= [1,$i-5*$npts].max;
 			my $end =  [$i+5*$npts,$n].min; 
