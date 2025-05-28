@@ -101,7 +101,9 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
 =end code
 
-prompt> onefite updatde -d --shell --test will 
+	At the host prompt run I<onefite updatde -d --shell --test>  
+
+	This will upgrade the current (main or dev) version of the OneFit-Engine. github.com/fitteia/OneFit-Engine.git is downloaded and expanded. OneFit-Engine/INSTALL is called with options --system-daemon and --shell an --test options.  
 
 
 
