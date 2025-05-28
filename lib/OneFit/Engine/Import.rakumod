@@ -250,7 +250,7 @@ class Import is export {
 							my @z;
 							for (0 ..^ @^a.elems) -> $i {
 								my $sum=0;
-								for ( (1,$i-5*$^b).max .. (i+5*$^b,@^a.elems).min ) -> $j {
+								for ( (1,$i-5*$^b).max .. ($i+5*$^b,@^a.elems).min ) -> $j {
 									my $exp=exp( -( ($i-$j)/(2*$^b) )**2 );
 									@z[$i] += @^a[$j]*$exp;
 									$sum += $exp;
