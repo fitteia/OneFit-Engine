@@ -246,11 +246,20 @@ class Import is export {
 					if %options<gfilt>.so {
 						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
-						"/tmp/lixo{$_}.dat".IO.spurt: @Re.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						my @re =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo{$_}.dat",:out).out.lines(:close) ; 
-						"/tmp/lixo1{$_}.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						my @im =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo1{$_}.dat",:out).out.lines(:close) ; 
-						shell("rm /tmp/lixo*.dat");
+						my $gfilt = { 
+							my @z;
+							for (0 ..^ $^a.elems) -> $i {
+								my $sum=0;
+								for ( (1,$i-5*$^b).max .. (i+5*$^b,$^a.elems).min ) -> $j {
+									my $exp=exp( -( ($i-$j)/(2*$^b) )**2 );
+									@z[$i] += @^a[$j]*$exp
+									$sum += $exp;
+								}
+							}	
+							return @z
+						};
+						my @re = $gfilt(@Re,%options<gfilt>); 
+						my @im = $gfilt(@Im,%options<gfilt>); 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
 	    
