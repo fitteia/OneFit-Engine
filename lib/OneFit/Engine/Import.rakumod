@@ -241,23 +241,23 @@ class Import is export {
 					}
 					else { take $_.words[ $Re ?? 0 !! $Im ?? 1 !! 2 ] if $_.contains(/^'-'?\d+/) }
 				};
-		    say "zone $_";	
+				
 				for (1 .. $ntaus).race { 
 					if %options<gfilt>.so {
 						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
 			
-						#			"/tmp/lixo{$_}.dat".IO.spurt: @Re.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						#my @re =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo{$_}.dat",:out).out.lines(:close) ; 
-						#"/tmp/lixo1{$_}.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						#my @im =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo1{$_}.dat",:out).out.lines(:close) ; 
-						#shell("rm /tmp/lixo*.dat");
+						#						"/tmp/lixo{$_}.dat".IO.spurt: @Re.splice(0,$BS.Int)[$i .. $f].join("\n"); 
+						#						my @re =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo{$_}.dat",:out).out.lines(:close) ; 
+						#						"/tmp/lixo1{$_}.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
+						#						my @im =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo1{$_}.dat",:out).out.lines(:close) ; 
+						#						shell("rm /tmp/lixo*.dat");
 			
-										my @re = gfilt(@Re.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
-										my @im = gfilt(@Im.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
+						my @re = gfilt-shell(@Re.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
+						my @im = gfilt-shell(@Im.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
-	  say "tau $_";
+						
 						@y.push: @module.sum/$N;
 					}
 					else { @y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; }
@@ -380,8 +380,15 @@ class Import is export {
 		}
 		return @files.sort.reverse;
 	}
-	
-	sub gfilt(@a,$npts)  { 
+		
+	sub gfilt-shell(@a,$npts)  { 
+		"/tmp/lixo.dat".IO.spurt: @a.join("\n"); 
+		my @z =  shell("gfilt { @a.elems }  $npts  /tmp/lixo.dat",:out).out.lines(:close) ; 
+		shell "rm /tmp/lixo.dat";
+		return @z
+	}	
+
+	sub gfilt-raku(@a,$npts)  { 
 		my @z;
 		my $n1 = @a.elems-1;
 		for (0 .. $n1) -> $i {
@@ -397,7 +404,7 @@ class Import is export {
 		}	
 		return @z
 	}	
-	
+		
 }
 
 
