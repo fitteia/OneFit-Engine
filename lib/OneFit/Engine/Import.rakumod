@@ -376,16 +376,16 @@ class Import is export {
 	
 	sub gfilt(@a,$npts)  { 
 		my @z;
-		my $n = @a.elems;
-		for (0 ..^ $n).race -> $i {
+		my $n1 = @a.elems-1;
+		for (0 .. $n1).race -> $i {
 			my $sum=0;
-			my $start= [1,$i-5*$npts].max;
-			my $end =  [$i+5*$npts,$n-1].min; 
+			my $start= [0,$i-5*$npts].max;
+			my $end =  [$i+5*$npts,$n1].min; 
 			@z[$i]=0;
 			say $start, " ", $end;
 			for ($start .. $end) -> $j {
 				my $exp=exp( -( ($i-$j)/(2*$npts) )**2 );
-				@z[$i] += @a[$j-1]*$exp;
+				@z[$i] += @a[$j]*$exp;
 				$sum += $exp;
 			}
 		}	
