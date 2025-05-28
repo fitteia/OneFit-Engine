@@ -250,7 +250,7 @@ class Import is export {
 						my @im = gfilt(@Im.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    				my @module = ($sqr(@re) Z+ $sqr(@im))>>.sqrt;
-	    
+	  say $_;
 						@y.push: @module.sum/$N;
 					}
 					else { @y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; }
@@ -377,7 +377,7 @@ class Import is export {
 	sub gfilt(@a,$npts)  { 
 		my @z;
 		my $n1 = @a.elems-1;
-		for (0 .. $n1).race -> $i {
+		for (0 .. $n1) -> $i {
 			my $sum=0;
 			my $start= [0,$i-5*$npts].max;
 			my $end =  [$i+5*$npts,$n1].min; 
