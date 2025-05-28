@@ -158,7 +158,7 @@ use JSON::Fast;
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 multi MAIN (Bool :$man!) {
-	say pod2man $=pod;
+	say Pod::To::Man.pod2man($=pod);
 }
 
 
