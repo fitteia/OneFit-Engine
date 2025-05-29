@@ -1161,7 +1161,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 	Port 8142 will be open to onefite requests.
 	Port 8100 will be open to shell command accces via a web browser 
 
-=OPTIONS 
+=head3 
 	[-u|--to-user] 	install OneFit-Engine in the user space. 
 					Default is False
 
@@ -1170,6 +1170,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 
 	[-d|--systema-daemon] 	Create a systemd service.config and install service. 
 							Default is False
+
 	[--test]	Run install tests
 				Default False
 
