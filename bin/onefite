@@ -1163,6 +1163,9 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 
 	Options
 =begin table
+
+	option | description
+	====================
 	[-c|--compile] 	| Compile the OneFit-Engine C and F source.  Default is True
 	[--ip] | Ip range access to the OneFit-Engine web service. Default '*' (All)
 	[-p] | Port number for the OneFit-Engine web service. Default 8142
@@ -1174,6 +1177,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 	[--cernlib] | Use debian cernlib package or compile fortran version from source. Default False
 	[--shell] | Install debian package to create a wes shell service on defaul port 8100 or port define in option --shell-port. Default False
 	[--shell-port] |  Port number for the web shell service. Default 8100
+
 =end table
 	Use --/<option> or --no-<option> for disable default option value (ex: --no-test or --/test)	
 
