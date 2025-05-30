@@ -1233,8 +1233,21 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 
 	Function
 
-	The function syntax has the follwing rules
-	[ nn < mm ] 
+	The function syntax has the follwing rules:
+		[ x < y ] Defines a range of vales [ x ; y], that is between x and y, inclusive. Spaces can be removed. '<' and ';' can be use as limits separators but '<' present less escape issues in argument passing   
+    	':'	Initializing symbol
+		'=' Fix a value
+
+	Example
+
+		"Mz [ -1 < 1] ( t[1e-3 < 10], M0:0.5[-1<1], Mi=1[-2<2], T1:0.5 [ 1e-3 < 10]) = Mi \+ (M0-Mi)*exp(-t/T1)"
+		Mz is the dependent variable with a plot range will be form -1 to 1. Mz is a function with arguments: t,M0,Mi, and T1
+		t  is the independent variable with a plot range between 1e-3 and 10
+		M0 is a model parameter initiallized to 0.5 and the non linier Least-Squares minimization performed by CERN lib MINUIT will be restrited to the range [-1;1]
+		Mi is a model parameter with a fixed value 1 but a possible range [-2;2]
+		T1 is a model parameter initialized to 0.5 in a range [1e-2; 10]
+	
+		The expression "Mi \+ (M0-Mi)*exp(-t/T1)" contains '\+' that sets the plotting individual model contributions option to True
 
 	Options
 
