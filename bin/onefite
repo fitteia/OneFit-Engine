@@ -25,7 +25,9 @@ use JSON::Fast;
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 multi MAIN (Bool :$man!) {
-	say pod2text $=pod;
+	my $txt = pod2text $=pod;
+	say $txt;
+	$txt
 }
 
 
@@ -326,7 +328,7 @@ HTML
 	get -> 'man', *@args {
 	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 			$log-fh.flush;
-		   	content 'text/plain', "ola { MAIN( man => True ) }\n" 
+		   	content 'text/plain', "{ MAIN( man => True ) }\n" 
 	}
 	
 	post -> 'fit',*@args {
