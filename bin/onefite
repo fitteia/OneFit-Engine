@@ -278,7 +278,7 @@ multi MAIN ('start-web-engine',
 		       key: <input name="key" type="text" values="" size=20>
             	     </form>
             	     <form action="/man" method="post" enctype="multipart/form-data">
-           	       <button type="submit">man</button>
+           	       <button type="submit">man page</button>
             	     </form>
  
             	  </body>
@@ -325,7 +325,7 @@ HTML
 	post -> 'man' {
 	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 			$log-fh.flush;
-		   	content 'text/plain', "{ MAIN( man => True ) }\n" 
+		   	content 'text/plain', "ola { MAIN( man => True ) }\n" 
 	}
 	
 	post -> 'fit',*@args {
