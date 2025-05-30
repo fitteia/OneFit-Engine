@@ -323,17 +323,9 @@ HTML
 	    }
 	}
 	post -> 'man' {
-            request-body -> (:$model, *%rest) {
 	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 			$log-fh.flush;
-	    	if so %rest.kv {
-		   for %rest.kv -> $k,$v {
-		       if so $v.Str { content 'text/plain', "{ MAIN(man => True) }\n" }
-		       else { content 'text/plain', "{ MAIN(:man) }\n" }
-		   }
-	    	}
-		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
-	    }
+		   	content 'text/plain', "{ MAIN(:man) }\n" 
 	}
 	
 	post -> 'fit',*@args {
