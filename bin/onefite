@@ -690,7 +690,7 @@ multi MAIN  ('random',
     exit;
 }
 
-multi MAIN  ('fito',
+multi MAIN  ('fit',
 	     Str  $function is copy, 
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
 	     Str  :data-label(:$data-labels),
