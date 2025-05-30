@@ -1,9 +1,9 @@
 #!/usr//bin/env raku
 
 my $time = BEGIN { now }
-END { say "Total execution time (s): " , now - INIT now }
+END { note "Total execution time (s): " , now - INIT now }
 
-say "Compile time: ", now - $time;
+note "Compile time: ", now - $time;
 
 our constant OFE-PATH="%OFE-PATH%";
 
