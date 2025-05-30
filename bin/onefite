@@ -1134,7 +1134,7 @@ onefite [-h|--help]
  onefite help <model> [-q|--quiet]
  onefite help <model> <key>] [-q|--quiet]
 =end code
- =item2	
+	
 	Provides information on the <model> equation included in the models fitting library
 	Sub-option <key> provides just the specific information on the key 
 	Options
@@ -1147,7 +1147,7 @@ onefite list [-q|--quiet]
 onefite list models [-q|--quiet]
 onefite list aliases [-q|--quiet]
 =end code
-=item2
+	
 	Lists models included in the models fitting library and aliases defined in $HOME/.local/etc/aliases.json)i
 	Lists just the models
 	Lists just the aliases
@@ -1155,7 +1155,7 @@ onefite list aliases [-q|--quiet]
 
 	[-q|--quiet] No screen print of log information 
 
-
+=item1 Paths finder
 =begin code :lang<bash>
 onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
 =end code
@@ -1178,6 +1178,7 @@ onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--lo
 	cd $(onefite path -s | awk '/home/ {print $0}')
 	vi $(onefite path -a | awk '/home/ {print $0}')/aliases.json
 
+=item1 sav <--> json files conversion
 =head2 Convert sav and json files
 =begin code :lang<bash>
 onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
