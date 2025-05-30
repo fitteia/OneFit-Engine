@@ -36,7 +36,8 @@ multi MAIN (Bool :h(:help($))) {
 	#    say $p.err.slurp(:close);
 	note qq:to/END_USAGE/;
     Usage:
-            onefite [-h|--help]
+        onefite [-h|--help]
+		onefite [--man]
 	    onefite uninstall
 	    onefite service start
 	    onefite service stop
@@ -45,7 +46,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list [-q|--quiet]
 	    onefite list models [-q|--quiet]
 	    onefite list aliases [-q|--quiet]
-	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
+	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
 	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
@@ -127,26 +128,29 @@ multi MAIN ('path',
       Bool :b(:$bin) = False,
       Bool :l(:$lib) = False,	
       Bool :c(:$C) = False,
-      Bool :$log = False
+      Bool :$log = False,
+	  Bool :a(:$aliases) = False
       ){
-      if none($src,$t,$bin,$lib,$C,$examples) {
+      if none($src,$t,$bin,$lib,$C,$examples,$aliases) {
       	 say ::('OFE-PATH');
-	 say ::('OFE-PATH') ~ "/t";
-	 say ::('OFE-PATH') ~ "/examples";
-	 say ::('OFE-PATH') ~ "/lib";
-	 say ::('OFE-PATH') ~ "/bin";
-	 say ::('OFE-PATH') ~ "/../bin";
-	 say ::('OFE-PATH') ~ "/../log";
-	 say ::('OFE-PATH') ~ "/C";
+		 say ::('OFE-PATH') ~ "/t";
+		 say ::('OFE-PATH') ~ "/examples";
+		 say ::('OFE-PATH') ~ "/lib";
+		 say ::('OFE-PATH') ~ "/bin";
+		 say ::('OFE-PATH') ~ "/../bin";
+		 say ::('OFE-PATH') ~ "/../log";
+	 	 say ::('OFE-PATH') ~ "/C";
+	 	 say ::('OFE-PATH') ~ "/../etc";
       }
       else {
       	 say ::('OFE-PATH') if $src;
-	 say ::('OFE-PATH') ~ "/t" if $t;
-	 say ::('OFE-PATH') ~ "/examples" if $examples;
-	 say ::('OFE-PATH') ~ "/lib" if $lib;
-	 say ::('OFE-PATH') ~ "/../bin" if $bin;
-	 say ::('OFE-PATH') ~ "/../log" if $log;
-	 say ::('OFE-PATH') ~ "/C" if $C;
+		 say ::('OFE-PATH') ~ "/t" if $t;
+		 say ::('OFE-PATH') ~ "/examples" if $examples;
+		 say ::('OFE-PATH') ~ "/lib" if $lib;
+		 say ::('OFE-PATH') ~ "/../bin" if $bin;
+		 say ::('OFE-PATH') ~ "/../log" if $log;
+		 say ::('OFE-PATH') ~ "/C" if $C;
+		 say ::('OFE-PATH') ~ "/../etc" if $aliases;
       }
 }
 
@@ -305,11 +309,24 @@ HTML
 	post -> 'help' {
             request-body -> (:$model, *%rest) {
 	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
-		$log-fh.flush;
+			$log-fh.flush;
 	    	if so %rest.kv {
 		   for %rest.kv -> $k,$v {
 		       if so $v.Str { content 'text/plain', "{ MAIN('help',$model.Str, $v.Str, :quiet) }\n" }
 		       else { content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
+		   }
+	    	}
+		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
+	    }
+	}
+	post -> 'man' {
+            request-body -> (:$model, *%rest) {
+	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
+			$log-fh.flush;
+	    	if so %rest.kv {
+		   for %rest.kv -> $k,$v {
+		       if so $v.Str { content 'text/plain', "{ MAIN(man => True) }\n" }
+		       else { content 'text/plain', "{ MAIN(:man) }\n" }
 		   }
 	    	}
 		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
@@ -1099,17 +1116,64 @@ onefite test [<arr> ...] [--verbose|-v]
 =head2 Basic commands
 
 =begin code :lang<bash>
-
 onefite [-h|--help]
+=end code
+
+	Options
+
+	[-h|--help] Basic help
+
+=begin code :lang<bash>
 onefite uninstall
+=end code
+
+=begin code :lang<bash>
 onefite help <model> [-q|--quiet]
+=
 onefite help <model> <key>] [-q|--quiet]
+=end code
+	
+	Provides information on the <model> equation included in the models fitting library
+	Sub-option <key> provides just the specific information on the key 
+	Options
+
+	[-q|--quiet] No screen print of log information 
+
+=begin code :lang<bash>
 onefite list [-q|--quiet]
 onefite list models [-q|--quiet]
 onefite list aliases [-q|--quiet]
-onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
-
 =end code
+
+	Lists models included in the models fitting library and aliases defined in $HOME/.local/etc/aliases.json)i
+	Lists just the models
+	Lists just the aliases
+	Options
+
+	[-q|--quiet] No screen print of log information 
+
+
+=begin code :lang<bash>
+onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
+=end code
+
+	Paths to OneFit-Engine folders installed. 
+	Combined use with "cd" and "awk" in the examples below
+	Options
+
+	[-s|--src] Source
+	[-t] Raku test folder
+	[-e|--examples] Examples folder
+	[-b|--bin] Binaries folder
+	[-l|--lib] Libraries folder
+	[-c|-C] C code/F code folders
+	[--log] Log folder
+	[-a|--aliases] Aliases folder
+	
+	Examples
+
+	cd $(onefite path -s | awk '/home/ {print $0}')
+	vi $(onefite path -a | awk '/home/ {print $0}')/aliases.json
 
 =head2 Convert sav and json files
 =begin code :lang<bash>
