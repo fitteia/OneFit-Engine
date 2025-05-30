@@ -1115,24 +1115,26 @@ onefite test [<arr> ...] [--verbose|-v]
 
 =head2 Basic commands
 
+=item1
 =begin code :lang<bash>
 onefite [-h|--help]
 =end code
 
+=item2
 	Options
 
 	[-h|--help] Basic help
 
+=item 1
 =begin code :lang<bash>
-onefite uninstall
+ onefite uninstall
 =end code
 
 =begin code :lang<bash>
-onefite help <model> [-q|--quiet]
-=
-onefite help <model> <key>] [-q|--quiet]
+ onefite help <model> [-q|--quiet]
+ onefite help <model> <key>] [-q|--quiet]
 =end code
-	
+ =item 2	
 	Provides information on the <model> equation included in the models fitting library
 	Sub-option <key> provides just the specific information on the key 
 	Options
