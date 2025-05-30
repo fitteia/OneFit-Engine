@@ -708,7 +708,7 @@ multi MAIN  ('fit',
 		 Bool :ist-ffc-Mz(:$ist-ffc) = False,
 		 Bool :$ist-ffc-R1 = False,
 		 Rat  :$ist-ffc-R1-err,
-		 :stelar-sdf-Mz(:$stelar-sdf)  where Str|Bool = False,
+		 :stelar-sdf-Mz(:$stelar-sdf)  where Bool|Str,
 	     Bool :$stelar-sdf-Re  = False,
 	     Bool :$stelar-sdf-Im  = False,
 	     Bool :stelar-sef-Mz(:$stelar-sef)  = False,
@@ -730,7 +730,10 @@ multi MAIN  ('fit',
     }
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
-say "first ", $stelar-sdf;   
+say "first ", { given $stelar-sdf { 
+		when Str { "Str"}; 
+		when Bool { "Bool" };
+	}};	
 	my %options =	'stelar-hdf5' 	 	=> $stelar-hdf5,
 					'stelar-hdf5-Re' 	=> $stelar-hdf5-Re,
 					'stelar-hdf5-Im' 	=> $stelar-hdf5-Im,
