@@ -1073,7 +1073,7 @@ EOT
 =begin pod
 
 =NAME 
-	onefite - Raku script interface to the OneFit-Engine
+	onefite - Raku script interface to the OneFit-Engine (OFE)
 
 =SYNOPSIS
 =begin code :lang<bash>
@@ -1115,7 +1115,7 @@ onefite test [<arr> ...] [--verbose|-v]
 
 =head2 Basic commands
 
-=item1 Plain
+=item1 onefite
 =begin code :lang<bash>
 onefite [-h|--help]
 =end code
@@ -1137,6 +1137,7 @@ onefite [-h|--help]
 	
 	Provides information on the <model> equation included in the models fitting library
 	Sub-option <key> provides just the specific information on the key 
+
 	Options
 
 	[-q|--quiet] No screen print of log information 
@@ -1151,6 +1152,7 @@ onefite list aliases [-q|--quiet]
 	Lists models included in the models fitting library and aliases defined in $HOME/.local/etc/aliases.json)i
 	Lists just the models
 	Lists just the aliases
+
 	Options
 
 	[-q|--quiet] No screen print of log information 
@@ -1162,6 +1164,7 @@ onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--lo
 
 	Paths to OneFit-Engine folders installed. 
 	Combined use with "cd" and "awk" in the examples below
+
 	Options
 
 	[-s|--src] Source
@@ -1178,11 +1181,22 @@ onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--lo
 	cd $(onefite path -s | awk '/home/ {print $0}')
 	vi $(onefite path -a | awk '/home/ {print $0}')/aliases.json
 
+=head2 Files conversion
 =item1 sav <--> json files conversion
-=head2 Convert sav and json files
 =begin code :lang<bash>
 onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
 =end code
+	
+	Converts fitteia's sav files to OFE json files
+
+	Options
+
+	[--work-folder] Folder where the coversion will be performed
+
+	Examples
+	
+	onefite convert some-fitteia-fit.sav ofe-version.json
+
 
 =head2 Service commands
 
