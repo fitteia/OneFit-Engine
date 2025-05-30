@@ -37,6 +37,7 @@ class Import is export {
 	method filter-with (%options) {
 		my @files=();
 		%!options = %!options, %options;
+		say %!options;
 		given %!options.values.grep(*.so).elems  {
 			when 0 { @files = self.import() }
 		    when 1 {	
@@ -184,7 +185,7 @@ class Import is export {
     }
 
 	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$rfpoptions) {
-		if $rfpoptions ~~ /(r\w*':'\d+)':'(\d+)/ { say "--stelar-sdf range sub-option syntax error: try { $0.Str }-{ $1.Str }"; exit(1); } 
+		if $rfpoptions.so and $rfpoptions ~~ /(r\w*':'\d+)':'(\d+)/ { say "--stelar-sdf range sub-option syntax error: try { $0.Str }-{ $1.Str }"; exit(1); } 
 		my %aux = $rfpoptions.so ?? $rfpoptions.split(':') !! ("range","0..end");
 		my %options;
 	   	for %aux.kv -> $k,$v { 
