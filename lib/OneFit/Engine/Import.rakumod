@@ -184,7 +184,7 @@ class Import is export {
     }
 
 	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$rfpoptions) {
-		if $rfpoptions.contains(/(r\w*':'\d+)':'(\d+)/) { say "--stelar-sdf range sub-option syntax error: try { $0.Str }-{ $1.Str }"; exit(1); } 
+		if $rfpoptions ~~ /(r\w*':'\d+)':'(\d+)/ { say "--stelar-sdf range sub-option syntax error: try { $0.Str }-{ $1.Str }"; exit(1); } 
 		my %aux = $rfpoptions.so ?? $rfpoptions.split(':') !! ("range","0..end");
 		my %options;
 	   	for %aux.kv -> $k,$v { 
