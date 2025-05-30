@@ -1115,38 +1115,39 @@ onefite test [<arr> ...] [--verbose|-v]
 
 =head2 Basic commands
 
-=item1
+=item1 Plain
 =begin code :lang<bash>
 onefite [-h|--help]
 =end code
 
-=item2
 	Options
 
 	[-h|--help] Basic help
 
-=item 1
+=item1 Uninstall
 =begin code :lang<bash>
  onefite uninstall
 =end code
 
+=item1 Help on models
 =begin code :lang<bash>
  onefite help <model> [-q|--quiet]
  onefite help <model> <key>] [-q|--quiet]
 =end code
- =item 2	
+ =item2	
 	Provides information on the <model> equation included in the models fitting library
 	Sub-option <key> provides just the specific information on the key 
 	Options
 
 	[-q|--quiet] No screen print of log information 
 
+=item1 List models
 =begin code :lang<bash>
 onefite list [-q|--quiet]
 onefite list models [-q|--quiet]
 onefite list aliases [-q|--quiet]
 =end code
-
+=item2
 	Lists models included in the models fitting library and aliases defined in $HOME/.local/etc/aliases.json)i
 	Lists just the models
 	Lists just the aliases
