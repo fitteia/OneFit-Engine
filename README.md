@@ -285,7 +285,7 @@ service shellinabox stop
 	```
 
 	```bash
-	cd $(onefite path --src | awk ´/\//') 
+	cd $(onefite path --src) 
 	```
 
 ## Data-file-types
