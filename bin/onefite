@@ -278,7 +278,7 @@ multi MAIN ('start-web-engine',
 		       key: <input name="key" type="text" values="" size=20>
             	     </form>
             	     <form action="/man" method="post" enctype="multipart/form-data">
-           	       <button type="submit">man page</button>
+           	       <button type="submit">man</button>
             	     </form>
  
             	  </body>
