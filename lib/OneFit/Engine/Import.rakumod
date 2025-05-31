@@ -26,7 +26,7 @@ class Import is export {
 		my @files=();
 		%!options = %!options, %options;
 		say %!options;
-		given %!options.values.grep(*.so).elems  {
+		given %!options<stelar ist>.values.grep(*.so).elems  {
 			when 0 { @files = self.import() }
 		    when 1 {	
 				for %!options.kv -> $k,$v {
