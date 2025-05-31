@@ -351,7 +351,7 @@ class Import is export {
 	}
 
 	sub is-hdf5 ($file)  { 
-		%!options<sub-options>.push: 'hdf5-Mz' => True; 
+		%!options.push: 'hdf5-Mz' => True; 
 		return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) 
 	}
 	sub is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
