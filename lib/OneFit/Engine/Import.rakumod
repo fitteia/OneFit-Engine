@@ -50,7 +50,7 @@ class Import is export {
 		my @input-files = @infiles.so ?? @infiles !! @!Input-files;
 		my @files=();
 		for @input-files -> $file {
-			given is-type($file) {
+			given self.is-type($file) {
 				say "file $file is type: ",$_;
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<stelar-sef-R1> }
