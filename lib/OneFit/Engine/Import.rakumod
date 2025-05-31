@@ -357,19 +357,19 @@ class Import is export {
 	sub is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
 	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
 	sub is-sdf ($file) 	 { 
-		%!options<sub-options>.push: 'sdf-Mz' => True; 
+		%!options.push: 'sdf-Mz' => True; 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) 
 	}
 	sub is-sef-R1 ($file) 	 { 
-		%!options<sub-options>.push: 'sef-R1' => True;
+		%!options.push: 'sef-R1' => True;
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) 
 	}
 	sub is-sef ($file) 	 { 
-		%!options<sub-options>.push: 'sef-Mz' => True;
+		%!options.push: 'sef-Mz' => True;
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) 
 	}
 	sub is-ffc ($file) 	 { 
-		%!options<sub-options>.push: 'ffc-Mz' => True;
+		%!options.push: 'ffc-Mz' => True;
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) 
 	}
 
