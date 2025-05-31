@@ -176,12 +176,12 @@ class Import is export {
 		my %options=%!options<sub-options>;
 		#my $Re = %options<Re>.so ?? %options<Re> !! False;
 		#my $Im = %options<Im>.so ?? %options<Im> !! False;
-		for %aux.kv -> $k,$v { 
-			%options<range>  =$v if $k.contains(/^r/);
-			%options<fit-if> =$v if $k.contains(/^f/);
-			%options<plot-if>=$v if $k.contains(/^p/);
-			%options<gfilt>=$v if $k.contains(/^g/);
-		}
+		#for %aux.kv -> $k,$v { 
+			#	%options<range>  =$v if $k.contains(/^r/);
+			#%options<fit-if> =$v if $k.contains(/^f/);
+			#%options<plot-if>=$v if $k.contains(/^p/);
+			#%options<gfilt>=$v if $k.contains(/^g/);
+			#}
 		my @window-range = %options<range>.so ?? %options<range>.split(/\D+/) !! <0 end>;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
