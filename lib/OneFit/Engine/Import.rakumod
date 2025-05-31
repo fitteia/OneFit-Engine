@@ -5,20 +5,8 @@ class Import is export {
 	has @!Input-files;
 	has $!filename;
 	has $!path = '.';
-	has %!options = 'stelar-hdf5' 	 	=> False,
-					'stelar-hdf5-Re' 	=> False,
-					'stelar-hdf5-Im' 	=> False,
-					'stelar-hdf5-R1' 	=> False,
-					'stelar-hdf5-R1-err'=> "",
-					'stelar-sdf-Mz'	 	=> "",
-					'stelar-sdf-Re'	 	=> False,
-					'stelar-sdf-Im'	 	=> False,
-					'stelar-sef-Mz'	 	=> False,
-					'stelar-sef-R1'	 	=> "",
-					'stelar-sef-R1-err'	=> "",
-					'ist-ffc'			=> False,
-					'ist-ffc-R1'		=> False,
-					'ist-ffc-R1-err'	=> "";
+	has %!options = 'stelar' 	 	=> False,
+					'ist'			=> False;
 
      multi method path ($folder) { 
 		$!path = $folder;
@@ -184,11 +172,11 @@ class Import is export {
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
-	method !stelar-sdf-Mz (:$file, Bool :$Re, Bool :$Im, :$rfpoptions) {
-		if $rfpoptions.so and $rfpoptions ~~ /(r\w*':'\d+)':'(\d+)/ { say "--stelar-sdf range sub-option syntax error: try { $0.Str }-{ $1.Str }"; exit(1); } 
-		my %aux = $rfpoptions.so ?? $rfpoptions.split(':') !! ("range","0..end");
-		my %options;
-	   	for %aux.kv -> $k,$v { 
+	method !stelar-sdf-Mz (:$file, :Re, :$Im) {
+		my %options=%!options<sub-options>;
+		#my $Re = %options<Re>.so ?? %options<Re> !! False;
+		#my $Im = %options<Im>.so ?? %options<Im> !! False;
+		for %aux.kv -> $k,$v { 
 			%options<range>  =$v if $k.contains(/^r/);
 			%options<fit-if> =$v if $k.contains(/^f/);
 			%options<plot-if>=$v if $k.contains(/^p/);
@@ -362,13 +350,28 @@ class Import is export {
 			is-sef-R1($file) ?? "stelar-sef-R1" !! "";	
 	}
 
-	sub is-hdf5 ($file)  { return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) }
+	sub is-hdf5 ($file)  { 
+		%!options<sub-options>.push: 'hdf5-Mz' => True; 
+		return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) 
+	}
 	sub is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
 	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
-	sub is-sdf ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) }
-	sub is-sef-R1 ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) }
-	sub is-sef ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) }
-	sub is-ffc ($file) 	 { return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) }
+	sub is-sdf ($file) 	 { 
+		%!options<sub-options>.push: 'sdf-Mz' => True; 
+		return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) 
+	}
+	sub is-sef-R1 ($file) 	 { 
+		%!options<sub-options>.push: 'sef-R1' => True;
+		return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) 
+	}
+	sub is-sef ($file) 	 { 
+		%!options<sub-options>.push: 'sef-Mz' => True;
+		return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) 
+	}
+	sub is-ffc ($file) 	 { 
+		%!options<sub-options>.push: 'ffc-Mz' => True;
+		return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) 
+	}
 
 
 	sub merge ($path, $R1-file, @files is copy) {

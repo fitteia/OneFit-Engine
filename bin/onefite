@@ -705,24 +705,13 @@ multi MAIN  ('fit',
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
-		 Bool :ist-ffc-Mz(:$ist-ffc) = False,
-		 Bool :$ist-ffc-R1 = False,
-		 Rat  :$ist-ffc-R1-err,
-		 :stelar-sdf-Mz(:$stelar-sdf)  where Bool|Str,
-	     Bool :$stelar-sdf-Re  = False,
-	     Bool :$stelar-sdf-Im  = False,
-	     Bool :stelar-sef-Mz(:$stelar-sef)  = False,
-	     Bool :$stelar-sef-R1  = False,
-	     Rat  :$stelar-sef-R1-err,
-	     Bool :$stelar-hdf5    = False,
-	     Bool :$stelar-hdf5-Re = False,
-	     Bool :$stelar-hdf5-Im = False,
-	     Bool :$stelar-hdf5-R1 = False,
-	     Rat  :$stelar-hdf5-R1-err,
+		 Str  :$ist = False,
+		 Str  :$stelar = False,
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts) = +100
+	     Int  :Num(:$npts) = +100,
+		 *%_
 	    ){
     my $name = "ofe-tmp";
     if $zip-to.Bool {
@@ -730,110 +719,13 @@ multi MAIN  ('fit',
     }
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
-say "first "; 
-	given $stelar-sdf { 
-		when Str { say "Str"}; 
-		when Bool { say "Bool" };
-	}
-	my %options =	'stelar-hdf5' 	 	=> $stelar-hdf5,
-					'stelar-hdf5-Re' 	=> $stelar-hdf5-Re,
-					'stelar-hdf5-Im' 	=> $stelar-hdf5-Im,
-					'stelar-hdf5-R1' 	=> $stelar-hdf5-R1,
-					'stelar-hdf5-R1-err'=> $stelar-hdf5-R1-err.so ?? $stelar-hdf5-R1-err !! False,
-					'stelar-sdf-Mz'	 	=> $stelar-sdf,
-					'stelar-sdf-Re'	 	=> $stelar-sdf-Re,
-					'stelar-sdf-Im'	 	=> $stelar-sdf-Im,
-					'stelar-sef-Mz'	 	=> $stelar-sef,
-					'stelar-sef-R1'	 	=> $stelar-sef-R1,
-					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False,
-					'ist-ffc'			=> $ist-ffc,
-					'ist-ffc-R1'		=> $ist-ffc-R1,
-					'ist-ffc-R1-err' 	=> $ist-ffc-R1-err.so ?? $ist-ffc-R1-err !! False;
-
-	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
-
-    my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
-    if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) {
-		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
-		if so $falias { $function = $falias }
-		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
-    }
-    my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
-    %e<FitMethods> = $fit-methods;
-    %e<FitType>="Global" if $global;
-    %e<Num>=$npts;
-    %e<SymbSize>=$ssz.Rat;
-    my $engine = Engine.new.path("$work-folder/$name").set(%e);
-    $engine.fit(
-	:no-plot($no-plot),
-	:autox($autox or $autoxy),
-	:autoy($autoy or $autoxy),
-	:logx($loglin or $loglog),
-	:logy($linlog or $loglog)
-    );
-    $engine.save($save-to) if $save-to.defined;
-    zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
-
-    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
-
-    exit;
-}
-
-multi MAIN  ('fit',
-	     Str  $function is copy, 
-	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Str  :data-label(:$data-labels),
-         Str  :$fit-methods = "simp scan min minos",
-	     Str  :$tags,
-	     Str  :$zip-to,
-	     Bool :$no-plot,
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
-	     Bool :$global,
-		 Bool :ist-ffc-Mz(:$ist-ffc) = False,
-		 Bool :$ist-ffc-R1 = False,
-		 Rat  :$ist-ffc-R1-err,
-		 Str  :stelar-sdf-Mz(:$stelar-sdf)  = "",
-	     Str  :$stelar-sdf-Re  = "",
-	     Str  :$stelar-sdf-Im  = "",
-	     Bool :stelar-sef-Mz(:$stelar-sef) = False,
-	     Str  :$stelar-sef-R1,
-	     Rat  :$stelar-sef-R1-err,
-	     Str  :stelar-hdf5-Mz(:$stelar-hdf5)    = "",
-	     Str  :$stelar-hdf5-Re = "",
-	     Str  :$stelar-hdf5-Im = "",
-	     Bool :$stelar-hdf5-R1 = False,
-	     Rat  :$stelar-hdf5-R1-err,
-	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
-	     Str  :$save-to, # write fit settings to json or sav file 
-	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts) = +100
-	    ){
-    my $name = "ofe-tmp";
-    if $zip-to.Bool {
-		$name = $zip-to.subst(/\.zip/,'',:g);
-    }
-    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-    "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
-  say $stelar-sdf; 
-	my %options =	'stelar-hdf5' 	 	=> $stelar-hdf5.so ?? $stelar-hdf5 !! False,
-					'stelar-hdf5-Re' 	=> $stelar-hdf5-Re.so ?? $stelar-hdf5-Re !! False,
-					'stelar-hdf5-Im' 	=> $stelar-hdf5-Im.so ?? $stelar-hdf5-Im !! False,
-					'stelar-hdf5-R1' 	=> $stelar-hdf5-R1,
-					'stelar-hdf5-R1-err'=> $stelar-hdf5-R1-err.so ?? $stelar-hdf5-R1-err !! False,
-					'stelar-sdf-Mz'	 	=> $stelar-sdf.so ?? $stelar-sdf !! False,
-					'stelar-sdf-Re'	 	=> $stelar-sdf-Re.so ?? $stelar-sdf-Re !! False,
-					'stelar-sdf-Im'	 	=> $stelar-sdf-Im.so ?? $stelar-sdf-Im !! False,
-					'stelar-sef-Mz'	 	=> $stelar-sef,
-					'stelar-sef-R1'	 	=> $stelar-sef-R1.so ?? $stelar-sef-R1 !! False,
-					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False,
-					'ist-ffc'			=> $ist-ffc,
-					'ist-ffc-R1'		=> $ist-ffc-R1,
-					'ist-ffc-R1-err' 	=> $ist-ffc-R1-err.so ?? $ist-ffc-R1-err !! False;
+  say $stelar-sdf;
+ 	my %sub-options = $stelar.so ?? $stelar.split(/<[,:\s]>+/) !! $ist.so ?? $ist.split(/<[,:\s]>+/) !! ""; 
+	say %sub-options;
+	say %_;
+	my %options =	'stelar' 	 	=> $stelar,
+					'ist'			=> $ist,
+					'sub-options'	=> %sub-options;
 	
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
     
