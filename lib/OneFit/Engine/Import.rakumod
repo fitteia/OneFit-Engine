@@ -172,7 +172,7 @@ class Import is export {
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
-	method !stelar-sdf-Mz (:$file, :Re, :$Im) {
+	method !stelar-sdf-Mz (:$file, :$Re, :$Im) {
 		my %options=%!options<sub-options>;
 		#my $Re = %options<Re>.so ?? %options<Re> !! False;
 		#my $Im = %options<Im>.so ?? %options<Im> !! False;
