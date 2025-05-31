@@ -724,7 +724,8 @@ multi MAIN  ('fit',
 	say "su option: ",%sub-options;
 	say "extre ",%_;
 	my %options =	'stelar' 	 	=> $stelar.so ?? $stelar !! False,
-					'ist'			=> $ist.so ?? $ist !! False,
+					'ist'			=> $ist.so ?? $ist !! False;
+
     %options = %options,%sub-options;
 	%options = %options,%_;
 	say "all: ",%options;
