@@ -720,13 +720,14 @@ multi MAIN  ('fit',
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
   say $stelar;
- 	my %sub-options = $stelar.so ?? $stelar.split(/<[,:\s]>+/) !! $ist.so ?? $ist.split(/<[,:\s]>+/) !! ""; 
+ 	my %sub-options = $stelar.so ?? $stelar.split(/<[:\s]>+/) !! $ist.so ?? $ist.split(/<[:\s]>+/) !! ""; 
 	say "su option: ",%sub-options;
 	say "extre ",%_;
 	my %options =	'stelar' 	 	=> $stelar.so ?? $stelar !! False,
 					'ist'			=> $ist.so ?? $ist !! False;
 
     %options = %options,%sub-options;
+	say "previous+sub:",%options;
 	%options = %options,%_;
 	say "all: ",%options;
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
