@@ -340,35 +340,35 @@ class Import is export {
     }
 
 
-	sub is-type ($file)  {
-	   	return is-hdf5($file) ?? 'stelar-hdf5' !! 
-			is-zip($file) ?? 'zip' !! 
-			is-block($file) ?? 'fitteia-blocks' !! 
-			is-sdf($file) ?? "stelar-sdf" !! 
-			is-ffc($file) ?? 'ist-ffc' !! 
-			is-sef($file) ?? "stelar-sef-Mz" !! 
-			is-sef-R1($file) ?? "stelar-sef-R1" !! "";	
+	method is-type ($file)  {
+	   	return self.is-hdf5($file) ?? 'stelar-hdf5' !! 
+			self.is-zip($file) ?? 'zip' !! 
+			self.is-block($file) ?? 'fitteia-blocks' !! 
+			self.is-sdf($file) ?? "stelar-sdf" !! 
+			self.is-ffc($file) ?? 'ist-ffc' !! 
+			self.is-sef($file) ?? "stelar-sef-Mz" !! 
+			self.is-sef-R1($file) ?? "stelar-sef-R1" !! "";	
 	}
 
-	sub is-hdf5 ($file)  { 
+	method is-hdf5 ($file)  { 
 		%!options.push: 'hdf5-Mz' => True; 
 		return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) 
 	}
-	sub is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
-	sub is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
-	sub is-sdf ($file) 	 { 
+	method is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
+	method is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
+	method is-sdf ($file) 	 { 
 		%!options.push: 'sdf-Mz' => True; 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) 
 	}
-	sub is-sef-R1 ($file) 	 { 
+	method is-sef-R1 ($file) 	 { 
 		%!options.push: 'sef-R1' => True;
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) 
 	}
-	sub is-sef ($file) 	 { 
+	method is-sef ($file) 	 { 
 		%!options.push: 'sef-Mz' => True;
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) 
 	}
-	sub is-ffc ($file) 	 { 
+	method is-ffc ($file) 	 { 
 		%!options.push: 'ffc-Mz' => True;
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) 
 	}
