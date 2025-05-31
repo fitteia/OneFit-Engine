@@ -719,7 +719,7 @@ multi MAIN  ('fit',
     }
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
-  say $stelar-sdf;
+  say $stelar;
  	my %sub-options = $stelar.so ?? $stelar.split(/<[,:\s]>+/) !! $ist.so ?? $ist.split(/<[,:\s]>+/) !! ""; 
 	say %sub-options;
 	say %_;
