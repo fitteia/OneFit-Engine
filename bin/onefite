@@ -356,12 +356,6 @@ HTML
 		my $work-folder = "./$tmp-folder";
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my @options;
-		my $set-option = {
-		   	my $opt;	
-			if $^a.so and $^a eq any(<yes 1>) { $opt = "--$^a" }
-			else { $opt = "--$^a=$^b"}
-			$opt
-		};
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
 		       $fit-methods	      = $v.Str	   if $k eq "fit-methods";
@@ -383,11 +377,6 @@ HTML
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq "plot-if" and $v.so;
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
 			
-
-			   #@options.push: $set-option($k.Str,$v.Str);
-			
-
-
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
 			  elsif $v eq "json" { $file-to-download = "$folder/" ~ $filename.IO.extension('json') }
@@ -407,7 +396,7 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "{@options.join(' ')} onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt  --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
