@@ -28,8 +28,6 @@ class Import is export {
 		
 		@files = self.import();
 
-		if %!options<sef-R1-file> { @files = merge(self.path,%!options<stelar-sef-R1>,@files) }
-		
 		return @files;
 	}
 	multi method import (:@infiles) {
@@ -272,6 +270,9 @@ class Import is export {
 			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = zone{$_+1}\n" ~ @zones[$_].join("\n");
 			@files.push: "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat"  
 		}
+
+		if %!options<sef-R1-file> { @files = merge(self.path,%!options<stelar-sef-R1>,@files) }
+	
 		return  @files;
     }
 
