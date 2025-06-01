@@ -38,6 +38,7 @@ class Import is export {
 				say "file $file is type: ",$_;
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
+					say @files-in-zip;
 					shell "unzip -jo $file";
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
@@ -270,8 +271,8 @@ class Import is export {
 			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = zone{$_+1}\n" ~ @zones[$_].join("\n");
 			@files.push: "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat"  
 		}
-
-		if %!options<sef-R1-file> { @files = merge(self.path,%!options<sef-R1i-file>,@files) }
+say "merge with: ", %!options<sef-R1-file>;
+		if %!options<sef-R1-file> { @files = merge(self.path,%!options<sef-R1-file>,@files) }
 		return  @files;
     }
 
