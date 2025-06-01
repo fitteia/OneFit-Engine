@@ -374,7 +374,7 @@ HTML
 		       $range                = "--range={$v.Str}  " if $k eq "range" and $v.so;
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq "fit-if" and $v.so;
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq "plot-if" and $v.so;
-		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "plot-if" and $v.so;
+		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
 
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
