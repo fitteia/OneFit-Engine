@@ -369,7 +369,7 @@ HTML
 		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
 		       $R1  		         = "--R1  " if $k eq "R1" and $v eq any("yes",1);
-		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file" and $v eq any("yes",1);
+		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file";
 		       $err                = "--err={$v.Rat}  " if $k eq "err" and $v.^name eq "Rat";
 		       $range                = "--range={$v.Str}  " if $k eq "range" and $v.so;
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq "fit-if" and $v.so;
