@@ -357,9 +357,8 @@ HTML
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my @options;
 		my $set-option = { 
-			if $^a.so and $^a eq any<yes 1> { "--$^a" };
+			if $^a.so and $^a eq any(<yes 1>) { "--$^a" };
 			else { "--$^a=$^b"}
-
 		};
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
