@@ -369,7 +369,7 @@ HTML
 		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
 		       $R1  		         = "--R1  " if $k eq "R1" and $v eq any("yes",1);
-		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file";
+		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file" and $v.so;
 		       $err                = "--err={$v.Rat}  " if $k eq "err" and $v.^name eq "Rat";
 		       $range                = "--range={$v.Str}  " if $k eq "range" and $v.so;
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq "fit-if" and $v.so;
@@ -389,7 +389,7 @@ HTML
 		else {		 
 		    $filename.IO.spurt: $file-content.decode('UTF-8')
 		}	   
-
+say $sef-R1-file;
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
 		$work-folder = "./$username" if $username.so and $username.IO.e;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
