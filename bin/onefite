@@ -252,19 +252,13 @@ multi MAIN ('start-web-engine',
 		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="logx" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="logy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>ist-ffc: </td><td><input name="ist-ffc" type="radio" value="yes">/<input name="ist-ffc" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>ist-ffc-R1: </td><td><input name="ist-ffc-R1" type="radio" value="yes">/<input name="ist-ffc-R1" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>ist-ffc-R1-err: </td><td><input name="ist-ffc-R1-err" type="text" value="">(float number)</td></tr>
-		       <tr><td>stelar-sdf: </td><td><input name="stelar-sdf" type="text" value="">(window range: i:f)</td></tr>
-		       <tr><td>stelar-sdf-Re: </td><td><input name="stelar-sdf-Re" type="text" value="">(empty or window range i:f)</td></tr>
-		       <tr><td>stelar-sdf-Im: </td><td><input name="stelar-sdf-Im" type="text" value="">(empty or window range i:f)</td></tr>
-		       <tr><td>stelar-sef-Mz: </td><td><input name="stelar-sef-Mz" type="radio" value="yes">/<input name="stelar-sef-Mz" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-sef-R1: </td><td><input name="stelar-sef-R1" type="text" value="">(stelar sef profile filename</td></tr>
-		       <tr><td>stelar-sef-R1-err: </td><td><input name="stelar-sef-R1-err" type="text" value="">(float number)</td></tr>
-		       <tr><td>stelar-hdf5: </td><td><input name="stelar-hdf5" type="text" value=""></td></tr>
-		       <tr><td>stelar-hdf5-Re: </td><td><input name="stelar-hdf5-Re" type="text" value=""></td></tr>
-		       <tr><td>stelar-hdf5-Im: </td><td><input name="stelar-hdf5-Im" type="test" value=""></td></tr>
-		       <tr><td>stelar-hdf5-R1: </td><td><input name="stelar-hdf5-R1" type="radio" value="yes">/<input name="stelar-hdf5-R1" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>stelar-hdf5-R1-err: </td><td><input name="stelar-hdf5-R1-err" type="text" value="">(float number)</td></tr>
+		       <tr><td>R1: </td><td><input name="R1" type="radio" value="yes">/<input name="R1" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>err: </td><td><input name="err" type="text" value="">(float number)</td></tr>
+		       <tr><td>range: </td><td><input name="range" type="text" value="">(window range: i:f)</td></tr>
+		       <tr><td>plot-if: </td><td><input name="plot-if" type="text" value="">(ex: c1>0.5,1)</td></tr>
+		       <tr><td>fit-if: </td><td><input name="fit-if" type="text" value="">(ex: c1<2,10)</td></tr>
+		       <tr><td>gfilt: </td><td><input name="gfilt" type="text" value="">(int number)</td></tr>
+		       <tr><td>sef-R1-file: </td><td><input name="sef-R1-file" type="text" value=""></td></tr>
 		       </table>
            	       <button type="submit">fit</button>
             	     </form>
@@ -346,20 +340,13 @@ HTML
 		my $logx= "";
 		my $logy= "";
 		my $global="";
-		my $ist-ffc = "";
-		my $ist-ffc-R1 = "";
-		my $ist-ffc-R1-err = "";
-		my $stelar-sdf = "";
-		my $stelar-sdf-Re = "";
-		my $stelar-sdf-Im = "";
-		my $stelar-sef-Mz  = "";
-		my $stelar-sef-R1 = "";
-		my $stelar-sef-R1-err = "";
-		my $stelar-hdf5 = "";
-		my $stelar-hdf5-Re = "";
-		my $stelar-hdf5-Im = "";
-		my $stelar-hdf5-R1 = "";
-		my $stelar-hdf5-R1-err = "";
+		my $R1 = "";
+		my $err = "";
+		my $fit-if = "";
+		my $plot-if = "";
+		my $gfilt = "";
+		my $range = "";
+		my $sef-R1-file = "";
 		my $num   = +100;
 		my $ssz   = +1.0;
 		my $fit-methods = "simp scan min minos";
@@ -381,21 +368,14 @@ HTML
 		       $autoxy     	      = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
 		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
-		       $ist-ffc		         = "--ist-ffc  " if $k eq "ist-ffc" and $v eq any("yes",1);
-		       $ist-ffc-R1        = "--ist-ffc-R1  " if $k eq "ist-ffc-R1" and $v eq any("yes",1);
-		       $ist-ffc-R1-err    = "--ist-ffc-R1-err={$v.Rat}  " if $k eq "ist-ffc-R1-err" and $v.^name eq "Rat";
-			   $stelar-sdf           = "--stelar-sdf{ $v eq any('yes',1) ?? '' !! '=' ~ $v.Str } " if $k eq "stelar-sdf" and $v !eq "no";
-		       $stelar-sdf-Re        = "--stelar-sdf-Re{ $v eq any('yes',1) ?? '' !! '=' ~ $v.Str }  " if $k eq "stelar-sdf-Re" and $v !eq "no";
-		       $stelar-sdf-Im        = "--stelar-sdf-Im{ $v eq any('yes',1) ?? '' !! '=' ~ $v.Str }  " if $k eq "stelar-sdf-Im" and $v !eq "no";
-		       $stelar-sef-Mz         = "--stelar-sef-Mz  " if $k eq "stelar-sef-Mz" and $v eq any("yes",1);
-		       $stelar-sef-R1        = "--stelar-sef-R1  " if $k eq "stelar-sef-R1" and $v eq any("yes",1);
-		       $stelar-sef-R1        = "--stelar-sef-R1={$v.Str}  " if $k eq "stelar-sef-R1" and $v.so and $v eq none("yes",1);
-		       $stelar-sef-R1-err    = "--stelar-sef-R1-err={$v.Rat}  " if $k eq "stelar-sef-R1-err" and $v.^name eq "Rat";
-		       $stelar-hdf5           = "--stelar-hdf5{ $v eq any('yes',1) ?? '' !! '=' ~ $v.Str }  " if $k eq "stelar-hdf5" and $v !eq "no";
-		       $stelar-hdf5-Re        = "--stelar-hdf5-Re{ $v eq any('yes',1) ?? '' !! '=' ~ $v.Str }  " if $k eq "stelar-hdf5-Re" and $v !eq "no";
-		       $stelar-hdf5-Im        = "--stelar-hdf5-Im{ $v eq any('yes',1) ?? '' !! '=' ~ $v.Str }  " if $k eq "stelar-hdf5-Im" and $v !eq "no";
-		       $stelar-hdf5-R1        = "--stelar-hdf5-R1  " if $k eq "stelar-hdf5-R1" and $v eq any("yes",1);
-		       $stelar-hdf5-R1-err    = "--stelar-hdf5-R1-err={$v.Rat}  " if $k eq "stelar-hdf5-R1-err" and $v.^name eq "Rat";
+		       $R1  		         = "--R1  " if $k eq "R1" and $v eq any("yes",1);
+		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file" and $v eq any("yes",1);
+		       $err                = "--err={$v.Rat}  " if $k eq "err" and $v.^name eq "Rat";
+		       $range                = "--range={$v.Str}  " if $k eq "range" and $v.so;
+		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq "fit-if" and $v.so;
+		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq "plot-if" and $v.so;
+		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "plot-if" and $v.so;
+
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
 			  elsif $v eq "json" { $file-to-download = "$folder/" ~ $filename.IO.extension('json') }
@@ -416,8 +396,8 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $ist-ffc $ist-ffc-R1 $ist-ffc-R1-err $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-sef-Mz $stelar-sef-R1 $stelar-sef-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
-		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $ist-ffc $ist-ffc-R1 $ist-ffc-R1-err $stelar-sdf $stelar-sdf-Re $stelar-sdf-Im $stelar-sef-Mz $stelar-sef-R1 $stelar-sef-R1-err $stelar-hdf5 $stelar-hdf5-Re $stelar-hdf5-Im $stelar-hdf5-R1 $stelar-hdf5-R1-err --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt  --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
 		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
@@ -519,8 +499,7 @@ multi MAIN ('start-engine',
 		start {
 	    	my $cmd = "plot";
 	    	$f ~~ /$<cmd>=(__fit__|__plot__|__fit\-only__)* $<file>=(\S+)/;
-	    	my $file = $<file>;
-	    	$cmd = $<cmd>.subst('__','',:g);
+	    	my $file = $<file>;$cmd = $<cmd>.subst('__','',:g);
 	    	my $name = $file.subst(/\.sav|\.json/,'',:g);
 	    	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    	"$work-folder/$name".IO.mkdir;
@@ -572,19 +551,13 @@ multi MAIN  ('create',
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
 	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False,
-		 Bool :$ist-ffc-R1 = False,
-		 Rat  :$ist-ffc-R1-err,
-	   	 Bool :stelar-sdf-Mz(:$stelar-sdf)  = False,
-	     Bool :$stelar-sdf-Re  = False,
-	     Bool :$stelar-sdf-Im  = False,
-	     Bool :stelar-sef-Mz(:$stelar-sef)  = False,
-	     Bool :$stelar-sef-R1  = False,
-	     Rat  :$stelar-sef-R1-err,
-	     Bool :$stelar-hdf5    = False,
-	     Bool :$stelar-hdf5-Re = False,
-	     Bool :$stelar-hdf5-Im = False,
-	     Bool :$stelar-hdf5-R1 = False,
-	     Rat  :$stelar-hdf5-R1-err,
+		 Str  :$fit-if = "",
+		 Str  :$plot-if = "",
+		 Str  :$sef-R1-file = "",
+		 Str  :$range = "",
+		 Bool :$R1 = False,
+		 Int  :$gfilt,
+		 Rat  :$err,
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
 	     Str  :save-to(:$to), # write fit settings to json or sav file"
 	     Str  :$work-folder = '.',
@@ -593,22 +566,15 @@ multi MAIN  ('create',
     my $name = "ofe-tmp";
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
+	my %options =();
 
-	my %options =	'stelar-hdf5' 	 	=> $stelar-hdf5,
-					'stelar-hdf5-Re' 	=> $stelar-hdf5-Re,
-					'stelar-hdf5-Im' 	=> $stelar-hdf5-Im,
-					'stelar-hdf5-R1' 	=> $stelar-hdf5-R1,
-					'stelar-hdf5-R1-err'=> $stelar-hdf5-R1-err.so ?? $stelar-hdf5-R1-err !! False,
-					'stelar-sdf-Mz'	 	=> $stelar-sdf,
-					'stelar-sdf-Re'	 	=> $stelar-sdf-Re,
-					'stelar-sdf-Im'	 	=> $stelar-sdf-Im,
-					'stelar-sef-Mz'	 	=> $stelar-sef,
-					'stelar-sef-R1'	 	=> $stelar-sef-R1,
-					'stelar-sef-R1-err' => $stelar-sef-R1-err.so ?? $stelar-sef-R1-err !! False,
-					'ist-ffc'			=> $ist-ffc,
-					'ist-ffc-R1'		=> $ist-ffc-R1,
-					'ist-ffc-R1-err' 	=> $ist-ffc-R1-err.so ?? $ist-ffc-R1-err !! False;
-
+	%options.push('fit-if' => $fit-if) if $fit-if.so;
+	%options.push('plot-if' => $plot-if) if $plot-if.so;
+	%options.push('sef-R1-file' => $sef-R1-file) if $sef-R1-file.so;
+	%options.push('R1' => $R1) if $R1;
+	%options.push('gfilt' => $gfilt) if $gfilt.so;
+	%options.push('err' => $err) if $err.so;
+	%options.push('range' => $range) if $range.so;
 
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
 
