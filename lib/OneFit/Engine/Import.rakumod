@@ -5,8 +5,7 @@ class Import is export {
 	has @!Input-files;
 	has $!filename;
 	has $!path = '.';
-	has %!options = 'stelar' 	 	=> False,
-					'ist'			=> False;
+	has %!options = ();
 
      multi method path ($folder) { 
 		$!path = $folder;
@@ -26,24 +25,11 @@ class Import is export {
 		my @files=();
 		%!options = %!options, %options;
 		say %!options;
-		given %!options<stelar ist>.values.grep(*.so).elems  {
-			when 0 { @files = self.import() }
-		    when 1 {	
-				for %!options.kv -> $k,$v {
-					if $v.so { 
-						if $k.contains(/err/) { @files = self.import($k, :err($v)) }	
-						elsif $k.contains(/sdf/) and $v.so { @files = self.import($k, :rfpoptions($v)) }
-						elsif $k.contains(/hdf5/) and $v.so { @files = self.import($k, :fpoptions($v)) }
-						else  { @files = self.import($k) }
-					}
-				}
-			}
-			when 2 {
-				if %!options<stelar-sef-Mz> and %!options<stelar-sef-R1>.so { @files = merge(self.path,%!options<stelar-sef-R1>,self.import()) }
-			   	else { say "too many stelar options selected!" }	
-			}
-			default { say "too many stelar options selected!" }
-		}
+		
+		@files = self.import();
+
+		if %!options<sef-R1-file> { @files = merge(self.path,%!options<stelar-sef-R1>,@files) }
+		
 		return @files;
 	}
 	multi method import (:@infiles) {
@@ -58,11 +44,20 @@ class Import is export {
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
-				when 'stelar-hdf5' 		{ @files.push: self.import('stelar-hdf5', file => $file).Slip }
-				when 'stelar-sdf'  		{ @files.push: self.import('stelar-sdf', file => $file).Slip }
+				when 'stelar-hdf5' 		{ 
+					if %!options<R1> { @files.push: self.import('stelar-hdf5', file => $file).Slip }
+					else { @files.push: self.import('stelar-hdf5-R1', file => $file).Slip }	
+				}
+				when 'stelar-sdf'  		{ 
+					if %!options<R1> { @files.push: self.import('stelar-sdfi-R1', file => $file).Slip }
+					else { @files.push: self.import('stelar-sdf', file => $file).Slip }
+				}
 				when 'stelar-sef-Mz'  	{ @files.push: self.import('stelar-sef-Mz', file => $file).Slip }
 				when 'stelar-sef-R1'  	{ @files.push: self.import('stelar-sef-R1', file => $file).Slip }
-				when 'ist-ffc'			{ @files.push: self.import('ist-ffc', file => $file).Slip }
+				when 'ist-ffc'			{ 
+					if %!options<R1> { @files.push: self.import('ist-ffc-R1', file => $file).Slip }
+					else { @files.push: self.import('ist-ffc', file => $file).Slip }
+				}
 				default {
 		   			@files.push: $file;
 		   			$file.IO.copy("{self.path}/$file");
@@ -73,23 +68,16 @@ class Import is export {
 	}
 
 
-	multi method import ('stelar-hdf5', :$file, :$fpoptions ) { self!stelar-hdf5-Mz( file => $file, fpoptions => $fpoptions ) }
-	multi method import ('stelar-hdf5-Re', :$file, :$fpoptions ) { self!stelar-hdf5-Mz( Re => True, file => $file, fpoptions => $fpoptions ) }
-	multi method import ('stelar-hdf5-Im', :$file, :$fpoptions ) { self!stelar-hdf5-Mz( Im => True, file => $file, fpoptions => $fpoptions ) }
-	multi method import ('stelar-hdf5-R1', :$file, :$fpoptions ) { self!stelar-hdf5-R1( file => $file, ftpoptions => $fpoptions ) }
-	multi method import ('stelar-hdf5-R1-err', :$file, :$err ) { self!stelar-hdf5-R1( err => $err, file => $file ) }
+	multi method import ('stelar-hdf5', :$file ) { self!stelar-hdf5-Mz( file => $file ) }
+	multi method import ('stelar-hdf5-R1', :$file ) { self!stelar-hdf5-R1( file => $file ) }
 
-	multi method import ('stelar-sdf', :$file, :$rfpoptions) { self!stelar-sdf-Mz( file => $file, rftpoptions => $rfpoptions ) }
-	multi method import ('stelar-sdf-Mz', :$file, :$rfpoptions) { self!stelar-sdf-Mz( file => $file, rfpoptions => $rfpoptions ) }
-	multi method import ('stelar-sdf-Re', :$file, :$rfpoptions) { self!stelar-sdf-Mz( Re => True, file => $file, rfpoptions => $rfpoptions ) }
-	multi method import ('stelar-sdf-Im', :$file, :$rfpoptions) { self!stelar-sdf-Mz( Im => True, file => $file, rfpoptions => $rfpoptions ) }
-	multi method import ('stelar-sef-Mz', :$file) { self!stelar-sef-Mz( file => $file ) }
-	multi method import ('stelar-sef-R1', :$file) { self!stelar-sef-R1( file => $file ) }
-	multi method import ('stelar-sef-R1-err', :$file, :$err) { self!stelar-sef-R1( file => $file, err => $err ) }
+	multi method import ('stelar-sdf', :$file ) { self!stelar-sdf-Mz( file => $file ) }
+	multi method import ('stelar-sdf-R1', :$file ) { self!stelar-sdf-Mz( Im => True, file => $file ) }
+	multi method import ('stelar-sef-Mz', :$file ) { self!stelar-sef-Mz( file => $file ) }
+	multi method import ('stelar-sef-R1', :$file ) { self!stelar-sef-R1( file => $file ) }
 
 	multi method import ('ist-ffc', :$file) { self!ist-ffc( file => $file ) }
 	multi method import ('ist-ffc-R1', :$file) { self!ist-ffc-R1( file => $file ) }
-	multi method import ('ist-ffc-R1-err', :$file, :$err) { self!ist-ffc-R1( err => $err, file => $file  ) }
 
 	method !fitteia-blocks ($file) {
 		my @files;
@@ -103,15 +91,8 @@ class Import is export {
 		return @files;	
 	}
 
-	method !stelar-hdf5-Mz (:$file, Bool :$Re, Bool :$Im, :$fpoptions) {
-		my %options;
-		if $fpoptions.so {
-			my %aux = $fpoptions.split(':');
-		   	for %aux.kv -> $k,$v { 
-				%options<fit-if> =$v if $k.contains(/^f/);
-				%options<plot-if>=$v if $k.contains(/^p/);
-			}
-		}	
+	method !stelar-hdf5-Mz (:$file) {
+		my %options = %!options;
 		my $stelar-hdf5 = self.filename();
 		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path();
@@ -152,7 +133,7 @@ class Import is export {
 		return @data-files.sort.reverse;
     }
 
-    method !stelar-hdf5-R1 (:$file, Rat :$err) {
+    method !stelar-hdf5-R1 (:$file ) {
 		my $stelar-hdf5 = self.filename();
 		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path;
@@ -160,6 +141,7 @@ class Import is export {
 		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @BR;
 		my @R1;
+		my $err = %!options<err> if %!options.so;
 		for @zones.hyper {
 	    	for shell("cd $path && h5dump -d $_ $stelar-hdf5",:out).out.slurp(:close) {
 				my @c = $_.split: "ATTRIBUTE";
@@ -172,16 +154,10 @@ class Import is export {
 		return $stelar-hdf5.IO.extension('dat').Str;
     }
 
-	method !stelar-sdf-Mz (:$file, :$Re, :$Im) {
-		my %options=%!options<sub-options>;
-		#my $Re = %options<Re>.so ?? %options<Re> !! False;
-		#my $Im = %options<Im>.so ?? %options<Im> !! False;
-		#for %aux.kv -> $k,$v { 
-			#	%options<range>  =$v if $k.contains(/^r/);
-			#%options<fit-if> =$v if $k.contains(/^f/);
-			#%options<plot-if>=$v if $k.contains(/^p/);
-			#%options<gfilt>=$v if $k.contains(/^g/);
-			#}
+	method !stelar-sdf-Mz (:$file) {
+		my %options=%!options;
+		my $Re = %options<Re>.so ?? %options<Re> !! False;
+		my $Im = %options<Im>.so ?? %options<Im> !! False;
 		my @window-range = %options<range>.so ?? %options<range>.split(/\D+/) !! <0 end>;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
@@ -264,10 +240,11 @@ class Import is export {
 		return @data-files.sort.reverse;
     }
 
-    method !stelar-sef-R1 (:$file, Rat :$err) {
+    method !stelar-sef-R1 (:$file) {
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
+		my $err = %!options<err>;
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
 		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\s*\d+/) } .map({ [ ($_[0] * 1e6).round(0.0001) ,$_[1]] }).Array;
 		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1].Rat * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
@@ -320,19 +297,20 @@ class Import is export {
 		}
 		return @files.sort.reverse
 	}
-    method !ist-ffc-R1 (:$file, Rat :$err) {
+    method !ist-ffc-R1 (:$file) {
 		my $ist-ffc = self.filename();
 		$ist-ffc = $file if $file.so;
 		my $path = self.path;
 		my @f;
 		my @R1;
 		my @err;
+		my $erro = %!options<err>;
 		$ist-ffc.IO.copy: "$path/$ist-ffc";
 		for "$ist-ffc".IO.lines {
 			my @a = $_.split(',')[1,2,3];
 			@f.push: @a[0]*1e3;
 			@R1.push: 1e6/@a[1];
-			@err.push: $err.Bool ?? 1e6/@a[1]*$err !! @a[2]/@a[1]*1e6/@a[1];
+			@err.push: $erro.Bool ?? 1e6/@a[1]*$erro !! @a[2]/@a[1]*1e6/@a[1];
 		}
 			
 		"$path/$ist-ffc".IO.extension('dat').spurt:  (@f  Z @R1 Z @err).join("\n") ~ "\n\n";
@@ -346,30 +324,25 @@ class Import is export {
 			self.is-block($file) ?? 'fitteia-blocks' !! 
 			self.is-sdf($file) ?? "stelar-sdf" !! 
 			self.is-ffc($file) ?? 'ist-ffc' !! 
-			self.is-sef($file) ?? "stelar-sef-Mz" !! 
+			self.is-sef-Mz($file) ?? "stelar-sef-Mz" !! 
 			self.is-sef-R1($file) ?? "stelar-sef-R1" !! "";	
 	}
 
 	method is-hdf5 ($file)  { 
-		%!options.push: 'hdf5-Mz' => True; 
-		return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A) 
+		return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A); 
 	}
 	method is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
 	method is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
 	method is-sdf ($file) 	 { 
-		%!options.push: 'sdf-Mz' => True; 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) 
 	}
 	method is-sef-R1 ($file) 	 { 
-		%!options.push: 'sef-R1' => True;
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) 
 	}
-	method is-sef ($file) 	 { 
-		%!options.push: 'sef-Mz' => True;
+	method is-sef-Mz ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) 
 	}
 	method is-ffc ($file) 	 { 
-		%!options.push: 'ffc-Mz' => True;
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) 
 	}
 
