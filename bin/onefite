@@ -936,9 +936,7 @@ EOT
 }
 
 sub set-option($k,$v) {
-	my $opt
-	if $v eq any("yes",1) { $opt = "--$k" }
-	else { $opt = "--$k=$v" }
+	my $opt = $v eq any("yes",1) ??  $opt = "--$k" !!   $opt = "--$k=$v"; 
 	return $opt
 }
 
