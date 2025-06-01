@@ -271,8 +271,7 @@ class Import is export {
 			@files.push: "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat"  
 		}
 
-		if %!options<sef-R1-file> { @files = merge(self.path,%!options<stelar-sef-R1>,@files) }
-	
+		if %!options<sef-R1-file> { @files = merge(self.path,%!options<sef-R1i-file>,@files) }
 		return  @files;
     }
 
