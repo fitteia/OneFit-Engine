@@ -705,8 +705,13 @@ multi MAIN  ('fit',
 	     Bool :logx(:$loglin),
 	     Bool :logxy(:$loglog),
 	     Bool :$global,
-		 Str  :$ist = "",
-		 Str  :$stelar = "",
+		 Str  :$fit-if = "",
+		 Str  :$plot-if = "",
+		 Str  :$sef-R1-file = "",
+		 Str  :$range = "",
+		 Bool :$R1 = False,
+		 Int  :$gfilt,
+		 Rat  :$err,
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
@@ -719,17 +724,16 @@ multi MAIN  ('fit',
     }
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
-  say $stelar;
- 	my %sub-options = $stelar.so ?? $stelar.split(/<[:=\s]>+/) !! $ist.so ?? $ist.split(/<[:=\s]>+/) !! (); 
-	say "su option: ",%sub-options;
-	say "extre ",%_;
-	my %options =	'stelar' 	 	=> $stelar.so ?? $stelar.so !! False,
-					'ist'			=> $ist.so ?? $ist.so !! False;
+	my %options =();
 
-    %options = %options,%sub-options;
-	say "previous+sub:",%options;
-	%options = %options,%_;
-	say "all: ",%options;
+	%options.push('fit-if' => $fit-if) if $fit-if.so;
+	%options.push('plot-if' => $plot-if) if $plot-if.so;
+	%options.push('sef-R1-file' => $sef-R1-file) if $sef-R1-file.so;
+	%options.push('R1' => $R1) if $R1;
+	%options.push('gfilt' => $gfilt) if $gfilt.so;
+	%options.push('err' => $err) if $err.so;
+	%options.push('range' => $range) if $range.so;
+
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
     
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
