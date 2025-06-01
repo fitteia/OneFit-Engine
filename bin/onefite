@@ -347,9 +347,9 @@ HTML
 		my $gfilt = "";
 		my $range = "";
 		my $sef-R1-file = "";
-		my $num   = +100;
-		my $ssz   = +1.0;
-		my $fit-methods = "simp scan min minos";
+		my $num   = "--Num=100";
+		my $ssz   = "--SymbSize=1.0";
+		my $fit-methods = "--fit-methods=\"simp scan min minos\"";
 		my $file-content = $file.body-blob;
 		my $tmp-folder=10000;
 		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
