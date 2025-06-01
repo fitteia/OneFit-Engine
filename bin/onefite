@@ -384,7 +384,7 @@ HTML
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
 			
 
-			   #@options.push: $set-option($k.Str,$v.Str);
+			   @options.push: $set-option($k.Str,$v.Str);
 			
 
 
@@ -401,14 +401,13 @@ HTML
 		else {		 
 		    $filename.IO.spurt: $file-content.decode('UTF-8')
 		}	   
-		say @options;
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
 		$work-folder = "./$username" if $username.so and $username.IO.e;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "{@options.join(' ')} onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt  --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
