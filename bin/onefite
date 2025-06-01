@@ -378,7 +378,7 @@ HTML
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
 			
 
-				@options.push: set-option($v.Str,$v.Str);
+				@options.push: set-option($k.Str,$v.Str);
 
 
 		       if $k eq "download" {
