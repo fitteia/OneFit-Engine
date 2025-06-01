@@ -358,9 +358,9 @@ HTML
 		my @options;
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
-		       $fit-methods	      = $v.Str	   if $k eq "fit-methods";
+		       $fit-methods	      = "--fit-methods=\"{$v.Str}\" " if $k eq "fit-methods";
 		       $function      	      = $v.Str     if $k eq "function";
-		       $num        	      = +$v.Str    if $k eq "Num";
+		       $num        	      = "--Num={+$v.Str} " if $k eq "Num";
 		       $ssz		      = $v.Str	   if $k eq "SymbSize";
 		       $username   	      = $v.Str     if $k eq "username";
 		       $global      	      = "--global" if $k eq "global"  and $v eq any("yes",1);
@@ -378,7 +378,7 @@ HTML
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
 			
 
-				@options.push: set-option($k.Str,$v.Str);
+				@options.push:  $v eq any("yes",1) ??  "--$k" !! "--$k=$v"; 
 
 
 		       if $k eq "download" {
@@ -400,7 +400,7 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "{@options.join(' ')} onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "{@options.join(' ')} onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt  --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
