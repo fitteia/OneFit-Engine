@@ -356,9 +356,11 @@ HTML
 		my $work-folder = "./$tmp-folder";
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		my @options;
-		my $set-option = { 
-			if $^a.so and $^a eq any(<yes 1>) { "--$^a" };
-			else { "--$^a=$^b"}
+		my $set-option = {
+		   	my $opt;	
+			if $^a.so and $^a eq any(<yes 1>) { $opt = "--$^a" }
+			else { $opt = "--$^a=$^b"}
+			$opt
 		};
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
