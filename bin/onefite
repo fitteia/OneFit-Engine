@@ -361,7 +361,7 @@ HTML
 		       $fit-methods	      = "--fit-methods=\"{$v.Str}\" " if $k eq "fit-methods";
 		       $function      	      = $v.Str     if $k eq "function";
 		       $num        	      = "--Num={+$v.Str} " if $k eq "Num";
-		       $ssz		      = $v.Str	   if $k eq "SymbSize";
+		       $ssz		      = "--SymbSize={$v.Str} " if $k eq "SymbSize";
 		       $username   	      = $v.Str     if $k eq "username";
 		       $global      	      = "--global" if $k eq "global"  and $v eq any("yes",1);
 		       $autox      	      = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
@@ -400,8 +400,8 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "{@options.join(' ')} onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
-		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt  --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --SymbSize=$ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = "{@options.join(' ')} onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num --work-folder=$work-folder $ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt  $fit-methods $num --work-folder=$work-folder $ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
 		}
 		 else {
 		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
