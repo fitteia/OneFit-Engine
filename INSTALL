@@ -370,7 +370,7 @@ sub shellinabox(Bool $shell, $shell-port) {
 
 sub install-manpage() {
 	"onefite.1".IO.spurt: shell("raku --doc=Man $*CWD/bin/onefite",:out).out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");
-   	shell("gzip -9 onefite.1");
+   	shell("rm onefite.1.gz && mzip -9 onefite.1");
 	say "onefite man page: onefite.1.gz";
 	if $SUDO {
    		shell("$SUDO cp onefite.1.gz /usr/share/man/man1/");	
