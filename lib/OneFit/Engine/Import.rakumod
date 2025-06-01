@@ -24,7 +24,6 @@ class Import is export {
 	method filter-with (%options) {
 		my @files=();
 		%!options = %!options, %options;
-		say %!options;
 		
 		@files = self.import();
 
@@ -357,7 +356,6 @@ class Import is export {
 		   	"$path/@files[$_]".IO.rename: "$path/$file";
 			@files[$_]= $file
 		}
-		say @files;
 		return @files.sort.reverse;
 	}
 		
