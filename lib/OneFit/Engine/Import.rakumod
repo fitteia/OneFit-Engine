@@ -42,11 +42,11 @@ class Import is export {
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
 				when 'stelar-hdf5' 		{ 
-					if %!options<R1> { @files.push: self.import('stelar-hdf5', file => $file).Slip }
-					else { @files.push: self.import('stelar-hdf5-R1', file => $file).Slip }	
+					if %!options<R1> { @files.push: self.import('stelar-hdf5-R1', file => $file).Slip }
+					else { @files.push: self.import('stelar-hdf5', file => $file).Slip }	
 				}
 				when 'stelar-sdf'  		{ 
-					if %!options<R1> { @files.push: self.import('stelar-sdfi-R1', file => $file).Slip }
+					if %!options<R1> { @files.push: self.import('stelar-sdf-R1', file => $file).Slip }
 					else { @files.push: self.import('stelar-sdf', file => $file).Slip }
 				}
 				when 'stelar-sef-Mz'  	{ @files.push: self.import('stelar-sef-Mz', file => $file).Slip }
