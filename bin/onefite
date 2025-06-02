@@ -355,11 +355,10 @@ HTML
 		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
 		my $work-folder = "./$tmp-folder";
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my @options;
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
 		       $fit-methods	      = "--fit-methods=\"{$v.Str}\" " if $k eq "fit-methods";
-		       $function      	      = $v.Str     if $k eq "function";
+		       $function      	      = "\"$v.Str\""     if $k eq "function";
 		       $num        	      = "--Num={+$v.Str} " if $k eq "Num";
 		       $ssz		      = "--SymbSize={$v.Str} " if $k eq "SymbSize";
 		       $username   	      = $v.Str     if $k eq "username";
@@ -378,7 +377,6 @@ HTML
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
 			
 
-				@options.push:  $v eq any("yes",1) ??  "--$k" !! "--$k=$v"; 
 
 
 		       if $k eq "download" {
@@ -400,12 +398,12 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "{@options.join(' ')} onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num --work-folder=$work-folder $ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
-		   $txt ~= shell("onefite fit \"$function\" $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt  $fit-methods $num --work-folder=$work-folder $ssz --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		 else {
-		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json";
-		    $txt ~= shell("onefite fit $filename $global $autox $autoy $autoxy $logx $logy --fit-methods=\"$fit-methods\" --Num=$num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json",:out).out.slurp(:close);
+		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		    $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
@@ -934,13 +932,6 @@ EOT
 #	shell "$SUDO rm -fr /tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 }
-
-sub set-option($k,$v) {
-	my $opt = $v eq any("yes",1) ??  "--$k" !! "--$k=$v"; 
-	return $opt
-}
-
-
 
 =begin pod
 
