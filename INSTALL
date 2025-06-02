@@ -409,13 +409,13 @@ EOT
 	my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
 	if $deamon {
 		if $service {
-			my $proc= Proc::Async.new("$SUDO systemctl stop onefite.service");
+			my $proc= Proc::Async.new($SUDO, 'systemctl', 'stop', 'onefite.service');
 			$proc.stdout.tap(-> $v { print "Output: $v" });
 			$proc.stderr.tap(-> $v { print "Err: $v" });
 			await $proc.start;
 			say "onefite service stoped";
 		}
-		my $proc = Proc::Async.new("$SUDO systemctl start onefite.service");
+		my $proc = Proc::Async.new($SUDO, 'systemctl', 'start', 'onefite.service');
 		$proc.stdout.tap(-> $v { print "Output: $v" });
 		$proc.stderr.tap(-> $v { print "Err: $v" });
 		await $proc.start;
