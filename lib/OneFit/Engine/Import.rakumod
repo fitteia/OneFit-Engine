@@ -209,15 +209,6 @@ class Import is export {
 				
 				for (1 .. $ntaus).race { 
 					if %options<gfilt>.so {
-						#						my $re =  @Re.splice(0,$BS.Int)[$i .. $f].sum/$N; 
-						#						my $im =  @Im.splice(0,$BS.Int)[$i .. $f].sum/$N; 
-			
-						#						"/tmp/lixo{$_}.dat".IO.spurt: @Re.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						#						my @re =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo{$_}.dat",:out).out.lines(:close) ; 
-						#						"/tmp/lixo1{$_}.dat".IO.spurt: @Im.splice(0,$BS.Int)[$i .. $f].join("\n"); 
-						#						my @im =  shell("gfilt $N { %options<gfilt> }  /tmp/lixo1{$_}.dat",:out).out.lines(:close) ; 
-						#						shell("rm /tmp/lixo*.dat");
-			
 						my @re = gfilt-shell(@Re.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
 						my @im = gfilt-shell(@Im.splice(0,$BS.Int)[$i .. $f],%options<gfilt>); 
 						my $sqr =  { $^a.map({ $_ ** 2 }) };
@@ -355,7 +346,7 @@ class Import is export {
 		for 0 ..^ @files.elems {
 		   	my $file = @files[$_];	
 			$file = $file.subst(/z\d+/,sprintf("%09d-z%03d",(@BR[$_]*1e6).Int,$_+1));
-			shell("sed -E -i -e 's/dum = [0-9]+/BR = { @BR[$_]*1e6 }/' $path/@files[$_]");
+			shell("sed -E -i -e 's/dum = [0-9]+/dum = { @BR[$_]*1e6 }/' $path/@files[$_]");
 		   	"$path/@files[$_]".IO.rename: "$path/$file";
 			@files[$_]= $file
 		}
