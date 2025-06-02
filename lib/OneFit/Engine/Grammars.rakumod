@@ -96,7 +96,8 @@ grammar Function is Number {
 	%res<Function> = $m<expression>.Str;
 	my $i=0;
 	for $m<pars><par> -> $par {
-	    %res{"Pval" ~ $i} = 1;
+		say $par;
+		%res{"Pval" ~ $i} = 1;
 	    %res{"Pmin" ~ $i} = "";
 	    %res{"Pmax" ~ $i} = "";
 	    %res{"F" ~ $i} = "Free";
