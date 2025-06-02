@@ -357,8 +357,8 @@ HTML
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
-		       $fit-methods	      = "--fit-methods=\"{$v.Str}\" " if $k eq "fit-methods";
-		       $function      	      = "\"$v.Str\""     if $k eq "function";
+		       $fit-methods	      = "--fit-methods\"{$v.Str}\" " if $k eq "fit-methods";
+		       $function      	      = "\"{$v.Str}\""     if $k eq "function";
 		       $num        	      = "--Num={+$v.Str} " if $k eq "Num";
 		       $ssz		      = "--SymbSize={$v.Str} " if $k eq "SymbSize";
 		       $username   	      = $v.Str     if $k eq "username";
