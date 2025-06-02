@@ -96,7 +96,6 @@ grammar Function is Number {
 	%res<Function> = $m<expression>.Str;
 	my $i=0;
 	for $m<pars><par> -> $par {
-		say $par;
 		%res{"Pval" ~ $i} = 1;
 	    %res{"Pmin" ~ $i} = "";
 	    %res{"Pmax" ~ $i} = "";
@@ -104,12 +103,7 @@ grammar Function is Number {
 
 	    %res{'Pval'~$i} = $par<attrib><range><min>.Str if $par<attrib><range><min>.Bool;
 	    %res{'Pval'~$i} = $par<range><attrib><initial-value>.Str if $par<range><attrib><initial-value>.Bool;
-	    %res{'Pval'~$i} = $par<name><attrib><initial-value>.Str if $par<name><attrib><initial-value>.Bool;
-		if $par<name>.Bool {
-			say $par<name>;
-			say $par<attrib>;
-			say $par<attrib><initial-value>.Str;
-		}	
+	    %res{'Pval'~$i} = $par<attrib><initial-value>.Str if $par<attrib><initial-value>.Bool;
 	    if $par<attrib><eq>.Bool {
 		%res{'Pval'~ $i } = $par<attrib><fixed-value>.Str;
 		%res{'F' ~ $i} = "Fix";
