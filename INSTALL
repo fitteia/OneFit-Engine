@@ -419,8 +419,7 @@ EOT
 		$proc.stdout.tap(-> $v { print "Output: $v" });
 		$proc.stderr.tap(-> $v { print "Err: $v" });
 		await $proc.start;
-		say "onefite service started";
-		say shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
+		say "onefite service started" if shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
 		sleep 3;
 	    my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
 	    say $result;
