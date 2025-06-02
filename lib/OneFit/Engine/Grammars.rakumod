@@ -107,8 +107,8 @@ grammar Function is Number {
 	    %res{'Pval'~$i} = $par<name><attrib><initial-value>.Str if $par<name><attrib><initial-value>.Bool;
 		if $par<name>.Bool {
 			say $par<name>;
-			say $par<name><attrib>;
-			say $par><name><attib><initial-value>.Str;
+			say $par<attrib>;
+			say $par><attib><initial-value>.Str;
 		}	
 	    if $par<attrib><eq>.Bool {
 		%res{'Pval'~ $i } = $par<attrib><fixed-value>.Str;
