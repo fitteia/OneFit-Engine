@@ -291,7 +291,10 @@ class Import is export {
 		for (1 .. @ntaus.elems) {
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
 			my $datafile = "{ $ffc.IO.extension('').Str }-{ sprintf('%09d',(@freqs[$_-1]*1e3).Int) }-z{ sprintf('%03d',$_) }.dat";
-			my $header = "# DATA dum = @modes[$_-1] @freqs[$_-1]\n# TAG = zone{ sprintf('%03d',$_) }";
+			my 	$header = "# DATA dum = @modes[$_-1] @freqs[$_-1]\n# TAG = zone{ sprintf('%03d',$_) }\n";
+				$header ~= "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
+				$header ~= "# plot if " ~ %options<plot-if> ~ "\n" if %options<plot-if>.so;
+	
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 		}
