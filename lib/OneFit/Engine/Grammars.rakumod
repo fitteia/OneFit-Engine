@@ -105,9 +105,11 @@ grammar Function is Number {
 	    %res{'Pval'~$i} = $par<attrib><range><min>.Str if $par<attrib><range><min>.Bool;
 	    %res{'Pval'~$i} = $par<range><attrib><initial-value>.Str if $par<range><attrib><initial-value>.Bool;
 	    %res{'Pval'~$i} = $par<name><attrib><initial-value>.Str if $par<name><attrib><initial-value>.Bool;
-		say $par<name>;
-		say $par<name><attrib>;
-		say $par><name><attib><initial-value>.Str;
+		if $par<name>.Bool {
+			say $par<name>;
+			say $par<name><attrib>;
+			say $par><name><attib><initial-value>.Str;
+		}	
 	    if $par<attrib><eq>.Bool {
 		%res{'Pval'~ $i } = $par<attrib><fixed-value>.Str;
 		%res{'F' ~ $i} = "Fix";
