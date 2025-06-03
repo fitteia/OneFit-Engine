@@ -241,7 +241,7 @@ class Engine is export {
 		@!par-tables[$i-1]= $parameters;
 		@!blocks[$i-1].parameters=$parameters;
 		if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all, :fit-methods($!fit-methods) ) }
-		else {$parameters.parfile.write($parameters.a, No => $i) }
+		else {$parameters.parfile.write($parameters.a, No => $i, :fit-methods($!fit-methods) ) }
 		self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
 		@!blocks[$i-1].chi2=$parameters.output{"chi2\[1\]"} if $parameters.output{"chi2\[1\]"};
 	    }
