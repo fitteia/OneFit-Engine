@@ -318,7 +318,14 @@ HTML
 		    else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 	    }
 	}
+		
+	get -> 'man',*@args {
+	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
+			$log-fh.flush;
+		   	content 'text/plain', "{ MAIN( man => True ) }\n" 
+	}
 	
+
 	post -> 'man' {
 	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 			$log-fh.flush;
