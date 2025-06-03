@@ -421,7 +421,7 @@ EOT
 		await $proc.start;
 		say "onefite service started" if shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
 	
-        await IO::Socket::Async.connect('localhost', $port, :timeout(10));
+    	await wait-for-port-async('localhost', $port);
 	
 		my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
 	    say $result;
@@ -455,3 +455,20 @@ EOT
 #	shell "$SUDO rm -fr /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 }
+
+
+
+async sub wait-for-port-async(Str $host, Int $port, Int :$timeout = 30) {
+    my $timeout-promise = Promise.in($timeout);
+    my $connect-promise = IO::Socket::Async.connect($host, $port);
+    
+    await Promise.anyof($connect-promise, $timeout-promise);
+    
+    if $connect-promise.status == Kept {
+        (await $connect-promise).close;
+        return True;
+    }
+    
+    fail "Timed out waiting for $host:$port";
+}
+
