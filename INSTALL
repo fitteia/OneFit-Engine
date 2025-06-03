@@ -457,6 +457,7 @@ EOT
 }
 
 
+use IO::Socket::Async;
 
 async sub wait-for-port-async(Str $host, Int $port, Int :$timeout = 30) {
     my $timeout-promise = Promise.in($timeout);
