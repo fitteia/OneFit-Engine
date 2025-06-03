@@ -275,10 +275,14 @@ class Import is export {
 		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
 		my @ntaus  = gather for @aux[1].lines { take $_.split(',')[5] }
 		my @lines;	
-	   	for @aux[0].lines {
+		my @x,@y;
+		for @aux[0].lines {
 			my @a = $_.split(',')[2,3];
-			@lines.push: @a[0]*1e-6 ~ ' ' ~ @a[1]; 
+			@x.push: @a[0]*1e-6;
+		   	@y.push: @a[1]; 
 		}
+		@y.map({ $_/@y.max });
+		@lines = @x Z @y;
 		for (1 .. @ntaus.elems) {
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
 			my $datafile = "{ $ffc.IO.extension('').Str }-{ sprintf('%09d',(@freqs[$_-1]*1e3).Int) }-z{ sprintf('%03d',$_) }.dat";
