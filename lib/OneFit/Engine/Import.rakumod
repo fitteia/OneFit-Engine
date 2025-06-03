@@ -275,7 +275,8 @@ class Import is export {
 		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
 		my @ntaus  = gather for @aux[1].lines { take $_.split(',')[5] }
 		my @lines;	
-		my @x,@y;
+		my @x;
+		my @y;
 		for @aux[0].lines {
 			my @a = $_.split(',')[2,3];
 			@x.push: @a[0]*1e-6;
