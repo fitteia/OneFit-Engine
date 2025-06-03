@@ -1,7 +1,5 @@
 #!/usr/bin/env raku
 
-use IO::Socket::Async;
-
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 our $SUDO = "sudo";
