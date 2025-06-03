@@ -73,7 +73,7 @@ multi MAIN (
 
    	add-show-ip-in-issue() if $to-site;
 
-   	run-post-install-tests(:deamon($systemd-daemon));
+   	run-post-install-tests(:deamon($systemd-daemon), port => $port);
 
 	install-manpage();
 }
@@ -381,7 +381,7 @@ sub install-manpage() {
 
 
 
-sub run-post-install-tests(Bool :$deamon = False) {
+sub run-post-install-tests(Bool :$deamon = False, :$port = 8142) {
     my $data = q:to/EOT/;
 # DATA dum = 40616
 # TAG = zone12
