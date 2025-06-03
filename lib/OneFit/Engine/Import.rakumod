@@ -275,23 +275,25 @@ class Import is export {
 		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
 		my @ntaus  = gather for @aux[1].lines { take $_.split(',')[5] }
 		my @lines;	
-		my @x;
-		my @y;
 		for @aux[0].lines {
 			my @a = $_.split(',')[2,3];
-			@x.push: @a[0]*1e-6;
-		   	@y.push: @a[1]; 
+			@lines.push: @a[0]*1e-6 ~ ' ' ~ @a[1]; 
 		}
-		say @y.max;
-		@y.map({ $_/@y.max });
-		@lines = @x Z @y;
 		for (1 .. @ntaus.elems) {
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
 			my $datafile = "{ $ffc.IO.extension('').Str }-{ sprintf('%09d',(@freqs[$_-1]*1e3).Int) }-z{ sprintf('%03d',$_) }.dat";
 			my 	$header = "# DATA dum = @modes[$_-1] @freqs[$_-1]\n# TAG = zone{ sprintf('%03d',$_) }\n";
 				$header ~= "# fit if " ~ %!options<fit-if> ~ "\n" if %!options<fit-if>.so;
 				$header ~= "# plot if " ~ %!options<plot-if> ~ "\n" if %!options<plot-if>.so;
-	
+
+			my @x;
+			my @y;
+			for @zone {
+			   	my @w = $_.words;	
+				@x.push: @w[0];
+				@y.push: @w[1];
+			}
+			@zone = (@x Z @y.map({ $_/@y.max})).join(" ");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 		}
