@@ -295,7 +295,7 @@ HTML
 	     else { content 'text/plain', "{ MAIN('list',:quiet) }\n" }	
 	}
 	
-	get -> 'help',*@args {
+	post -> 'help',*@args {
 	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 	     $log-fh.flush;
 	     if so @args {
@@ -319,7 +319,7 @@ HTML
 	    }
 	}
 	
-	get -> 'man', *@args {
+	post -> 'man' {
 	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 			$log-fh.flush;
 		   	content 'text/plain', "{ MAIN( man => True ) }\n" 
