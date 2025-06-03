@@ -282,6 +282,7 @@ class Import is export {
 			@x.push: @a[0]*1e-6;
 		   	@y.push: @a[1]; 
 		}
+		say @y.max;
 		@y.map({ $_/@y.max });
 		@lines = @x Z @y;
 		for (1 .. @ntaus.elems) {
