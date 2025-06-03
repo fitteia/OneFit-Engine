@@ -299,23 +299,23 @@ HTML
 	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 	     $log-fh.flush;
 	     if so @args {
-		  if @args.elems > 1 { content 'text/plain', "{ MAIN('help',@args.head, @args.tail, :quiet) }\n" }
-		  else { content 'text/plain', "{ MAIN('help',@args.head,:quiet) }\n" }
+		  	if @args.elems > 1 { content 'text/plain', "{ MAIN('help',@args.head, @args.tail, :quiet) }\n" }
+		  	else { content 'text/plain', "{ MAIN('help',@args.head,:quiet) }\n" }
 	     }
 	     else { 	content 'text/plain', "tyep model name or model name and key to get help\n" }
 	}	
 	
-	post -> 'help' {
+	get -> 'help' {
             request-body -> (:$model, *%rest) {
 	    	$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) help");
 			$log-fh.flush;
 	    	if so %rest.kv {
-		   for %rest.kv -> $k,$v {
-		       if so $v.Str { content 'text/plain', "{ MAIN('help',$model.Str, $v.Str, :quiet) }\n" }
-		       else { content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
-		   }
+		   		for %rest.kv -> $k,$v {
+		       		if so $v.Str { content 'text/plain', "{ MAIN('help',$model.Str, $v.Str, :quiet) }\n" }
+		       		else { content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
+		   		}
 	    	}
-		else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
+		    else { 	content 'text/plain', "{ MAIN('help',$model.Str,:quiet) }\n" }
 	    }
 	}
 	
