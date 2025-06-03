@@ -302,7 +302,7 @@ HTML
 		  	if @args.elems > 1 { content 'text/plain', "{ MAIN('help',@args.head, @args.tail, :quiet) }\n" }
 		  	else { content 'text/plain', "{ MAIN('help',@args.head,:quiet) }\n" }
 	     }
-	     else { 	content 'text/plain', "tyep model name or model name and key to get help\n" }
+	     else { 	content 'text/plain', "type model name or model name and key to get help\n" }
 	}	
 	
 	post -> 'help' {
