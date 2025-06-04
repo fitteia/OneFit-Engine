@@ -109,7 +109,6 @@ EOTT
         }
 
 	method setgraph ($X,$Y) {
-		say $X.h;
 	qq:to/EOTEXT/;
 r0 off
 link r0 to g0
