@@ -136,6 +136,7 @@ class Engine is export {
 			 }(%!engine{$_})
 	    }
 	    for @!blocks {
+			say "Logx" if $logx;
 		.Graph.path: $!path;
 		.Graph.Xaxis.type("Logarithmic") if $logx;
 		.Graph.Yaxis.type("Logarithmic") if $logy;
