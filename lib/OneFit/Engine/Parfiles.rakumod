@@ -13,7 +13,7 @@ class Parfile is export {
 	$table ~= sprintf("%-10.1f%-10s%-2.1f\n",1.0,"n.tot.par",1+@parameters.elems);
 	for (0 ..^@parameters.elems) {
 	    my ($v,$m,$M)=@parameters[$_]<value min max>;
-	    my $s = $v ?? abs(0.1*$v) !! 0.1;
+	    my $s = $v.so ?? abs(0.1*$v) !! 0.1;
 	    my $f = {
 		$^a ??
 #		sprintf( { (abs($^b) > 1e6 or abs($^b) < 1e-2) ?? "%10.3e" !! "%10.3e" }($^a), $^a)

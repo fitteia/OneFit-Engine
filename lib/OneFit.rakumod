@@ -227,7 +227,7 @@ class Engine is export {
 #	say "Greatings from update parameters form output" if $from-output;
 	 #	say "Greatings from update parameters form log" if $from-log;
 
-	 $!fit-methods = %!engine<FitMethods> if %!engine<fit-methods>.Bool;
+	 $!fit-methods = %!engine<FitMethods> if %!engine<FitMethods>.Bool;
 	 
 	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race -> $i {
