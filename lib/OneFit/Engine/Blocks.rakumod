@@ -47,45 +47,46 @@ class Block is export {
 			     );
 
 	for $txt.lines -> $line {
-	    if $line.contains("DATA")  {
-		$!T = $line.split("=")[1].subst(/^\s*/,"");
-	    }
-	    elsif $line.contains("TAG") {
-		$!Tag = $line.split("=")[1].subst(/^\s*/,"");
-	    }
+	    if $line.contains("DATA") { 
+			$!T = $line.split("=")[1].subst(/^\s*/,""); 
+		}
+	    elsif $line.contains("TAG") { 
+			$!Tag = $line.split("=")[1].subst(/^\s*/,""); 
+		}
 	    elsif $line.contains("TITLE") {
-		$!Graph.Title.read($line);
-		<title posx posy>.map({ $!Graph.Curves[0]{$_}=$!Graph.Title.h{$_} });
-
+			$!Graph.Title.read($line);
+			<title posx posy>.map({ $!Graph.Curves[0]{$_}=$!Graph.Title.h{$_} });
 	    }
 	    elsif $line.contains("XAXIS") {
-		$!Graph.Xaxis.read($line).auto(False);
-		$!Graph.Xaxis.grid: set => ($xgrid.defined) ?? "on" !! "off" 
+			$!Graph.Xaxis.read($line).auto(False);
+			$!Graph.Xaxis.grid: set => ($xgrid.defined) ?? "on" !! "off" 
 	    }
 	    elsif $line.contains("YAXIS") {
-		$!Graph.Yaxis.read($line).auto(False);
-		$!Graph.Xaxis.grid: set => ($ygrid.defined) ?? "on" !! "off" 
+			$!Graph.Yaxis.read($line).auto(False);
+			$!Graph.Xaxis.grid: set => ($ygrid.defined) ?? "on" !! "off" 
 	    }
 	    elsif $line.contains(/fit <ws> if/) {
-		$line ~~ /'#' <ws> fit <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;
-		$!fstep = $<s>;
-		$!fcond = $<c>;
-		$!fcond ~~ s:g/c(\d+)/ \(\$c->\{$0\}\) /;
+			$line ~~ /'#' <ws> fit <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;
+			$!fstep = $<s>;
+			$!fcond = $<c>;
+			$!fcond ~~ s:g/c(\d+)/ \(\$c->\{$0\}\) /;
 	    }
 	    elsif $line.contains(/plot <ws> if/) {
-		$line ~~ /'#' <ws> plot <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;
-		$!pstep = $<s>;
-		$!pcond = $<c>;
-		$!pcond ~~ s:g/c(\d+)/ \(\$c->\{$0\}\) /;
+			$line ~~ /'#' <ws> plot <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;
+			$!pstep = $<s>;
+			$!pcond = $<c>;
+			$!pcond ~~ s:g/c(\d+)/ \(\$c->\{$0\}\) /;
 	    }
 	    else {
-		if $line {
-		    if $line ~~ /^'#'/ or $line.words.elems < 2 {
-			say "ignoring non-conform line: $line" unless $quiet
-		    }
-		    else { @!Data.push: $line }
+			if $line {
+		    	if $line ~~ /^'#'/ or $line.words.elems < 2 {
+					say "ignoring non-conform line: $line" unless $quiet
+		    	}
+		    	else { 
+					@!Data.push: $line 
+				}
 
-		}
+			}
 	    }
 	}
 	@!Data = @!Data.map({ .words } ).sort({ +$^a[0] <=> +$^b[0] }).map({ .join(" ") });
@@ -250,7 +251,6 @@ class Block is export {
 	for $!Graph.Curves -> %label {
 	    $TXT ~= $agr.string(%label<label>,%label<color>,%label<posx>,%label<posy>);
 	}
-	say $!Graph.Xaxis.h;
 	$TXT ~= $agr.setgraph($!Graph.Xaxis,$!Graph.Yaxis);
 	$TXT ~= $agr.dataset(0,
 			     :type<xydy>,
