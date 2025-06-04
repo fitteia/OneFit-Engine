@@ -250,6 +250,7 @@ class Block is export {
 	for $!Graph.Curves -> %label {
 	    $TXT ~= $agr.string(%label<label>,%label<color>,%label<posx>,%label<posy>);
 	}
+	say $!Graph.Xaxis.h;
 	$TXT ~= $agr.setgraph($!Graph.Xaxis,$!Graph.Yaxis);
 	$TXT ~= $agr.dataset(0,
 			     :type<xydy>,
