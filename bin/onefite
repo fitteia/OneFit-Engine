@@ -750,7 +750,8 @@ multi MAIN  ('fit',
 	     Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
 	     Str  :$zip-to = $input-file.IO.extension('').Str,
 	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts)
+	     Int  :Num(:$npts),
+		 *%_
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
