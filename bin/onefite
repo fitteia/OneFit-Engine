@@ -30,7 +30,6 @@ multi MAIN (Bool :$man!) {
 	$txt
 }
 
-
 multi MAIN (Bool :h(:help($))) {
 #        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
 
