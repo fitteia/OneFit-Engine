@@ -723,11 +723,11 @@ multi MAIN  ('fit',
     %e<SymbSize>=$ssz.Rat;
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
-	:no-plot($no-plot),
-	:autox($autox or $autoxy),
-	:autoy($autoy or $autoxy),
-	:logx($loglin or $loglog),
-	:logy($linlog or $loglog)
+		:no-plot($no-plot),
+		:autox($autox or $autoxy),
+		:autoy($autoy or $autoxy),
+		:logx($loglin or $loglog),
+		:logy($linlog or $loglog)
     );
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
