@@ -209,10 +209,13 @@ sub install-p6-modules ($to-site) {
 	say "Install raku modules. This may take some time....";
    	shell("$SUDO zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
    	shell("$SUDO zef install --/test cro { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
-	if shell("zef locate Pod::To::Man",:out).out.slurp(:close).contains("Nothing located") {
-		unless shell("$SUDO zef install Pod::To::Man { '--install-to=site ' if $to-site } ").so  {
-			say "zef install Pod::To::Man gave test errors. Try to install with --no-test option";	
-			shell("$SUDO zef install Pod::To::Man --/test { '--install-to=site ' if $to-site } ");
+	my $not-installed = shell("zef locate Pod::To::Man",:out).out.slurp(:close).contains("Nothing located"); 
+	if $not-installed.so {
+		my $fail-install-with-test = shell("$SUDO zef install Pod::To::Man { '--install-to=site ' if $to-site } ");
+		unless  $fail-install-with-test.so  {
+			my $installed-with-no-test = shell("$SUDO zef install Pod::To::Man --/test { '--install-to=site ' if $to-site } ");
+			if $installed-with-test.so { say "zef install Pod::To::Man gave test errors. Try to install with --no-test option"	}
+			else { say "install Pod::To::Man by hand" }
 		}
 	}
 }
