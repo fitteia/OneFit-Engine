@@ -214,7 +214,7 @@ sub install-p6-modules ($to-site) {
 		my $fail-install-with-test = shell("$SUDO zef install Pod::To::Man { '--install-to=site ' if $to-site } ");
 		unless  $fail-install-with-test.so  {
 			my $installed-with-no-test = shell("$SUDO zef install Pod::To::Man --/test { '--install-to=site ' if $to-site } ");
-			if $installed-with-no-test.so { say "zef install Pod::To::Man gave test errors. Try to install with --no-test option"	}
+			if $installed-with-no-test.so { say "zef install Pod::To::Man gave test errors. Pod::To::Man installed with --/test option"	}
 			else { say "install Pod::To::Man by hand" }
 		}
 	}
