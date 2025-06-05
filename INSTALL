@@ -54,7 +54,7 @@ multi MAIN (
 
    	install-web-server if $web-server and $to-site;
 
-   	install-p6-modules($to-site) if $p6-modules.Bool;
+   	install-p6-modules($to-site,test => $test) if $p6-modules.Bool;
 
    	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
@@ -205,7 +205,7 @@ sub install-web-server () {
 }
 
 
-sub install-p6-modules ($to-site) {
+sub install-p6-modules ($to-site,:$test) {
 	say "Install raku modules. This may take some time....";
    	shell("$SUDO zef install Inline::Perl5 --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
    	shell("$SUDO zef install cro --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
