@@ -207,9 +207,9 @@ sub install-web-server () {
 
 sub install-p6-modules ($to-site) {
 	say "Install raku modules. This may take some time....";
-   	shell("$SUDO zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
-   	shell("$SUDO zef install cro --force-test { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
- 	shell("$SUDO zef install Pod::To::Man --force-test { '--install-to=site ' if $to-site } ");
+   	shell("$SUDO zef install Inline::Perl5 --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
+   	shell("$SUDO zef install cro --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
+ 	shell("$SUDO zef install Pod::To::Man --force-test { '--/test' unless $test }  { '--install-to=site ' if $to-site } ");
 }
 
 sub enable-ghostscript-in-ImageMagick-policy () {
