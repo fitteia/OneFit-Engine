@@ -213,10 +213,10 @@ sub install-p6-modules ($to-site) {
   	if $not-installed {
 		try { 		
 			shell("$SUDO zef install Pod::To::Man { '--install-to=site ' if $to-site } "); 
-		}
-		CATCH {
-			say "zef install Pod::To::Man gave test errors. Try to install with --no-test option";	
-			shell("$SUDO zef install Pod::To::Man --/test { '--install-to=site ' if $to-site } ");
+			CATCH {
+				say "zef install Pod::To::Man gave test errors. Try to install with --no-test option";	
+				shell("$SUDO zef install Pod::To::Man --/test { '--install-to=site ' if $to-site } ");
+			}
 		}
 	}
 }
