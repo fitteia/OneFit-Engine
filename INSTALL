@@ -209,7 +209,7 @@ sub install-p6-modules ($to-site) {
 	say "Install raku modules. This may take some time....";
    	shell("$SUDO zef install Inline::Perl5 { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
    	shell("$SUDO zef install --/test cro { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
-	my $is-installed = so shell("zef locate Pod::To::Man",:out).out.slurp(:close).contains("Nothing located");
+	my $is-installed = shell("zef locate Pod::To::Man",:out).out.slurp(:close).contains("Nothing located");
   	unless $is-installed {
 		try { 		
 			shell("$SUDO zef install Pod::To::Man { '--install-to=site ' if $to-site } "); 
