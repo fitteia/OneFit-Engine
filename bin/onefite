@@ -399,6 +399,7 @@ HTML
 		    $filename.IO.spurt: $file-content.decode('UTF-8')
 		}	   
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
+		say "usernme: $username";
 		$work-folder = "./$username" if $username.so and $username.IO.e;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
