@@ -412,7 +412,7 @@ HTML
 		    $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
-		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n\n" }
+		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
 		my Bool $tmp-folder-was-created = "./$tmp-folder".IO.e;
    		shell("rm -fr ./$tmp-folder") if "./$tmp-folder".IO.e;		
  		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $tmp-folder ~ ' removed.' if $tmp-folder-was-created }");
