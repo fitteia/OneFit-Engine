@@ -179,7 +179,7 @@ sub apt-pkgs-not-installed (@pkgs) {
 sub install-apt-packages ($cpu,:$cernlib) {
  	my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
    	if so @apt-pkgs-to-install {
-		run "sudo", "apt", "install" , @apt-pkgs-to-install; 
+		run "sudo", "apt-get", "install" , @apt-pkgs-to-install; 
    	}	
    	if $cernlib {
 		my @required-cern-pkgs = cernpkgs($cpu);
@@ -194,7 +194,7 @@ sub install-apt-packages ($cpu,:$cernlib) {
 		}
 		say "the OneFit-Engine/etc/OFE/default/makefile has to be changed if you plan to use the minuit routine from the debian installed package";
     }
-    shell "sudo apt update && sudo apt upgrade && sudo apt autoremove && sudo apt clean";
+    shell "sudo apt-get update && sudo apt-get upgrade && sudo apt-get autoremove && sudo apt-get clean";
 }
 
 sub install-web-server () {
