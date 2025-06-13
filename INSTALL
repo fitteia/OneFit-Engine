@@ -179,6 +179,7 @@ sub apt-pkgs-not-installed (@pkgs) {
 sub install-apt-packages ($cpu,:$cernlib) {
  	my @apt-pkgs-to-install = apt-pkgs-not-installed(aptpkgs());
    	if so @apt-pkgs-to-install {
+		run "sudo", "apt-get", "update";
 		run "sudo", "apt-get", "install" , @apt-pkgs-to-install; 
    	}	
    	if $cernlib {
