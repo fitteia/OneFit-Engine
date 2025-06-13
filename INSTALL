@@ -108,6 +108,7 @@ Usage:
     --shell        # False by default it will NOT install shellinabox service
     --shell-port   # shellinabox service port (defaults to 8100)
     --git          # by default it runs git pull. Use --no-git to avoid git pull 
+    --docker       # when installing in a docker container 
     --ip = '*'     # creates the onefite.service for all IPv4 interfaces
     --port = 8142  # onefite web service service port defaults to 8142
     --merge-site=<Str> # merge git site files with git main/dev files when updating
