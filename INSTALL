@@ -22,7 +22,7 @@ multi MAIN (
    	Bool :$cernlib = False, # by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
    	Bool :$shell = False, # by default it NOT will install shellinabox service in port 8100
    	Bool :$git = True, # By default it runs git to pull the package for remote repository
-	Boll :$docker = False, # Flag for a Docker Install
+	Bool :$docker = False, # Flag for a Docker Install
    	Str  :$ip = '*',
    	Int  :$port = 8142,
    	Int  :$shell-port = 8100,
