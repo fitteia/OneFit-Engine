@@ -4,6 +4,8 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 our $SUDO = "sudo";
 
+our $DOCKER = False;
+
 multi MAIN (
  	Bool :$dpkg = True, # to install required debian packages
    	Bool :w(:$web-server) = True, # to run tasksel install web-server
@@ -20,6 +22,7 @@ multi MAIN (
    	Bool :$cernlib = False, # by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
    	Bool :$shell = False, # by default it NOT will install shellinabox service in port 8100
    	Bool :$git = True, # By default it runs git to pull the package for remote repository
+	Boll :$docker = False, # Flag for a Docker Install
    	Str  :$ip = '*',
    	Int  :$port = 8142,
    	Int  :$shell-port = 8100,
@@ -45,6 +48,8 @@ multi MAIN (
    	$to-site = False if $to-user;
    
    	$SUDO = "" unless $to-site;
+
+	$DOCKER = $docker;
 
    	uninstall() if $Uninstall;
 
@@ -73,7 +78,7 @@ multi MAIN (
 
    	add-show-ip-in-issue() if $to-site;
 
-   	run-post-install-tests(:deamon($systemd-daemon), port => $port);
+   	run-post-install-tests(:deamon($systemd-daemon), port => $port) unless $DOCKER;
 
 	install-manpage();
 }
@@ -200,8 +205,8 @@ sub install-web-server () {
 		say "tasksel install Web-server and SSH-server";
 		shell "sudo apt install task-ssh-server task-web-server";
    	} unless $is-installed;
-   	shell "sudo a2enmod userdir";
-   	shell "sudo systemctl restart apache2";
+   	shell "sudo a2enmod userdir" unless $DOCKER;
+   	shell "sudo systemctl restart apache2" unless $DOCKER;
 }
 
 
@@ -331,16 +336,18 @@ Group=%*ENV<USER>
 [Install]
 WantedBy=multi-user.target
 ";
-    shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
-    shell "sudo systemctl daemon-reload";
-    shell "sudo systemctl enable onefite.service";
-    say "onefite service daemon created for IPv4 $ip and port $port:
+	unless $DOCKER {
+	    shell "sudo cp /tmp/onefite.service /etc/systemd/system/";
+	    shell "sudo systemctl daemon-reload";
+	    shell "sudo systemctl enable onefite.service";
+	    say "onefite service daemon created for IPv4 $ip and port $port:
 
     1) sudo service onefite start
     2) sudo onefite upgrade -d (for future upgrades)
     3) onefite test (when needed)
 
-    ";
+	    ";
+	} 
 }
 
 sub add-show-ip-in-issue() {
