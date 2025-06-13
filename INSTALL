@@ -149,6 +149,7 @@ sub aptpkgs () {
    	sudo
    	curl
 	jq
+	debianutils
    	libssl-dev
    	hdf5-tools
    	tasksel
