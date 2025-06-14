@@ -418,7 +418,7 @@ EOT
     say "Running post-install tests...";
     "/tmp/zone12.dat".IO.spurt: $data;
 	my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
-	if $deamon {
+	if $daemon {
 		if $service {
 			my $proc= Proc::Async.new($SUDO, 'systemctl', 'stop', 'onefite.service');
 			$proc.stdout.tap(-> $v { print "Output: $v" });
