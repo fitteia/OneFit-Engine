@@ -67,8 +67,8 @@ multi MAIN (
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
-   	if shell("diff $*CWD/etc/OFE/default/aliases.json $bindir/../etc//aliases.json",:out).out.slurp(:close).so { 
-		say "$bindir/../etc/aliases.json has been changed not updating";
+   	if "$bindir/../etc/aliases.json".IO.e {
+		say "$bindir/../etc/aliases.json has been changed not updating" if shell("diff $*CWD/etc/OFE/default/aliases.json $bindir/../etc/aliases.json",:out).out.slurp(:close).so; 
    	}	
    	else {
 		install-aliases( bindir => $bindir );
