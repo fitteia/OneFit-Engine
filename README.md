@@ -36,6 +36,8 @@ The copyright will be defined at the end of the devolopment process. For now the
 	wsl -d debian
 ```
 	In debian shell
+```bash
+	sudo apt-get update && sudo apt-get install jq zip pdftk
 
 
  ** MacOS
