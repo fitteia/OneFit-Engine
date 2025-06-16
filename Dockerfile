@@ -46,7 +46,7 @@ RUN mkdir /home/ofe/public_html &&\
 	mkdir -p bin etc log && \
     git clone https://github.com/fitteia/OneFit-Engine.git /home/ofe/.local/OneFit-Engine 
  
-RUN cd /home/ofe/.local/OneFit-Engine &&  git checkout dev  && echo "ofe\nY\nY\nY" | sudo -S ./INSTALL --/web-server  --/test --/dpkg --docker
+RUN cd /home/ofe/.local/OneFit-Engine &&  git checkout dev  && echo "ofe\nY\nY\nY" | sudo -S ./INSTALL --docker
 
 # Expose SSH (2222), Apache (8142), ShellInABox (8100)
 EXPOSE 8142  
