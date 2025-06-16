@@ -101,7 +101,7 @@ Usage:
     ./INSTALL [-h|--help]
       ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs] \
                 [-w|--web-server] [-U|--Uninstall] [--to-site] [--bindir=<Str>] [--systemd-daemon] [-u|--to-user] \
-				[--wsl|docker] [--man-page] [--post-test]
+				[--wsl] [--docker] [--man-page] [--post-test]
     --dpkg         # to install required debian packages
     --web-server   # to run tasksel install web-server
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
@@ -121,7 +121,8 @@ Usage:
     --git          # by default it runs git pull. Use --no-git to avoid git pull 
     --post-test    # Run post tests
 	--man-page 	   # Install onefite man page
-	--docker       # set options for a WSL2/Docker install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
+	--docker       # set options for a Docker install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
+	--wsl          # set options for a WSL2 install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
     --ip = '*'     # creates the onefite.service for all IPv4 interfaces
     --port = 8142  # onefite web service service port defaults to 8142
     --merge-site=<Str> # merge git site files with git main/dev files when updating
