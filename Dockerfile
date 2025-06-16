@@ -13,10 +13,10 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     raku \
     zsh \
-	libperl-dev \
-  	swig \
-   	gcc \
-   	dpkg-dev \
+    libperl-dev \
+    swig \
+    gcc \
+    dpkg-dev \
    	gfortran \
    	grace \
    	imagemagick \
@@ -25,11 +25,11 @@ RUN apt-get update && apt-get install -y \
    	libcgi-pm-perl \
    	zip \
    	pdftk \
-	jq \
+    jq \
    	hdf5-tools \
-	man-db \
-	tasksel \ 
-	&& apt-get clean
+    man-db \
+    tasksel \ 
+    && apt-get clean
 
 # Create user 'ofe' with password and sudo access
 RUN useradd -ms /bin/bash ofe && \
