@@ -7,23 +7,23 @@ our $SUDO = "sudo";
 our $DOCKER = False;
 
 multi MAIN (
- 	Bool :$dpkg = True, # to install required debian packages
-   	Bool :w(:$web-server) = True, # to run tasksel install web-server
+ 	Bool :$dpkg is copy = True, # to install required debian packages
+   	Bool :w(:$web-server) is copy = True, # to run tasksel install web-server
    	Str  :$cpu is copy, # [amd64|arm64| defaults to "uname -a" detection 
    	Bool :c(:$compile) = True, # to compile and install the OneFit engine core
-   	Bool :t(:$test) = True, # to run raku module tests
+   	Bool :t(:$test) is copy = True, # to run raku module tests
    	Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
    	Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
    	Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
    	Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick policy.xml
    	Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
    	Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
-   	Bool :d(:$systemd-daemon) = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
+   	Bool :d(:$systemd-daemon) is copy = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
    	Bool :$cernlib = False, # by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
    	Bool :$shell = False, # by default it NOT will install shellinabox service in port 8100
    	Bool :$git = True, # By default it runs git to pull the package for remote repository
 	Bool :wsl(:$docker) = False, # Flag for a Docker/WSL2 Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
-	Bool :$post-test = True; # Run post install tests
+	Bool :$post-test is copy = True; # Run post install tests
 	Bool :$man-page = True; # Install man page
    	Str  :$ip = '*',
    	Int  :$port = 8142,
