@@ -22,7 +22,9 @@ multi MAIN (
    	Bool :$cernlib = False, # by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
    	Bool :$shell = False, # by default it NOT will install shellinabox service in port 8100
    	Bool :$git = True, # By default it runs git to pull the package for remote repository
-	Bool :$docker = False, # Flag for a Docker Install
+	Bool :wsl(:$docker) = False, # Flag for a Docker/WSL2 Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
+	Bool :$post-test = True; # Run post install tests
+	Bool :$man-page = True; # Install man page
    	Str  :$ip = '*',
    	Int  :$port = 8142,
    	Int  :$shell-port = 8100,
@@ -49,7 +51,14 @@ multi MAIN (
    
    	$SUDO = "" unless $to-site;
 
-	$DOCKER = $docker;
+	if $docker {
+		$DOCKER = $docker;
+		$web-server = False;
+		$test = False;
+		$system-daemon = False;
+		$dpkg = False;
+		$post-test = False;
+	}
 
    	uninstall() if $Uninstall;
 
@@ -61,7 +70,7 @@ multi MAIN (
 
    	install-p6-modules($to-site, test => $test) if $p6-modules.Bool;
 
-   	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
+	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
    	compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv) if $compile;
 
@@ -78,9 +87,9 @@ multi MAIN (
 
    	add-show-ip-in-issue() if $to-site;
 
-   	run-post-install-tests(:daemon($systemd-daemon), port => $port) unless $DOCKER;
+   	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
 
-	install-manpage();
+	install-manpage() if $man-page;
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -91,6 +100,7 @@ Usage:
     ./INSTALL [-h|--help]
       ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs] \
                 [-w|--web-server] [-U|--Uninstall] [--to-site] [--bindir=<Str>] [--systemd-daemon] [-u|--to-user] \
+				[--wsl|docker] [--man-page] [--post-test]
     --dpkg         # to install required debian packages
     --web-server   # to run tasksel install web-server
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
@@ -108,7 +118,9 @@ Usage:
     --shell        # False by default it will NOT install shellinabox service
     --shell-port   # shellinabox service port (defaults to 8100)
     --git          # by default it runs git pull. Use --no-git to avoid git pull 
-    --docker       # when installing in a docker container 
+    --post-test    # Run post tests
+	--man-page 	   # Install onefite man page
+	--docker       # set options for a WSL2/Docker install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
     --ip = '*'     # creates the onefite.service for all IPv4 interfaces
     --port = 8142  # onefite web service service port defaults to 8142
     --merge-site=<Str> # merge git site files with git main/dev files when updating
