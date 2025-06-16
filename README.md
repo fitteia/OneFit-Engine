@@ -41,18 +41,21 @@ The copyright will be defined at the end of the devolopment process. For now the
 
  ** MacOS
 
-	```bash
+```bash
 	brew install calima docker
-	```
-	```bash
+```
+
+```bash
 	/opt/homebrew/opt/colima/bin/colima start --memory 4 --runtime docker  
-	```
-	```bash
+```
+
+```bash
 	docker build -t onefite .
-	```
-	````bash
+```
+
+````bash
 	docker run -e UID=$(id -u) -e GID=$(id -g) -p 8142:8142 -it --mount type=bind,source=/Users/$(id -nu)/Docker,target=/home/ofe/public_html  --name onefite onefite bash
-	```
+```
 
 ### Full features OneFit Engine Server
 
