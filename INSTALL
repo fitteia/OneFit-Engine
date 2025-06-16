@@ -463,7 +463,7 @@ EOT
 		else 	{
 		   	my $pid = shell("onefite service PID",:out).out.slurp(:close);
 			if $pid.so {
-				say "onefiteis runnid with PID: $pid";
+				say "onefite is running with PID: $pid";
 				my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
 	    		say $result;
 	    		$result = shell("cd /tmp && $result");
