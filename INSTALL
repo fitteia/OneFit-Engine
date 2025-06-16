@@ -55,7 +55,7 @@ multi MAIN (
 		$DOCKER = $docker;
 		$web-server = False;
 		$test = False;
-		$system-daemon = False;
+		$systemd-daemon = False;
 		$dpkg = False;
 		$post-test = False;
 	}
