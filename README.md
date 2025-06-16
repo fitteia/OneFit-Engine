@@ -40,20 +40,25 @@ The copyright will be defined at the end of the devolopment process. For now the
 
  ** MacOS
 
+	Install Colima and Docker with brew
 ```bash
 	brew install calima docker
 ```
-
+	Start Colima with 4GB or RAM (less will not work)
 ```bash
 	/opt/homebrew/opt/colima/bin/colima start --memory 4 --runtime docker  
 ```
-
+	Get the Dockerfile from https://github.com/fitteia/OneFit-Engine/blob/dev/Dockerfile and build the container
 ```bash
-	docker build -t onefite .
+	curl -O https://raw.githubusercontent.com/fitteia/OneFit-Engine/dev/Dockerfile && docker build -t onefite .
 ```
-
+	Run the onefite container
 ```bash
 	docker run -e UID=$(id -u) -e GID=$(id -g) -p 8142:8142 -it --mount type=bind,source=/Users/$(id -nu)/Docker,target=/home/ofe/public_html  --name onefite onefite bash
+```
+	In the container
+```bash
+	cd /home/ofe/public_html && onefite service start && onefite test
 ```
 
 ### Full features OneFit Engine Server
