@@ -37,8 +37,11 @@ The copyright will be defined at the end of the devolopment process. For now the
 ```
 	In debian shell
 ```bash
-	sudo apt-get update && sudo apt-get install jq zip pdftk
-
+	mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
+```
+```bash  
+	cd /Home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start && onefite test
+```
 
  ** MacOS
 
