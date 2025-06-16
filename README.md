@@ -35,7 +35,7 @@ Start debian
 ```powershell
 wsl -d debian
 ```
-	In debian shell
+In debian shell
 ```bash
 mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
 ```
