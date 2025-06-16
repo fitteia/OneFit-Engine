@@ -1,33 +1,4 @@
 
-# Install required packages
-sudo pt-get update && apt-get install -y \
-    sudo \
-    git \
-    curl \
-    shellinabox \
-    build-essential \
-    libreadline-dev \
-    libssl-dev \
-    raku \
-    zsh \
-    libperl-dev \
-    swig \
-    gcc \
-    dpkg-dev \
-   	gfortran \
-   	grace \
-   	imagemagick \
-   	texlive-font-utils \
-   	ghostscript \
-   	libcgi-pm-perl \
-   	zip \
-   	pdftk \
-    jq \
-   	hdf5-tools \
-    man-db \
-    tasksel \ 
-    && apt-get clean
-
 # Create target directories and clone the repo
 mkdir /home/ofe/public_html &&\
 	mkdir -p /home/ofe/.local && \
