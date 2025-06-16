@@ -459,10 +459,8 @@ EOT
 	    }
 	}
 	else {
-		if $service {
-	    	say "onefite service status unchanged: is running"
-		}
-		else {
+		if $service { say "onefite service status unchanged: is running" }
+		else 	{
 		   	my $pid = shell("onefite service PID",:out).out.slurp(:close);
 			if $pid.so {
 				say "onefiteis runnid with PID: $pid";
@@ -475,6 +473,7 @@ EOT
 	    		else { say "localhost web service error!"; }
 			}					
 			else { say "onefite is not running. Consider: 'sudo systemctl start onefite.service' first, or 'onefite service start'"; } 
+		}
 	}
 	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
 	</tmp/ofe-tmp>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
