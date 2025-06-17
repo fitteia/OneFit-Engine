@@ -17,7 +17,7 @@ multi MAIN (
    	Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
    	Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
    	Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
-   	Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick policy.xml
+   	Bool :g(:$enable-gs) is copy = True, # enable ghostscript in ImageMagick policy.xml
    	Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
    	Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
    	Bool :d(:$systemd-daemon) is copy = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
@@ -35,9 +35,8 @@ multi MAIN (
   	Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
    	Str  :m(:$merge-site)='', # if merge string then merge site branch (it it exits) into current branch
 	){
-   	my %cpus = ("x86_64"  => "amd64",
-	"aarch64" => "arm64"
-	);
+   	
+	my %cpus = ("x86_64"  => "amd64", "aarch64" => "arm64");
 
    	if $git {
 		shell "git stash";
