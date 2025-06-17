@@ -75,6 +75,8 @@ Start Colima with 4GB or RAM (less will not work)
 	In the Host: ssh user@192.168.64.11; http://192.168.64.11; http://192.168.64.11:8142
 
 
+## Installation
+
 ### Simple single user instalations
 
  ** Windows WSL2
@@ -106,7 +108,7 @@ In the container
 cd /home/ofe/public_html && onefite service start && onefite test
 ```
 
-## Installation
+## Detailed installation
 
 OneFit  Engine package is prepared for instalation in Debian
 
