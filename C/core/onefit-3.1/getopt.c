@@ -70,8 +70,6 @@ Cambridge, MA 02139, USA.  */
 #include <stdlib.h>
 #endif	/* GNU C library.  */
 
-#include <string.h>
-
 /* This version of `getopt' appears to the caller like standard Unix `getopt'
    but it behaves differently for the user, since it allows the user
    to intersperse the options with the other arguments.
@@ -283,7 +281,8 @@ exchange (argv)
 
 /* Initialize the internal data when the first call is made.  */
 
-static const char * _getopt_initialize (optstring)
+static const char *
+_getopt_initialize (optstring)
      const char *optstring;
 {
   /* Start processing options with ARGV-element 1 (since ARGV-element 0
@@ -370,7 +369,8 @@ static const char * _getopt_initialize (optstring)
    If LONG_ONLY is nonzero, '-' as well as '--' can introduce
    long-named options.  */
 
-int _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
+int
+_getopt_internal (argc, argv, optstring, longopts, longind, long_only)
      int argc;
      char *const *argv;
      const char *optstring;

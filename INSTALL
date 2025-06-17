@@ -6,8 +6,6 @@ our $SUDO = "sudo";
 
 our $DOCKER = False;
 
-our $OS = "Linux";
-
 multi MAIN (
  	Bool :$dpkg is copy = True, # to install required debian packages
    	Bool :w(:$web-server) is copy = True, # to run tasksel install web-server
@@ -17,7 +15,7 @@ multi MAIN (
    	Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
    	Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
    	Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
-   	Bool :g(:$enable-gs) is copy = True, # enable ghostscript in ImageMagick policy.xml
+   	Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick policy.xml
    	Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
    	Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
    	Bool :d(:$systemd-daemon) is copy = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
@@ -26,7 +24,6 @@ multi MAIN (
    	Bool :$git = True, # By default it runs git to pull the package for remote repository
 	Bool :$wsl = False, # Flag for a WSL2 Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Bool :$docker = False, # Flag for a Docker Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
-	Bool :$mac = False, # Flag for native mac installs
 	Bool :$post-test is copy = True; # Run post install tests
 	Bool :$man-page = True; # Install man page
    	Str  :$ip = '*',
@@ -44,7 +41,7 @@ multi MAIN (
 		shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
    	}
    
-  	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless any($cpu.so,$mac);
+  	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless so $cpu;
 	
    	my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
    	my $arch= shell("arch",:out).out.lines(:close).head;
@@ -69,19 +66,6 @@ multi MAIN (
 		$systemd-daemon = False;
 		$post-test = False;
 	}
-	if $mac {
-		$DOCKER = $docker;
-		$web-server = False;
-		$test = False;
-		$systemd-daemon = False;
-		$post-test = False;
-		$cpu = "arm64";
-		$OS = "MacOSX";
-		$enable-gs = False;
-		$dpkg = False;
-	}
-
-
 
    	uninstall() if $Uninstall;
 
@@ -95,7 +79,7 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-   	compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv, os => $OS ) if $compile;
+   	compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv ) if $compile;
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
@@ -123,7 +107,7 @@ Usage:
     ./INSTALL [-h|--help]
       ./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs] \
                 [-w|--web-server] [-U|--Uninstall] [--to-site] [--bindir=<Str>] [--systemd-daemon] [-u|--to-user] \
-				[--wsl] [--docker] [--mac] [--man-page] [--post-test]
+				[--wsl] [--docker] [--man-page] [--post-test]
     --dpkg         # to install required debian packages
     --web-server   # to run tasksel install web-server
     --cpu          # cpu [amd64|arm64] defaults to automaic detection based on "uname -a"
@@ -145,7 +129,6 @@ Usage:
     --man-page 	   # Install onefite man page
     --docker       # set options for a Docker install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
     --wsl          # set options for a WSL2 install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
-    --mac          # set options for a mac install ( --/test --/post-test --/web-server --/system-daemon --/dpkg --cpu=arm64 )
     --ip = '*'     # creates the onefite.service for all IPv4 interfaces
     --port = 8142  # onefite web service service port defaults to 8142
     --merge-site=<Str> # merge git site files with git main/dev files when updating
@@ -266,13 +249,13 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root,:$arch,:$bindir,:$pv, :$os) {
+sub compile (:$root,:$arch,:$bindir,:$pv) {
    	say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    	shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
-   	shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && make { $os eq 'MacOSX'  ?? 'CC=gfortran' !! '' } install && make clean";
+   	shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && make install && make clean";
    	say "install source in $*CWD and binaries with perl version: $pv";
-  	shell "make  { $os.so ?? 'OS=' ~ $os !! 'OS=' ~ $OS } MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
+  	shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
    	shell "find . -name .precomp -prune -o -name .git -prune -o -name .gitignore -prune -o -name .prove -prune -o -name .travis.yml -prune -o -name Makefile -prune -o -name \"*~\" -prune -o -name bugs -prune -o -type f -print | sort | cut -c 3- > MANIFEST";
 }
 
