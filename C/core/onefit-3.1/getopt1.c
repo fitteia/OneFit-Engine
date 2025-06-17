@@ -68,8 +68,7 @@ char *getenv ();
 #define NULL 0
 #endif
 
-int
-getopt_long (argc, argv, options, long_options, opt_index)
+int getopt_long (argc, argv, options, long_options, opt_index)
      int argc;
      char *const *argv;
      const char *options;
