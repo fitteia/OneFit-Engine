@@ -283,8 +283,7 @@ exchange (argv)
 
 /* Initialize the internal data when the first call is made.  */
 
-static const char *
-_getopt_initialize (optstring)
+static const char * _getopt_initialize (optstring)
      const char *optstring;
 {
   /* Start processing options with ARGV-element 1 (since ARGV-element 0
@@ -371,8 +370,7 @@ _getopt_initialize (optstring)
    If LONG_ONLY is nonzero, '-' as well as '--' can introduce
    long-named options.  */
 
-int
-_getopt_internal (argc, argv, optstring, longopts, longind, long_only)
+int _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
      int argc;
      char *const *argv;
      const char *optstring;
