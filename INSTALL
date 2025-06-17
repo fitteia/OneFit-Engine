@@ -78,6 +78,7 @@ multi MAIN (
 		$post-test = False;
 		$cpu = "arm64";
 		$OS = "MacOSX";
+		$enable-gs = False;
 	}
 
 
