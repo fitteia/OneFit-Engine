@@ -75,6 +75,7 @@ int getopt_long (argc, argv, options, long_options, opt_index)
      const struct option *long_options;
      int *opt_index;
 {
+  int _getopt_internal();
   return _getopt_internal (argc, argv, options, long_options, opt_index, 0);
 }
 
@@ -90,6 +91,7 @@ int getopt_long_only (argc, argv, options, long_options, opt_index)
      const struct option *long_options;
      int *opt_index;
 {
+  int _getopt_internal();
   return _getopt_internal (argc, argv, options, long_options, opt_index, 1);
 }
 
