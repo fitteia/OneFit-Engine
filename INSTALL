@@ -44,7 +44,7 @@ multi MAIN (
 		shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
    	}
    
-  	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless so $cpu;
+  	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless any($cpu.so,$mac);
 	
    	my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
    	my $arch= shell("arch",:out).out.lines(:close).head;
@@ -78,6 +78,7 @@ multi MAIN (
 		$cpu = "arm64";
 		$OS = "MacOSX";
 		$enable-gs = False;
+		$dpkg = False;
 	}
 
 
