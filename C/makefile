@@ -1,5 +1,6 @@
 ROOT=/home/lfx/fitteia
 PREFIX=
+OS=Linux
 
 install:
 	make ROOT=$(ROOT) -C core/onefit-3.1 install-fitteia
