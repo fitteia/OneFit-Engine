@@ -203,7 +203,7 @@ double sqgausn(Function *X, int p, int n)
 	int j;
 	double a,b,s,*x,*w;
 	double	r_plow(Function *x , int a),r_phigh(Function *x, int a),*dvector();
-	void	w_pval(Function *a, int b, double b),gauleg(),free_dvector();
+	void	w_pval(Function *a, int b, double c),gauleg(),free_dvector();
 
 	a = r_plow(X,p);
 	b = r_phigh(X,p);
