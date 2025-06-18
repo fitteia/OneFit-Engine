@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "struct.h"
 #include <string.h>
-#include "globals.h"
 
 #define EPS1	3.0e-11
 #define EPS	8.0e-5
@@ -12,6 +11,9 @@
 #define	K	5
 #define SIGN(a) ((a) > 0.0 ? 1 : -1)
 
+extern void nrerror(char a[]);
+extern double *dvector(int nl, int nh)
+extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy)
 	
 /*****************************************************************************/
 /*                              ODF_UTIL.C                                   */
