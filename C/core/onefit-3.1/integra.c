@@ -13,8 +13,8 @@
 
 
 
-extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy)
-extern void nrerror(char error_text[])
+extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
+extern void nrerror(char error_text[]);
 
 	
 /*****************************************************************************/
