@@ -99,10 +99,10 @@ extern char ***Func_args;
 extern int *Func_nargs;
 extern FILE *pointers_file;
 
-extern void nrerror();
+extern void nrerror(char a[]);
 extern void gfitn_error();
 extern int *ivector();
-extern double *dvector();
+extern double *dvector(int nl, int nh)
 extern double **dmatrix();
 extern char **cmatrix();
 extern char *cvector();
