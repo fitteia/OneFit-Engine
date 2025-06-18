@@ -3,7 +3,7 @@
 
 #define pi 3.1415927  
 
-extern lor(double *t, double w);
+extern lor(double t, double w);
 
 double BPP(double f,double a,double tauc)
 {
