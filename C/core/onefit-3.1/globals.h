@@ -122,7 +122,7 @@ extern double   atanh();
 extern double   Iden();
 extern double   Inv();
 extern double   logT1();
-extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy)
+extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
 extern void dsplint();
 extern void dspline();
 extern void new_line();
