@@ -14,7 +14,8 @@
 extern void nrerror(char a[]);
 extern double *dvector(int nl, int nh);
 extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
-	
+extern void free_dvector(double *v, int nl, int nh);
+
 /*****************************************************************************/
 /*                              ODF_UTIL.C                                   */
 /*****************************************************************************/
@@ -176,34 +177,6 @@ double sqgaus(Function *X, int p)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double sqgausn(Function *X, int p, int n)
-{
-	int j;
-	double a,b,s,*x,*w;
-	double	r_plow(Function *x , int a),r_phigh(Function *x, int a);
-	void	w_pval(Function *a, int b, double c),gauleg(),free_dvector();
-
-	a = r_plow(X,p);
-	b = r_phigh(X,p);
-
-	x = dvector(0,n);
-	w = dvector(0,n);
-
-	gauleg(a,b,x,w,n);
-
-	s=0;
-	for (j=1;j<=n;j++) {
-		w_pval(X,p,x[j]);
-		s += w[j]*FUNC(X);
-	}
-	free_dvector(x,0,n);
-	free_dvector(w,0,n);
-
-	return s;
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
 void gauleg(double x1, double x2, double x[], double w[], int n)
 {
 	int m,j,i;
@@ -236,13 +209,39 @@ void gauleg(double x1, double x2, double x[], double w[], int n)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
+double sqgausn(Function *X, int p, int n)
+{
+	int j;
+	double a,b,s,*x,*w;
+
+	a = r_plow(X,p);
+	b = r_phigh(X,p);
+
+	x = dvector(0,n);
+	w = dvector(0,n);
+
+	gauleg(a,b,x,w,n);
+
+	s=0;
+	for (j=1;j<=n;j++) {
+		w_pval(X,p,x[j]);
+		s += w[j]*FUNC(X);
+	}
+	free_dvector(x,0,n);
+	free_dvector(w,0,n);
+
+	return s;
+}
+
+/*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
 double	szero(Function *X, int n, double eps)
 {
 	int	a,b,c,p;
 	double 	x,*z,*f,*xx,x1,x2;
 	double	g,_T_,N;
 	double	bis(),hyp();
-	void	free_dvector();
 
 	z = dvector(-1,1);
 	f = dvector(-1,1);

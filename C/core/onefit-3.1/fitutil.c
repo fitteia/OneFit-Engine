@@ -64,8 +64,7 @@ double *dvector(int nl, int nh)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-char *cvector(nl,nh)
-int nl,nh;
+char *cvector(int nl, int nh)
 {
    char *v;
 
@@ -77,8 +76,7 @@ int nl,nh;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double **dmatrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+double **dmatrix(int nrl, int nrh, int ncl, int nch)
 {
    int i;
    double **m;
@@ -98,8 +96,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-char **cmatrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+char **cmatrix(int nrl, int nrh, int ncl, int nch)
 {
    int i;
    char **m;
@@ -119,8 +116,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-float *vector(nl,nh)
-int nl,nh;
+float *vector(int nl, int nh)
 {
    float *v;
 
@@ -132,8 +128,7 @@ int nl,nh;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-float **matrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+float **matrix(int nrl, int nrh, int ncl, int nch)
 {
    int i;
    float **m;
@@ -153,9 +148,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_matrix(m,nrl,nrh,ncl,nch)
-float **m;
-int nrl,nrh,ncl,nch;
+void free_matrix(float **m, int nrl, int nrh, int ncl, int nch)
 {
    int i;
 
@@ -165,9 +158,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_cmatrix(m,nrl,nrh,ncl,nch)
-char **m;
-int nrl,nrh,ncl,nch;
+void free_cmatrix(char **m, int nrl, int nrh, int ncl, int nch)
 {
    int i;
 
@@ -177,36 +168,28 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_vector(v,nl,nh)
-float *v;
-int nl,nh;
+void free_vector(float *v, int nl, int nh)
 {
    free((char*) (v+nl));
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_dvector(v,nl,nh)
-double *v;
-int nl,nh;
+void free_dvector(double *v, int nl, int nh)
 {
    free((char*) (v+nl));
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_cvector(v,nl,nh)
-char *v;
-int nl,nh;
+void free_cvector(char *v, int nl, int nh)
 {
    free((char*) (v+nl));
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_dmatrix(m,nrl,nrh,ncl,nch)
-double **m;
-int nrl,nrh,ncl,nch;
+void free_dmatrix(double **m, int nrl, int nrh, int ncl, int nch)
 {
    int i;
 
@@ -217,8 +200,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_ivector(v,nl,nh)
-int *v,nl,nh;
+void free_ivector(int *v, int nl, int nh)
 {
    free((char*) (v+nl));
 }
