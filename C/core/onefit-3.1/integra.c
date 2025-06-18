@@ -138,7 +138,7 @@ ior points.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	sqromo(Function *X,double (*choose)(), int p)
+double	sqromo(Function *X,double (*choose)(Function *a, int b, int c), int p)
 /*
 Romberg integration on an open interval. Returns the integral of the function 
 func from a to b, using any specified integrating routine choose and Romberg
