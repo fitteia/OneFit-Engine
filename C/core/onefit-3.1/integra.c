@@ -12,8 +12,8 @@
 #define SIGN(a) ((a) > 0.0 ? 1 : -1)
 
 extern void nrerror(char a[]);
-extern double *dvector(int nl, int nh)
-extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy)
+extern double *dvector(int nl, int nh);
+extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
 	
 /*****************************************************************************/
 /*                              ODF_UTIL.C                                   */
