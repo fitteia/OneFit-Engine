@@ -325,9 +325,7 @@ double   x;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void dpolint(xa,ya,n,x,y,dy)
-double   xa[],ya[],x,*y,*dy;
-int   n;
+void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy)
 /*
 Given arrays xa[1..n] and ya[1..n], and given a value x, this routine returns
 an error estimate dy. If P(x) is the polinomial of degree n-1 such that P(xa)=
