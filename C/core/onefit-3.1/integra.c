@@ -98,7 +98,6 @@ ncial order) will improve the accuracy by adding (2/3)x3^(n-1) additional inter
 ior points.
 */
 {
-	double	r_plow(),r_phigh();
 	double 	a,b;
 	double	tnm,sum,del,ddel;
 	double	*s,*x,*it;
@@ -139,10 +138,7 @@ ior points.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	sqromo(X,choose,p)
-double	 (*choose)();
-int	 p;
-Function *X;
+double	sqromo(Function *X,double (*choose)(), int p)
 /*
 Romberg integration on an open interval. Returns the integral of the function 
 func from a to b, using any specified integrating routine choose and Romberg
@@ -174,9 +170,7 @@ choices for choose.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double sqgaus(X,p)
-Function *X;
-int	  p;
+double sqgaus(Function *X, int p)
 {
 	int j;
 	double a,b,xr,xm,dx,s,s1,s2;
@@ -184,8 +178,6 @@ int	  p;
 		0.679409568299024,0.865063366688985,0.973906528517172};
 	static double w[]={0.0,0.295524224714753,0.269266719309996,
 		0.219086362515982,0.149451349150581,0.066671344308688};
-	double	r_plow(),r_phigh();
-	void	w_pval();
 
 	a = r_plow(X,p);
 	b = r_phigh(X,p);
@@ -206,13 +198,11 @@ int	  p;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double sqgausn(X,p,n)
-Function *X;
-int	  p,n;
+double sqgausn(Function *X, int p, int n)
 {
 	int j;
 	double a,b,s,*x,*w;
-	double	r_plow(),r_phigh(),*dvector();
+	double	r_plow(Function *x , int a),r_phigh(Function *x, int a),*dvector();
 	void	w_pval(),gauleg(),free_dvector();
 
 	a = r_plow(X,p);
@@ -236,9 +226,7 @@ int	  p,n;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void gauleg(x1,x2,x,w,n)
-double x1,x2,x[],w[];
-int n;
+void gauleg(double x1, double x2, double x[], double w[], int n)
 {
 	int m,j,i;
 	double z1,z,xm,xl,pp,p3,p2,p1;
@@ -270,10 +258,7 @@ int n;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	szero(X,n,eps)
-int	 n;
-double	 eps;
-Function *X;
+double	szero(Function *X, int n, double eps)
 {
 	int	a,b,c,p;
 	double 	x,*z,*f,*xx,x1,x2;
