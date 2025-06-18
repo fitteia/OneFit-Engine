@@ -31,7 +31,7 @@ typedef	struct	  {
 	int		status; /* 0 - not choosed */
 				/* 1 - choosed     */
 	int		n_par;
-	double		(*f_ptr)(Function *a);                 /* function pointer */
+	double		(*f_ptr)(struct *a);                 /* function pointer */
 	void            *P;
 	Parameter	par[20];
 } Function;
