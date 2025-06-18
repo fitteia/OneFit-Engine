@@ -11,6 +11,12 @@
 #define	K	5
 #define SIGN(a) ((a) > 0.0 ? 1 : -1)
 
+
+
+extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy)
+extern void nrerror(char error_text[])
+
+	
 /*****************************************************************************/
 /*                              ODF_UTIL.C                                   */
 /*****************************************************************************/
@@ -126,7 +132,6 @@ choices for choose.
 {
 	int	 j;
 	double   ss,dss,h[JMAXP+1],s[JMAXP+1];
-	void	 nrerror();
 
 	h[1]=1.0;
 	for (j=1;j<=JMAX;j++) {
@@ -239,7 +244,7 @@ double	szero(Function *X, int n, double eps)
 	double 	x,*z,*f,*xx,x1,x2;
 	double	g,_T_,N;
 	double	*dvector(),bis(),hyp();
-	void	free_dvector(),nrerror();
+	void	free_dvector();
 
 	z = dvector(-1,1);
 	f = dvector(-1,1);
