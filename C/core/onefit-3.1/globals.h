@@ -102,19 +102,19 @@ extern FILE *pointers_file;
 extern void nrerror(char a[]);
 extern void gfitn_error();
 extern int *ivector();
-extern double *dvector(int nl, int nh)
-extern double **dmatrix(int nrl, int nrh, int ncl, int nch)
-extern char **cmatrix(int nrl, int nrh, int ncl, int nch)
-extern char *cvector(int nl, int nh)
-extern float *vector(int nl, int nh)
-extern float **matrix(int nrl, int nrh, int ncl, int nch)
-extern void free_matrix(float **m, int nrl, int nrh, int ncl, int nch)
-extern void free_cmatrix(char **m, int nrl, int nrh, int ncl, int nch)
-extern void free_vector(float *v, int nl, int nh)
-extern void free_dvector(double *v, int nl, int nh)
-extern void free_cvector(char *v, int nl, int nh)
-extern void free_dmatrix(double **m, int nrl, int nrh, int ncl, int nch)
-extern void free_ivector(int *v, int nl, int nh)
+extern double *dvector(int nl, int nh);
+extern double **dmatrix(int nrl, int nrh, int ncl, int nch);
+extern char **cmatrix(int nrl, int nrh, int ncl, int nch);
+extern char *cvector(int nl, int nh);
+extern float *vector(int nl, int nh);
+extern float **matrix(int nrl, int nrh, int ncl, int nch);
+extern void free_matrix(float **m, int nrl, int nrh, int ncl, int nch);
+extern void free_cmatrix(char **m, int nrl, int nrh, int ncl, int nch);
+extern void free_vector(float *v, int nl, int nh);
+extern void free_dvector(double *v, int nl, int nh);
+extern void free_cvector(char *v, int nl, int nh);
+extern void free_dmatrix(double **m, int nrl, int nrh, int ncl, int nch);
+extern void free_ivector(int *v, int nl, int nh);
 extern FILE   *openf();
 extern int RRemove();
 extern int Rename();
