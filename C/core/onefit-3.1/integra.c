@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "struct.h"
 #include <string.h>
+#include "globals.h"
 
 #define EPS1	3.0e-11
 #define EPS	8.0e-5
@@ -10,11 +11,6 @@
 #define	JMAXP	JMAX+1
 #define	K	5
 #define SIGN(a) ((a) > 0.0 ? 1 : -1)
-
-
-
-extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
-extern void nrerror(char error_text[]);
 
 	
 /*****************************************************************************/
@@ -182,7 +178,7 @@ double sqgausn(Function *X, int p, int n)
 {
 	int j;
 	double a,b,s,*x,*w;
-	double	r_plow(Function *x , int a),r_phigh(Function *x, int a),*dvector();
+	double	r_plow(Function *x , int a),r_phigh(Function *x, int a);
 	void	w_pval(Function *a, int b, double c),gauleg(),free_dvector();
 
 	a = r_plow(X,p);
@@ -243,7 +239,7 @@ double	szero(Function *X, int n, double eps)
 	int	a,b,c,p;
 	double 	x,*z,*f,*xx,x1,x2;
 	double	g,_T_,N;
-	double	*dvector(),bis(),hyp();
+	double	bis(),hyp();
 	void	free_dvector();
 
 	z = dvector(-1,1);
