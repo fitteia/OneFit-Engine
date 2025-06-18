@@ -1,7 +1,7 @@
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-#define	FUNC(x)		((*(*x).f_ptr)(x))
+#define	FUNC(x)		(((x)->f_ptr)(x))
 #define	Func(x)		((*func)(x))
 #define	Funk(x)		((*func)(1.0/(x))/((x)*(x)))
 
@@ -28,12 +28,12 @@ typedef	struct {
 /******************************************************************************/
 struct Function;
 
-typedef	struct	  {
+typedef	struct Function {
 	char		name[20];
 	int		status; /* 0 - not choosed */
 				/* 1 - choosed     */
 	int		n_par;
-	double		(*f_ptr)(Function *x);                 /* function pointer */
+	double		(*f_ptr)(struct Function *x);                 /* function pointer */
 	void            *P;
 	Parameter	par[20];
 } Function;
