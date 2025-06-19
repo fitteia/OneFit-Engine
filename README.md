@@ -19,51 +19,27 @@ The copyright will be defined at the end of the devolopment process. For now the
 
  ** Windows WSL2
 	
-	Install WSL
+Install WSL
 ```powershell
-	wsl --install
+wsl --install
 ```
-	Ste default to WSL2
+Set default to WSL2
 ```powershell
-	wsl --set-default-version 2
+wsl --set-default-version 2
 ```
-	Install debian
+Install debian
 ```powershell
-	wsl --install -d debian
+wsl --install -d debian
 ```
-	Start debian
-```powershell
-	wsl -d debian
-```
-	In debian shell
-```bash
-	mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
-```
-```bash  
-	cd /Home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start && onefite test
-```
-
  ** MacOS
 
-	Install Colima and Docker with brew
+Install Colima and Docker with brew
 ```bash
-	brew install calima docker
+brew install calima docker
 ```
-	Start Colima with 4GB or RAM (less will not work)
+Start Colima with 4GB or RAM (less will not work)
 ```bash
-	/opt/homebrew/opt/colima/bin/colima start --memory 4 --runtime docker  
-```
-	Get the Dockerfile from https://github.com/fitteia/OneFit-Engine/blob/dev/Dockerfile and build the container
-```bash
-	curl -O https://raw.githubusercontent.com/fitteia/OneFit-Engine/dev/Dockerfile && docker build -t onefite .
-```
-	Run the onefite container
-```bash
-	docker run -e UID=$(id -u) -e GID=$(id -g) -p 8142:8142 -it --mount type=bind,source=/Users/$(id -nu)/Docker,target=/home/ofe/public_html  --name onefite onefite bash
-```
-	In the container
-```bash
-	cd /home/ofe/public_html && onefite service start && onefite test
+/opt/homebrew/opt/colima/bin/colima start --memory 4 --runtime docker  
 ```
 
 ### Full features OneFit Engine Server
@@ -100,6 +76,39 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 
 ## Installation
+
+### Simple single user instalations
+
+ ** Windows WSL2
+	
+Start debian
+```powershell
+wsl -d debian
+```
+In debian shell
+```bash
+mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
+```
+```bash  
+cd /Home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start && onefite test
+```
+
+ ** MacOS
+
+Get the Dockerfile from https://github.com/fitteia/OneFit-Engine/blob/dev/Dockerfile and build the container
+```bash
+curl -O https://raw.githubusercontent.com/fitteia/OneFit-Engine/dev/Dockerfile && docker build -t onefite .
+```
+Run the onefite container
+```bash
+docker run -e UID=$(id -u) -e GID=$(id -g) -p 8142:8142 -it --mount type=bind,source=/Users/$(id -nu)/Docker,target=/home/ofe/public_html  --name onefite onefite bash
+```
+In the container
+```bash
+cd /home/ofe/public_html && onefite service start && onefite test
+```
+
+## Detailed installation
 
 OneFit  Engine package is prepared for instalation in Debian
 
