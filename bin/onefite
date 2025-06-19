@@ -164,12 +164,12 @@ multi MAIN ('upgrade',
       Int  :$shell-port = 8100,
       Str  :$ip = '*',
       Int  :p(:$port) = 8142,
-      Str  :$test = '--/test',
+      Bool :$test = False,
       Str  :m(:$merge-site) = '',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { "--shell --shell-port=$shell-port" if $shell }";
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { "--shell --shell-port=$shell-port" if $shell }";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
@@ -838,6 +838,13 @@ multi MAIN ('test',
     run-post-install-tests(:verbose($v));
     exit;
 }
+
+multi MAIN (Bool :v(:$version))
+{
+    my %meta = from-json( "{ ::('OFE-PATH') }/META.json".IO.slurp );	
+    say %meta<version>;
+}
+
 
 sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
     my %e = OneFit::Engine::Grammars::Function.parse-me($function);
