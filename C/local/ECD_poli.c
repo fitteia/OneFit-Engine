@@ -12,8 +12,6 @@
 int	flag=0;  /* flag=0 primeira vez, flag!=0 vezes seguintes */
 		 /* flag!=0 nao carrega tabela			 */
 
-extern FILE   *openf(char fname[],char modei[]);
-extern void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y);
 
 double	J1tab[TABSIZE_R][TABSIZE_fr];
 double	J1drv2tab[TABSIZE_R][TABSIZE_fr];
