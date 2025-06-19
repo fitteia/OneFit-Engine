@@ -25,7 +25,7 @@ use JSON::Fast;
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 multi MAIN (Bool :$man!) {
-	my $txt = pod2text($=pod) ~ "\n" ~ MAIN("-h");
+	my $txt = pod2text($=pod) ~ "\n" ~ MAIN(:v);
 	say $txt;
 	$txt
 }
