@@ -845,7 +845,7 @@ multi MAIN (Bool :v(:$version))
 {
     my %meta = from-json( "{ ::('OFE-PATH') }/META6.json".IO.slurp );	
     my $txt = "OneFit-Engine version: " ~ %meta<version>;
-	my $txt ~= shell("zef locate OneFit-Engine",:out).out.slurp;
+	$txt ~= shell("zef locate OneFit-Engine",:out).out.slurp;
 	say $txt;
 	return $txt
 }
