@@ -37,6 +37,7 @@ double _ellipticf_(Function *X)
 double EllipticF(double x, double K, double NP) 
 {
     Function X;
+	double af;
 
     clear_struct(&X,2);
     w_f_ptr(&X,_ellipticf_);
