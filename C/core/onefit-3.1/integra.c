@@ -11,118 +11,42 @@
 #define	K	5
 #define SIGN(a) ((a) > 0.0 ? 1 : -1)
 
+extern void nrerror(char a[]);
+extern double *dvector(int nl, int nh);
+extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
+extern void free_dvector(double *v, int nl, int nh);
+
 /*****************************************************************************/
 /*                              ODF_UTIL.C                                   */
 /*****************************************************************************/
-int	r_n_par(x)
-Function	*x;
+double	r_pval(Function	*x, int n) { return( (*x).par[n].val); }
+
+double	r_plow(Function *x, int n) { return( (*x).par[n].low_v); }
+
+int	r_n_par(Function *x) { return( (*x).n_par ); }
+
+void	wsval(Function *x)
 {
-	return( (*x).n_par );
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-void	wsval(X)
-Function *X;
-{
-	double	r_pval();
-	int	r_n_par();
 	int	i;
 
-	for(i=0; i<r_n_par(X); i++) printf("p[%d]=%g\n",i,r_pval(X,i));
+	for(i=0; i<r_n_par(x); i++) printf("p[%d]=%g\n",i,r_pval(x,i));
 }
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-void	w_f_ptr(x,f)
-double		(*f)();
-Function	*x;
-{
-	(*x).f_ptr = f;
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-double	r_plow(x,n)
-int		n;
-Function	*x;
-{
-	return( (*x).par[n].low_v);
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-void	w_plow(x,n,lv)
-int		n;
-double		lv;
-Function	*x;
-{
-	(*x).par[n].low_v = lv;
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-double	r_phigh(x,n)
-int		n;
-Function	*x;
-{
-	return( (*x).par[n].high_v);
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-void	w_phigh(x,n,hv)
-int		n;
-double		hv;
-Function	*x;
-{
-	(*x).par[n].high_v = hv;
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-double	r_pstep(x,n)
-int		n;
-Function	*x;
-{
-	return( (*x).par[n].step_v);
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-void	w_pstep(x,n,sv)
-int		n;
-double		sv;
-Function	*x;
-{
-	(*x).par[n].step_v = sv;
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-double	r_pval(x,n)
-int		n;
-Function	*x;
-{
-	return( (*x).par[n].val);
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-void	w_pval(x,n,v)
-int		n;
-double		v;
-Function	*x;
-{
-	(*x).par[n].val = v;
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-void	clear_struct(f_struct,n_par)
 
-Function	*f_struct;
-int	n_par;
+void	w_f_ptr(Function *x, double (*f)(Function *x)) { (*x).f_ptr = f; }
+
+void	w_plow(Function	*x, int n, double lv) { (*x).par[n].low_v = lv; }
+
+double	r_phigh(Function *x, int n) { return( (*x).par[n].high_v); }
+
+void	w_phigh(Function *x, int n, double hv) { (*x).par[n].high_v = hv; }
+
+double	r_pstep(Function *x, int n) { return( (*x).par[n].step_v); }
+
+void	w_pstep(Function *x, int n, double sv) { (*x).par[n].step_v = sv; }
+
+void	w_pval(Function *x, int n, double v) { (*x).par[n].val = v; }
+
+void	clear_struct(Function *f_struct, int n_par)
 {
 	int	i;
 	
@@ -140,16 +64,11 @@ int	n_par;
 			(*f_struct).par[i].val  	=0.0;
 			(*f_struct).par[i].min_v	=0.0;
 	}
-
-
-
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double smidpnt(X,p,n)
-int	  p,n;
-Function *X;
+double smidpnt(Function *X, int p, int n)
 /*
 This routine computes the n'th stage of refinement of an extended midpoint rule
 X is input as a pointer to the structure Function to integrated between limits
@@ -159,7 +78,6 @@ ncial order) will improve the accuracy by adding (2/3)x3^(n-1) additional inter
 ior points.
 */
 {
-	double	r_plow(),r_phigh();
 	double 	a,b;
 	double	tnm,sum,del,ddel;
 	double	*s,*x,*it;
@@ -200,10 +118,7 @@ ior points.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	sqromo(X,choose,p)
-double	 (*choose)();
-int	 p;
-Function *X;
+double	sqromo(Function *X,double (*choose)(Function *a, int b, int c), int p)
 /*
 Romberg integration on an open interval. Returns the integral of the function 
 func from a to b, using any specified integrating routine choose and Romberg
@@ -216,7 +131,6 @@ choices for choose.
 {
 	int	 j;
 	double   ss,dss,h[JMAXP+1],s[JMAXP+1];
-	void	 dpolint(),nrerror();
 
 	h[1]=1.0;
 	for (j=1;j<=JMAX;j++) {
@@ -235,9 +149,7 @@ choices for choose.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double sqgaus(X,p)
-Function *X;
-int	  p;
+double sqgaus(Function *X, int p)
 {
 	int j;
 	double a,b,xr,xm,dx,s,s1,s2;
@@ -245,8 +157,6 @@ int	  p;
 		0.679409568299024,0.865063366688985,0.973906528517172};
 	static double w[]={0.0,0.295524224714753,0.269266719309996,
 		0.219086362515982,0.149451349150581,0.066671344308688};
-	double	r_plow(),r_phigh();
-	void	w_pval();
 
 	a = r_plow(X,p);
 	b = r_phigh(X,p);
@@ -267,39 +177,7 @@ int	  p;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double sqgausn(X,p,n)
-Function *X;
-int	  p,n;
-{
-	int j;
-	double a,b,s,*x,*w;
-	double	r_plow(),r_phigh(),*dvector();
-	void	w_pval(),gauleg(),free_dvector();
-
-	a = r_plow(X,p);
-	b = r_phigh(X,p);
-
-	x = dvector(0,n);
-	w = dvector(0,n);
-
-	gauleg(a,b,x,w,n);
-
-	s=0;
-	for (j=1;j<=n;j++) {
-		w_pval(X,p,x[j]);
-		s += w[j]*FUNC(X);
-	}
-	free_dvector(x,0,n);
-	free_dvector(w,0,n);
-
-	return s;
-}
-/*****************************************************************************/
-/*                                                                           */
-/*****************************************************************************/
-void gauleg(x1,x2,x,w,n)
-double x1,x2,x[],w[];
-int n;
+void gauleg(double x1, double x2, double x[], double w[], int n)
 {
 	int m,j,i;
 	double z1,z,xm,xl,pp,p3,p2,p1;
@@ -331,16 +209,39 @@ int n;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	szero(X,n,eps)
-int	 n;
-double	 eps;
-Function *X;
+double sqgausn(Function *X, int p, int n)
+{
+	int j;
+	double a,b,s,*x,*w;
+
+	a = r_plow(X,p);
+	b = r_phigh(X,p);
+
+	x = dvector(0,n);
+	w = dvector(0,n);
+
+	gauleg(a,b,x,w,n);
+
+	s=0;
+	for (j=1;j<=n;j++) {
+		w_pval(X,p,x[j]);
+		s += w[j]*FUNC(X);
+	}
+	free_dvector(x,0,n);
+	free_dvector(w,0,n);
+
+	return s;
+}
+
+/*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
+double	szero(Function *X, int n, double eps)
 {
 	int	a,b,c,p;
 	double 	x,*z,*f,*xx,x1,x2;
 	double	g,_T_,N;
-	double	*dvector(),bis(),hyp();
-	void	free_dvector(),nrerror();
+	double	bis(),hyp();
 
 	z = dvector(-1,1);
 	f = dvector(-1,1);

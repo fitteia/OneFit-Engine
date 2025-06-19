@@ -8,28 +8,14 @@
 #define	C	0.569504e-12
 #define LIM	3.0e-11
 
-
-double CompElliptic1(double K, double NP) 
-{
-  double _elliptic1_(),GaussLegendreInt(),af;
-    void w_f_ptr(),clear_struct();
-    Function X;
-
-    clear_struct(&X,2);
-    w_f_ptr(&X,_elliptic1_);
-    X.par[0].low_v  = 0.0;
-    X.par[0].high_v  = (pi/2.0);
-    X.par[1].val  = K;
-
-    af = GaussLegendreInt(&X,0,(int) NP);
-
-    //        printf("%lf\n",af);
-    return af;
-}
+extern double r_pval(Function *x, int n); 
+extern void	w_f_ptr(Function *x, double (*f)(Function *x));
+extern void	clear_struct(Function *f_struct, int n_par);
+extern double GaussLegendreInt(Function *X,int p,int n);
 
 double _elliptic1_(Function *X)
 {
-  double r_pval(),p1,p2;
+  double p1,p2;
 
    p1 = r_pval(X,0);
    p2 = r_pval(X,1);
@@ -46,3 +32,22 @@ double _elliptic1_(Function *X)
 
     }
 }
+
+double CompElliptic1(double K, double NP) 
+{
+  	double af;
+    Function X;
+
+    clear_struct(&X,2);
+    w_f_ptr(&X,_elliptic1_);
+    X.par[0].low_v  = 0.0;
+    X.par[0].high_v  = (pi/2.0);
+    X.par[1].val  = K;
+
+    af = GaussLegendreInt(&X,0,(int) NP);
+
+    //        printf("%lf\n",af);
+    return af;
+}
+
+

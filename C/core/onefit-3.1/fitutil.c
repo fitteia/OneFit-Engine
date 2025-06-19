@@ -13,8 +13,7 @@
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void nrerror(error_text)
-char error_text[];
+void nrerror(char error_text[])
 {
    void exit();
 
@@ -26,8 +25,7 @@ char error_text[];
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void gfitn_error(error_text,option_msg)
-char error_text[],option_msg[];
+void gfitn_error(char error_text[],char option_msg[])
 {
    void exit();
 
@@ -40,8 +38,7 @@ char error_text[],option_msg[];
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-int *ivector(nl,nh)
-int nl,nh;
+int *ivector(int nl, int nh)
 {
    int *v;
 
@@ -53,8 +50,7 @@ int nl,nh;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double *dvector(nl,nh)
-int nl,nh;
+double *dvector(int nl, int nh)
 {
    double *v;
 
@@ -66,8 +62,7 @@ int nl,nh;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-char *cvector(nl,nh)
-int nl,nh;
+char *cvector(int nl, int nh)
 {
    char *v;
 
@@ -79,8 +74,7 @@ int nl,nh;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double **dmatrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+double **dmatrix(int nrl, int nrh, int ncl, int nch)
 {
    int i;
    double **m;
@@ -100,8 +94,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-char **cmatrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+char **cmatrix(int nrl, int nrh, int ncl, int nch)
 {
    int i;
    char **m;
@@ -121,8 +114,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-float *vector(nl,nh)
-int nl,nh;
+float *vector(int nl, int nh)
 {
    float *v;
 
@@ -134,8 +126,7 @@ int nl,nh;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-float **matrix(nrl,nrh,ncl,nch)
-int nrl,nrh,ncl,nch;
+float **matrix(int nrl, int nrh, int ncl, int nch)
 {
    int i;
    float **m;
@@ -155,9 +146,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_matrix(m,nrl,nrh,ncl,nch)
-float **m;
-int nrl,nrh,ncl,nch;
+void free_matrix(float **m, int nrl, int nrh, int ncl, int nch)
 {
    int i;
 
@@ -167,9 +156,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_cmatrix(m,nrl,nrh,ncl,nch)
-char **m;
-int nrl,nrh,ncl,nch;
+void free_cmatrix(char **m, int nrl, int nrh, int ncl, int nch)
 {
    int i;
 
@@ -179,36 +166,28 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_vector(v,nl,nh)
-float *v;
-int nl,nh;
+void free_vector(float *v, int nl, int nh)
 {
    free((char*) (v+nl));
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_dvector(v,nl,nh)
-double *v;
-int nl,nh;
+void free_dvector(double *v, int nl, int nh)
 {
    free((char*) (v+nl));
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_cvector(v,nl,nh)
-char *v;
-int nl,nh;
+void free_cvector(char *v, int nl, int nh)
 {
    free((char*) (v+nl));
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_dmatrix(m,nrl,nrh,ncl,nch)
-double **m;
-int nrl,nrh,ncl,nch;
+void free_dmatrix(double **m, int nrl, int nrh, int ncl, int nch)
 {
    int i;
 
@@ -219,8 +198,7 @@ int nrl,nrh,ncl,nch;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void free_ivector(v,nl,nh)
-int *v,nl,nh;
+void free_ivector(int *v, int nl, int nh)
 {
    free((char*) (v+nl));
 }
@@ -228,10 +206,7 @@ int *v,nl,nh;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-FILE   *openf(fname,mode)
-
-char   fname[];
-char   mode[];
+FILE   *openf(char fname[],char mode[])
 {
    void   exit();
    FILE   *fopen();
@@ -325,9 +300,7 @@ double   x;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void dpolint(xa,ya,n,x,y,dy)
-double   xa[],ya[],x,*y,*dy;
-int   n;
+void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy)
 /*
 Given arrays xa[1..n] and ya[1..n], and given a value x, this routine returns
 an error estimate dy. If P(x) is the polinomial of degree n-1 such that P(xa)=
@@ -372,9 +345,7 @@ ya, i=1,...,n, then the returned value y=P(x).
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void dsplint(xa,ya,y2a,n,x,y)
-double xa[],ya[],y2a[],x,*y;
-int n;
+void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y)
 {
    int klo,khi,k;
    double h,b,a;

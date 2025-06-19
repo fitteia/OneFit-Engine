@@ -4,8 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 
-double	lor(t,w)
-double	t,w;
+double	lor(double t, double w)
 {
 	double	af;
 

@@ -26,6 +26,7 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 multi MAIN (Bool :$man!) {
 	my $txt = pod2text $=pod;
+	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
 	say $txt;
 	$txt
 }
@@ -39,6 +40,7 @@ multi MAIN (Bool :h(:help($))) {
     Usage:
         onefite [-h|--help]
 		onefite [--man]
+		onefite [-v|--version]
 	    onefite uninstall
 	    onefite service start
 	    onefite service stop
@@ -68,7 +70,7 @@ multi MAIN (Bool :h(:help($))) {
 	    fit-methods: simp scan min minos
 
 	    <function> syntax alternatives:
-    \"y(x,a,b,c)=a + b*x + c*pow(x,2.0)\"
+    /\"y(x,a,b,c)=a + b*x + c*pow(x,2.0)\"
     \"y(t,A,lambda: 0.1)=A*exp(-lambda*t)\" 0.1 is the initial value to start mimimization
     \"y (t,A,B=2,lambda)=A * (1 - B*exp(-lambda*t) )\" B is fixed with value 2
     \"y( t,A, lambda: [0;0.5])=A*exp(-lambda*t)\" [lambda is limited to range 0 to 0.
@@ -164,12 +166,12 @@ multi MAIN ('upgrade',
       Int  :$shell-port = 8100,
       Str  :$ip = '*',
       Int  :p(:$port) = 8142,
-      Str  :$test = '--/test',
+      Bool :$test = False,
       Str  :m(:$merge-site) = '',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } $test --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { "--shell --shell-port=$shell-port" if $shell }";
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { "--shell --shell-port=$shell-port" if $shell }";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
@@ -838,6 +840,18 @@ multi MAIN ('test',
     run-post-install-tests(:verbose($v));
     exit;
 }
+
+multi MAIN (Bool :v(:$version))
+{
+    my %meta = from-json( "{ ::('OFE-PATH') }/META6.json".IO.slurp );	
+    my $txt = "OneFit-Engine version: "  
+			~ %meta<version> 
+			~ " "
+			~ shell("zef locate OneFit-Engine",:out).out.slurp;
+	say $txt;
+	return $txt
+}
+
 
 sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
     my %e = OneFit::Engine::Grammars::Function.parse-me($function);

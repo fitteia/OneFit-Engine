@@ -8,14 +8,18 @@
 #define	C	0.569504e-12
 #define LIM	3.0e-11
 
+extern double r_pval(Function *x, int n); 
+extern void	w_f_ptr(Function *x, double (*f)(Function *x));
+extern void	clear_struct(Function *f_struct, int n_par);
+extern double r_plow(Function *x, int n);
+extern double r_phigh(Function *x, int n);
+extern void	w_pval(Function *x, int n, double v);
 
 double GaussLegendreInt(Function *X,int p,int n)
 {
   int m,j,i;
   double z1,z,xm,xl,pp,p3,p2,p1;
   double a,b,s,*x,*w;
-  double r_plow(),r_phigh();
-  void	w_pval();
   
   a = r_plow(X,p);
   b = r_phigh(X,p);

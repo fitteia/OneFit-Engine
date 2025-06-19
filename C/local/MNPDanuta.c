@@ -25,68 +25,49 @@ nmpR1Hsze() is R1F(e) eq 11
 
 ****/
 
+extern double r_pval(Function *x, int n); 
+extern void	w_f_ptr(Function *x, double (*f)(Function *x));
+extern void	clear_struct(Function *f_struct, int n_par);
+extern double sqgausn(Function *X, int p, int n);
 
-
-
-double mnpR1HSc(double f, double T, double gH, double gS, double C, double S, double d, double D, double NP)
-{
-  double w, wS, A, B, Sc, tau, Cdd2,result;
-  double _Bs(), _jMP();
-
-  tau=d*d/D;
-  w=2*pi*f;
-  wS=gS/gH*w;
-  Sc=S*_Bs(wS, S, T);
-
-  Cdd2=1e-14*gH*gH*gS*gS*hbar*hbar;
-  
-  result=432.0/5.0*Cdd2*C*NA/1e3*tau/(d*d*d)*Sc*Sc*_jMP(w*tau,0.0,NP);
-  return result;
-} 
-
-double mnpR1Hszn(double f, double T, double gH, double gS, double C, double S, double d, double D, double T1e, double NP)
-{
-  double w, wS, A, B, Sc,Sz2, tau, Cdd2,result;
-  double _Bs(), _jMP();
-
-  tau=d*d/D;
-  w=2*pi*f;
-  wS=gS/gH*w;
-  Sc=S*_Bs(wS, S, T);
-  Sz2=S*(S+1)-Sc/tanh(hbar*wS/(2*k*T))-Sc*Sc;
-
-  Cdd2=1e-14*gH*gH*gS*gS*hbar*hbar;
-
-  result=432.0/5.0*Cdd2*C*NA/1e3*tau/(d*d*d)*Sz2*_jMP(w*tau,tau/T1e,NP);
-  return result;
-} 
-
-double mnpR1Hsze(double f, double T, double gH, double gS, double C, double S, double d, double D, double T2e, double NP)
-{
-  double w, wS, A, B, Sc, tau, Cdd2,result;
-  double _Bs(), _jMP();
-
-  tau=d*d/D;
-  w=2*pi*f;
-  wS=gS/gH*w;
-  Sc=S*_Bs(wS, S, T);
-
-  Cdd2=1e-14*gH*gH*gS*gS*hbar*hbar;
-
-  result=1008.0/5.0*Cdd2*C*NA/1e3*tau/(d*d*d)*Sc/tanh(hbar*wS/(2*k*T))*_jMP(wS*tau,tau/T2e,NP);
-  return result;
-} 
 double _Bs(double wS, double S, double T)
 {
   return 1.0/tanh(S*hbar*wS/(k*T))-1.0/(2*S*tanh(hbar*wS/(2*k*T)));
 }
 
+double _j_int1MP(Function *X)
+{
+  double u,u2,u4,a,b;
+
+  u = r_pval(X,0);
+  a = r_pval(X,1);
+  b = r_pval(X,2);
+
+  u2=u*u;
+  u4=u2*u2;
+  
+  return 1.0/(81+9*u2-2*u4+u4*u2);
+}
+
+double _j_int2MP(Function *X)
+{
+  double u,u2,u4,a,b,y;
+  
+  u = r_pval(X,0);
+  a = r_pval(X,1);
+  b = r_pval(X,2);
+  
+  u2=u*u;
+  u4=u2*u2;
+  
+  return u*u/(81+9*u2-2*u4+u4*u2)*(u2+b)/((u2+b)*(u2+b)+a*a);
+}
+
+
 double _jMP(double a, double b, double NP)
 {
   double result=0.0;
   int np;
-  double sqgausn(),_j_int1MP(),_j_int2MP();
-  void w_f_ptr(),clear_struct();
   Function X;
 
   clear_struct(&X,3);
@@ -130,38 +111,51 @@ double _jMP(double a, double b, double NP)
   
   return result;
 }
-
-double _j_int1MP(Function *X)
+double mnpR1HSc(double f, double T, double gH, double gS, double C, double S, double d, double D, double NP)
 {
-  double u,u2,u4,a,b;
-  double r_pval();
+  double w, wS, A, B, Sc, tau, Cdd2,result;
 
-  u = r_pval(X,0);
-  a = r_pval(X,1);
-  b = r_pval(X,2);
+  tau=d*d/D;
+  w=2*pi*f;
+  wS=gS/gH*w;
+  Sc=S*_Bs(wS, S, T);
 
-  u2=u*u;
-  u4=u2*u2;
+  Cdd2=1e-14*gH*gH*gS*gS*hbar*hbar;
   
-  return 1.0/(81+9*u2-2*u4+u4*u2);
-}
+  result=432.0/5.0*Cdd2*C*NA/1e3*tau/(d*d*d)*Sc*Sc*_jMP(w*tau,0.0,NP);
+  return result;
+} 
 
-double _j_int2MP(Function *X)
+double mnpR1Hszn(double f, double T, double gH, double gS, double C, double S, double d, double D, double T1e, double NP)
 {
-  double u,u2,u4,a,b,y;
-  double r_pval();
-  
-  u = r_pval(X,0);
-  a = r_pval(X,1);
-  b = r_pval(X,2);
-  
-  u2=u*u;
-  u4=u2*u2;
-  
-  return u*u/(81+9*u2-2*u4+u4*u2)*(u2+b)/((u2+b)*(u2+b)+a*a);
-}
+  double w, wS, A, B, Sc,Sz2, tau, Cdd2,result;
 
+  tau=d*d/D;
+  w=2*pi*f;
+  wS=gS/gH*w;
+  Sc=S*_Bs(wS, S, T);
+  Sz2=S*(S+1)-Sc/tanh(hbar*wS/(2*k*T))-Sc*Sc;
 
+  Cdd2=1e-14*gH*gH*gS*gS*hbar*hbar;
+
+  result=432.0/5.0*Cdd2*C*NA/1e3*tau/(d*d*d)*Sz2*_jMP(w*tau,tau/T1e,NP);
+  return result;
+} 
+
+double mnpR1Hsze(double f, double T, double gH, double gS, double C, double S, double d, double D, double T2e, double NP)
+{
+  double w, wS, A, B, Sc, tau, Cdd2,result;
+
+  tau=d*d/D;
+  w=2*pi*f;
+  wS=gS/gH*w;
+  Sc=S*_Bs(wS, S, T);
+
+  Cdd2=1e-14*gH*gH*gS*gS*hbar*hbar;
+
+  result=1008.0/5.0*Cdd2*C*NA/1e3*tau/(d*d*d)*Sc/tanh(hbar*wS/(2*k*T))*_jMP(wS*tau,tau/T2e,NP);
+  return result;
+} 
 
 
 

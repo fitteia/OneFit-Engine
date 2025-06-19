@@ -7,7 +7,7 @@
 #define PI 3.1415926
 #define N 8
 
-extern double  EllipticF(); 
+extern double EllipticF(double x, double K, double NP);
 
 double JacobiCN(double u, double k, double ni)
 {

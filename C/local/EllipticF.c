@@ -8,28 +8,14 @@
 #define	C	0.569504e-12
 #define LIM	3.0e-11
 
-
-double EllipticF(double x, double K, double NP) 
-{
-  double _ellipticf_(),GaussLegendreInt(),af;
-    void w_f_ptr(),clear_struct();
-    Function X;
-
-    clear_struct(&X,2);
-    w_f_ptr(&X,_ellipticf_);
-    X.par[0].low_v  = 0.0;
-    X.par[0].high_v  = x;
-    X.par[1].val  = K;
-
-    af = GaussLegendreInt(&X,0,(int) NP);
-
-    //            printf("%lf\n",af);
-    return af;
-}
+extern double r_pval(Function *x, int n); 
+extern void	w_f_ptr(Function *x, double (*f)(Function *x));
+extern void	clear_struct(Function *f_struct, int n_par);
+extern double GaussLegendreInt(Function *X,int p,int n);
 
 double _ellipticf_(Function *X)
 {
-  double r_pval(),p1,p2,af;
+  double p1,p2,af;
 
    p1 = r_pval(X,0);
    p2 = r_pval(X,1);
@@ -47,3 +33,22 @@ double _ellipticf_(Function *X)
 
     }
 }
+
+double EllipticF(double x, double K, double NP) 
+{
+    Function X;
+	double af;
+
+    clear_struct(&X,2);
+    w_f_ptr(&X,_ellipticf_);
+    X.par[0].low_v  = 0.0;
+    X.par[0].high_v  = x;
+    X.par[1].val  = K;
+
+    af = GaussLegendreInt(&X,0,(int) NP);
+
+    //            printf("%lf\n",af);
+    return af;
+}
+
+
