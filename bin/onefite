@@ -847,7 +847,7 @@ multi MAIN (Bool :v(:$version))
     say "OneFit-Engine version: " ~ %meta<version>;
 	my $txt = shell("zef locate OneFit-Engine",:out).out.slurp;
 	say $txt;
-	return $txt
+	return "ola $txt"
 }
 
 
