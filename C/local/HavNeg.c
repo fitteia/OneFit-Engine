@@ -3,16 +3,6 @@
 
 #define pi 3.1415927  
 
-double HavNeg(double f,double A,double tau, double epsilon, double delta)
-{
-  double w,af,JHN();
-  w = 2*pi*f;
-
-  af=A*(JHN(w,tau,epsilon,delta)+4*JHN(2*w,tau,epsilon,delta));
-
-  return af;
-}
-
 double JHN(double w, double t, double epsilon, double delta)
 {
   double af,wt,wtd,wt2d,sind,cosd;
@@ -29,3 +19,15 @@ double JHN(double w, double t, double epsilon, double delta)
   }
   return af;
 }
+
+double HavNeg(double f,double A,double tau, double epsilon, double delta)
+{
+  double w,af;
+  w = 2*pi*f;
+
+  af=A*(JHN(w,tau,epsilon,delta)+4*JHN(2*w,tau,epsilon,delta));
+
+  return af;
+}
+
+
