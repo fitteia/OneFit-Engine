@@ -39,6 +39,7 @@ multi MAIN (Bool :h(:help($))) {
     Usage:
         onefite [-h|--help]
 		onefite [--man]
+		onefite [-v|--version]
 	    onefite uninstall
 	    onefite service start
 	    onefite service stop
@@ -842,7 +843,7 @@ multi MAIN ('test',
 multi MAIN (Bool :v(:$version))
 {
     my %meta = from-json( "{ ::('OFE-PATH') }/META6.json".IO.slurp );	
-    say %meta<version>;
+    say "OneFit-Engine version: " ~ %meta<version>;
 	say shell("zef locate OneFit-Engine",:out).out.slurp;
 }
 

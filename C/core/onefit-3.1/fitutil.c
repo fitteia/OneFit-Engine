@@ -206,10 +206,7 @@ void free_ivector(int *v, int nl, int nh)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-FILE   *openf(fname,mode)
-
-char   fname[];
-char   mode[];
+FILE   *openf(char fname[],char modei[])
 {
    void   exit();
    FILE   *fopen();
@@ -348,9 +345,7 @@ ya, i=1,...,n, then the returned value y=P(x).
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void dsplint(xa,ya,y2a,n,x,y)
-double xa[],ya[],y2a[],x,*y;
-int n;
+void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y)
 {
    int klo,khi,k;
    double h,b,a;
