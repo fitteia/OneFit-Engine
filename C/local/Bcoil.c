@@ -5,33 +5,10 @@
 #include "struct.h"
 #define pi      3.141592653589793238
 
-
-double Bcoil(double x, double z, double miu, double nz, double nr, double dz, double R, double I, double NP, double flag) 
-{
-  double _Bcoil_x(),_Bcoil_z(),GaussLegendreInt(),af;
-    Function X;
-
-    clear_struct(&X,9);
-    if(flag>1) { w_f_ptr(&X,_Bcoil_z); }
-    else {     w_f_ptr(&X,_Bcoil_x); }
- 
-    X.par[0].low_v  = 0.0;
-    X.par[0].high_v  = 2*pi;
-    X.par[1].val  = x;
-    X.par[2].val  = z;
-    X.par[3].val  = miu;
-    X.par[4].val  = nz;
-    X.par[5].val  = nr;
-    X.par[6].val  = dz;
-    X.par[7].val  = R;
-    X.par[8].val  = I;
-
-
-    af = GaussLegendreInt(&X,0,(int) NP);
-
-    //           printf("%lf\n",af);
-    return af;
-}
+extern double r_pval(Function *x, int n); 
+extern void	w_f_ptr(Function *x, double (*f)(Function *x));
+extern void	clear_struct(Function *f_struct, int n_par);
+extern double GaussLegendreInt(Function *X,int p,int n);
 
 double _Bcoil_x(Function *X)
 {
@@ -84,3 +61,31 @@ double _Bcoil_z(Function *X)
    }
    return af;
 }
+
+double Bcoil(double x, double z, double miu, double nz, double nr, double dz, double R, double I, double NP, double flag) 
+{
+  double af;
+    Function X;
+
+    clear_struct(&X,9);
+    if(flag>1) { w_f_ptr(&X,_Bcoil_z); }
+    else {     w_f_ptr(&X,_Bcoil_x); }
+ 
+    X.par[0].low_v  = 0.0;
+    X.par[0].high_v  = 2*pi;
+    X.par[1].val  = x;
+    X.par[2].val  = z;
+    X.par[3].val  = miu;
+    X.par[4].val  = nz;
+    X.par[5].val  = nr;
+    X.par[6].val  = dz;
+    X.par[7].val  = R;
+    X.par[8].val  = I;
+
+
+    af = GaussLegendreInt(&X,0,(int) NP);
+
+    //           printf("%lf\n",af);
+    return af;
+}
+

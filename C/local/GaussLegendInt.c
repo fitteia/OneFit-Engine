@@ -14,8 +14,6 @@ double GaussLegendreInt(Function *X,int p,int n)
   int m,j,i;
   double z1,z,xm,xl,pp,p3,p2,p1;
   double a,b,s,*x,*w;
-  double r_plow(),r_phigh();
-  void	w_pval();
   
   a = r_plow(X,p);
   b = r_phigh(X,p);
