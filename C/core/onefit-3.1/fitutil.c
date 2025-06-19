@@ -206,7 +206,7 @@ void free_ivector(int *v, int nl, int nh)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-FILE   *openf(char fname[],char modei[])
+FILE   *openf(char fname[],char mode[])
 {
    void   exit();
    FILE   *fopen();
