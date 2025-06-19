@@ -100,7 +100,7 @@ extern int *Func_nargs;
 extern FILE *pointers_file;
 
 extern void nrerror(char a[]);
-extern void gfitn_error();
+extern void gfitn_error(char error_text[],char option_msg[]);
 extern int *ivector(int nl, int nh);
 extern double *dvector(int nl, int nh);
 extern double **dmatrix(int nrl, int nrh, int ncl, int nch);

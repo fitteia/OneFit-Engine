@@ -25,7 +25,7 @@ void nrerror(char error_text[])
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void gfitn_error(char error_text[],option_msg[])
+void gfitn_error(char error_text[],char option_msg[])
 {
    void exit();
 
