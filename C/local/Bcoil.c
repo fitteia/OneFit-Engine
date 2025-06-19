@@ -9,7 +9,6 @@
 double Bcoil(double x, double z, double miu, double nz, double nr, double dz, double R, double I, double NP, double flag) 
 {
   double _Bcoil_x(),_Bcoil_z(),GaussLegendreInt(),af;
-    void w_f_ptr(),clear_struct();
     Function X;
 
     clear_struct(&X,9);
@@ -36,7 +35,7 @@ double Bcoil(double x, double z, double miu, double nz, double nr, double dz, do
 
 double _Bcoil_x(Function *X)
 {
-  double r_pval(),phi,x,z,miu,nz,nr,dz,R,I,af=0.0,sphi,i,j,zi,Rj;
+  double phi,x,z,miu,nz,nr,dz,R,I,af=0.0,sphi,i,j,zi,Rj;
 
    phi = r_pval(X,0);
    x     = r_pval(X,1);
@@ -63,7 +62,7 @@ double _Bcoil_x(Function *X)
 
 double _Bcoil_z(Function *X)
 {
-  double r_pval(),phi,x,z,miu,nz,nr,dz,R,I,af=0.0,sphi,i,j,zi,Rj;
+  double phi,x,z,miu,nz,nr,dz,R,I,af=0.0,sphi,i,j,zi,Rj;
 
     phi = r_pval(X,0);
    x     = r_pval(X,1);

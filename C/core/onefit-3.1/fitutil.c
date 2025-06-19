@@ -25,8 +25,7 @@ void nrerror(char error_text[])
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void gfitn_error(error_text,option_msg)
-char error_text[],option_msg[];
+void gfitn_error(char error_text[],option_msg[])
 {
    void exit();
 
@@ -39,8 +38,7 @@ char error_text[],option_msg[];
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-int *ivector(nl,nh)
-int nl,nh;
+int *ivector(int nl, int nh)
 {
    int *v;
 

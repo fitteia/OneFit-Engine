@@ -101,7 +101,7 @@ extern FILE *pointers_file;
 
 extern void nrerror(char a[]);
 extern void gfitn_error();
-extern int *ivector();
+extern int *ivector(int nl, int nh):
 extern double *dvector(int nl, int nh);
 extern double **dmatrix(int nrl, int nrh, int ncl, int nch);
 extern char **cmatrix(int nrl, int nrh, int ncl, int nch);
