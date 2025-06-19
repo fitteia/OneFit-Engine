@@ -118,7 +118,7 @@ extern void free_ivector(int *v, int nl, int nh);
 extern FILE   *openf();
 extern int RRemove();
 extern int Rename();
-extern double   atanh();
+extern double   atanh(double a);
 extern double   Iden();
 extern double   Inv();
 extern double   logT1();
