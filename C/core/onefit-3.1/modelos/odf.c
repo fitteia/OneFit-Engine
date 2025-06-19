@@ -13,8 +13,7 @@
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	odfN(wcm,wcM,w,delta)
-double	wcm,wcM,w,delta;
+double	odfN(double wcm, double wcM, double w, double delta)
 {
 	double	af,am,aM;
 	double	JodfN(),fh();

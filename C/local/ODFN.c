@@ -3,9 +3,10 @@
 
 #define pi 3.1415927  
 
+extern double	odfN(double wcm, double wcM, double w, double delta);
+
 double ODFN(double f, double Aodf, double fcm, double fcM, double delta)
 {
-  double        odfN();
   double	wcm,wcM,w,af;
 
   wcm   = 2*pi*fcm;
