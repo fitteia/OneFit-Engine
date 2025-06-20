@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "rot.h"
 #include "fij.h"
+#include "lor.h"
 #include "fitutil.h"
 
 #define  CR    1.7086248e11   /* 3/2*gama^4*(h/2pi)^2*(4/15)*10^48*I*(I+1)*/
@@ -40,7 +41,6 @@ double	rot(double t, double w, double delta)
 double	Pij(int i, int j, double S,double P4)
 {
 	double	af;
-	void	nrerror();
 	
 	i=abs(i);
 	j=abs(j);
@@ -103,7 +103,6 @@ double JR(int k, double w, double S, double P4, double ts, double tl, double A0,
 double	rot_reor(double ts, double tl, double w, double delta, double S, double P4, double A0, double A1, double A2)
 {
 	double	J1wd,J2wd,af;
-	double 	fij(),JR();
 
 	J1wd = 	fij(1,0,delta)*JR(0,w,S,P4,ts,tl,A0,A1,A2)+
 	      	fij(1,1,delta)*JR(1,w,S,P4,ts,tl,A0,A1,A2)+
@@ -120,7 +119,6 @@ double	rot_reor(double ts, double tl, double w, double delta, double S, double P
 double	rot_reor_poli(double ts, double tl, double w, double S, double P4, double A0, double A1, double A2)
 {
 	double	J1wd,J2wd,af;
-	double 	fij(),JR();
 
 	J1wd = 	1./30.*JR(0,w,S,P4,ts,tl,A0,A1,A2)+
 	      	2./5. *JR(1,w,S,P4,ts,tl,A0,A1,A2)+
@@ -148,7 +146,6 @@ CR2*0.2*J1wd,CR2*0.2*J2wd,CR2*0.2*(J1wd+J2wd));
 double	rot_reor_ro(double ts, double tl, double w1, double w, double delta, double S, double P4, double A0, double A1, double A2)
 {
 	double	J0wd,J1wd,J2wd,af;
-	double 	fij(),JR();
 
 	J0wd = 	fij(0,0,delta)*JR(0,2*w1,S,P4,ts,tl,A0,A1,A2)+
 	      	fij(0,1,delta)*JR(1,2*w1,S,P4,ts,tl,A0,A1,A2)+
@@ -176,7 +173,6 @@ double	Sc,P4c;		* parametros de ordem p/ cadeia (relativos ao corpo) *
 double	A0,A1,A2;       * "Afactors" *
 ***/
 {
-double	Jcad();
 double	J1w;
 double	J2w;
 
