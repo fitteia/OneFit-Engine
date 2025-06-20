@@ -73,7 +73,6 @@ double	Pij(int i, int j, double S,double P4)
 double JR(int k, double w, double S, double P4, double ts, double tl, double A0, double A1, double A2)
 {
 	double af,t0,t1,t2;
-	void   nrerror();
 
 	t0 = ts;
 	t1 = 6.0/(1.0/tl+5.0/ts);
@@ -213,8 +212,6 @@ double	C[3][3];
 double	B[3][3];
 double	AB[3];
 double	Jwk;
-double	lor();
-double	d2ij2();
 
 tauM[0]=tauS;
 tauM[1]=1./(1./(6.*tauL)+5./(6.*tauS));
