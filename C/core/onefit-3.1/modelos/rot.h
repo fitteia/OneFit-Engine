@@ -1,4 +1,4 @@
-# rot.h
+/** rot.h  **/
 
 double	rot(double t, double w, double delta);
 double	Pij(int i, int j, double S,double P4);
