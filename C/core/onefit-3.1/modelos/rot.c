@@ -72,7 +72,7 @@ double	Pij(int i, int j, double S,double P4)
 /******************************************************************************/
 double JR(int k, double w, double S, double P4, double ts, double tl, double A0, double A1, double A2)
 {
-	double af,Pij(),lor(),t0,t1,t2;
+	double af,t0,t1,t2;
 	void   nrerror();
 
 	t0 = ts;
