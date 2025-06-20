@@ -1,6 +1,6 @@
 #include <math.h>
 #include <stdio.h>
-#include "rot.h"
+#include "lor.h"
 
 #define pi 3.1415927  
 
