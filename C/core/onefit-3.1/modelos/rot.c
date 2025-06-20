@@ -94,6 +94,8 @@ double JR(int k, double w, double S, double P4, double ts, double tl, double A0,
 			break;
 		default:
 			nrerror("JR not defined!");
+			return 0.0;
+			break;
 	}
 }
 /******************************************************************************/
