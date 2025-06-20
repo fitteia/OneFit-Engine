@@ -2,10 +2,9 @@
 /*				FIJ.C					      */
 /******************************************************************************/
 #include <math.h>
+#include "fij.h"
 
-double	fij(i,j,delta)
-int	i,j;
-double	delta;
+double	fij(int i, int j, double delta)
 {
 	double 	af,s,s2,s4;
 	void	nrerror();
@@ -42,9 +41,7 @@ double	delta;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	fh(h,delta)
-int	h;
-double	delta;
+double	fh(int h, double delta)
 {
 	double	fij();
 	
