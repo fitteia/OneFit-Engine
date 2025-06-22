@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include "CROSSRELAX.h"
 
 #define pi 3.14159265359
 
