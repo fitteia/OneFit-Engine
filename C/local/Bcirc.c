@@ -4,6 +4,8 @@
 #include "globals.h"
 #include "struct.h"
 #include "Bcirc.h"
+#include "integra.h"
+#include "fitutil.h"
 
 #define pi      3.141592653589793238
 
