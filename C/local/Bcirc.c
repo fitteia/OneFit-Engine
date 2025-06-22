@@ -6,7 +6,7 @@
 #include "Bcirc.h"
 #include "integra.h"
 #include "fitutil.h"
-#include "GaussLegendreInt.h"
+#include "GaussLegendInt.h"
 
 #define pi      3.141592653589793238
 
