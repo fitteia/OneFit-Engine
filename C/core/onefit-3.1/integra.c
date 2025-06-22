@@ -42,7 +42,7 @@ double	r_pstep(Function *x, int n) { return( (*x).par[n].step_v); }
 
 void	w_pstep(Function *x, int n, double sv) { (*x).par[n].step_v = sv; }
 
-void	w_pval(function *x, int n, double v) { (*x).par[n].val = v; }
+void	w_pval(Function *x, int n, double v) { (*x).par[n].val = v; }
 
 void	clear_struct(Function *f_struct, int n_par)
 {
