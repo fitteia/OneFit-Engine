@@ -12,7 +12,8 @@ double CROSSRELAX(double f, double a, double tau, double f0)
   return af;
 }
 
-double CROSSR1(double f, double a, double tau, double f0){
+double CROSSR1(double f, double a, double tau, double f0)
+{
   double	af;
 
   af= a*( tau/(1+pow(2*pi*(f-f0)*tau,2.0)) + tau/(1+pow(2*pi*(f+f0)*tau,2.0)));
