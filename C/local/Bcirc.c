@@ -10,7 +10,7 @@
 
 double Bcirc(double x, double z, double miu, double N, double R, double I, double NP, double flag) 
 {
-  double _Bcirc_x(),_Bcirc_z(),GaussLegendreInt(),af;
+  	double af;
     Function X;
 
     clear_struct(&X,7);
