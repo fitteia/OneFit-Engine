@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "struct.h"
 #include <string.h>
+#include "integra.h"
+#include "fitutil.h"
 
 #define EPS1	3.0e-11
 #define EPS	8.0e-5
@@ -11,10 +13,6 @@
 #define	K	5
 #define SIGN(a) ((a) > 0.0 ? 1 : -1)
 
-extern void nrerror(char a[]);
-extern double *dvector(int nl, int nh);
-extern void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
-extern void free_dvector(double *v, int nl, int nh);
 
 /*****************************************************************************/
 /*                              ODF_UTIL.C                                   */
@@ -44,7 +42,7 @@ double	r_pstep(Function *x, int n) { return( (*x).par[n].step_v); }
 
 void	w_pstep(Function *x, int n, double sv) { (*x).par[n].step_v = sv; }
 
-void	w_pval(Function *x, int n, double v) { (*x).par[n].val = v; }
+void	w_pval(function *x, int n, double v) { (*x).par[n].val = v; }
 
 void	clear_struct(Function *f_struct, int n_par)
 {
