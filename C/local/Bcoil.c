@@ -5,6 +5,7 @@
 #include "struct.h"
 #include "fitutil.h"
 #include "integra.h"
+#include "GaussLegendreInt.h"
 
 #define pi      3.141592653589793238
 
