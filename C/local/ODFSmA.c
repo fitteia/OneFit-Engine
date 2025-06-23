@@ -7,7 +7,7 @@
 
 double ODFSmA(double f, double Alu, double fcm, double fcM, double delta)
 {
-  double w,wcm,wcM,af,odfSa();
+  double w,wcm,wcM,af;
   int i=1;
 
   wcm = 2*pi*fcm;
