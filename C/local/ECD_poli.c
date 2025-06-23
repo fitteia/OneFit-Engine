@@ -240,7 +240,7 @@ printf("tabR[0]=%le\n",tabR[0]);
 
 		default:
 			exit(0);
-			return(-1.o);
+			return(-1.0);
 	}
 }
 
