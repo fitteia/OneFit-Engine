@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "struct.h"
+#include "JacobiSN.h"
+#include "EllipticF.h"
+
 #define	pi	3.141592653589793238
 #define PI 3.1415926
 #define N 8
-
-extern double  EllipticF(); 
 
 double JacobiSN(double u, double k, double ni)
 {

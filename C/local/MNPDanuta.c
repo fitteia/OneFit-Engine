@@ -2,6 +2,8 @@
 #include <math.h>
 #include "globals.h"
 #include "struct.h"
+#include "integra.h"
+#include "MNPDanuta.h"
 
 #define pi 3.1415926
 #define k 1.380649e-23
@@ -24,11 +26,6 @@ nmpR1Hszn() is R1F(n) eq 9
 nmpR1Hsze() is R1F(e) eq 11
 
 ****/
-
-extern double r_pval(Function *x, int n); 
-extern void	w_f_ptr(Function *x, double (*f)(Function *x));
-extern void	clear_struct(Function *f_struct, int n_par);
-extern double sqgausn(Function *X, int p, int n);
 
 double _Bs(double wS, double S, double T)
 {
@@ -111,6 +108,7 @@ double _jMP(double a, double b, double NP)
   
   return result;
 }
+
 double mnpR1HSc(double f, double T, double gH, double gS, double C, double S, double d, double D, double NP)
 {
   double w, wS, A, B, Sc, tau, Cdd2,result;
