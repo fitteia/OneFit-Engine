@@ -775,7 +775,6 @@ double T1_rot_vold( double f, double delta, double Szz, double Tau_S, double Tau
 void    rot_vold( double f, double delta, double S0, double Tau_S, double Tau_L, double k1, double p, double *t1_ang, double *j0, double *j1, double *j2,  double afact0, double afact1, double afact2)
 {
 	int	i,j,k;
-	int	t1vold_new_(),t1vold_abc_();
 	double Szz;
 	
 	Szz=S0;
