@@ -4,14 +4,13 @@
 #include 	<stdio.h>
 #include 	<math.h>
 #include        "globals.h"
+#include "t1torrey.h"
 
 #define	PI	3.141592654
 #define	C	0.569504e-12
 
-double t1torrey(I,d,n,alfa,t,w,delta)
-double I,d,n,t,w,delta,alfa;
+double t1torrey( double I, double d, double n, double alfa, double t, double w, double delta)
 {
-	double	ftorrey();
 	double  af;
 
 	af = 1.5*I*(I+1)*n*C*t/(d*d*d) * ftorrey(alfa,w,t);
@@ -20,11 +19,9 @@ double I,d,n,t,w,delta,alfa;
 /******************************************************************************/
 /*				 					      */
 /******************************************************************************/
-double	ftorrey(alfa,w,t)
-double	alfa,w,t;
+double	ftorrey( double alfa, double w, double t)
 {
 	double	wtau;
-	double	faw();
 	double	a1,a2,af;
 
 	wtau = w*t;
@@ -44,9 +41,7 @@ double	alfa,w,t;
 /******************************************************************************/
 /*                                					      */
 /******************************************************************************/
-double	faw(alfa,wtau)
-
-double	alfa,wtau;
+double	faw( double alfa, double wtau)
 {
 	double  x,u,v,q;
 	double	a1,a2,a3,af;

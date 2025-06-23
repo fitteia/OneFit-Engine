@@ -1,6 +1,8 @@
 
 #include <math.h>
 #include <stdio.h>
+#include "lor.h"
+#include "R1OSabhf.h"
 
 #define pi 3.1415926
 
@@ -23,7 +25,6 @@
 double R1OSabhf(double f, double C, double S, double a, double D, double tv, double Delta2)
 {
   double x,wI,wS, Delta,af,tD,it1s,it2s;
-  double lor(),jhf();
   
    wI     = 2*pi*f;
    wS    = wI*gammae/gamma;
