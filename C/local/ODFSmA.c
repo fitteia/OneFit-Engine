@@ -1,8 +1,8 @@
 #include <math.h>
 #include <stdio.h>
+#include "struct.h"
 #include "ODFSmA.h"
 #include "odf.h"
-#include "struct.h"
 
 #define	pi	3.141592653589793238
 
