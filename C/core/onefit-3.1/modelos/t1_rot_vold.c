@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <math.h>
 #include "t1_rot_vold.h"
-#include "t1vold_new.h"
-#include "t1vold_abc.h"
 
 #define	pi	3.141592653589793238
 
@@ -758,6 +756,8 @@ double Szz_old_alex = -1.0;
 double	a_a[10][10][10];
 double  b_b[10][10][10];
 double	c_c[10][10];
+int t1vold_abc_();
+int t1vold_new_();
 
 /*****************************************************************************/
 double T1_rot_vold( double f, double delta, double Szz, double Tau_S, double Tau_L, double k1, double p, double afact0, double afact1, double afact2)
