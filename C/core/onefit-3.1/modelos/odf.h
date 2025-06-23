@@ -1,6 +1,6 @@
 /** odf.h **/
 
-double	odfN(double wcm, double wcM, double w, double delta)
+double	odfN(double wcm, double wcM, double w, double delta);
 double	Jodf_k123(double K13, double K23, double eta12, double RM, double Rm, double wcM, double wcm, double w);
 double	odfN_ro(double wcm, double wcM, double w, double w1, double delta);
 double	odf_k123( double w, double delta, double K13, double K23, double eta12, double RM, double Rm, double wcM, double wcm);
