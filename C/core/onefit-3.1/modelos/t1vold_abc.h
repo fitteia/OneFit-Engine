@@ -1,7 +1,7 @@
 /** t1vold_new.h **/
 
-#define D1 2
-#define D2 30
+#define D1 30
+#define D2 2
 #define D3 10
 
 int t1vold_abc_( double *f, double *S, double a[D3][D3][D3], double b[D3][D3][D3], double c[D3][D3],  double a00_1[D1][D2], double a00_2[D1][D2], double a10_1[D1][D2], 
