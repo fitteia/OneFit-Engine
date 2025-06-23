@@ -36,7 +36,7 @@ printf("nR=%d,nfr=%d\n",nR,nfr);
 	printf("R= %le\n",tabR[iR]);
 	*/
 		for(ifr=0; ifr<nfr; ifr++){
-	  		if (!fscanf(fp,"%le %le",tabfr+ifr,j1tab+iR*nfr+ifr)) printf("fscanf() call error in ECD_poli.c, read_Jtab() for loop ifr\n");
+	  		if (!fscanf(fp,"%le %le",&tabfr[ifr],&j1tab[iR][ifr]) printf("fscanf() call error in ECD_poli.c, read_Jtab() for loop ifr\n");
 		/* 
 		printf("fr=%le J1=%le\n",tabfr[ifr],*(J1tab+iR*nfr+ifr));
 		*/
