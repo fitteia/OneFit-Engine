@@ -1,9 +1,9 @@
 #include <math.h>
 #include <stdio.h>
+#include "ODFN.h"
+#include "odf.h"
 
 #define pi 3.1415927  
-
-extern double	odfN(double wcm, double wcM, double w, double delta);
 
 double ODFN(double f, double Aodf, double fcm, double fcM, double delta)
 {
