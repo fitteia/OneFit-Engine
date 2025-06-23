@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include "globals.h"
 #include "struct.h"
+#include "OPF.h"
+
 #define pi 3.1415926
 
 double OPF(double f, double Aopf, double f0,double fcm, double fcM,double n)
 {
 	double	x;
-	double	jopf(),j1,af;
+	double	j1,af;
 
 	j1=jopf(2.0*pi*f,1.0/(2.0*pi*f0),2.0*pi*fcm,2.0*pi*fcM,n);
 	af=Aopf*j1;
@@ -23,7 +25,6 @@ double OPF(double f, double Aopf, double f0,double fcm, double fcM,double n)
 double jopf_int(Function *X)
 {
 	double x,xM,xm,w,tau0,af;
-	double r_pval(),r_plow();
 
 	x    = r_pval(X,0);
 	w    = r_pval(X,1);
@@ -36,9 +37,8 @@ double jopf_int(Function *X)
 
 double jopf(double w,double tau0,double wcm,double wcM,double n)
 {
-	double	sqgausn(),sqromo(),smidpnt(),jopf_int(),A,j1,j2,af;
+	double	A,j1,j2,af;
 	int np;
-	void	w_f_ptr(),clear_struct();
 	Function X;
 
 	clear_struct(&X,3);
