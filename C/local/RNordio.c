@@ -36,7 +36,6 @@ double RNordio_ang( double f,  double S0, double A0, double A1, double A2,  doub
   double J1;
   double J2;
   double w;
-  double fij();
 
   w=2*pi*f;
   J1 = fij(1,0,delta)*JRotNordio_2(0,w,S0,A0,A1,A2,Dz,Dx)
