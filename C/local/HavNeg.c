@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include "HavNeg.h"
 
 #define pi 3.1415927  
 
