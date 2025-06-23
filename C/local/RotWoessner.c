@@ -1,5 +1,8 @@
 #include <math.h>
 #include <stdio.h>
+#include "RotWoessner.h"
+#include "fij.h"
+#include "RNordio.h"
 
 #define pi 3.1415926
 #define Arot 6.408e11
@@ -10,10 +13,8 @@
 ***/
 
 
-double RotWoessner(f, S,A0,A1,A2, Dx, Dz,delta)
-double f, S, Dx,Dz,A0,A1,A2,delta;
+double RotWoessner( double f,  double S, double A0, double A1, double A2, double  Dx,  double Dz, double delta)
 {
-  double JRotWoessner_(), fij();
   double J1,J2;
   double w,y;
 
@@ -35,7 +36,7 @@ double f, S, Dx,Dz,A0,A1,A2,delta;
 double JRotWoessner_(int mL, double w, double P2, double A0, double A1, double A2, double Dx, double Dz)
 {
   double y;
-  double c_(),itau0,itau1,itau2;
+  double itau0,itau1,itau2;
 
   itau0 = (6*Dx);
   itau1= (5*Dx+Dz);
