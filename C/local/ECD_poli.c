@@ -237,6 +237,10 @@ printf("tabR[0]=%le\n",tabR[0]);
 		printf("f e R certos\n");
 		*/
 			return(J1tab[itab][jtab]);
+
+		default:
+			exit(0);
+			return(-1.o);
 	}
 }
 
