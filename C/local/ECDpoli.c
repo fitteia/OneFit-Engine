@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "struct.h"
+#include "ECDpoli.h"
+#include "integra.h"
 
 #define pi 3.141592653589793238
 
@@ -10,7 +12,6 @@
 double ECDpoli(double f, double Aecd, double fcm, double fcM, double R, double n)
 {
 
-        double  J1ecdpoli();
         double  af,wcm,wcM,w;
 
         wcm = 2*pi*fcm;
@@ -23,10 +24,9 @@ double ECDpoli(double f, double Aecd, double fcm, double fcM, double R, double n
       return af;
 }
 
-double	J1ecdpoli(w,R,wcm,wcM,n)
-     double	w,R,wcm,wcM,n;
+double	J1ecdpoli( double w, double R, double wcm, double wcM, double n)
 {
-  double	j1ecd(),j1ecd1(),j1,j2,af;
+  double j1,j2,af;
   j1 = j1ecd(R,w,wcm,wcM,n);
   j2 = j1ecd(R,2.*w,wcm,wcM,n);
   af=(2./5.*(j1) + 8./5.*(j2));
@@ -39,7 +39,6 @@ double	J1ecdpoli(w,R,wcm,wcM,n)
 double jecd_int(Function *X)
 {
   double u,v,R,w,wcm,wcM,af,u4;
-  double r_pval(),r_plow();
 	
 	u    = r_pval(X,0);
 	v    = r_pval(X,1);
@@ -56,9 +55,7 @@ double jecd_int(Function *X)
 
 double jecd_int1(Function *X)
 {
-  double u,R,wrm,wrM,af,n;
-  double r_pval(),r_plow(),jecd_int1(),jecd_int(),sqgausn();
-  void w_f_ptr();
+  	double u,R,wrm,wrM,af,n;
 	int np;
      
 	n    = r_pval(X,6);
@@ -73,9 +70,8 @@ double jecd_int1(Function *X)
 
 double j1ecd(double R,double w,double wcm,double wcM, double n)
 {
-  double sqgausn(),sqromo(),smidpnt(),jecd_int1(),A,j1,j2,af;
+  	double A,j1,j2,af;
 	int np;
-	void	w_f_ptr(),clear_struct();
 	Function X;
 
 	clear_struct(&X,7);
@@ -102,7 +98,6 @@ double j1ecd(double R,double w,double wcm,double wcM, double n)
 double jecd_int2(Function *X)
 {
   double u,v,R,wc,w,af;
-  double r_pval(),r_plow();
 	
 	u    = r_pval(X,0);
 	R    = r_pval(X,1);
@@ -117,9 +112,8 @@ double jecd_int2(Function *X)
 
 double j1ecd1(double w,double R,double wc,double n)
 {
-  double sqgausn(),sqromo(),smidpnt(),jecd_int2(),A,j1,j2,af;
+  	double A,j1,j2,af;
 	int np;
-	void	w_f_ptr(),clear_struct();
 	Function X;
 
 	clear_struct(&X,4);

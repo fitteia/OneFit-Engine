@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "ECD_poli.h"
 
 #define pi 3.141592653589793238
 #define		FILE_J1TAB	"/home/lfx/lib/j1tabodf.dat"
@@ -21,7 +22,8 @@ double	tabfr[TABSIZE_fr],tabR[TABSIZE_R];
 /*** Le tabelas de J1odf ou das respectivas  2as derivadas ***/
 
 /* nome da file que contem a tabela, arrays com os valores de fr e R, matriz com os valores de J1 (ou das 2as derivadas) */
-void read_Jtab(char *tabfile, double *tabfr, double *tabR, double j1tab[TABSIZE_R][TABSIZE_fr]) {
+void read_Jtab(char *tabfile, double *tabfr, double *tabR, double j1tab[TABSIZE_R][TABSIZE_fr])
+{
 	FILE	*fp;
 	int	nR,nfr;		/* numero total de R's e f's */
 	int	iR,ifr;		/* contador de R's e f's     */
@@ -49,7 +51,7 @@ printf("nR=%d,nfr=%d\n",nR,nfr);
 
 /**** limite a baixas frequencias - dependente de frequencia ******/
 
-double J1odf_low(double A, double R, double wr)    
+double J1odf_low(double A, double R, double wr)
 {
 	double a,C1,sqrt2,pol1,pol2,Jlow;
 
