@@ -1,5 +1,7 @@
 #include <math.h>
 #include <stdio.h>
+#include "GAUSS1.h"
+
 #define pi 3.14159265
 
 double GAUSS1(double f, double a, double b, double f0)
