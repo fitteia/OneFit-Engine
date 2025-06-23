@@ -26,7 +26,7 @@ module-test:
 
 install: lib module
 	install -d $(ROOT)$(PREFIX)/lib $(ROOT)$(PREFIX)/include
-	install -m 0644 *.a *.so *.pm *.h $(ROOT)$(PREFIX)/lib
+	install -m 0644 *.dat *.a *.so *.pm *.h $(ROOT)$(PREFIX)/lib
 	install -m 0644 *.h $(ROOT)$(PREFIX)/include
 
 clean:

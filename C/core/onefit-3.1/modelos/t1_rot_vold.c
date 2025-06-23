@@ -1,5 +1,8 @@
 #include <stdio.h>
 #include <math.h>
+#include "t1_rot_vold.h"
+#include "t1vold_new.h"
+#include "t1vold_abc.h"
 
 #define	pi	3.141592653589793238
 
@@ -757,11 +760,9 @@ double  b_b[10][10][10];
 double	c_c[10][10];
 
 /*****************************************************************************/
-double T1_rot_vold(f,delta,Szz,Tau_S,Tau_L,k1,p,afact0,afact1,afact2)
-double  f,delta,Szz,Tau_S,Tau_L,k1,p,afact0,afact1,afact2;
+double T1_rot_vold( double f, double delta, double Szz, double Tau_S, double Tau_L, double k1, double p, double afact0, double afact1, double afact2)
 {
 	double   t1_ang=0.0,j0,j1,j2;
-	void    rot_vold();
 
 	/*	printf("%lg %lg %lg %lg %lg %lg %lg\n",f,delta,Szz,Tau_S,Tau_L,k1,p);*/
 	rot_vold(f,delta,Szz,Tau_S,Tau_L,k1,p,&t1_ang,&j0,&j1,&j2,
@@ -771,10 +772,7 @@ double  f,delta,Szz,Tau_S,Tau_L,k1,p,afact0,afact1,afact2;
 
 }
 /*****************************************************************************/
-void    rot_vold(f,delta,S0,Tau_S,Tau_L,k1,p,t1_ang,j0,j1,j2,
-                afact0,afact1,afact2)
-double   f,delta,S0,Tau_S,Tau_L,k1,p,afact0,afact1,afact2;
-double   *t1_ang,*j0,*j1,*j2;
+void    rot_vold( double f, double delta, double S0, double Tau_S, double Tau_L, double k1, double p, double *t1_ang, double *j0, double *j1, double *j2,  double afact0, double afact1, double afact2)
 {
 	int	i,j,k;
 	int	t1vold_new_(),t1vold_abc_();
