@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "struct.h"
 #include "integra.h"
-#include "GaussLegendInt.h"
+#include "GaussLegendreInt.h"
 
 #define	pi	3.141592653589793238
 #define PI 3.1415926
