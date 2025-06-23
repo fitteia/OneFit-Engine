@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "globals.h"
 #include "struct.h"
+#include "integra.h"
 #include "OPF.h"
 
 #define pi 3.1415926
