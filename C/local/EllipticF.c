@@ -5,7 +5,7 @@
 #include "struct.h"
 #include "EllipticF.h"
 #include "integra.h"
-#include "GaussLengendInt.h"
+#include "GaussLegendInt.h"
 
 #define	pi	3.141592653589793238
 #define PI 3.1415926
