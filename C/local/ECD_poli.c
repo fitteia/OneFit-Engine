@@ -5,10 +5,6 @@
 #include "ECD_poli.h"
 
 #define pi 3.141592653589793238
-#define		FILE_J1TAB	"/home/lfx/lib/j1tabodf.dat"
-#define		FILE_D2J1TAB	"/home/lfx/lib/d2J1tab.dat"
-#define		TABSIZE_R	90
-#define		TABSIZE_fr	72
 
 int	flag=0;  /* flag=0 primeira vez, flag!=0 vezes seguintes */
 		 /* flag!=0 nao carrega tabela			 */

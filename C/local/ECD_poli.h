@@ -1,6 +1,11 @@
 /** ECD_poli.h **/
 
 
+#define		FILE_J1TAB	"/home/lfx/lib/j1tabodf.dat"
+#define		FILE_D2J1TAB	"/home/lfx/lib/d2J1tab.dat"
+#define		TABSIZE_R	90
+#define		TABSIZE_fr	72
+
 void read_Jtab(char *tabfile, double *tabfr, double *tabR, double j1tab[TABSIZE_R][TABSIZE_fr]);
 double J1odf_low(double A, double R, double wr);
 double J1odf_low2(double A, double R, double wr,double v0);
