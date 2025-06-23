@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include "struct.h"
 #include "ODFN.h"
 #include "odf.h"
 
