@@ -6,7 +6,7 @@ typedef struct Operacao {
   int j;
   int t;
   double c;
-  double (*fptr)(Operacao *x, double y[]);
+  double (*fptr)(struct Operacao *x, double y[]);
 } Operacao;
 
 void maincop(int argc, char *argv[]);
