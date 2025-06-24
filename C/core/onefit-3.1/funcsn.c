@@ -22,13 +22,13 @@ printf("mode=%d\n",mode);
 	printf("funcsn %s\n",Func_names[i-1]);
       */
     if(!strncmp(Func_names[i-1],"Perl",4)){
-      afunc[i]=(*function[i-1])(x,par,t,mode,Func_names[i-1],NULL); 
+      afunc[i]=(*function[i-1])(x,par,t,mode,Func_names[i-1],0); 
     }
     else { 
 		if(Func_args[i-1] != NULL)
 	    	afunc[i]=(*function[i-1])(x,par,t,mode,Func_args[i-1],Func_nargs[i-1]);
 		else
-	    	afunc[i]=(*function[i-1])(x,par,t,mode,NULL,NULL);
+	    	afunc[i]=(*function[i-1])(x,par,t,mode,NULL,0);
     }
   }	
   
