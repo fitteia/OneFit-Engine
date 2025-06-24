@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include "iT1osSmallS.h"
 
 #define pi 3.1415926
 
