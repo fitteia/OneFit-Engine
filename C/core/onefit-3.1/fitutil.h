@@ -1,4 +1,8 @@
 /** fitutil.h **/
+int RRemove(char *fname);
+
+
+int Rename(char *oldfname, char *newfname);
 
 FILE   *openf(char fname[],char mode[]);
 void nrerror(char error_text[]);
