@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include "iT1isSmallS.h"
 
 #define pi 3.1415926
 
@@ -12,7 +13,6 @@
 double iT1isSmallS(double f, double T, double tmg, double tmH, double tv, double ZFS, double r,double Sp,double S)
 {
   double x,w, Delta,af,Sc,ws,td1,td2,td1g,td2g,it1s,it2s;
-  double __Jin();
 
    w = 2*pi*f;
    ws=w*gammae/gamma;
