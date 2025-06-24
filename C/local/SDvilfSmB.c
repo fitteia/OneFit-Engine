@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include "globals.h"
 #include "struct.h"
-
+#include "SDvilfSmB.h"
+#include "fij.h"
+#include "fitutil.h"
 
 /****************************************************************************/
 /*		SDVILFSmB.C				      */
@@ -52,7 +54,6 @@ double SDvilfSmB(double f, double d, double n, double t)
 {
 	int	j;
 	double	B,D,wt,m,j1,j2,af;
-	double	fij(),_iT1wSmB();
 	double  I=0.5;
 
 	/*
@@ -79,14 +80,12 @@ double SDvilfSmB(double f, double d, double n, double t)
 /***************************************************************************/
 /*							      */
 /**************************************************************************/
-double _iT1wSmB(k,t,w)
-int	k;
-double t,w;
+double _iT1wSmB(int k, double t, double w)
+// int	k;
+// double t,w;
 {
 	int	j,i,p;
 	double	wt,m,af,*x,*y,*y2,*xx,*yy,ypn;
-	double	*dvector();
-	void	free_dvector(),dsplint(),dpolint();
 
 	x  = dvector(1,Ndt+1);
 	y  = dvector(1,Ndt+1);
