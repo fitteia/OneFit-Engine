@@ -10,7 +10,7 @@ static double sqrarg;
 
 void lfit1n( double x[], double y[], double sig[], int ndata, double a[], int ma, int lista[], 
 			 int mfit, double *chisq,
-			 void (*func_ptr)(double x[],double *afunc, int ma, double *par, double t, int mode), 
+			 void (*func_ptr)(double x, double *afunc, int ma, double *par, double t, int mode), 
 			 double par[], double t, int mode)
 // int ndata,ma,lista[],mfit,mode;
 // double x[],y[],sig[],a[],*chisq,t,par[];
