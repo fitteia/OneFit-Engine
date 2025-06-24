@@ -24,5 +24,5 @@ double Log_(Operacao *x, double y[]);
 double Sin_(Operacao *x, double y[]);
 double id(Operacao *x, double y[]);
 double Exp_(Operacao *x, double y[]);
-
+double Cos_(Operacao *x, double y[]);
 

@@ -56,8 +56,6 @@ int main(int argc, char *argv[])
 // int argc;
 // char *argv[];
 {
-   void maincop();
-
    maincop(argc,argv);
    exit(0);
 }
