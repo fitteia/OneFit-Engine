@@ -15,8 +15,6 @@
 /*****************************************************************************/
 void nrerror(char error_text[])
 {
-   void exit();
-
    fprintf(stderr,"OneFit run-time error...\n");
    fprintf(stderr,"%s\n",error_text);
    fprintf(stderr,"...now exiting to system...\n");
@@ -27,8 +25,6 @@ void nrerror(char error_text[])
 /*****************************************************************************/
 void gfitn_error(char error_text[],char option_msg[])
 {
-   void exit();
-
    fprintf(stderr,"OneFit run-time error...\n");
    fprintf(stderr,"%s %s\n",error_text,option_msg);
    fprintf(stderr,"...now exiting to system...\n");
@@ -208,7 +204,6 @@ void free_ivector(int *v, int nl, int nh)
 /*****************************************************************************/
 FILE   *openf(char fname[],char mode[])
 {
-   void   exit();
    FILE   *fopen();
    FILE   *f;
 
@@ -227,7 +222,6 @@ FILE   *openf(char fname[],char mode[])
 int RRemove(fname)
 char *fname;
 {
-  void nrerror();
   int f;
 
   if( (f = remove(fname)) == -1  ) {
@@ -245,7 +239,6 @@ int Rename(oldfname,newfname)
 char *oldfname;
 char *newfname;
 {
-  void nrerror();
   int f;
 
   if( (f = rename(oldfname,newfname)) != 0 ) {
