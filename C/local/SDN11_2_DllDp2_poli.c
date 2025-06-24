@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "SDN11_2_DllDp2_poli.h"
-#include "sdvilfjwN11_2.h"
+#include "sdvilfjwn11_2.h"
 
 #define pi 3.1415927
 
