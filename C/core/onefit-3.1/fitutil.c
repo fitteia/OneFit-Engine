@@ -477,7 +477,7 @@ void *Realloc(void *ptr,unsigned int size)
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-int *Flc(FILE *file, int nlines)
+int *Flc(FILE *file, int *nlines)
 // FILE *file;
 // int *nlines;
 {
