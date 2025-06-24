@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "globals.h"
 #include "pp3d.h"
+#include "funcsn.h"
 
 #define P1M 1.5
 #define P1m 0.5
@@ -18,7 +19,7 @@ static double sqrarg;
 void pp3d(double par[])
 // double  par[];
 {
-   int   i,j,*ivector(),ntotpar,npar;
+   int   i,j,ntotpar,npar;
    double  *p[200],*parbak=0,p1,p2,z;
    double  *chisq,p1m,p1M,p2m,p2M,p1s,p2s;
    char    ppname[100];

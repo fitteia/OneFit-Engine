@@ -101,7 +101,7 @@ extern FILE *pointers_file;
 
 extern void nrerror(char a[]);
 extern void gfitn_error(char error_text[],char option_msg[]);
-extern int *ivector(int nl, int nh);
+int *ivector(int nl, int nh);
 extern double *dvector(int nl, int nh);
 extern double **dmatrix(int nrl, int nrh, int ncl, int nch);
 extern char **cmatrix(int nrl, int nrh, int ncl, int nch);
@@ -113,7 +113,7 @@ extern void free_cmatrix(char **m, int nrl, int nrh, int ncl, int nch);
 extern void free_vector(float *v, int nl, int nh);
 extern void free_cvector(char *v, int nl, int nh);
 extern void free_dmatrix(double **m, int nrl, int nrh, int ncl, int nch);
-extern void free_ivector(int *v, int nl, int nh);
+void free_ivector(int *v, int nl, int nh);
 double   atanh(double a);
 extern void dpolint(double xa[], double ya[], int n, double x, double *y, double *dy);
 extern void dsplint(double *xa, double *ya, double *y2a, int n, double x, double *y);
