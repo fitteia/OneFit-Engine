@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "fitutil.h"
 #include "actpar.h"
@@ -10,7 +11,7 @@ void usage()
   exit(0);
 }
 
-void main( int argc,char *argv[])
+int main( int argc,char *argv[])
 // int argc;
 // char *argv[];
 {
