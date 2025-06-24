@@ -218,8 +218,8 @@ FILE   *openf(char fname[],char mode[])
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-int RRemove(fname)
-char *fname;
+int RRemove(char *fname)
+// char *fname;
 {
   int f;
 
@@ -234,9 +234,9 @@ char *fname;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-int Rename(oldfname,newfname)
-char *oldfname;
-char *newfname;
+int Rename(char *oldfname, char *newfname)
+// char *oldfname;
+// char *newfname;
 {
   int f;
 
@@ -251,8 +251,8 @@ char *newfname;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double   atanh(x)
-double   x;
+double atanh(double x)
+// double   x;
 {
    if( x <= -1.0 || x >= 1.0 ) nrerror("Error in function atanh() -1<x<1");
    return -0.5*log( (1-x)/(1+x) );
