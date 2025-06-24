@@ -179,7 +179,7 @@ double  angulo(Atomo A1, Atomo A2, Atomo A3, Atomo A4)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-FILE *openf(char fname[], char modei[])
+FILE *openf(char fname[], char mode[])
 // char    fname[];
 // char    mode[];
 {
