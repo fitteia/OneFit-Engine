@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "globals.h"
+#include "pp3d.h"
 
 #define P1M 1.5
 #define P1m 0.5
@@ -14,15 +15,14 @@ static double sqrarg;
 #define SQR(a) (sqrarg=(a),sqrarg*sqrarg)
 
 
-void   pp3d(par)
-double  par[];
+void pp3d(double par[])
+// double  par[];
 {
    int   i,j,*ivector(),ntotpar,npar;
-   double  *p[200],*dvector(),gchi2t(),lixo(),**dmatrix(),*parbak=0,p1,p2,z;
+   double  *p[200],*parbak=0,p1,p2,z;
    double  *chisq,p1m,p1M,p2m,p2M,p1s,p2s;
    char    ppname[100];
-   void    free_dvector(),free_ivector();
-   FILE    *fpp,*openf(),*gnu3d;
+   FILE    *fpp,*gnu3d;
 
    ntotpar = FPar+NT*Mfit;
    if(par) npar    = (int) par[0];
@@ -92,15 +92,13 @@ double  par[];
 /******************************************************************************/
 /*                                 */
 /******************************************************************************/
-double   gchi2t(par,chisq)
-double    par[];
-double chisq[];
+double gchi2t(double par[], double chisq[])
+// double    par[];
+// double chisq[];
 {
    int   ma=0,i,k,j,mode;
    double   chisqt;
    double   **Data,*x,*y,*sig,*afunc,sum,t;
-   double   *dvector();
-   void   funcsn(),free_dvector();
 
    afunc = dvector(1,Ma);
    if(par) mode = (int) par[1];
@@ -141,10 +139,5 @@ double chisq[];
 /******************************************************************************/
 /*                                 */
 /******************************************************************************/
-double lixo(p)
-double p[];
-{
-return 0.0;
-}
 #undef SQR
 
