@@ -301,8 +301,7 @@ ya, i=1,...,n, then the returned value y=P(x).
 {
    int   i,m,ns=1;
    double   den,dif,dift,ho,hp,w;
-   double   *c,*d,*dvector();
-   void   nrerror(),free_dvector();
+   double   *c,*d;
 
    dif=fabs(x-xa[1]);
    c=dvector(1,n);
@@ -363,8 +362,7 @@ void dspline( double x[], double y[], int n, double yp1, double ypn, double y2[]
 // int n;
 {
    int i,k;
-   double p,qn,sig,un,*u,*dvector();
-   void free_dvector();
+   double p,qn,sig,un,*u;
 
    u=dvector(1,n-1);
    if (yp1 > 0.99e30)
