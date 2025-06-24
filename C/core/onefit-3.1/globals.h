@@ -82,7 +82,7 @@ extern double _X;
 extern double _Y;
 extern double _E;
 extern int *num_gph_points;
-extern double (**function)(double x, double par[], double t, int mode, char **args, char *names);
+extern double (**function)(double x, double par[], double t, int mode, char **args, int  nargs);
 extern char *Gnuplot;
 extern int Nfuncoes;
 extern int Ngnus;
