@@ -26,7 +26,7 @@ printf("mode=%d\n",mode);
     }
     else { 
 		if(Func_args[i-1] != NULL)
-	    	afunc[i]=(*function[i-1])(x,par,t,mode,Func_args[i-1],Func_nargs[i-1]);
+	    	afunc[i]=(*function[i-1])(x,par,t,mode,&Func_args[i-1],Func_nargs[i-1]);
 		else
 	    	afunc[i]=(*function[i-1])(x,par,t,mode,NULL,0);
     }
