@@ -4,7 +4,7 @@ int RRemove(char *fname);
 void *Malloc(unsigned int size);
 void *Realloc(void *ptr,unsigned int size);
 int Rename(char *oldfname, char *newfname);
-int *Flc(FILE *file, int nlines);
+int *Flc(FILE *file, int *nlines);
 char **nlnc( int nlinhas, int *nchar_linha);
 FILE *openf(char fname[],char mode[]);
 void free_nlnc(char **m, int nlinhas);
