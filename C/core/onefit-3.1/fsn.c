@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "gfit_out.h"
 
 /*****************************************************************************/
 /*                                                                           */

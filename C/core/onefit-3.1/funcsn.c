@@ -23,7 +23,7 @@ printf("mode=%d\n",mode);
       */
     if(!strncmp(Func_names[i-1],"Perl",4)){
       afunc[i]=(*function[i-1])(x,par,t,mode,Func_names,0); 
-      // afunc[i]=(*function[i-1])(x,par,t,mode,Func_names[i-1],0); 
+      // afunc[i]=(*function[i-1])(x,par,t,mode,Func_names[i-1],0); NOT SURE ABOUT THE REASON FOR THIS... 
     }
     else { 
 		if(Func_args[i-1] != NULL)
