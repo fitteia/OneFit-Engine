@@ -204,7 +204,6 @@ void free_ivector(int *v, int nl, int nh)
 /*****************************************************************************/
 FILE   *openf(char fname[],char mode[])
 {
-   FILE   *fopen();
    FILE   *f;
 
    if( (f = fopen(fname,mode)) == NULL) {

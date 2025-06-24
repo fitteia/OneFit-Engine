@@ -1,5 +1,6 @@
 /** fitutil.h **/
 
+FILE   *openf(char fname[],char mode[]);
 void nrerror(char error_text[]);
 double *dvector(int nl, int nh);
 void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
