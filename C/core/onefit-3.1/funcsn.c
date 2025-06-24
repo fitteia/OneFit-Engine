@@ -5,10 +5,11 @@
 #include	<math.h>
 #include        "globals.h"
 #include <string.h>
+#include "funcsn.h"
 
-void	funcsn(x,afunc,ma,par,t,mode)
-int	ma,mode;
-double 	x,*afunc,t,*par;
+void funcsn(double x, double *afunc, int ma, double *par, double t, int mode)
+// int	ma,mode;
+// double 	x,*afunc,t,*par;
 {
   int	i;
 /**
