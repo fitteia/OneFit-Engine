@@ -55,10 +55,8 @@ double gchi2_vn(double *p, double *chisq)
       mfit  = Mfit;
       ndata = Ndata[i];
       lista = Lista;
-	void (*f)(double a, double *b, int c, double *d, double h,int i);
-		f= funcsn;
       if(_T!=NULL) lfit1n(x,y,sig,ndata,a,ma,lista,mfit,
-			 &chisq[i],f,p,_T[i],mode);
+			 &chisq[i],funcsn,p,_T[i],mode);
       else lfit1n(x,y,sig,ndata,a,ma,lista,mfit,
 			 &chisq[i],funcsn,p,1.0,mode);
  
