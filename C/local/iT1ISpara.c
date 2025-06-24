@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include "iT1ISpara.h"
 
 #define pi 3.1415926
 
