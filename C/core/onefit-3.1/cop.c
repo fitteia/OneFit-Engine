@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "cop.h"
+#include "fitutil.h"
 
 /*
  ** The following lines will prevent `gcc' version 2.X
@@ -18,14 +20,6 @@ USE(rcsid);
 
 #define MAX_LINES 10000
 #define MAX_COL  100
-
-typedef struct {
-  int i;
-  int j;
-  int t;
-  double c;
-  double (*fptr)();
-} Operacao;
 
 void usage()
 {
@@ -58,9 +52,9 @@ void usage()
 int S_flag,G_flag,F_flag,p_flag,b_flag,e_flag,c_flag,top_flag,botom_flag,nb,ne;
 char sep;
 
-int main(argc,argv)
-int argc;
-char *argv[];
+int main(int argc, char *argv[])
+// int argc;
+// char *argv[];
 {
    void maincop();
 
@@ -68,16 +62,14 @@ char *argv[];
    exit(0);
 }
 
-void maincop(argc,argv)
-int argc;
-char *argv[];
+void maincop(int argc, char *argv[])
+// int argc;
+// char *argv[];
 {
   int i,j,k,nop,nc_out,nc,err=1;
   char c,ins[20];
   double x,*y;
-  double *dvector();
-  void options(),free_dvector(),operacao();
-  FILE *fin,*fout,*openf();
+  FILE *fin,*fout;
   Operacao col[MAX_COL];
 
   p_flag=b_flag=e_flag=c_flag=top_flag=botom_flag=nb=nop=0;
@@ -203,8 +195,8 @@ char *argv[];
   if (!err) printf("fscan() call error in cop.c, maincop()\n");
 }
 
-void options(argu)
-char argu[];
+void options(char argu[])
+// char argu[];
 {
   if(!strncmp(argu,"-v",2)) p_flag=1;
   else if(!strncmp(argu,"-b",2)) {
@@ -236,15 +228,13 @@ char argu[];
 */
 }
 
-void operacao(col,argu)
-Operacao *col;
-char *argu;
+void operacao(Operacao *col,char *argu)
+// Operacao *col;
+// char *argu;
 {
   int i,j,op_flag=0,ncar=0,err=1;
   char c;
   double x;
-  double id(),sim(),soma(),dif(),mult(),divi(),ln_(),Log_(),Exp_();
-  double Sin_(),Cos_(),Pow_(), Abs_();
 
   for(i=0;i<strlen(argu);i++) if(argu[i] == 'c') ++ncar;
   for(i=0;i<strlen(argu);i++) {
@@ -384,108 +374,104 @@ char *argu;
   if (!err) printf("fscan() call error in cop.c, maincop()\n");
 }
 
-double Abs_(x,y)
-Operacao *x;
-double y[];
+double Abs_(Operacao *x, double y[])
+// Operacao *x;
+// double y[];
 {
   return fabs(y[(*x).i]);
 }
 
-double soma(x,y)
-Operacao *x;
-double y[];
+double soma(Operacao *x, double y[])
+// Operacao *x;
+// double y[];
 {
   if((*x).t == 2) return (*x).c + y[(*x).i];
   else if((*x).t == 1) return y[(*x).i] + (*x).c;
   else return y[(*x).i]+y[(*x).j];
 }
 
-double dif(x,y)
-Operacao *x;
-double *y;
+double dif(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   if((*x).t == 2) return (*x).c - y[(*x).i];
   else if((*x).t ==1) return y[(*x).i] - (*x).c;
   else return y[(*x).i]-y[(*x).j];
 }
 
-double mult(x,y)
-Operacao *x;
-double *y;
+double mult( Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   if((*x).t == 2) return (*x).c * y[(*x).i];
   else if((*x).t ==1) return y[(*x).i] * (*x).c;
   else return y[(*x).i] * y[(*x).j];
 }
 
-double divi(x,y)
-Operacao *x;
-double *y;
+double divi(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   if((*x).t == 2) return (*x).c / y[(*x).i];
   else if((*x).t==1) return y[(*x).i] / (*x).c;
   else return y[(*x).i] / y[(*x).j];
 }
 
-double Pow_(x,y)
-Operacao *x;
-double *y;
+double Pow_(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   if((*x).t == 2) return pow( (*x).c, y[(*x).i]);
   else return pow(y[(*x).i],(*x).c);
 }
 
-double id(x,y)
-Operacao *x;
-double *y;
+double id(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   if((*x).t == 1) return (*x).c;
   else return y[(*x).i];
 }
 
-double sim(x,y)
-Operacao *x;
-double *y;
+double sim(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   return -y[(*x).i];
 }
 
-double ln_(x,y)
-Operacao *x;
-double *y;
+double ln_(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   return log(y[(*x).i]);
 }
 
-double Log_(x,y)
-Operacao *x;
-double *y;
+double Log_(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   return log10(y[(*x).i]);
 }
 
-double Exp_(x,y)
-Operacao *x;
-double *y;
+double Exp_(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   return exp(y[(*x).i]);
 }
 
-double Sin_(x,y)
-Operacao *x;
-double *y;
+double Sin_(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   return sin(y[(*x).i]);
 }
 
-double Cos_(x,y)
-Operacao *x;
-double *y;
+double Cos_(Operacao *x, double y[])
+// Operacao *x;
+// double *y;
 {
   return cos(y[(*x).i]);
 }
-
-
-
-
 
