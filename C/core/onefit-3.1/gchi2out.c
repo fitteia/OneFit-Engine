@@ -5,18 +5,19 @@
 #include <stdio.h>
 #include <string.h>
 #include "globals.h"
+#include "gchi2out.h"
+#include "fitutil.h"
+#include "lfit1n.h"
+#include "funcsn.h"
 
-
-double   gchi2out(p,i,fitout)
-double    p[];
-int  i; /* temperature i */
-FILE    *fitout;
+double gchi2out(double p[], int i, FILE *fitout)
+// double    p[];
+// int  i;  temperature i 
+// FILE    *fitout;
 {
    int   ma,*lista,mfit,ndata,j,k,mode;
    double   chisqt=0.0;
    double   **Data,*x,*y,*sig,*a;
-   double   *dvector();
-   void   funcsn(),lfit1n(),free_dvector();
 
    a     = dvector(1,Ma);
 
