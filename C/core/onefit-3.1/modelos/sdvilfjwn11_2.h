@@ -1,4 +1,4 @@
-/** sdvilfjwn11:2.h **/i
+/** sdvilfjwn11:2.h **/
 
 double sdvilfjwN11_2(double I, double d, double n, double t, double w, double delta);
 double sdvilfjwN11_2_poli(double I, double d, double n, double t, double w);
