@@ -11,7 +11,7 @@ int main (int argc, char **argv)
   int     i=0,n=0,N=0;
   double	t,t1,a,x;
   char    c;
-  double data,*re,*im, delta=1.0,fstep,f;
+  double *data,*re,*im, delta=1.0,fstep,f;
 
 	FILE	*fp,*fout;
 
