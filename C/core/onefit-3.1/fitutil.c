@@ -349,7 +349,6 @@ void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y)
 {
    int klo,khi,k;
    double h,b,a;
-   void nrerror();
 
    klo=1;
    khi=n;
@@ -367,9 +366,9 @@ void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void dspline(x,y,n,yp1,ypn,y2)
-double x[],y[],yp1,ypn,y2[];
-int n;
+void dspline( double x[], double y[], int n, double yp1, double ypn, double y2[])
+// double x[],y[],yp1,ypn,y2[];
+// int n;
 {
    int i,k;
    double p,qn,sig,un,*u,*dvector();
