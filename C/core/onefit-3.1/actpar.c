@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <string.h>
+#include "fitutil.h"
+#include "actpar.h"
 
 void usage()
 {
@@ -8,16 +10,15 @@ void usage()
   exit(0);
 }
 
-void main(argc,argv)
-int argc;
-char *argv[];
+void main( int argc,char *argv[])
+// int argc;
+// char *argv[];
 {
-  FILE *openf(),*fparin,*fout,*fparout;
+  FILE *fparin,*fout,*fparout;
   unsigned char c;
   int i,j,npar;
   char s[126],file[50],val[11];
-  double *par,*dvector(),ler_val();
-  void itoa(),new_line();
+  double *par;
 
 
   if(argc == 1) usage();
@@ -124,8 +125,8 @@ char *argv[];
 #define IN  1
 #define OUT 0
 
-int wc(s)
-char *s;
+int wc(char *s)
+// char *s;
 {
   int nw,i,state;
   char c;
@@ -143,8 +144,8 @@ char *s;
   return nw;
 }
 
-double   ler_val(f)
-FILE   *f;
+double   ler_val(FILE *f)
+// FILE   *f;
 {
    double   x;
    char   c;
