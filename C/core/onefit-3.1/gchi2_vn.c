@@ -57,9 +57,9 @@ double gchi2_vn(double *p, double *chisq)
       lista = Lista;
 
       if(_T!=NULL) lfit1n(x,y,sig,ndata,a,ma,lista,mfit,
-			 &chisq[i],*funcsn,p,_T[i],mode);
+			 &chisq[i],funcsn,p,_T[i],mode);
       else lfit1n(x,y,sig,ndata,a,ma,lista,mfit,
-			 &chisq[i],*funcsn,p,1.0,mode);
+			 &chisq[i],funcsn,p,1.0,mode);
  
       for(k=1;k<=Ma;k++) {
 /*         printf("a[%d]=%lg\n",k,a[k]); */
