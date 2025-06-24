@@ -166,7 +166,7 @@ double  distancia(Atomo A1, Atomo A2)
 double  angulo(Atomo A1, Atomo A2, Atomo A3, Atomo A4)
 // Atomo   A1,A2,A3,A4;
 {
-    double  distancia(),ang,d12,d34,v;
+    double  ang,d12,d34,v;
 
     d12 = distancia(A1,A2);
     d34 = distancia(A3,A4);
@@ -183,7 +183,6 @@ FILE *openf(char fname[], char modei[])
 // char    fname[];
 // char    mode[];
 {
-        FILE    *fopen();
         FILE    *f;
 
         if( (f = fopen(fname,mode)) == NULL) {
