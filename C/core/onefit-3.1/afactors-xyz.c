@@ -9,7 +9,6 @@
 int  main(int argc, char **argv)
 {
     FILE    *fout,*fin;
-    void     Afactors(),r6medio();
     int      e1,e2;
 
     fin  = openf(argv[1],"r");
@@ -37,7 +36,7 @@ void Afactors(FILE *fin, FILE *fout, int e1, int e2)
 {
     int     c,i,j,natomos,nprotoes;
     double  b0,b1,b2;
-    double  angulo(),distancia(),angij,rij,re1e2,A00,A0,A1,A2,tmp,tmp1=0;
+    double  angij,rij,re1e2,A00,A0,A1,A2,tmp,tmp1=0;
     Atomo   A[500];
 
     fscanf(fin,"%d",&natomos);
@@ -111,7 +110,7 @@ void r6medio( FILE *fin, FILE *fout)
 // FILE    *fin,*fout;
 {
     int     c,i,j,natomos,nprotoes;
-    double  angulo(),distancia(),rij,r6;
+    double  rij,r6;
     Atomo   A[500];
 
     fscanf(fin,"%d",&natomos);
