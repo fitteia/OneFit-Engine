@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <getopt.h>
 #ifndef MacOSX
      #include <malloc.h>
 #endif
@@ -235,7 +236,6 @@ void read_arguments(int argc, char *argv[])
 // int argc;
 // char *argv[];
 {
-    int getopt_long(int,char **, char *, char **, int *);
     int i,j,n,m;
     int optind_aux=0;
     char *optarg_aux=NULL;
