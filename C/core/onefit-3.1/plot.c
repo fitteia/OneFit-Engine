@@ -81,8 +81,6 @@ void plotgraf(double *par)
   char aux1[100];
   double  *fs,f,ft,*x;
   
-  void funcsn(),teste_func(),lixo();
-  
   FILE    *fptr;
   
   fs = dvector(1,Ma);
