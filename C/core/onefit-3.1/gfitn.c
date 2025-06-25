@@ -15,10 +15,9 @@
 
 
 #ifdef WITH_PERL
-#include <EXTERN.h>
-#include <perl.h>
-#endif
-static PerlInterpreter *my_perl;
+	#include <EXTERN.h>
+	#include <perl.h>
+	static PerlInterpreter *my_perl;
 #endif
 /*static char *PERL_FILE[]={"","gfitn.pl"};*/
 static char **PERL_FILE;
