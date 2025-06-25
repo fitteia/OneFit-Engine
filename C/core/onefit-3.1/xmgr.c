@@ -15,7 +15,6 @@ void xmgr(char prog[], char format[])
   char *typex,*typey;
   char xmgr_cmd[2048];
   char xmgr_par_file[256];
-  void new_line();
   char graph_type[30];
   char curv_teo[100];
   int print_data();
@@ -238,7 +237,6 @@ void grbatch()
   char *typex,*typey;
   char xmgr_cmd[2048];
   char xmgr_par_file[256];
-  void new_line();
   char graph_type[30];
   char curv_teo[100];
   int print_data();
