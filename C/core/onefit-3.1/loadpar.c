@@ -103,7 +103,6 @@ char **ReadParNames(char filepar[])
   int i,npar;
   double x1,x2;
   char s[125]="",s1[11]="";
-  void new_line();
   FILE *fin;
   int err=1;
   char *cerr=s;
