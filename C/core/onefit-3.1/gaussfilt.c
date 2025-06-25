@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include "fitutil.h"
+#include "gaussfilt.h"
 
 #define SWAP(a,b) tempr=(a);(a)=(b);(b)=tempr
 #define MAX(a,b)  (((a)>(b)) ? (a) : (b))
@@ -16,8 +17,9 @@ void usage()
   printf("        if file_in is . then standard input is used\n");
   exit(0);
 }
-double EXPFILT(i,j,npts)
-int i,j,npts;
+
+double EXPFILT(int i, int j, int npts)
+// int i,j,npts;
 {
   if(npts ==0) {
     if(i == j) return 1.0;
@@ -26,9 +28,9 @@ int i,j,npts;
   else return exp(-(i-j)*(i-j)/((double) npts));
 }
  
-double *expfilt(y,n,npts)
-double *y;
-int n,npts;
+double *expfilt(double *y, int n, int npts)
+// double *y;
+// int n,npts;
 {
   double *z,sum=0.0;
   int i,j;
