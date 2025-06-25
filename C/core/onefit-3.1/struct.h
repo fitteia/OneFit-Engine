@@ -100,7 +100,7 @@ typedef struct ODE2 {
   double             y;
   double             z;
   double             h;
-  double             (*dydx)();                 /* function */
-  double             (*d2ydx2)();                 /* function */
+  double             (*dydx)(struct ODE2 *a);                 /* function */
+  double             (*d2ydx2)(struct ODE2 *b);                 /* function */
   Parameter          par[10];
 } ODE2;
