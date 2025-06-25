@@ -198,10 +198,8 @@ int swc(char *s);
 int flc(FILE *file);
 
 
-extern void gfitn_error();
 extern void initialize();
 extern void user_initialize();
-extern int strplen();
 extern void ParFreeF();
 extern char **ReadParNames();
 extern void minuit_();
