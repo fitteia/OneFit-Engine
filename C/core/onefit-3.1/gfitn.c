@@ -16,6 +16,7 @@
 #include "readdat.h"
 #include "xmgr.h"
 #include "gfitoutp.h"
+#include "gchi2_vn.h"
 
 static PerlInterpreter *my_perl;
 #endif
