@@ -80,7 +80,7 @@ double _E=0;
 int *num_gph_points=0;
 FILE *pointers_file=0;
 
-static option long_options[]={
+static const struct option long_options[]={
   {"autox_scale",0,&autox_flag,1},
   {"autox",0,&autox_flag,1},
   {"autoy_scale",0,&autoy_flag,1},
