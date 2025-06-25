@@ -5,14 +5,13 @@
 #include "globals.h"
 #include "struct.h"
 #include "Ftotal.h"
-
+#include "fitutil.h"
+#include "funcsn.h"
 
 double   Ftotal(double x, double t, double *p)
 {
   int   i,k,mode,j,u;
   double   *a,*afunc,sum;
-   double   *dvector();
-   void   funcsn(),free_dvector();
 
    a     = dvector(1,Ma);
    afunc= dvector(0,Ma);
