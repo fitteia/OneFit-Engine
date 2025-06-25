@@ -4,6 +4,7 @@
 #include <string.h>
 #include "globals.h"
 #include "struct.h"
+#include "Ftotal.h"
 
 
 double   Ftotal(double x, double t, double *p)
