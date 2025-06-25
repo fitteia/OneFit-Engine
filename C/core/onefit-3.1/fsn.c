@@ -14,7 +14,7 @@
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void fcn(int *npar double ,g[], double *f, double par[], int *iflag)
+void fcn(int *npar, double g[], double *f, double par[], int *iflag)
 // int   *npar,*iflag;
 // double   g[],*f,par[];
 {
