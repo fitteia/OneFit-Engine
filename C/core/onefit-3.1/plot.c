@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "plot.h"
-#include "gfit_outp.h"
 
 void plotfitn()
 {
