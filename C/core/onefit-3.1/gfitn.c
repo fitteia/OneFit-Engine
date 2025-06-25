@@ -197,7 +197,7 @@ int main(int argc, char **argv,char **env)
 	  minuit_(fcn,0);
 #endif
 #ifndef LINUX
-	  minuit_MSDOS(fcn,0);
+	  // minuit_MSDOS(fcn,0);
 #endif
 	  free_ivector(ParFreeVector,1,FPar);
 	}

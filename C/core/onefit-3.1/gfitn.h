@@ -211,6 +211,7 @@ extern double PerlNLF();
 void read_arguments(int argc, char *argv[]);
 void decode_funcao(char *optarg);
 double perl_func_call(char s[],char *spointer[]);
+int minuit_(void fcn(int *npar, double g[], double *f, double par[], int *iflag), int a);
 
 #define START_INITIALIZE \
 ({\
