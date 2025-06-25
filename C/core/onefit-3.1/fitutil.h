@@ -25,7 +25,7 @@ void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
 void dspline( double x[], double y[], int n, double yp1, double ypn, double y2[]);
 void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y);
 void free_dvector(double *v, int nl, int nh);
-void free_ivector(int *v, int nl, int nh)
+void free_ivector(int *v, int nl, int nh);
 void free_nlnc(char **m, int nlinhas);
 void new_line(FILE *f, int n);
 void nrerror(char error_text[]);
