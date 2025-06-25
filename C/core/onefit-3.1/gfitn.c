@@ -27,10 +27,8 @@ int argc;
 char **argv;
 char **env;
 {
-  int read_data();
   int i,m;
   double out,*chis;
-  void gfit_outpg();
 
   PROGNAME = argv[0];
 
