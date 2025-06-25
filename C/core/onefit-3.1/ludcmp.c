@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #include "fitutil.h"
 
 #define TINY 1.0e-20;
