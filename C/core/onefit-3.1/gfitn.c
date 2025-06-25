@@ -15,6 +15,7 @@
 #include "gfitoutp.h"
 #include "gchi2_vn.h"
 #include "loadpar.h"
+#include "fsn.h"
 
 #ifdef WITH_PERL
 	#include <EXTERN.h>
