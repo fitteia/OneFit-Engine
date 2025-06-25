@@ -99,12 +99,12 @@ void ParFreeF(char filePar[])
 char **ReadParNames(char filepar[])
 // char filepar[];
 {
-  char **cmatrix(),**m;
+  char **m;
   int i,npar;
   double x1,x2;
   char s[125]="",s1[11]="";
   void new_line();
-  FILE *fin,*openf();
+  FILE *fin;
   int err=1;
   char *cerr=s;
   
