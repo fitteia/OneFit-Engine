@@ -125,8 +125,7 @@ extern void grbatch();
 extern double perl_func_call();
 extern double PerlLF();
 extern double PerlNLF();
-extern double Ftotal();
-
+double   Ftotal(double x, double t, double *p);
 int RRemove(char *fname);
 void *Malloc(unsigned int size);
 void *Realloc(void *ptr,unsigned int size);
