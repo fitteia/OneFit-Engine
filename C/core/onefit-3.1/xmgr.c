@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "readdat.h"
 #include "xmgr.h"
 
 void xmgr(char prog[], char format[])
@@ -17,7 +18,6 @@ void xmgr(char prog[], char format[])
   char xmgr_par_file[256];
   char graph_type[30];
   char curv_teo[100];
-  int print_data();
   int err = 1;
   
   for(i=0;i<NT;i++){
@@ -239,7 +239,6 @@ void grbatch()
   char xmgr_par_file[256];
   char graph_type[30];
   char curv_teo[100];
-  int print_data();
   int err = 1;
   
   for(i=0;i<NT;i++){
