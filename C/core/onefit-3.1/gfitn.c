@@ -15,7 +15,7 @@
 #endif
 #include "readdat.h"
 #include "xmgr.h"
-#include "giftoutp.h"
+#include "gfitoutp.h"
 
 static PerlInterpreter *my_perl;
 #endif
