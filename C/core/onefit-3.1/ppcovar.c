@@ -18,9 +18,9 @@
 #define H        1e-1
 
 
-void    ppcovar(fitout,par)
-FILE    *fitout;
-double  par[];
+void ppcovar(FILE *fitout, double par[])
+// FILE    *fitout;
+// double  par[];
 {
    int     i,j,ntotpar,npar,*indx;
    double  *p[200],*parbak=0,p1,p2;
