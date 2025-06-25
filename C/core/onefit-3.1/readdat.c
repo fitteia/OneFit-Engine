@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "globals.h"
 #include <stdlib.h>
+#include "readdat.h"
 
 int read_data(char *fname)
 {
@@ -109,9 +110,9 @@ int read_data(char *fname)
   return Ndata[nfile-1];
 }
 
-int print_data(file,nfile)
-char *file;
-int nfile;
+int print_data(char *file, int nfile)
+// char *file;
+// int nfile;
 {
   int nlinhas,i;
   FILE *f;
