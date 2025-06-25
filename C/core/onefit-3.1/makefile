@@ -33,7 +33,7 @@ LIB=  -L$(DESTDIR)/lib -lonefit-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -lonefit
 SRC= functions.c tabfunc.c
 OBJ= functions.o tabfunc.o
 
-FLAGS= -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I./ -Wall
+FLAGS= -D__GNU_LIBRARY__ -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I./ -Wall
 
 CC = cc $(FLAGS)
 
