@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "plot.h"
+#include "funcsn.h"
 
 void plotfitn()
 {
