@@ -13,7 +13,7 @@ double ler_num(FILE *f);
 double logT1( double x);
 int *Flc(FILE *file, int *nlines);
 int *buffer_Flc(FILE *file, int *nlines);
-int *ivector(int nl, int nh)
+int *ivector(int nl, int nh);
 int RRemove(char *fname);
 int Rename(char *oldfname, char *newfname);
 int flc(FILE *file);
