@@ -8,16 +8,16 @@
 #endif
 #include "gfitn.h"
 #include <stdlib.h>
-
-#ifdef WITH_PERL
-#include <EXTERN.h>
-#include <perl.h>
-#endif
 #include "readdat.h"
 #include "xmgr.h"
 #include "gfit_out.h"
 #include "gchi2_vn.h"
 
+
+#ifdef WITH_PERL
+#include <EXTERN.h>
+#include <perl.h>
+#endif
 static PerlInterpreter *my_perl;
 #endif
 /*static char *PERL_FILE[]={"","gfitn.pl"};*/
