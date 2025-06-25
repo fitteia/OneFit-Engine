@@ -6,18 +6,19 @@
 #include <string.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "fsn.h"
 #include "gfit_out.h"
+#include "gchi2_vn.h"
+#include "gfitoutp.h"
 
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void fcn(npar,g,f,par,iflag)
-int   *npar,*iflag;
-double   g[],*f,par[];
+void fcn(int *npar double ,g[], double *f, double par[], int *iflag)
+// int   *npar,*iflag;
+// double   g[],*f,par[];
 {
-   double   gchi2_vn(),*chis;
-   void   gfit_outpg(),gfit_outgraf();
-
+   double  *chis;
 
    switch(*iflag) {
    case 1:
