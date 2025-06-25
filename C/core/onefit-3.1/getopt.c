@@ -177,10 +177,9 @@ static enum
 
 char *getenv ();
 
-static char *
-my_index (str, chr)
-     const char *str;
-     int chr;
+static char *my_index (const char *str, int chr)
+     // const char *str;
+     // int chr;
 {
   while (*str)
     {
