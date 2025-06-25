@@ -12,6 +12,7 @@
 #ifdef WITH_PERL
 #include <EXTERN.h>
 #include <perl.h>
+#endif
 #include "readdat.h"
 #include "xmgr.h"
 #include "mygnus.h"
