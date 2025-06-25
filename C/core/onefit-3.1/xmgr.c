@@ -4,12 +4,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "xmgr.h"
 
-
-void xmgr(prog,format)
-     char prog[],format[];
+void xmgr(char prog[], char format[])
+     // char prog[],format[];
 {
-  FILE *openf();
   char ins[1024],lixo[100],Files_gph[100];
   char lixo1[100],aux[100],dlixo[100],dlixo1[100],gph[100],gnu[100];
   int i,j,nchar;
@@ -233,7 +232,6 @@ void xmgr(prog,format)
 
 void grbatch()
 {
-  FILE *openf();
   char ins[1024],lixo[100],Files_gph[100];
   char lixo1[100],aux[100],dlixo[100],dlixo1[100],gph[100],gnu[100];
   int i,j,nchar;
