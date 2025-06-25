@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
 // int argc;
 // char *argv[];
 {
-  FILE *openf(),*fin,*fout;
+  FILE *fin,*fout;
   char c;
   int i,n,npts;
   double *x,*y,*z;
