@@ -1,13 +1,15 @@
 #include <math.h>
+#include <stdio.h>
+#include "gamma.h"
+#include "fitutil.h"
 
 #define ITMAX 200
 #define EPS 3.0e-7
 
-double gammq(a,x)
-double a,x;
+double gammq(double a, double x)
+// double a,x;
 {
 	double gamser,gammcf,gln;
-	void gcf(),gser(),nrerror();
 
 	/*	if (x < 0.0 || a <= 0.0) nrerror("Invalid arguments in routine GAMMQ"); */
 	if (x < 0.0 || a <= 0.0) return -1.0;
@@ -20,14 +22,12 @@ double a,x;
 	}
 }
 
-void gcf(gammcf,a,x,gln)
-double a,x,*gammcf,*gln;
+void gcf(double *§gammcf, double a, double x, double *gln)
+// double a,x,*gammcf,*gln;
 {
 	int n;
 	double gold=0.0,g,fac=1.0,b1=1.0;
 	double b0=0.0,anf,ana,an,a1,a0=1.0;
-	double gammln();
-	void nrerror();
 
 	*gln=gammln(a);
 	a1=x;
@@ -53,13 +53,11 @@ double a,x,*gammcf,*gln;
 }
 
 
-void gser(gamser,a,x,gln)
-double a,x,*gamser,*gln;
+void gser(double *gamser, double a, double x, double *gln)
+// double a,x,*gamser,*gln;
 {
 	int n;
 	double sum,del,ap;
-	double gammln();
-	void nrerror();
 
 	*gln=gammln(a);
 	if (x <= 0.0) {
@@ -84,8 +82,8 @@ double a,x,*gamser,*gln;
 }
 
 
-double gammln(xx)
-double xx;
+double gammln(double xx)
+// double xx;
 {
 	double x,tmp,ser;
 	static double cof[6]={76.18009173,-86.50532033,24.01409822,
