@@ -120,7 +120,7 @@ extern void dsplint(double *xa, double *ya, double *y2a, int n, double x, double
 extern void initialize();
 extern void user_initialize();
 extern void mygnus();
-extern void xmgr();
+void xmgr(char prog[], char format[]);
 extern void grbatch();
 extern double perl_func_call();
 extern double PerlLF();
