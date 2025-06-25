@@ -52,7 +52,8 @@ void xmgr(char prog[], char format[])
     else if(!strncmp(typex,"log",3) && strncmp(typey,"log",3) != 0){
 	strcpy(graph_type," -log x ");
     }
-    else if(!strncmp(typey,"log",3) != 0 && !strncmp(typey,"log",3)){
+    else if( !strncmp(typey,"log",3) ){
+    // else if( !strncmp(typey,"log",3) xxx!= 0 && !strncmp(typey,"log",3)){
 	strcpy(graph_type," -log y ");
     }
     else {
@@ -273,11 +274,13 @@ void grbatch()
     else if(!strncmp(typex,"log",3) && strncmp(typey,"log",3) != 0){
 	strcpy(graph_type," -log x ");
     }
-    else if(!strncmp(typey,"log",3) != 0 && !strncmp(typey,"log",3)){
+    else if( !strncmp(typey,"log",3) ){
+    // else if(!strncmp(typey,"log",3) != 0 && !strncmp(typey,"log",3)){
 	strcpy(graph_type," -log y ");
     }
     else {
 	strcpy(graph_type," -xy ");
+
     }
 
     for(j=0;j<100;j++) gph[j]=ins[j]=lixo[j]=lixo1[j]=dlixo[j]=dlixo1[j]=0;
