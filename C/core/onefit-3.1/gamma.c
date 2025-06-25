@@ -22,7 +22,7 @@ double gammq(double a, double x)
 	}
 }
 
-void gcf(double *§gammcf, double a, double x, double *gln)
+void gcf(double *gammcf, double a, double x, double *gln)
 // double a,x,*gammcf,*gln;
 {
 	int n;
