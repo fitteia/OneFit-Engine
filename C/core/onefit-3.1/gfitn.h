@@ -199,8 +199,6 @@ int flc(FILE *file);
 
 extern void initialize();
 extern void user_initialize();
-extern void minuit_();
-extern void minuit_MSDOS();
 extern void fcn();
 extern void usage();
 extern void inigfit();
