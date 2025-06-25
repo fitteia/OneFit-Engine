@@ -4,6 +4,10 @@
 #include <math.h>
 #include <stdio.h>
 #include "globals.h"
+#include "ppcovar.h"
+#include "pp3d.h"
+#include "ludcmp.h"
+#include "lubksb.h"
 
 #define P1M 1.1
 #define P1m 0.9
@@ -18,15 +22,12 @@ void    ppcovar(fitout,par)
 FILE    *fitout;
 double  par[];
 {
-   int     i,j,*ivector(),ntotpar,npar,*indx;
-   double  *p[200],*dvector(),gchi2t(),lixo(),**dmatrix(),*parbak=0,p1,p2;
+   int     i,j,ntotpar,npar,*indx;
+   double  *p[200],*parbak=0,p1,p2;
    double  *chisq,dd2bak;
    double  ff00,ff10,ff_10,ff11,ff1_1,ff_11,ff_1_1,dd2,**dd,**bb,*col,d;
    double  h,hbak;
    double  roff;
-   void    ludcmp(),lubksb();
-   void    free_dvector(),free_ivector(),free_dmatrix();
-   FILE    *openf();
 
    ntotpar = FPar+NT*Mfit;
    if(par == NULL) npar=0;
