@@ -213,7 +213,9 @@ extern void plotfitn();
 extern double PerlLF();
 extern double PerlNLF();
 
-
+void read_arguments(int argc, char *argv[]);
+void decode_funcao(char *optarg);
+double perl_func_call(char s[],char *spointer[]);
 
 #define START_INITIALIZE \
 ({\

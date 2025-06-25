@@ -29,7 +29,7 @@ char **env;
   int read_data();
   int i,m;
   double out,*chis;
-  void gfit_outpg(),read_arguments(),decode_funcao();
+  void gfit_outpg();
 
   PROGNAME = argv[0];
 
@@ -232,9 +232,9 @@ char **env;
 }
 
 
-void read_arguments(argc,argv)
-int argc;
-char *argv[];
+void read_arguments(int argc, char *argv[])
+// int argc;
+// char *argv[];
 {
     int getopt_long();
     int i,j,n,m;
