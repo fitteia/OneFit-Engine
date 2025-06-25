@@ -200,7 +200,6 @@ int flc(FILE *file);
 extern void initialize();
 extern void user_initialize();
 extern void ParFreeF();
-extern double perl_func_call();
 extern char **ReadParNames();
 extern void minuit_();
 extern void minuit_MSDOS();
