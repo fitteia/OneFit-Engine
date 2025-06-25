@@ -235,7 +235,7 @@ void read_arguments(int argc, char *argv[])
 // int argc;
 // char *argv[];
 {
-    int getopt_long(int,char **, char *, char **. int *);
+    int getopt_long(int,char **, char *, char **, int *);
     int i,j,n,m;
     int optind_aux=0;
     char *optarg_aux=NULL;
