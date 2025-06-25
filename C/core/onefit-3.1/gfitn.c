@@ -11,6 +11,7 @@
 #include "readdat.h"
 #include "xmgr.h"
 #include "gfit_out.h"
+#include "gfitoutp.h"
 #include "gchi2_vn.h"
 
 
