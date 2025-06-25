@@ -6,18 +6,16 @@
 /**********************************************************************/
 /*                                                                    */
 /**********************************************************************/
-void ParFreeF(filePar)
-char filePar[];
+void ParFreeF(char filePar[])
+// char filePar[];
 {
    char   s[100]="",c;
-   double *dvector(),pn,pv;
-   int    *ivector();
-   void   new_line(),free_dvector(),free_ivector(),free_cmatrix();
+   double pn,pv;
    int    i,j,nd,fnd,*status=0;
    int    npar,*pParfree=0;
    int    err;
    
-   FILE   *fpar,*openf();
+   FILE   *fpar;
 
    fpar = openf(filePar,"r");
    new_line(fpar,1);
@@ -97,8 +95,8 @@ char filePar[];
 /**********************************************************************/
 /*                                                                    */
 /**********************************************************************/
-char **ReadParNames(filepar)
-char filepar[];
+char **ReadParNames(char filepar[])
+// char filepar[];
 {
   char **cmatrix(),**m;
   int i,npar;
