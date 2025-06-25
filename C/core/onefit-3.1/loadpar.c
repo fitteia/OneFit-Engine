@@ -2,6 +2,7 @@
 #include <math.h>
 #include <string.h>
 #include "globals.h"
+#include "loadpar.h"
 
 /**********************************************************************/
 /*                                                                    */
