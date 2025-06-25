@@ -15,6 +15,7 @@
 #include "readdat.h"
 #include "xmgr.h"
 #include "mygnus.h"
+#include "giftoutp.h"
 
 static PerlInterpreter *my_perl;
 #endif
