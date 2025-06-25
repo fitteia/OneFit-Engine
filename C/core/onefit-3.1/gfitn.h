@@ -210,9 +210,6 @@ extern void usage();
 extern void gfit_outgraf();
 extern void inigfit();
 extern void plotfitn();
-extern void mygnus();
-extern void xmgr();
-extern void grbatch();
 extern double PerlLF();
 extern double PerlNLF();
 
