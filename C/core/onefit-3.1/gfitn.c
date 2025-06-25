@@ -23,10 +23,10 @@ static PerlInterpreter *my_perl;
 /*static char *PERL_FILE[]={"","gfitn.pl"};*/
 static char **PERL_FILE;
 
-int main(argc,argv,env)
-int argc;
-char **argv;
-char **env;
+int main(int argc, char **argv,char **env)
+// int argc;
+// char **argv;
+// char **env;
 {
   int i,m;
   double out,*chis;
