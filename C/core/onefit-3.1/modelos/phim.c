@@ -11,6 +11,7 @@
 #include "phim.h"
 #include "integra.h"
 #include "globals.h"
+#include "dif_phase.h"
 
 #define PIO2 1.57079632679490
 /******************************************************************************/
