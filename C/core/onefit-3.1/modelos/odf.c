@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "struct.h"
-#include "struf.h"
+#include "integra.h"
 #include "odf.h"
 #include "fij.h"
 
