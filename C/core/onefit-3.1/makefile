@@ -36,7 +36,7 @@ OBJ= functions.o tabfunc.o
 
 FLAGS= -D__GNU_LIBRARY__ -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I./ -Wall
 
-CC = $(CC) $(FLAGS) 
+#CC = $(CC) $(FLAGS) 
 
 TAR = onefit-$(LIBNUMBER).tar
 
@@ -75,7 +75,7 @@ tar: $(CS1) $(CS2) $(OTHERS)
 	rm $(TAR)
 
 gfitn.o: gfitn.c gfitn.h
-	$(CC) -c gfitn.c
+	$(CC) $(FLAGS) -c gfitn.c
 
 fitutil.o: fitutil.c
 	$(CC)  $(FLAGS) -c fitutil.c
