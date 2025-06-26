@@ -123,7 +123,7 @@ printf("f=%g\n",f);
 	f = pow(10.0,f);
       else if(!strncmp(typex,"sqrt",4))
 	f = pow(f,2.0);
-      else f=f;
+      else f=f*1.0;
 /**
 printf("f=%g\n",f);
 printf("xi=%d\n",xi);
