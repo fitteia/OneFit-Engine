@@ -3,6 +3,8 @@
 /******************************************************************************/
 #include <math.h>
 #include <stdio.h>
+#include "sdvilfn11_2.h"
+#include "fitutil.h"
 
 #define	C	0.569504e-12
 #define ndt1	41
@@ -64,13 +66,11 @@ static double	jwdev[][3]={
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double sdvilfN11_2(I,d,n,t,w,delta)
-double I,d,n,t,w,delta;
+double sdvilfN11_2(double I,double d,double n,double t,double w,double delta)
+// double I,d,n,t,w,delta;
 {
 	int	j,i,p;
 	double	wt,m,af,*x,*y,*y2,*xx,*yy,ypn;
-	double	*dvector();
-	void	free_dvector(),dsplint(),dpolint();
 
 	x  = dvector(1,Ndt+1);
 	y  = dvector(1,Ndt+1);
@@ -90,7 +90,7 @@ double I,d,n,t,w,delta;
 		case -1:
 			af = y[Ndt+1]*x[Ndt+1]*x[Ndt+1]/(w*w);
 /*
-			xx = &x[Ndt];
+			zRxx = &x[Ndt];
 			yy = &y[Ndt];
 			dpolint(xx-1,yy-1,2,wt,&af,&m);
 */
