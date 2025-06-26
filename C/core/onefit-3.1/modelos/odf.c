@@ -6,7 +6,6 @@
 #include "struct.h"
 #include "struf.h"
 #include "odf.h"
-#include "integra.h"
 #include "fij.h"
 
 #define	pi	3.141592653589793238
