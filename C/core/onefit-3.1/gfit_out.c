@@ -54,7 +54,7 @@ void gfit_outgraf(double par[])
 	f = pow(10.0,f);
       else if(!strncmp(typex,"sqrt",4))
 	f = pow(f,2.0);
-      else f=f;
+      else f=f*1.0;
       x[xi] = f;
 
       fprintf(fptr,"%lg ", x[xi]);
