@@ -1,7 +1,7 @@
 # $Id: makefile,v 1.12 1999/10/28 15:45:13 pedros Exp $
 ARCH=x86_64
 OS=LINUX
-CC=cc
+CC=gcc
 ROOT=/home/lfx/fitteia
 PREFIX=
 DESTDIR=$(ROOT)$(PREFIX)
