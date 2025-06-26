@@ -9,7 +9,6 @@ double	Jodf_k123(double K13, double K23, double eta12, double RM, double Rm, dou
 double	godfN(double a);
 double	godfSN( double alfa, double w, double Wc, double Wb, double Ka1, double K31, double eta1a, double R, double Q);
 double	godfSN_v1( double alfa, double w, double Wc, double Ws, double Ka3, double K13, double eta1a, double R, double BD);
-double	godfSa(double a char *);
 double	godfSa(double a);
 double	godf_k123(double wc_w, double eta1a, double Ka3, double R);
 double	godfa(double ZaB, double n, double m1, double m2);
