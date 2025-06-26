@@ -75,7 +75,7 @@ multi MAIN (
 		$test = False;
 		$systemd-daemon = False;
 		$post-test = False;
-		$OS ? "MacOSX";
+		$OS = "MacOSX";
 	}
 
 
