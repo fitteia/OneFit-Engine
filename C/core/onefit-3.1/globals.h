@@ -122,9 +122,9 @@ extern void user_initialize();
 extern void mygnus();
 void xmgr(char prog[], char format[]);
 extern void grbatch();
-double perl_func_call(char s[],char *spointer[])
-double PerlLF(double x,double *par,double t,int mode,char *name)
-double PerlNLF(double x,double *par,double t,int mode,char *name)
+double perl_func_call(char s[],char *spointer[]);
+double PerlLF(double x,double *par,double t,int mode,char *name);
+double PerlNLF(double x,double *par,double t,int mode,char *name);
 double   Ftotal(double x, double t, double *p);
 int RRemove(char *fname);
 void *Malloc(unsigned int size);
