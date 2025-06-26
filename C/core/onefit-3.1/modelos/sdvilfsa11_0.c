@@ -5,6 +5,9 @@
 /******************************************************************************/
 #include <math.h>
 #include <stdio.h>
+#include "sdvilfsa11_0.h"
+#include "fitutil.h"
+#include "fij.h"
 
 #define	C	0.569504e-12
 #define ndt1	34
@@ -50,12 +53,11 @@ static double	jwdev[][7]={
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double sdvilfSa11_0(I,d,n,t,w,delta)
-double I,d,n,t,w,delta;
+double sdvilfSa11_0(double I,double d,double n,double t,double w,double delta)
+// double I,d,n,t,w,delta;
 {
 	int	j;
 	double	B,D,wt,m,j1,j2,af;
-	double	fij(),jw11_0();
 
 	if(delta == 0.0){
 		af = jw11_0(1,t,w) + jw11_0(2,t,2*w);
@@ -75,14 +77,12 @@ double I,d,n,t,w,delta;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double jw11_0(k,t,w)
-int	k;
-double t,w;
+double jw11_0(int k,double t,double w)
+// int	k;
+// double t,w;
 {
 	int	j,i,p;
 	double	wt,m,af,*x,*y,*y2,*xx,*yy,ypn;
-	double	*dvector(),dpolint();
-	void	free_dvector(),dsplint();
 
 	x  = dvector(1,Ndt+1);
 	y  = dvector(1,Ndt+1);
@@ -121,12 +121,12 @@ double t,w;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	jwd11_0(i,t,w,delta)
-int	i;
-double	t,w,delta;
+double	jwd11_0(int i,double t,double w,double delta)
+// int	i;
+// double	t,w,delta;
 {
 	int	j;
-	double	af,jw11_0(),fij();
+	double	af;
 
 	for(j=0,af=0.0;j<=2;j++) af += fij(i,j,delta)*jw11_0(j,t,w);
 	return af;
@@ -134,13 +134,12 @@ double	t,w,delta;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double t1ro11_0(I,d,n,t,w,w0,delta)
-double I,d,n,t,w,w0,delta;
+double t1ro11_0(double I,double d,double n,double t,double w,double w0,double delta)
+// double I,d,n,t,w,w0,delta;
 /* B*(J0(2*w1)+10*J1(w0)+J2(2*w0) */
 {
 	int	j;
 	double	B,D,wt,w0t,w2t,m,J0,J1,J2,af;
-	double	jwd11_0();
 
 	J0 = jwd11_0(0,t,2*w,delta);
 	J1 = jwd11_0(1,t,w0,delta);
