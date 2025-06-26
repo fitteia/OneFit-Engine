@@ -6,6 +6,8 @@
 #include "struct.h"
 #include "struf.h"
 #include "dimer.h"
+#include "lor.h"
+#include "fij.h"
 
 #define	pi	3.141592653589793238
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
