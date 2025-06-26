@@ -7,7 +7,7 @@ DESTDIR=$(ROOT)/$(PREFIX)
 LIBDIR=$(DESTDIR)/lib
 LIBNUMBER=4.0.4
 FLAGS= -D$(OS) -O2 -fPIC -I$(ROOT)/C/core/onefit-3.1/
-CC= gcc $(FLAGS)
+CC= cc $(FLAGS)
 F77= gfortran -fPIC
 SRCDIR=$(DESTDIR)/src
 
