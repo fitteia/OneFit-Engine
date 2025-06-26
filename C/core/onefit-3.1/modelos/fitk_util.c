@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include "/u/pedros/c/fit/struct.h"
+#include "struct.h"
+#include "fitk_util.h"
 
 #define EPS	1.0e-4
 #define	JMAX	14
@@ -11,16 +12,16 @@
 /*****************************************************************************/
 /*                             FITK_UTIL.C                                   */
 /*****************************************************************************/
-int	r_n_par(x)
-Function	*x;
+int	r_n_par(Function *x)
+// Function	*x;
 {
 	return( (*x).n_par );
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void	wsval(X)
-Function *X;
+void	wsval(Function *X)
+// Function *X;
 {
 	double	r_pval();
 	int	r_n_par();
@@ -31,95 +32,94 @@ Function *X;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void	w_f_ptr(x,f)
-double		(*f)();
-Function	*x;
+void	w_f_ptr(Function *x,double		(*f)(Function *a))
+// double		(*f)();
+// Function	*x;
 {
 	(*x).f_ptr = f;
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	r_plow(x,n)
-int		n;
-Function	*x;
+double	r_plow(Function *x, int n)
+// int		n;
+// Function	*x;
 {
 	return( (*x).par[n].low_v);
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void	w_plow(x,n,lv)
-int		n;
-double		lv;
-Function	*x;
+void	w_plow(Function *x, int n, double lv)
+// int		n;
+// double		lv;
+// Function	*x;
 {
 	(*x).par[n].low_v = lv;
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	r_phigh(x,n)
-int		n;
-Function	*x;
+double	r_phigh(Function *x, int n)
+// int		n;
+// Function	*x;
 {
 	return( (*x).par[n].high_v);
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void	w_phigh(x,n,hv)
-int		n;
-double		hv;
-Function	*x;
+void	w_phigh(Function *x, int n, double hv)
+// int		n;
+// double		hv;
+// Function	*x;
 {
 	(*x).par[n].high_v = hv;
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	r_pstep(x,n)
-int		n;
-Function	*x;
+double	r_pstep(Function *x, int n)
+// int		n;
+// Function	*x;
 {
 	return( (*x).par[n].step_v);
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void	w_pstep(x,n,sv)
-int		n;
-double		sv;
-Function	*x;
+void	w_pstep(Function *x, int n, double sv)
+// int		n;
+// double		sv;
+// Function	*x;
 {
 	(*x).par[n].step_v = sv;
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	r_pval(x,n)
-int		n;
-Function	*x;
+double	r_pval(Function *x, int n)
+// int		n;
+// Function	*x;
 {
 	return( (*x).par[n].val);
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void	w_pval(x,n,v)
-int		n;
-double		v;
-Function	*x;
+void	w_pval(Function *x, int n, double v)
+// int		n;
+// double		v;
+// Function	*x;
 {
 	(*x).par[n].val = v;
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void	clear_struct(f_struct,n_par)
-
-Function	*f_struct;
-int	n_par;
+void	clear_struct(Function *f_struct, int n_par)
+// Function	*f_struct;
+// int	n_par;
 {
 	int	i;
 	
@@ -144,9 +144,9 @@ int	n_par;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double smidpnt(X,p,n)
-int	  p,n;
-Function *X;
+double smidpnt(Function *X, int p, int n)
+// int	  p,n;
+// Function *X;
 /*
 This routine computes the n'th stage of refinement of an extended midpoint rule
 X is input as a pointer to the structure Function to integrated between limits
@@ -197,10 +197,10 @@ ior points.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	sqromo(X,choose,p)
-double	 (*choose)();
-int	 p;
-Function *X;
+double	sqromo(Function *X, double (*choose)(Function *x) int ,p)
+// double	 (*choose)();
+// int	 p;
+// Function *X;
 /*
 Romberg integration on an open interval. Returns the integral of the function 
 func from a to b, using any specified integrating routine choose and Romberg
