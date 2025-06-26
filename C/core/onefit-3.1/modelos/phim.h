@@ -1,4 +1,4 @@
 // phim.h
 
-void    phiM_graf(double par);
+void    phiM_graf(double par[]);
 
