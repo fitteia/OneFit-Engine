@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "sdvilf.h"
 #include "fij.h"
-#include "fitutils.h"
+#include "fitutil.h"
 
 #define	C	0.569504e-12
 #define ndt1	20
