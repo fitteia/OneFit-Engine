@@ -4,7 +4,7 @@ double	r_phigh(Function *x, int n);
 double	r_plow(Function *x, int n);
 double	r_pstep(Function *x, int n);
 double	r_pval(Function *x, int n);
-double	sqromo(Function *X, double (*choose)(Function *x) int ,p);
+double	sqromo(Function *X, double (*choose)(Function *x), int p);
 double smidpnt(Function *X, int p, int n);
 int	r_n_par(Function *x);
 void	clear_struct(Function *f_struct, int n_par);
