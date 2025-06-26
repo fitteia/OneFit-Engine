@@ -1,22 +1,22 @@
-int	r_status();
-int	r_n_par();
-int	r_pstatus();
-char	*r_name();
-char	*r_pname();
-double	r_plow();
-double	r_phigh();
-double	r_pstep();
-double	r_pval();
-double	r_pmin();
-void	w_status();
-void	w_name();
-void	w_n_par();
-void	w_f_ptr();
-void	w_pname();
-void	w_pstatus();
-void	w_plow();
-void	w_phigh();
-void	w_pstep();
-void	w_pval();
-void	w_pmin();
-
+char *r_name(Function *x) { return( (*x).name ); }
+char *r_pname(Function *x, int n) { return( (*x).par[n].name ); }
+double	r_phigh(Function *x, int n);
+double	r_plow(Function *x, int n);
+double	r_pmin(Function	*x, int n);
+double	r_pstep(Function *x, int n);
+double	r_pval(Function	*x, int n);
+int	r_n_par(Function *x);
+int	r_pstatus(Function *x, int n) { return( (*x).par[n].status ); }
+int	r_status(Function *x) { return( (*x).status ); }
+void	clear_struct(Function *f_struct, int n_par);
+void	w_f_ptr(Function *x, double (*f)(Function *x));
+void	w_name(Function *x, char name[]);
+void	w_phigh(Function *x, int n, double hv);
+void	w_plow(Function	*x, int n, double lv);
+void	w_pmin(Function *x, int n, double mv);
+void	w_pname(Function *x, int n, char name[]);
+void	w_pstatus(Function *x, int n, int status);
+void	w_pstep(Function *x, int n, double sv);
+void	w_pval(Function *x, int n, double v);
+void	w_status(Function *x, int status);
+void	wsval(Function *x);

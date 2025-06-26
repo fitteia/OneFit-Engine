@@ -16,9 +16,25 @@
 
 double	r_pval(Function	*x, int n) { return( (*x).par[n].val); }
 
+double	r_pmin(Function	*x, int n) { return( (*x).par[n].min_v); }
+
+double	r_pstep(Function	*x, int n) { return( (*x).par[n].step_v); }
+
 double	r_plow(Function *x, int n) { return( (*x).par[n].low_v); }
 
+double	r_phigh(Function *x, int n) { return( (*x).par[n].high_v); }
+
+double	r_pstep(Function *x, int n) { return( (*x).par[n].step_v); }
+
 int	r_n_par(Function *x) { return( (*x).n_par ); }
+
+int	r_status(Function *x) { return( (*x).status ); }
+
+int	r_pstatus(Function *x, int n) { return( (*x).par[n].status ); }
+
+char *r_name(Function *x) { return( (*x).name ); }
+
+char *r_pname(Function *x, int n) { return( (*x).par[n].name ); }
 
 void	wsval(Function *x)
 {
@@ -29,13 +45,19 @@ void	wsval(Function *x)
 
 void	w_f_ptr(Function *x, double (*f)(Function *x)) { (*x).f_ptr = f; }
 
-void	w_plow(Function	*x, int n, double lv) { (*x).par[n].low_v = lv; }
+void	w_name(Function *x, char name[]) { strcpy( (*x).name, name ); }
 
-double	r_phigh(Function *x, int n) { return( (*x).par[n].high_v); }
+void	w_status(Function *x, int status) { (*x).status = status; }
+
+void	w_pname(Function *x, int n, char name[]) { strcpy( (*x).par[n].name, name ); }
+
+void	w_plow(Function	*x, int n, double lv) { (*x).par[n].low_v = lv; }
 
 void	w_phigh(Function *x, int n, double hv) { (*x).par[n].high_v = hv; }
 
-double	r_pstep(Function *x, int n) { return( (*x).par[n].step_v); }
+void	w_pmin(Function *x, int n, double mv) { (*x).par[n].min_v = mv; }
+
+void	w_pstatus(Function *x, int n, int status) { (*x).par[n].status = status; }
 
 void	w_pstep(Function *x, int n, double sv) { (*x).par[n].step_v = sv; }
 
