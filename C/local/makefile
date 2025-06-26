@@ -1,4 +1,5 @@
 OS=LINUX
+CC=gcc
 ARCH=x86_64
 ROOT=/home/fitteia
 PERLVERSION=5.36
@@ -10,14 +11,14 @@ LDFLAGS=-shared -L/usr/local/lib -fstack-protector -O2 -g
 LIBS=-L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
 lib: *.c
-	gcc $(CCFLAGS) -c *.c
+	$(CC) $(CCFLAGS) -c *.c
 	ar -rvs libuserlib.a *.o
 	rm *.o
 
 module: *.c $(INTERFACE).i
 	swig -perl $(INTERFACE).i
-	gcc -c $(CCFLAGS) *.c 
-	gcc $(LDFLAGS)  *.o -o $(INTERFACE).so $(LIBS)
+	$(CC) -c $(CCFLAGS) *.c 
+	$(CC)  $(LDFLAGS)  *.o -o $(INTERFACE).so $(LIBS)
 	rm $(INTERFACE)_wrap.o $(INTERFACE)_wrap.c
 
 module-test:
