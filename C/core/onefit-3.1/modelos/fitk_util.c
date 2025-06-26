@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 #include "struct.h"
 #include "fitk_util.h"
 #include "fitutil.h"
@@ -228,10 +229,10 @@ choices for choose.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-#undef  EPS	1.0e-4
-#undef 	JMAX	14
-#undef	JMAXP	JMAX+1
-#undef	K	5
+#undef  EPS	
+#undef 	JMAX
+#undef	JMAXP
+#undef	K	
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
