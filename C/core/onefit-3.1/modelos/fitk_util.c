@@ -225,6 +225,7 @@ choices for choose.
 		h[j+1]=h[j]/9.0;
 	}
 	nrerror("Too many steps in routine QROMO");
+	return 0.0;
 }
 /*****************************************************************************/
 /*                                                                           */
