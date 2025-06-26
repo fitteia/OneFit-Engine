@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include "t1rodelta.h"
+#include "fitutil.h"
 
 #define	pi	3.141592654
 
@@ -12,7 +14,7 @@ int main()
 	int	np;
 	double	f0,f1,td,d,n,A,fcm,fcM,RA,RB;
 	char	file[20];
-	FILE	*f,*openf();
+	FILE	*f;
 	void	graf();
 	
 	printf(" input file: ");
@@ -32,9 +34,9 @@ int main()
 	fclose(f);		
 }
 
-void	graf(f0,f1,td,d,n,A,fcm,fcM,RA,RB,nxy)
-int	nxy;
-double	f0,f1,td,d,n,A,fcm,fcM,RA,RB;
+void	graf(double f0,double f1,double td,double d,double n,double A,double fcm,double fcM,double RA,double RB,int nxy)
+// int	nxy;
+// double	f0,f1,td,d,n,A,fcm,fcM,RA,RB;
 {
 	int	k;
 	double	w0,w1,wcm,wcM,delta;
