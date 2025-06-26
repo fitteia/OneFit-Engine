@@ -36,8 +36,6 @@ OBJ= functions.o tabfunc.o
 
 FLAGS= -D__GNU_LIBRARY__ -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I./ -Wall
 
-CC = $(CC) $(FLAGS) 
-
 TAR = onefit-$(LIBNUMBER).tar
 
 
