@@ -1,4 +1,4 @@
-char *r_name(Function *x;
+char *r_name(Function *x);
 char *r_pname(Function *x, int n);
 double	r_phigh(Function *x, int n);
 double	r_plow(Function *x, int n);
