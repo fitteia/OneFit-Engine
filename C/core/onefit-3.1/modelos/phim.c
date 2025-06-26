@@ -10,6 +10,7 @@
 #include "plot.h"
 #include "phim.h"
 #include "integra.h"
+#include "globals.h"
 
 #define PIO2 1.57079632679490
 /******************************************************************************/
