@@ -102,7 +102,6 @@ double PerlNLF(double x,double *par,double t,int mode,char *name)
 // int mode;
 // char name[];
 {
-  double perl_func_call();
   char **parametros;
   double result;
   int i,j,npar;
@@ -133,7 +132,6 @@ double PerlLF(double x,double *par,double t,int mode,char *name)
 // int mode;
 // char name[];
 {
-  double perl_func_call();
   char **parametros;
   double result;
 
