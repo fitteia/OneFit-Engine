@@ -1,7 +1,7 @@
 /** integra..h **/
 
-char *r_name(Function *x) { return( (*x).name ); }
-char *r_pname(Function *x, int n) { return( (*x).par[n].name ); }
+char *r_name(Function *x);
+char *r_pname(Function *x, int n);
 double	r_phigh(Function *x, int n);
 double	r_plow(Function *x, int n);
 double	r_pmin(Function	*x, int n);
@@ -13,8 +13,8 @@ double smidpnt(Function *X, int p, int n);
 double sqgaus(Function *X, int p);
 double sqgausn(Function *X, int p, int n);
 int	r_n_par(Function *x);
-int	r_pstatus(Function *x, int n) { return( (*x).par[n].status ); }
-int	r_status(Function *x) { return( (*x).status ); }
+int	r_pstatus(Function *x, int n);
+int	r_status(Function *x);
 void	clear_struct(Function *f_struct, int n_par);
 void	w_f_ptr(Function *x, double (*f)(Function *x));
 void	w_name(Function *x, char name[]);
