@@ -3,11 +3,11 @@
 /******************************************************************************/
 #include <math.h>
 #include "fij.h"
+#include "fitutil.h"
 
 double	fij(int i, int j, double delta)
 {
 	double 	af,s,s2,s4;
-	void	nrerror();
 
 	s  = sin(delta);
 	s2 = s*s;
