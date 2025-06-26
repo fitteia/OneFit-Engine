@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "sdvilfsa13_0.h"
 #include "fitutil.h"
+#include "fij.h"
 
 #define	C	0.569504e-12
 #define ndt1	28
