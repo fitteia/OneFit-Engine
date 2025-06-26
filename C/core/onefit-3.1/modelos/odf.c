@@ -89,7 +89,6 @@ double	odfSa_ro(double wcm, double wcM, double w, double w1, double delta)
 /******************************************************************************/
 double	JodfSa(double w, double aM, double am)
 {
-	double	godfSa();
 	return 2*pi/w*(godfSa(aM) - godfSa(am));
 }
 
