@@ -274,7 +274,7 @@ bis:
 		if( p < 6 ) p=0;
 	} else p += 1;
 	a = -a-b;	
-	if( fabs(z[a]-z[b] > eps) && fabs(z[a]-z[-a-b]) > eps ){
+	if( fabs(z[a]-z[b]) > eps && fabs(z[a]-z[-a-b]) > eps ){
 	  if(p < 6) goto hyp; else goto bis;
 	}
 out:
