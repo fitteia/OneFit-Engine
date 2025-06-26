@@ -4,7 +4,7 @@ double	r_phigh(Function *x, int n);
 double	r_plow(Function *x, int n);
 double	r_pstep(Function *x, int n);
 double	r_pval(Function *x, int n);
-double	sqromo(Function *X, double (*choose)(Function *a, int a, int b),p);
+double	sqromo(Function *X, double (*choose)(Function *a, int a, int b), int p);
 double smidpnt(Function *X, int p, int n);
 double sqgaus(Function *X, int p);
 double sqgausn(Function *X, int p, int n);
