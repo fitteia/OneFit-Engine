@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "struct.h"
+#include "fitutil.h"
+#include "integra.h"
+#include "dif_phase.h"
 
 #define CA 0.0003
 #define PIO2 1.57079632679490
@@ -9,14 +12,12 @@
 /******************************************************************************/
 /*				DIF_PHASE.C				      */
 /******************************************************************************/
-double dif_phase(H,par)
-double	H,par[];
+double dif_phase(double H, double par[])
+// double	H,par[];
 {
 	Function X;
 	double	a1,a2,af;
 	double	x,phiM,niu,H0;
-	double	dcel(),sqromo(),smidpnt(),calc_phiM(),integranda(),szero();
-	void	w_f_ptr(),clear_struct();
 
 	H0   = par[1];
 	x    = par[2]-1.0;
@@ -50,11 +51,10 @@ double	H,par[];
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	integranda(X)
-Function *X;
+double	integranda(Function *X)
+// Function *X;
 {
 	double	x,phiM,qzi,niu,af,s1,s2;
-	double	r_pval();
 
 	qzi  = r_pval(X,0);
 	phiM = r_pval(X,1);
@@ -70,12 +70,11 @@ Function *X;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	calc_phiM(X)
-Function *X;
+double	calc_phiM(Function *X)
+// Function *X;
 {
 	double	x,phiM,niu,alfa2,k,H0,H;
 	double  af,s1,a1;
-	double	r_pval(),dcel();
 
 	phiM = r_pval(X,0);
 	H0   = r_pval(X,1);
@@ -94,11 +93,10 @@ Function *X;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double dcel(qqc,pp,aa,bb)
-double qqc,pp,aa,bb;
+double dcel(double qqc, double pp, double aa, double bb)
+// double qqc,pp,aa,bb;
 {
 	double a,b,e,f,g,em,p,q,qc;
-	void nrerror();
 
 	if (qqc == 0.0) nrerror("Bad qqc in routine CEL");
 	qc=fabs(qqc);
