@@ -116,7 +116,7 @@ double jw5_0(int k,double t,double w)
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	jwd7(int i,double t,double w,double delta)
+double jwd5_0(int i,double t,double w,double delta)
 // int	i;
 // double	t,w,delta;
 {
