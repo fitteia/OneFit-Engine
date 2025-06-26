@@ -196,7 +196,8 @@ ior points.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	sqromo(Function *X, double (*choose)(Function *x), int p)
+double	sqromo(Function *X, double (*choose)(Function *x, int a, int b:w
+			), int p)
 // double	 (*choose)();
 // int	 p;
 // Function *X;
