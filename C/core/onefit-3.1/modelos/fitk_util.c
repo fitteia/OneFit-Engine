@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "struct.h"
 #include "fitk_util.h"
+#include "fitutil.h"
 
 #define EPS	1.0e-4
 #define	JMAX	14
@@ -156,7 +157,6 @@ ncial order) will improve the accuracy by adding (2/3)x3^(n-1) additional inter
 ior points.
 */
 {
-	double	r_plow(),r_phigh();
 	double 	a,b;
 	double	tnm,sum,del,ddel;
 	double	*s,*x,*it;
@@ -197,7 +197,7 @@ ior points.
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	sqromo(Function *X, double (*choose)(Function *x) int ,p)
+double	sqromo(Function *X, double (*choose)(Function *x), int p)
 // double	 (*choose)();
 // int	 p;
 // Function *X;
@@ -213,7 +213,6 @@ choices for choose.
 {
 	int	 j;
 	double   ss,dss,h[JMAXP+1],s[JMAXP+1];
-	void	 dpolint(),nrerror();
 
 	h[1]=1.0;
 	for (j=1;j<=JMAX;j++) {
