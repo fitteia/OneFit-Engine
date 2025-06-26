@@ -24,8 +24,6 @@ double	r_plow(Function *x, int n) { return( (*x).par[n].low_v); }
 
 double	r_phigh(Function *x, int n) { return( (*x).par[n].high_v); }
 
-double	r_pstep(Function *x, int n) { return( (*x).par[n].step_v); }
-
 int	r_n_par(Function *x) { return( (*x).n_par ); }
 
 int	r_status(Function *x) { return( (*x).status ); }
