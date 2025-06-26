@@ -24,7 +24,7 @@ int	r_n_par(Function *x)
 void	wsval(Function *X)
 // Function *X;
 {
-	int	i;
+	long int	i;
 
 	for(i=0; i<r_n_par(X); i++) printf("p[%ld]=%lg\n",i,r_pval(X,i));
 }
