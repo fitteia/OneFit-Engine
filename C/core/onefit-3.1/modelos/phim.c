@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
-#include <processes.h>
 #include "struct.h"
 #include "plot.h"
 #include "phim.h"
