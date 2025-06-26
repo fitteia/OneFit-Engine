@@ -1,11 +1,12 @@
 ROOT=/home/lfx/fitteia
 PREFIX=
+OS=LINUX
 
 install:
-	make ROOT=$(ROOT) -C core/onefit-3.1 install-fitteia
-	make ROOT=$(ROOT) -C core/onefit-3.1/perl install-pcop
-	make ROOT=$(ROOT) -C core/onefit-3.1/doc install
-	make ROOT=$(ROOT) -C local install
+	make OS=$(OS) ROOT=$(ROOT) -C core/onefit-3.1 install-fitteia
+	make OS=$(OS) ROOT=$(ROOT) -C core/onefit-3.1/perl install-pcop
+	make OS=$(OS) ROOT=$(ROOT) -C core/onefit-3.1/doc install
+	make OS=$(OS) ROOT=$(ROOT) -C local install
 
 clean:
 	rm -f *~
