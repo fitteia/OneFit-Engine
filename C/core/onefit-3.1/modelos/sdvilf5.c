@@ -112,7 +112,7 @@ double	jwd5(int i,double t,double w,double delta)
 /*									      */
 /******************************************************************************/
 double t1ro5(double I,double d,double n,double t,double w,double w0,double delta)
-double I,d,n,t,w,w0,delta;
+// double I,d,n,t,w,w0,delta;
 /* B*(J0(2*w1)+10*J1(w0)+J2(2*w0) */
 {
 	int	j;
