@@ -9,12 +9,13 @@
 #include "struct.h"
 #include "plot.h"
 #include "phim.h"
+#include "integra.h"
 
 #define PIO2 1.57079632679490
 /******************************************************************************/
 /*				PHIM.C					      */
 /******************************************************************************/
-int main( int argc, char *argv÷[])
+int main( int argc, char *argv[])
 // int argc;
 // char *argv[];
 {
