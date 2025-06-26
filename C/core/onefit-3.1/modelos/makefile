@@ -24,7 +24,7 @@ SRC=	 dif_phase.c dimer.c fij.c lor.c odf.c rot.c sdvilfsa7.c \
         sdvilfsa11.c sdvilfsa5.c sdvilfsa5Dll0.c sdvilfsa11_0.c sdvilfsa13_0.c\
         t1rodelta.c Ftotal.c \
         t1torrey.c t1_rot_vold.c t1vold_new.f t1vold_abc.f makefile struct.h \
-        struf.h plot.h var.h
+        struf.h 
 
 Lib: $(OBJ)
 	$(AR) -rvs $(LIBNAME) $(OBJ)
