@@ -72,7 +72,9 @@ void gfit_outpg(double par[])
   /*  printf("\n\n");*/
   
 #ifndef LINUX
+#ifndef MacOSX
   if(FPar+NT*Mfit >0 ) ppcovar(fitout,par);
+#endif
 #endif
 
   /*  printf("\n");*/

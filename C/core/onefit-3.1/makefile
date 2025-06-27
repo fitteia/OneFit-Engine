@@ -44,12 +44,12 @@ TAR = onefit-$(LIBNUMBER).tar
 OBJ= 	gfitn.o funcoes.o readdat.o \
 	loadpar.o fsn.o	gchi2_vn.o funcsn.o \
 	lfit1n.o usage.o gfitoutp.o \
-	pp3d.o gchi2out.o gfit_out.o plot.o mygnus.o xmgr.o
+	ppcovar.o pp3d.o gchi2out.o gfit_out.o plot.o mygnus.o xmgr.o
 
 SRC= 	gfitn.c fitutil.c funcoes.c  readdat.c \
 	loadpar.c fsn.c	gchi2_vn.c gfitoutp.c gfit_out.c funcsn.c \
 	lfit1n.c usage.c ppcovar.c ludcmp.c \
-	lubksb.c gamma.c pp3d.c gchi2out.c tabfunc.c plot.c mygnus.c getopt.c\
+	lubksb.c gamma.c ppcovar.c pp3d.c gchi2out.c tabfunc.c plot.c mygnus.c getopt.c\
 	getopt1.c getopt.h fitenv.c integra.c makefile gfitn.h globals.h \
 	struct.h mixed.h actpar.c xmgr.c
 
