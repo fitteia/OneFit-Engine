@@ -36,7 +36,7 @@ multi MAIN (
    	Str  :m(:$merge-site)='', # if merge string then merge site branch (it it exits) into current branch
 	){
    	
-	my %cpus = ("x86_64"  => "amd64", "aarch64" => "arm64");
+	my %cpus = ("x86_64"  => "amd64", "aarch64" => "arm64", "arm64" => "arm64");
 
    	if $git {
 		shell "git stash";
