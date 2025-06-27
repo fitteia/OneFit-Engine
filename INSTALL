@@ -29,7 +29,7 @@ multi MAIN (
 	Bool :$docker = False, # Flag for a Docker Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Bool :$post-test is copy = True; # Run post install tests
 	Bool :$man-page = True; # Install man page
-   	Str  :$ip = '*',
+   	Str  :$ip is copy = '*',
    	Int  :$port = 8142,
    	Int  :$shell-port = 8100,
   	Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
