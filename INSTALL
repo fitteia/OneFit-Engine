@@ -107,8 +107,8 @@ multi MAIN (
    	}	
 
    	systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
-	say $DOCKER;
-   	add-show-ip-in-issue() if $to-site and !$DOCKER;
+   	
+	add-show-ip-in-issue() if $to-site and !$DOCKER;
 	
    	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
 
@@ -424,8 +424,8 @@ sub install-manpage( :$macos = False ) {
 	say "onefite man page: onefite.1.gz";
 	if $SUDO {
    		if $macos {
-   			shell("$SUDO cp onefite.1 /usr/share/man/man1/");	
-			say "onefite.1 man page install in /usr/share/man/man1/";
+   			shell("$SUDO cp onefite.1 /usr/local/share/man/man1/");	
+			say "onefite.1 man page install in /usr/local/share/man/man1/";
 		}
 		else {
 			shell("gzip -9 onefite.1");
