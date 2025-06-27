@@ -20,7 +20,7 @@ NAME=onefit-user
 PERLVERSION=5.36
 PERLLIB=/usr/lib/$(ARCH)-linux-gnu/libperl.so.$(PERLVERSION)
 PERLROOT=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
-PERLCORE:=$(shell perl -MConfig -e 'print "$Config{archlib}/CORE"')
+PERLCORE=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
 # run to get above directory: perl -MConfig -e 'print $Config{archlib}'
 
 CERNLIBPATH=/usr/lib
