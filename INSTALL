@@ -71,7 +71,8 @@ multi MAIN (
 		$post-test = False;
 	}
 	if $macos {
-		$DOCKER = $docker;
+		$shell("cpan CGI");
+		$DOCKER = True;
 		$web-server = False;
 		$test = False;
 		$systemd-daemon = False;
