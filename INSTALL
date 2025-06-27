@@ -71,7 +71,7 @@ multi MAIN (
 		$post-test = False;
 	}
 	if $macos {
-		$shell("cpan CGI");
+		shell("cpan CGI");
 		$DOCKER = True;
 		$web-server = False;
 		$test = False;
