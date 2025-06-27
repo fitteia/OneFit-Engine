@@ -37,7 +37,7 @@ LIB=  -L$(DESTDIR)/lib -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUM
 
 FLAGS=  -D$(OS) -fPIC -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I$(DESTDIR)/include
 
-CCFLAGS=-D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I\$(PERLROOT)  -I\$(ONEFIT)/include
+CCFLAGS=-D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE)  -I$(ONEFIT)/include
 
 LDFLAGS=-shared -L/usr/local/lib -fstack-protector -O3 -g
 
