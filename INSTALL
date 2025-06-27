@@ -271,8 +271,8 @@ sub compile (:$root,:$arch,:$bindir,:$pv,:$perlcore) {
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
    	shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && make install && make clean";
    	say "install source in $*CWD and binaries with perl version: $pv";
-  	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install"i if $pv.so;
-  	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install"i if $perlcore.so;
+  	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
+  	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
    	shell "find . -name .precomp -prune -o -name .git -prune -o -name .gitignore -prune -o -name .prove -prune -o -name .travis.yml -prune -o -name Makefile -prune -o -name \"*~\" -prune -o -name bugs -prune -o -type f -print | sort | cut -c 3- > MANIFEST";
 }
 
