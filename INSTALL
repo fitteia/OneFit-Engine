@@ -80,6 +80,7 @@ multi MAIN (
 		$OS = "MacOSX";
 		$dpkg = False;
 		$enable-gs = False;
+		$ip="127.0.0.1";
 	}
 
 
