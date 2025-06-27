@@ -107,9 +107,9 @@ multi MAIN (
    	}	
 
    	systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
-
+	say $DOCKER;
    	add-show-ip-in-issue() if $to-site and !$DOCKER;
-
+	
    	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
 
 	install-manpage() if $man-page;
