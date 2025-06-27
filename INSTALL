@@ -64,7 +64,7 @@ multi MAIN (
 		$post-test = False;
 	}
 	if $wsl {
-		$DOCKER = $docker;
+		$DOCKER = True;
 		$web-server = False;
 		$test = False;
 		$systemd-daemon = False;
