@@ -2,11 +2,13 @@
 OS=LINUX
 ARCH=x86_64
 ROOT=/home/lfx/fitteia
+PERLVERSION=5.36
+PERLCORE=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
 PREFIX=
 DESTDIR=$(ROOT)/$(PREFIX)
 LIBDIR=$(DESTDIR)/lib
 LIBNUMBER=4.0.4
-FLAGS= -D$(OS) -O2 -fPIC -I$(ROOT)/C/core/onefit-3.1/
+FLAGS= -D$(OS) -O2 -fPIC -I$(PERLCORE) -I$(ROOT)/C/core/onefit-3.1/
 CC= gcc $(FLAGS)
 F77= gfortran -fPIC
 SRCDIR=$(DESTDIR)/src

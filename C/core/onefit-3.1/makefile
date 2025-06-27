@@ -15,7 +15,7 @@ SRCDIR=$(DESTDIR)/src
 #
 PERLVERSION=5.36
 PERLLIB=/usr/lib/$(ARCH)-linux-gnu/libperl.so.$(PERLVERSION)
-PERLROOT=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
+PERLCORE=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
 
 # run to get above directory: perl -MConfig -e 'print $Config{archlib}'
 
@@ -34,7 +34,7 @@ LIB=  -L$(DESTDIR)/lib -lonefit-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -lonefit
 SRC= functions.c tabfunc.c
 OBJ= functions.o tabfunc.o
 
-FLAGS= -D__GNU_LIBRARY__ -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I./ -Wall
+FLAGS= -D__GNU_LIBRARY__ -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I./ -Wall
 
 #CC = $(CC) $(FLAGS) 
 
