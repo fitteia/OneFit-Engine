@@ -61,7 +61,6 @@ Cambridge, MA 02139, USA.  */
 #else
 char *getenv ();
 #endif
-
 #ifndef	NULL
 #define NULL 0
 #endif
