@@ -5,6 +5,7 @@ OS=LINUX
 PERLVERSION=5.36
 ROOT=$(MROOT)
 BINDIR=$(HOME)/bin
+PERLCORE=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
 
 help:
 	echo "run make ARCH=<x86_64|aarch64> ROOT=<path>  install"
@@ -18,7 +19,7 @@ set:
 	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" $(MROOT)/etc/OFE/default/makefile
 
 install: set
-	make -C $(ROOT)/C  OS=$(OS) ROOT=$(ROOT) BINDIR=$(BINDIR) install
+	make -C $(ROOT)/C  OS=$(OS) ROOT=$(ROOT) PERLCORE=$(PERLCORE) BINDIR=$(BINDIR) install
 	make -C $(ROOT)/C  OS=$(OS) ROOT=$(ROOT) BINDIR=$(BINDIR) clean
 
 clean:
