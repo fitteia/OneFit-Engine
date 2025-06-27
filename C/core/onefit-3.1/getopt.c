@@ -171,6 +171,7 @@ static enum
 #include <string.h>
 #define	my_index	strchr
 #else
+#include <string.h>
 
 /* Avoid depending on library functions or files
    whose names are inconsistent.  */
