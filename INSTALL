@@ -112,7 +112,7 @@ multi MAIN (
 	
    	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
 
-	install-manpage() if $man-page;
+	install-manpage(macos => $macos) if $man-page;
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -417,15 +417,21 @@ sub shellinabox(Bool $shell, $shell-port) {
 	}
 }
 
-sub install-manpage() {
+sub install-manpage( :$macos = False ) {
 	"onefite.1".IO.spurt: shell("raku --doc=Man $*CWD/bin/onefite",:out).out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");
 	"onefite.1".IO.spurt: "\n\n" ~ shell("$*CWD/bin/onefite -v",:out).out.lines.join("\n"), :append;
     "onefite.1.gz".IO(:e).unlink;
-   	shell("gzip -9 onefite.1");
 	say "onefite man page: onefite.1.gz";
 	if $SUDO {
-   		shell("$SUDO cp onefite.1.gz /usr/share/man/man1/");	
-		say "onefite.1.gz man page install in /usr/share/man/man1/";
+   		if $macos {
+   			shell("$SUDO cp onefite.1 /usr/share/man/man1/");	
+			say "onefite.1 man page install in /usr/share/man/man1/";
+		}
+		else {
+			shell("gzip -9 onefite.1");
+   			shell("$SUDO cp onefite.1.gz /usr/share/man/man1/");	
+			say "onefite.1.gz man page install in /usr/share/man/man1/";
+		}
 	}
 }
 
