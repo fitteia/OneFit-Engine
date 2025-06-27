@@ -81,13 +81,12 @@ int getopt_long (int argc, char *const *argv, const char *options, const struct 
    but does match a short option, it is parsed as a short option
    instead.  */
 
-int
-getopt_long_only (argc, argv, options, long_options, opt_index)
-     int argc;
-     char *const *argv;
-     const char *options;
-     const struct option *long_options;
-     int *opt_index;
+int getopt_long_only (int argc, char *const *argv, const char *options, const struct *long_options, int *opt_index)
+     // int argc;
+     // char *const *argv;
+     // const char *options;
+     // const struct option *long_options;
+     // int *opt_index;
 {
   return _getopt_internal (argc, argv, options, long_options, opt_index, 1);
 }
@@ -99,10 +98,9 @@ getopt_long_only (argc, argv, options, long_options, opt_index)
 
 #include <stdio.h>
 
-int
-main (argc, argv)
-     int argc;
-     char **argv;
+int main (int argc, char **argv)
+     // int argc;
+     // char **argv;
 {
   int c;
   int digit_optind = 0;

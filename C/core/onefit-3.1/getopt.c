@@ -223,9 +223,8 @@ static int last_nonopt;
    `first_nonopt' and `last_nonopt' are relocated so that they describe
    the new indices of the non-options in ARGV after they are moved.  */
 
-static void
-exchange (argv)
-     char **argv;
+static void exchange (char **argv)
+     // char **argv;
 {
   int bottom = first_nonopt;
   int middle = last_nonopt;
@@ -281,9 +280,8 @@ exchange (argv)
 
 /* Initialize the internal data when the first call is made.  */
 
-static const char *
-_getopt_initialize (optstring)
-     const char *optstring;
+static const char *_getopt_initialize (const char *optstring)
+     // const char *optstring;
 {
   /* Start processing options with ARGV-element 1 (since ARGV-element 0
      is the program name); the sequence of previously skipped
@@ -369,14 +367,13 @@ _getopt_initialize (optstring)
    If LONG_ONLY is nonzero, '-' as well as '--' can introduce
    long-named options.  */
 
-int
-_getopt_internal (argc, argv, optstring, longopts, longind, long_only)
-     int argc;
-     char *const *argv;
-     const char *optstring;
-     const struct option *longopts;
-     int *longind;
-     int long_only;
+int _getopt_internal (int argc, char *const *argv, const char *optstring, const struct *longopts, int *longind, int long_only)
+     // int argc;
+     // char *const *argv;
+     // const char *optstring;
+     // const struct option *longopts;
+     // int *longind;
+     // int long_only;
 {
   optarg = NULL;
 
@@ -664,11 +661,10 @@ _getopt_internal (argc, argv, optstring, longopts, longind, long_only)
   }
 }
 
-int
-getopt (argc, argv, optstring)
-     int argc;
-     char *const *argv;
-     const char *optstring;
+int getopt (int argc, char *const *argv, const char *optstring)
+     // int argc;
+     // char *const *argv;
+     // const char *optstring;
 {
   return _getopt_internal (argc, argv, optstring,
 			   (const struct option *) 0,
@@ -683,10 +679,9 @@ getopt (argc, argv, optstring)
 /* Compile with -DTEST to make an executable for use in testing
    the above definition of `getopt'.  */
 
-int
-main (argc, argv)
-     int argc;
-     char **argv;
+int main (int argc, cahr **argv)
+     // int argc;
+     // char **argv;
 {
   int c;
   int digit_optind = 0;
