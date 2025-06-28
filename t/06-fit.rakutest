@@ -22,7 +22,8 @@ my class OutputCapture {
 }
 
 my %cpus = ("x86_64"  => "amd64",
-		"aarch64" => "arm64"
+		"aarch64" => "arm64",
+		"arm64" => "arm64"
 	   );
 
 my $cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head };
