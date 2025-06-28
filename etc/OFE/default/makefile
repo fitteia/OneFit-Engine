@@ -47,7 +47,7 @@ FLAGS= -D__GNU_LIBRARY__ -D$(OS) -fPIC -O3 -Wall -Werror=implicit-function-decla
 
 CCFLAGS= -D__GNU_LIBRARY__ -D__GNU_LIBRARY__  -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE)  -I$(ONEFIT)/include
 
-LDFLAGS= $(LIBGFORTRAN) -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -shared -L/usr/local/lib -fstack-protector -O3 -g
+LDFLAGS= $(LIBGFORTRAN) -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -shared -L/usr/local/lib -fstack-protector -O3 -g 
 
 CC = gcc $(FLAGS)
 
@@ -60,8 +60,8 @@ gfitn : clean module $(objects)
 
 module: AuxCode.c AuxCode.i
 	swig -perl AuxCode.i
-	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(DESTDIR)/include
-	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so
+	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
+	gcc $(LIB)  AuxCode.o AuxCode_wrap.o -o AuxCode.so
 	rm AuxCode_wrap.o AuxCode_wrap.c
 #	mv AuxCode.pm $ROOT/public_html/$numero/
 #	mv AuxCode.so $ROOT/public_html/$numero/
