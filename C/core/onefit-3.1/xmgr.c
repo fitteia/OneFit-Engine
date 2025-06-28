@@ -216,7 +216,7 @@ void xmgr(char prog[], char format[])
     err = system(xmgr_cmd);
 
   }
-  if (!err) printf("system() call errror in xmgr.c, xmgr(): %d\n",err);
+  if (err == -1) printf("system() call errror in xmgr.c, xmgr(): %d\n",err);
 }
 
 void grbatch()
