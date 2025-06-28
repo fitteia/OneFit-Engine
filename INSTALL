@@ -87,7 +87,7 @@ multi MAIN (
 			gnuplot
 		>.join(" ");
 		say "installing $brew-packages";
-		shell "sudo brew install $brew-packages";
+		shell("sudo brew install $brew-packages",:out).out.slurp(:close).say;
 	   	shell "sudo zef install App::Prove6";
 		$DOCKER = True;
 		$web-server = False;
