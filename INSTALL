@@ -86,11 +86,11 @@ multi MAIN (
 			hdf5
 			gnuplot
 		>;
-		for @brew-packages {
-			say "installing $_";
-			shell("brew install $_");
-		}
-		shell "zef install App::Prove6";
+	#	for @brew-packages {
+	#		say "installing $_";
+	#		shell("brew install $_");
+	#	}
+	#	shell "zef install App::Prove6";
 		$DOCKER = True;
 		$web-server = False;
 		$test = False;
