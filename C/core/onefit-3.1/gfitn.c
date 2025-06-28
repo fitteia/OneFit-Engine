@@ -196,9 +196,10 @@ int main(int argc, char **argv,char **env)
 	  
 #ifdef LINUX
 	  minuit_(fcn,0);
-#endif
-#ifndef LINUX
-	  // minuit_MSDOS(fcn,0);
+#elif MacOSX
+	  minuit_(fcn,0);
+#else
+# error "minuit_MSDOS(fcn,0) not available"
 #endif
 	  free_ivector(ParFreeVector,1,FPar);
 	}
