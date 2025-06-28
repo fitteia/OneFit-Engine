@@ -52,7 +52,7 @@ Cambridge, MA 02139, USA.  */
 #include <stdio.h>
 
 #ifdef MacOSX
-#define __GNU_LIBRARY 1
+#define __GNU_LIBRARY__ 1
 #endif
 
 
