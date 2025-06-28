@@ -126,104 +126,93 @@ void xmgr(char prog[], char format[])
       err = system(ins);
     }
     if(!strcmp(prog,"xmgr") && !strcmp(format,"")){
-      if(!strcmp(xmgr_par_file,"NULL")){
-	sprintf(xmgr_cmd,"xmgr %s -nxy %s -xydy %s ",graph_type,curv_teo,gnu);
-      }
-      else sprintf(xmgr_cmd,"xmgr %s -nxy %s -xydy %s -param %s",graph_type,curv_teo,gnu,xmgr_par_file);
+      	if(!strcmp(xmgr_par_file,"NULL")){
+			sprintf(xmgr_cmd,"xmgr %s -nxy %s -xydy %s ",graph_type,curv_teo,gnu);
+      	}
+      	else sprintf(xmgr_cmd,"xmgr %s -nxy %s -xydy %s -param %s",graph_type,curv_teo,gnu,xmgr_par_file);
     }
     else if (!strcmp(prog,"xmgr") && strcmp(format,"")>0){
-      if(!strcmp(xmgr_par_file,"NULL")){
+      	if(!strcmp(xmgr_par_file,"NULL")){
 #ifndef MacOSX
-	if(display_flag) sprintf(xmgr_cmd,"grbatch %s -nxy %s -xydy %s -printfile %s.ps -device 1 -saveall %s.agr; convert -density 125x125 %s.ps %s.%s; display %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
-	else sprintf(xmgr_cmd,"grbatch %s -nxy %s -xydy %s -printfile %s.ps -device 1 -saveall %s.agr ; convert -density 125x125 %s.ps %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE);
+			if(display_flag) sprintf(xmgr_cmd,"grbatch %s -nxy %s -xydy %s -printfile %s.ps -device 1 -saveall %s.agr; convert -density 125x125 %s.ps %s.%s; display %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"grbatch %s -nxy %s -xydy %s -printfile %s.ps -device 1 -saveall %s.agr ; convert -density 125x125 %s.ps %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE);
 #endif
 #ifdef MacOSX
-	if(display_flag) sprintf(xmgr_cmd,"gracebat %s -nxy %s -settypexydy %s -printfile %s.eps -device EPS -saveall %s.agr; convert -density 125x125 %s.eps %s.%s; display %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
-	else sprintf(xmgr_cmd,"gracebat %s -nxy %s -settypexydy %s -printfile %s.eps -device EPS -saveall %s.agr; convert -density 125x125 %s.eps %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE);
+			if(display_flag) sprintf(xmgr_cmd,"gracebat %s -nxy %s -settypexydy %s -printfile %s.eps -device EPS -saveall %s.agr; convert -density 125x125 %s.eps %s.%s; display %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"gracebat %s -nxy %s -settypexydy %s -printfile %s.eps -device EPS -saveall %s.agr; convert -density 125x125 %s.eps %s.%s",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE);
 #endif
-      }
+      	}	
 #ifndef MacOSX
-      else {
-	if(display_flag) sprintf(xmgr_cmd,"grbatch %s -nxy %s -xydy %s -param %s -printfile %s.ps -device 1 -saveall %s.agr; convert -density 125x125 %s.ps %s.%s; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
-	else sprintf(xmgr_cmd,"grbatch  %s -nxy %s -xydy %s -param %s -printfile %s.ps -device 1 -saveall %s.agr; convert -density 125x125 %s.ps %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE);
-      }
-    }
+      	else {
+			if(display_flag) sprintf(xmgr_cmd,"grbatch %s -nxy %s -xydy %s -param %s -printfile %s.ps -device 1 -saveall %s.agr; convert -density 125x125 %s.ps %s.%s; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"grbatch  %s -nxy %s -xydy %s -param %s -printfile %s.ps -device 1 -saveall %s.agr; convert -density 125x125 %s.ps %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE);
+      	}
+#else
+    	else {
+      		if(display_flag) sprintf(xmgr_cmd,"gracebat  %s -nxy %s -settype xydy %s -param %s -printfile %s.eps -device EPS -saveall %s.agr; convert -density 125x125 %s.eps %s.%s; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
+      		else sprintf(xmgr_cmd,"gracebat  %s -nxy %s -settype xydy %s -param %s -printfile %s.eps -device EPS -saveall %s.agr; convert -density 125x125 %s.eps %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE);
+    	}
 #endif
-#ifdef MacOSX
-    else {
-      if(display_flag) sprintf(xmgr_cmd,"gracebat  %s -nxy %s -settype xydy %s -param %s -printfile %s.eps -device EPS -saveall %s.agr; convert -density 125x125 %s.eps %s.%s; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE,curv_teo,GRAPH_TYPE);
-      else sprintf(xmgr_cmd,"gracebat  %s -nxy %s -settype xydy %s -param %s -printfile %s.eps -device EPS -saveall %s.agr; convert -density 125x125 %s.eps %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo,GRAPH_TYPE);
-    }
-  }
-#endif
+  	}
     else if (!strcmp(prog,"xmgrace")&& strcmp(format,"")==0){
-      if(!strcmp(xmgr_par_file,"NULL")){
-	sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -saveall %s.agr",graph_type,curv_teo,gnu,curv_teo);
-      }
-      else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s  -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo);
+      	if(!strcmp(xmgr_par_file,"NULL")){
+			sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -saveall %s.agr",graph_type,curv_teo,gnu,curv_teo);
+      	}
+      	else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s  -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo);
     }
 #ifndef DEBIAN9
     else if (!strcmp(prog,"xmgrace")&& strcmp(format,"")>0){
-      if(!strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
-	if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
-	else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr",graph_type,curv_teo,gnu,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
-      }
-      else if(!strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
-	if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -hdevice EPS -hardcopy -printfile %s.eps; epstopdf %s.eps  -saveall %s.agr; display %s.pdf",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo);
-	else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",curv_teo,curv_teo,graph_type,curv_teo,gnu,curv_teo); 
-      }
-      else if(strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
-	if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
-	else {
-	  sprintf(xmgr_cmd,"xmgrace %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s  -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
-	}
-      }
-      else if(strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
-	if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps;  display %s.pdf",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo);
-	else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo);
-      }
-      else { 
-	if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
-	else {
-	  sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
-	}
-      }
+      	if(!strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
+			if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr",graph_type,curv_teo,gnu,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
+      	}	
+      	else if(!strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
+			if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -hdevice EPS -hardcopy -printfile %s.eps; epstopdf %s.eps  -saveall %s.agr; display %s.pdf",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo);
+			else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",curv_teo,curv_teo,graph_type,curv_teo,gnu,curv_teo); 
+      	}
+      	else if(strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
+			if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"xmgrace %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s  -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
+    	}
+    	else if(strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
+			if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps;  display %s.pdf",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo);
+			else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",graph_type,curv_teo,gnu,xmgr_par_file,curv_teo,curv_teo,curv_teo);
+    	}
+    	else { 
+			if(display_flag) sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"xmgrace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
+    	}
     }
-#endif  
-#ifdef DEBIAN9
+#else  
     else if (!strcmp(prog,"xmgrace")&& strcmp(format,"")>0){
-      if(!strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
+      	if(!strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
 	//	printf(":::::::::: 1  :::::::::::::\n\n");
-	if(display_flag) sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
-	else sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr",graph_type,curv_teo,gnu,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
-      }
-      else if(!strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
+			if(display_flag) sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr",graph_type,curv_teo,gnu,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
+      	}	
+      	else if(!strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
 	//	printf(":::::::::: 2 :::::::::::::\n\n");
-	if(display_flag) sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -hdevice EPS -hardcopy -printfile %s.eps; epstopdf %s.eps  -saveall %s.agr; display %s.pdf",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo);
-	else {
-	  sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",curv_teo,curv_teo,graph_type,curv_teo,gnu,curv_teo);
-	}
-      }
-      else if(strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
+			if(display_flag) sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -hdevice EPS -hardcopy -printfile %s.eps; epstopdf %s.eps  -saveall %s.agr; display %s.pdf",graph_type,curv_teo,gnu,curv_teo,curv_teo,curv_teo,curv_teo);
+			else sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",curv_teo,curv_teo,graph_type,curv_teo,gnu,curv_teo);
+      	}
+      	else if(strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
 	//	printf(":::::::::: 3 :::::::::::::\n\n");
-	if(display_flag) sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
-	else sprintf(xmgr_cmd,"grace %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s  -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
-      }
-      else if(strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
+			if(display_flag) sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"grace %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s  -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
+      	}
+      	else if(strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
 	//	printf(":::::::::: 4 ::::::::::::: %s %s\n\n",xmgr_par_file,GRAPH_TYPE);
-	if(display_flag) sprintf(xmgr_cmd,"sed -i '/inf\\|nan/d' %s; grace -settype xydy %s -nxy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps;  display %s.pdf",curv_teo,gnu,curv_teo,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo);
-	else {
-	  sprintf(xmgr_cmd,"sed -i '/inf\\|nan/d' %s; grace -settype xydy %s -nxy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",curv_teo,gnu,curv_teo,xmgr_par_file,curv_teo,curv_teo,curv_teo);
-	}
-      }
-      else {
+			if(display_flag) sprintf(xmgr_cmd,"sed -i '/inf\\|nan/d' %s; grace -settype xydy %s -nxy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps;  display %s.pdf",curv_teo,gnu,curv_teo,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo);
+			else sprintf(xmgr_cmd,"sed -i '/inf\\|nan/d' %s; grace -settype xydy %s -nxy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",curv_teo,gnu,curv_teo,xmgr_par_file,curv_teo,curv_teo,curv_teo);
+      	}
+      	else {
 	//	printf(":::::::::: 5 :::::::::::::\n\n");
-	if(display_flag) sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
-	else sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
-      }
+			if(display_flag) sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr; display %s.%s",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo,curv_teo,GRAPH_TYPE);
+			else sprintf(xmgr_cmd,"grace  %s -nxy %s -settype xydy %s -param %s -hdevice %s -hardcopy -printfile %s.%s -saveall %s.agr",graph_type,curv_teo,gnu,xmgr_par_file,GRAPH_TYPE,curv_teo,GRAPH_TYPE,curv_teo);
+      	}
     }
 #endif  
-  //    printf("%s\n",xmgr_cmd);
+    printf("%s\n",xmgr_cmd);
     err = system(xmgr_cmd);
 
   }
