@@ -19,7 +19,7 @@ void xmgr(char prog[], char format[])
   char graph_type[30];
   char curv_teo[100];
   int err = 1;
- printf("%s\n","ola"); 
+  
   for(i=0;i<NT;i++){
     typex = xscale[i];
     typey = yscale[i];

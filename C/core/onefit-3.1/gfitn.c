@@ -182,50 +182,50 @@ int main(int argc, char **argv,char **env)
       }      
   }
 
-  if(fit_flag){
-      if(nolinpar_flag){
-	if(parfile == NULL) usage();
-	else {
+  	if(fit_flag){
+      	if(nolinpar_flag){
+			if(parfile == NULL) usage();
+			else {
 	  /*
 	    ParNames = ReadParNames(parfile);
 	    ParFreeF(parfile);
 	  */
 	  
-	  printf("Adjusting FPar=%d non-linear parameters\n",FPar);
-	  for(i=1;i<=FPar;i++) printf("Par. no. %d is free\n",ParFreeVector[i]);
+	  			printf("Adjusting FPar=%d non-linear parameters\n",FPar);
+	  			for(i=1;i<=FPar;i++) printf("Par. no. %d is free\n",ParFreeVector[i]);
 	  
 #ifdef LINUX
-	  minuit_(fcn,0);
+	  			minuit_(fcn,0);
 #elif MacOSX
-	  minuit_(fcn,0);
+	  			minuit_(fcn,0);
 #else
 # error "minuit_MSDOS(fcn,0) not available"
 #endif
-	  free_ivector(ParFreeVector,1,FPar);
-	}
-      }
-      else {
-	FPar = 0;
-	chis = dvector(1,NT);
-	out = gchi2_vn(NULL,chis);
-	putd(out);
-	gfit_outpg(NULL);
-	gfit_outgraf(NULL);
-	free_dvector(chis,1,NT);
-      }
-  }
+	  			free_ivector(ParFreeVector,1,FPar);
+			}
+		}
+   		else {
+			FPar = 0;
+			chis = dvector(1,NT);
+			out = gchi2_vn(NULL,chis);
+			putd(out);
+			gfit_outpg(NULL);
+			gfit_outgraf(NULL);
+			free_dvector(chis,1,NT);
+ 		}
+  	}
   
 /**/  
-  if(plot_flag) plotfitn();
+  	if(plot_flag) plotfitn();
 
-  /*    printf("plot_flag=%d xmgr_flag =%d xmgrace_flag =%d graphic_flag=%d grbatch_flag=%d GRAPH_TYPE=%s\n",plot_flag,xmgr_flag,xmgrace_flag,graphic_flag,grbatch_flag,GRAPH_TYPE);*/
+    printf("plot_flag=%d xmgr_flag =%d xmgrace_flag =%d graphic_flag=%d grbatch_flag=%d GRAPH_TYPE=%s\n",plot_flag,xmgr_flag,xmgrace_flag,graphic_flag,grbatch_flag,GRAPH_TYPE);
 
-  if(graphic_flag && xmgr_flag == 0 && grbatch_flag == 0 && xmgrace_flag == 0) mygnus();
-  else if(graphic_flag && xmgr_flag == 1 && grbatch_flag == 0) xmgr("xmgr","");
-  else if(graphic_flag && xmgr_flag == 1 && grbatch_flag == 1) xmgr("xmgr",GRAPH_TYPE);
-  else if(graphic_flag && xmgrace_flag == 1 && grbatch_flag == 0) xmgr("xmgrace","");
-  else if(graphic_flag && xmgrace_flag == 1 && grbatch_flag == 1) xmgr("xmgrace",GRAPH_TYPE);
-	  
+  	if(graphic_flag && xmgr_flag == 0 && grbatch_flag == 0 && xmgrace_flag == 0) mygnus();
+  	else if(graphic_flag && xmgr_flag == 1 && grbatch_flag == 0) xmgr("xmgr","");
+  	else if(graphic_flag && xmgr_flag == 1 && grbatch_flag == 1) xmgr("xmgr",GRAPH_TYPE);
+  	else if(graphic_flag && xmgrace_flag == 1 && grbatch_flag == 0) xmgr("xmgrace","");
+  	else if(graphic_flag && xmgrace_flag == 1 && grbatch_flag == 1) xmgr("xmgrace",GRAPH_TYPE);
+	else nrerror(" case not defined for grpphic_flag, xmgr_flag, xmgrace_flag, grbatch_flag");   
 
 #ifdef WITH_PERL
   perl_destruct(my_perl);
