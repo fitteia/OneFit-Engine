@@ -35,7 +35,7 @@ MINUIT= -lminuit -lgfortran
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	GCCPATH := $(shell brew --prefix gcc)
-	LIBGFORTRAN = -L$(GCCPATH)/lib/current
+	LIBGFORTRAN = -L$(GCCPATH)/lib/gcc/current
 else
 	LIBGFORTRAN=
 endif
