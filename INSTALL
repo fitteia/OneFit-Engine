@@ -90,7 +90,7 @@ multi MAIN (
 			say "installing $_";
 			shell("brew install $_");
 		}
-		shell "sudo zef install App::Prove6";
+		shell "zef install App::Prove6";
 		$DOCKER = True;
 		$web-server = False;
 		$test = False;
