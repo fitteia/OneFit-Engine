@@ -32,8 +32,16 @@ CERNLIB= -L$(CERNLIBPATH)  $(CERNMATH) $(CERNPACK) $(F2C)
 #MINUIT=$(CERNLIB)
 MINUIT= -lminuit -lgfortran
 
+UNAME_S := $(shell uname -s)
+ifeq (UNAME,Darwin)
+	GCCPATH := $(shell brew --prefix gcc)
+	LIBGFORTRAN = -L$(GCCPATH)/lib/current
+else
+	LIBGFORTRAN=
+endif
+
 # versao linux
-LIB=  -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm 
+LIB= $(LIBGFORTRAN) -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm 
 
 FLAGS=  -D$(OS) -fPIC -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I$(DESTDIR)/include
 
