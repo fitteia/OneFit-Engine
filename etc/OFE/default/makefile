@@ -33,7 +33,7 @@ CERNLIB= -L$(CERNLIBPATH)  $(CERNMATH) $(CERNPACK) $(F2C)
 MINUIT= -lminuit -lgfortran
 
 UNAME_S := $(shell uname -s)
-ifeq (UNAME,Darwin)
+ifeq ($(UNAME_S),Darwin)
 	GCCPATH := $(shell brew --prefix gcc)
 	LIBGFORTRAN = -L$(GCCPATH)/lib/current
 else
