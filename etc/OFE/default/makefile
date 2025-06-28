@@ -61,7 +61,7 @@ gfitn : clean module $(objects)
 module: AuxCode.c AuxCode.i
 	swig -perl AuxCode.i
 	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
-	gcc $(LIB)  AuxCode.o AuxCode_wrap.o -o AuxCode.so
+	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so
 	rm AuxCode_wrap.o AuxCode_wrap.c
 #	mv AuxCode.pm $ROOT/public_html/$numero/
 #	mv AuxCode.so $ROOT/public_html/$numero/
