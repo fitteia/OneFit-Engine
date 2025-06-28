@@ -72,7 +72,7 @@ multi MAIN (
 	}
 	if $macos {
 		shell("cpan CGI");
-		my @brew-packages=<
+		my $brew-packages=<
 			jq
 			swig
 			gcc
@@ -85,7 +85,7 @@ multi MAIN (
 			openssl
 			hdf5
 			gnuplot
-		>.join(" ");;
+		>.join(" ");
 		say "installing $brew-packages";
 		shell "sudo brew install $brew-packages";
 	   	shell "sudo zef install App::Prove6";
