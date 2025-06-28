@@ -85,8 +85,10 @@ multi MAIN (
 			openssl
 			hdf5
 			gnuplot
-		>;
-		shell("sudo brew install { @brew-packages.join(' ') } && sudo zef install App::Prove6");
+		>.join(" ");;
+		say "installing $brew-packages";
+		shell "sudo brew install $brew-packages";
+	   	shell "sudo zef install App::Prove6";
 		$DOCKER = True;
 		$web-server = False;
 		$test = False;
