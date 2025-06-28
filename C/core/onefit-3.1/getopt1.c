@@ -31,6 +31,11 @@ Cambridge, MA 02139, USA.  */
 #endif
 #endif
 
+#ifdef MacOSX
+#define __GNU_LIBRARY__ 1
+#endif
+
+
 #include <getopt.h>
 
 #ifndef __STDC__
