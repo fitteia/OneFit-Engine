@@ -184,6 +184,11 @@ void xmgr(char prog[], char format[])
     	}
     }
 #else  
+# ifdef MacOSX
+#  define GRACE_PROG "gracebat"
+# else
+#  define GRACE_PROG "grace"
+#endif
     else if (!strcmp(prog,"xmgrace")&& strcmp(format,"")>0){
       	if(!strcmp(xmgr_par_file,"NULL") && strcmp(GRAPH_TYPE,"PDF")){
 	//	printf(":::::::::: 1  :::::::::::::\n\n");
@@ -202,8 +207,8 @@ void xmgr(char prog[], char format[])
       	}
       	else if(strcmp(xmgr_par_file,"NULL") && !strcmp(GRAPH_TYPE,"PDF")){
 	//	printf(":::::::::: 4 ::::::::::::: %s %s\n\n",xmgr_par_file,GRAPH_TYPE);
-			if(display_flag) sprintf(xmgr_cmd,"sed -i '/inf\\|nan/d' %s; grace -settype xydy %s -nxy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps;  display %s.pdf",curv_teo,gnu,curv_teo,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo);
-			else sprintf(xmgr_cmd,"sed -i '/inf\\|nan/d' %s; grace -settype xydy %s -nxy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",curv_teo,gnu,curv_teo,xmgr_par_file,curv_teo,curv_teo,curv_teo);
+			if(display_flag) sprintf(xmgr_cmd,"sed -E -i.bak '/inf\\|nan/d' %s; %s  -settype xydy %s -nxy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps;  display %s.pdf",curv_teo,GRACE_PROG,gnu,curv_teo,xmgr_par_file,curv_teo,curv_teo,curv_teo,curv_teo);
+			else sprintf(xmgr_cmd,"sed -E -i.bak '/inf\\|nan/d' %s; %s -settype xydy %s -nxy %s -param %s -hdevice EPS -hardcopy -printfile %s.eps -saveall %s.agr; epstopdf %s.eps",curv_teo,GRACE_PROG,gnu,curv_teo,xmgr_par_file,curv_teo,curv_teo,curv_teo);
       	}
       	else {
 	//	printf(":::::::::: 5 :::::::::::::\n\n");
