@@ -16,6 +16,11 @@
 
 #define PAR(no,n) ( (MIXED) ? pars_[(int) no][(int) n+1] : par[(int) n] )	
 
+int write_parfile(double *a);
+int update_pars_(double *p);
+int print_pars_(double *p);
+int First_Make_Individual_Fits(double N, double *par, double no);
+
 #define SET_INDIVIDUAL_FITS_ENGINE(N,par)			\
 								\
   static int FIRST_TIME=1;			                \
@@ -28,9 +33,8 @@
 								\
   int write_parfile(double *p)					\
   {								\
-    FILE *fin, *fout, *openf();					\
+    FILE *fin, *fout;					\
     char s[256], val[11];					\
-    int update_pars_(), print_pars_();				\
     int *mixed;							\
 								\
     mixed = ivector(0,NP);					\
@@ -129,9 +133,8 @@
 									\
   int update_pars_(double *p)						\
   {									\
-    FILE *fin,*openf();							\
+    FILE *fin;							\
     char s[256];							\
-    int print_pars_();							\
 									\
     if(MIXED) {								\
       for( int k=1;k<=NT;k++) {						\
