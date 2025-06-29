@@ -20,6 +20,8 @@ int write_parfile(double *a);
 int update_pars_(double *p);
 int print_pars_(double *p);
 int First_Make_Individual_Fits(double N, double *par, double no);
+int NT=0;
+int *PROGNAME=0;
 
 #define SET_INDIVIDUAL_FITS_ENGINE(N,par)			\
 								\
