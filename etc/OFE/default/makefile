@@ -49,7 +49,7 @@ CCFLAGS= -D__GNU_LIBRARY__ -D__GNU_LIBRARY__  -D_REENTRANT -D_GNU_SOURCE -DDEBIA
 
 LDFLAGS= $(LIBGFORTRAN) -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  -shared -L/usr/local/lib -fstack-protector -O3 -g 
 
-CC = gcc $(FLAGS)
+CC = gcc -std=c99 $(FLAGS)
 
 #CC=gcc -I/usr/lib/perl/5.6.1/CORE -I/include
 
@@ -59,12 +59,10 @@ gfitn : clean module $(objects)
 	$(CC) $(objects) $(LIB) -o $(NAME) 
 
 module: AuxCode.c AuxCode.i
-	swig -perl AuxCode.i
-	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
-	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so
-	rm AuxCode_wrap.o AuxCode_wrap.c
-#	mv AuxCode.pm $ROOT/public_html/$numero/
-#	mv AuxCode.so $ROOT/public_html/$numero/
+#	swig -perl AuxCode.i
+#	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
+#	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so
+#	rm AuxCode_wrap.o AuxCode_wrap.c
 
 clean:
 	rm -f *.o *~ *_ *.gph *.gp_ gnu*
