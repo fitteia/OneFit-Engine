@@ -23,7 +23,7 @@ my class OutputCapture {
 
 my %cpus = ("x86_64"  => "amd64",
 		"aarch64" => "arm64",
-		"arm64" => "arm64"
+		"arm64" => "Darwin"
 	   );
 
 my $OS = shell("uname -s",:out).out.slurp(:close);
