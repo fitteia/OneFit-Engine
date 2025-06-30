@@ -31,7 +31,7 @@ Install debian
 ```powershell
 wsl --install -d debian
 ```
- ** MacOS
+ ** MacOS Colima+Docker
 
 Install Colima and Docker with brew
 ```bash
@@ -40,6 +40,12 @@ brew install calima docker
 Start Colima with 4GB or RAM (less will not work)
 ```bash
 /opt/homebrew/opt/colima/bin/colima start --memory 4 --runtime docker  
+```
+ ** MacOS Native
+
+A litle bit of hacking might be necessary but...start with brew
+```bash
+brew install rakudo gcc
 ```
 
 ### Full features OneFit Engine Server
@@ -93,7 +99,7 @@ mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-E
 cd /Home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start && onefite test
 ```
 
- ** MacOS
+ ** MacOS Colima+Docker
 
 Get the Dockerfile from https://github.com/fitteia/OneFit-Engine/blob/dev/Dockerfile and build the container
 ```bash
@@ -107,6 +113,14 @@ In the container
 ```bash
 cd /home/ofe/public_html && onefite service start && onefite test
 ```
+ ** MacOS Native
+
+```
+Clone OneFit-Engine
+```bash
+mkdir ~/folder && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && ./INSTALL  --macos
+```
+
 
 ## Detailed installation
 
