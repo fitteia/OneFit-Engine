@@ -60,13 +60,13 @@ gfitn : clean module $(objects)
 	$(CC) $(objects) $(LIB) -o $(NAME) 
 
 module: AuxCode.c AuxCode.i
-#ifeq ($(UNAME_S),Darwin)
-#else
+ifeq ($(UNAME_S),Darwin)
+else
 	swig -perl AuxCode.i
-	gcc -std=c99 -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
-	gcc -std=c99 $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
+	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
+	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
 	rm AuxCode_wrap.o AuxCode_wrap.c
-#endif
+endif
 
 clean:
 	rm -f *.o *~ *_ *.gph *.gp_ gnu*
