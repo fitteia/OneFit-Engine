@@ -115,7 +115,6 @@ cd /home/ofe/public_html && onefite service start && onefite test
 ```
  ** MacOS Native
 
-```
 Clone OneFit-Engine
 ```bash
 mkdir ~/folder && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && ./INSTALL  --macos
