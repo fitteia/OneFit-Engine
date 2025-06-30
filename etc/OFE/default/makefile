@@ -59,7 +59,7 @@ objects := $(patsubst %.c,%.o,$(wildcard *.c))
 gfitn : clean module $(objects)
 	$(CC) $(objects) $(LIB) -o $(NAME) 
 
-module: AuxCode.c AuxCode.ii
+module: AuxCode.c AuxCode.i
 #ifeq ($(UNAME_S),Darwin)
 #else
 	swig -perl AuxCode.i
