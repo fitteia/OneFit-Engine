@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include "struct.h"
 #include "struf.h"
+#include "dimer.h"
+#include "lor.h"
+#include "fij.h"
 
 #define	pi	3.141592653589793238
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -15,11 +18,10 @@
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double dimer(a0,a1,a2,t,w,delta)
-double a0,a1,a2,t,w,delta;
+double dimer(double a0, double a1, double a2, double t, double w, double delta)
+// double a0,a1,a2,t,w,delta;
 {
 	double	j1,j2,af;
-	double	fij(),lor();
 	
 /*	printf("delta=%lg\n",delta); */
 	if(delta == 0.0){

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "globals.h"
+#include "lfit1n.h"
 
 /******************************************************************************/
 /*				LFIT1N.C				      */
@@ -7,15 +8,16 @@
 static double sqrarg;
 #define SQR(a) (sqrarg=(a),sqrarg*sqrarg)
 
-void lfit1n(x,y,sig,ndata,a,ma,lista,mfit,chisq,func_ptr,par,t,mode)
-int ndata,ma,lista[],mfit,mode;
-double x[],y[],sig[],a[],*chisq,t,par[];
-void (*func_ptr)();	/* ANSI: void (*func_ptr)(float,float *,int); */
+void lfit1n( double x[], double y[], double sig[], int ndata, double a[], int ma, int lista[], 
+			 int mfit, double *chisq,
+			 void (*func_ptr)(double x, double *afunc, int ma, double *par, double t, int mode), 
+			 double par[], double t, int mode)
+// int ndata,ma,lista[],mfit,mode;
+// double x[],y[],sig[],a[],*chisq,t,par[];
+//void (*func_ptr)();	/* ANSI: void (*func_ptr)(float,float *,int); */
 {
 	int	j,i;
 	double 	sum,*afunc;
-	double 	**dmatrix(),*dvector();
-	void 	nrerror(),free_dmatrix(),free_dvector();
 
 	afunc= dvector(0,ma);
 	*chisq=0.0;

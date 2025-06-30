@@ -4,7 +4,9 @@
 #include <math.h>
 #include <stdio.h>
 #include "struct.h"
-#include "struf.h"
+#include "integra.h"
+#include "odf.h"
+#include "fij.h"
 
 #define	pi	3.141592653589793238
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -16,7 +18,6 @@
 double	odfN(double wcm, double wcM, double w, double delta)
 {
 	double	af,am,aM;
-	double	JodfN(),fh();
 
 	am = wcm/w;
 	aM = wcM/w;
@@ -29,11 +30,9 @@ double	odfN(double wcm, double wcM, double w, double delta)
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	odfN_ro(wcm,wcM,w,w1,delta)
-double	wcm,wcM,w,w1,delta;
+double	odfN_ro(double wcm, double wcM, double w, double w1, double delta)
 {
 	double	af,am,aM,a1M,a1m;
-	double	JodfN(),fh();
 
 	am  = wcm/w;
 	aM  = wcM/w;
@@ -49,20 +48,16 @@ double	wcm,wcM,w,w1,delta;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	JodfN(w,aM,am)
-double	w,aM,am;
+double	JodfN(double w, double aM, double am)
 {
-	double	godfN();
 	return sqrt(2*pi/w)*(godfN(aM) - godfN(am));
 }
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	odfSa(wcm,wcM,w,delta)
-double	wcm,wcM,w,delta;
+double	odfSa(double wcm, double wcM, double w, double delta)
 {
 	double	af,am,aM;
-	double 	JodfSa(),fh();
 
 	am = wcm/w;
 	aM = wcM/w;
@@ -74,11 +69,9 @@ double	wcm,wcM,w,delta;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	odfSa_ro(wcm,wcM,w,w1,delta)
-double	wcm,wcM,w,w1,delta;
+double	odfSa_ro(double wcm, double wcM, double w, double w1, double delta)
 {
 	double	af,am,aM,a1M,a1m;
-	double 	JodfSa(),fh();
 
 	am  = wcm/w;
 	aM  = wcM/w;
@@ -93,21 +86,18 @@ double	wcm,wcM,w,w1,delta;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	JodfSa(w,aM,am)
-double	w,aM,am;
+double	JodfSa(double w, double aM, double am)
 {
-	double	godfSa();
 	return 2*pi/w*(godfSa(aM) - godfSa(am));
 }
 
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	godfN(a)
-double 	a;
+double	godfN(double a)
 {
 	double 	af;
-	double	r2a,atanh();
+	double	r2a;
 
 	r2a = sqrt(2*a);
 
@@ -119,8 +109,7 @@ double 	a;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	godfSa(a)
-double 	a;
+double	godfSa(double a)
 {
 	double 	af;
 
@@ -130,11 +119,9 @@ double 	a;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	godf_k123(wc_w,eta1a,Ka3,R)
-double	wc_w,eta1a,Ka3,R;
+double	godf_k123(double wc_w, double eta1a, double Ka3, double R)
 {
 	double	Za,B,b,n,m,m_,af,a1,r2Za;
-	double	godfa(),atanh();
 
 	Za   = sqrt(eta1a*wc_w);
 	r2Za = sqrt(2.0)*Za;
@@ -153,11 +140,9 @@ double	wc_w,eta1a,Ka3,R;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	godfa(ZaB,n,m1,m2)
-double	ZaB,n,m1,m2;
+double	godfa(double ZaB, double n, double m1, double m2)
 {
 	double af;
-	double	atanh();
 
 	af = atanh(ZaB*m1/(ZaB*ZaB+n))/m1
 	     -( atan((2*ZaB-m1)/m2) + atan((2*ZaB+m1)/m2) )/m2;
@@ -166,10 +151,8 @@ double	ZaB,n,m1,m2;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	Jodf_k123(K13,K23,eta12,RM,Rm,wcM,wcm,w)
-double	K13,K23,eta12,RM,Rm,wcM,wcm,w;
+double	Jodf_k123(double K13, double K23, double eta12, double RM, double Rm, double wcM, double wcm, double w)
 {
-	double godf_k123();
 	double	aM,am,af;
 
 	aM = wcM/w; am = wcm/w;
@@ -181,10 +164,8 @@ double	K13,K23,eta12,RM,Rm,wcM,wcm,w;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	odf_k123(w,delta,K13,K23,eta12,RM,Rm,wcM,wcm)
-double	w,delta,K13,K23,eta12,RM,Rm,wcM,wcm;
+double	odf_k123( double w, double delta, double K13, double K23, double eta12, double RM, double Rm, double wcM, double wcm)
 {
-	double Jodf_k123(),fh();
 	double	af;
 
 	af = 	fh(1,delta)*Jodf_k123(K13,K23,eta12,RM,Rm,wcM,wcm,w)+
@@ -194,13 +175,11 @@ double	w,delta,K13,K23,eta12,RM,Rm,wcM,wcm;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	int_godfSN_v1(X)
-Function *X;
+double	int_godfSN_v1(Function *X)
 {
 	double	alfa,w,Wc,Ws,Ka3,eta1a,R,Q;
 	double	A,a,n,m,m_,u;
 	double	Wca,Wsa,Z2Ro2,af;
-	double	godfa();
 	
 	alfa	= r_pval(X,0); 
 	w 	= r_pval(X,1);
@@ -228,13 +207,10 @@ Function *X;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	godfSN_v1(alfa,w,Wc,Ws,Ka3,K13,eta1a,R,BD)
-double	alfa,w,Wc,Ws,Ka3,K13,eta1a,R,BD;
+double	godfSN_v1(double alfa, double w, double Wc, double Ws, double Ka3, double K13, double eta1a, double R, double BD)
 {
 	Function X;
 	double	af;
-	double	int_godfSN_v1(),sqromo(),smidpnt(),sqgaus(),sqgausn();
-	void	clear_struct();
 
 	clear_struct(&X,9);
 
@@ -261,10 +237,8 @@ double	alfa,w,Wc,Ws,Ka3,K13,eta1a,R,BD;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	JodfSN_v1(BD,K13,K23,eta12,RM,Rm,wcM,wcm,ws,w)
-double	BD,K13,K23,eta12,RM,Rm,wcM,wcm,ws,w;
+double	JodfSN_v1(double BD, double K13, double K23, double eta12, double RM, double Rm, double wcM, double wcm, double ws, double w)
 {
-	double godfSN_v1();
 	double af;
 
 	af =(	 godfSN_v1(1.0,w,wcM,ws,K13,K13,1.0,RM,BD)
@@ -279,10 +253,8 @@ double	BD,K13,K23,eta12,RM,Rm,wcM,wcm,ws,w;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	odfSN_v1(w,delta,K13,K23,eta12,RM,Rm,wcM,wcm,ws,BD)
-double	w,delta,K13,K23,eta12,RM,Rm,wcM,wcm,ws,BD;
+double	odfSN_v1( double w, double delta, double K13, double K23, double eta12, double RM, double Rm, double wcM, double wcm, double ws, double BD)
 {
-	double JodfSN_v1(),fh();
 	double	af;
 
 	af= fh(1,delta)*JodfSN_v1(BD,K13,K23,eta12,RM,Rm,wcM,wcm,ws,w)+
@@ -293,13 +265,11 @@ double	w,delta,K13,K23,eta12,RM,Rm,wcM,wcm,ws,BD;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	int_godfSN(X)
-Function *X;
+double	int_godfSN(Function *X)
 {
 	double	alfa,w,Wc,Wb,Ka1,K31,eta1a,R,Q;
 	double	A,a,n,m,m_,u;
 	double	Wcw,Wbw,Z2Ro2,L,af;
-	double	godfa();
 	
 	alfa	= r_pval(X,0); 
 	w 	= r_pval(X,1);
@@ -340,13 +310,10 @@ Function *X;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	godfSN(alfa,w,Wc,Wb,Ka1,K31,eta1a,R,Q)
-double	alfa,w,Wc,Wb,Ka1,K31,eta1a,R,Q;
+double	godfSN( double alfa, double w, double Wc, double Wb, double Ka1, double K31, double eta1a, double R, double Q)
 {
 	Function X;
 	double	af;
-	double	int_godfSN(),sqromo(),smidpnt(),sqgaus(),sqgausn();
-	void	clear_struct();
 
 	clear_struct(&X,10);
 
@@ -375,10 +342,8 @@ double	alfa,w,Wc,Wb,Ka1,K31,eta1a,R,Q;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	JodfSN(Q,K31,K21,eta12,RM,Rm,wcM,wcm,wb,w)
-double	Q,K31,K21,eta12,RM,Rm,wcM,wcm,wb,w;
+double	JodfSN( double Q, double K31, double K21, double eta12, double RM, double Rm, double wcM, double wcm, double wb, double w)
 {
-	double godfSN();
 	double af;
 
 	af =(	 godfSN(1.0,w,wcM,wb,1.0,K31,1.0,RM,Q)
@@ -393,10 +358,8 @@ double	Q,K31,K21,eta12,RM,Rm,wcM,wcm,wb,w;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	odfSN(w,delta,K31,K21,eta12,RM,Rm,wcM,wcm,wb,Q)
-double	w,delta,K31,K21,eta12,RM,Rm,wcM,wcm,wb,Q;
+double	odfSN( double w, double delta, double K31, double K21, double eta12, double RM, double Rm, double wcM, double wcm, double wb, double Q)
 {
-	double JodfSN(),fh();
 	double	af;
 	
 	af = fh(1,delta)*JodfSN(Q,K31,K21,eta12,RM,Rm,wcM,wcm,wb,w)+
@@ -407,10 +370,8 @@ double	w,delta,K31,K21,eta12,RM,Rm,wcM,wcm,wb,Q;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	odfS_K1B(w,delta,wcM,wcm,wb)
-double	w,delta,wcM,wcm,wb;
+double	odfS_K1B( double w, double delta, double wcM, double wcm, double wb)
 {
-	double JodfS_K1B(),fh();
 	double	af;
 	
 	af = fh(1,delta)*JodfS_K1B(wcM,wcm,wb,w)+
@@ -421,8 +382,7 @@ double	w,delta,wcM,wcm,wb;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	JodfS_K1B(wcM,wcm,wb,w)
-double	w,wcM,wcm,wb;
+double	JodfS_K1B( double wcM, double wcm, double wb, double w)
 {
 	double	af;
 	

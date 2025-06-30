@@ -1,8 +1,8 @@
 #include <math.h>
 #include <stdio.h>
-
-extern double LORTZN(double f, double a, double b, double f0);
-extern double GAUSS1(double f, double a, double b, double f0);
+#include "GAULOR.h"
+#include "LORTZN.h"
+#include "GAUSS1.h"
 
 double GAULOR(double f, double a, double b, double f0, double t)
 {

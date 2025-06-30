@@ -2,6 +2,8 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
+#include "fitutil.h"
+#include "gfilt.h"
 
 #define SWAP(a,b) tempr=(a);(a)=(b);(b)=tempr
 #define MAX(a,b)  (((a)>(b)) ? (a) : (b))
@@ -16,14 +18,46 @@ void usage()
   exit(0);
 }
 
-int main(argc,argv)
-int argc;
-char *argv[];
+double EXPFILT(int i, int j, int npts)
+// int i,j,npts;
 {
-  FILE *openf(),*fin,*fout;
+  if(npts ==0) {
+    if(i == j) return 1.0;
+    else return 0.0;
+  }
+  else return exp(-(i-j)*(i-j)/(2.0*pow((double) npts,2.0)));
+}
+
+double *expfilt(double *y, int n, int npts)
+// double *y;
+// int n,npts;
+{
+  double *z,sum=0.0;
+  int i,j,k;
+
+  z = dvector(1,n);
+
+  for(i=1;i<=n;i++){
+    sum=0.0;
+    for(j=MAX(1,i-5*npts),z[i]=0.0;j<=MIN(i+5*npts,n);j++) {
+      k=j;
+      z[i] += y[k]*EXPFILT(i,j,npts);
+      sum += EXPFILT(i,j,npts);
+    }
+    z[i] /= sum;
+/*    printf("z[%d]=%g\n",i,z[i]);*/
+  }
+  return z;
+}
+
+
+int main(int argc, char *argv[])
+// int argc;
+// char *argv[];
+{
+  FILE *fin,*fout;
   int i,n=1,npts=1;
-  double *x,*y,*z,*dvector(),*expfilt();
-  void free_dvector();
+  double *x,*y,*z;
 
   fin =stdin;
   fout=stdout;
@@ -66,36 +100,4 @@ char *argv[];
   exit(0);
 }
  
-double *expfilt(y,n,npts)
-double *y;
-int n,npts;
-{
-  double *z,*dvector(),EXPFILT(),sum=0.0;
-  int i,j,k;
-
-  z = dvector(1,n);
-
-  for(i=1;i<=n;i++){
-    sum=0.0;
-    for(j=MAX(1,i-5*npts),z[i]=0.0;j<=MIN(i+5*npts,n);j++) {
-      k=j;
-      z[i] += y[k]*EXPFILT(i,j,npts);
-      sum += EXPFILT(i,j,npts);
-    }
-    z[i] /= sum;
-/*    printf("z[%d]=%g\n",i,z[i]);*/
-  }
-  return z;
-}
-
-double EXPFILT(i,j,npts)
-int i,j,npts;
-{
-  if(npts ==0) {
-    if(i == j) return 1.0;
-    else return 0.0;
-  }
-  else return exp(-(i-j)*(i-j)/(2.0*pow((double) npts,2.0)));
-}
-
 #undef SWAP

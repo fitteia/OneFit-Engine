@@ -1,5 +1,7 @@
 #include <math.h>
 #include <stdio.h>
+#include "RNordio.h"
+#include "fij.h"
 
 #define pi 3.1415926
 #define Arot 6.408e11
@@ -10,11 +12,8 @@
 ***/
 
 
-double RNordio(f, S0,A0,A1,A2, Dz, Dx)
-double f, S0, Dz, Dx,A0,A1,A2;
+double RNordio( double f,  double S0, double A0, double A1, double A2,  double Dz,  double Dx)
 {
- double JRotNordio_();
-  
   double y;
   double J1;
   double J2;
@@ -31,16 +30,12 @@ double f, S0, Dz, Dx,A0,A1,A2;
   return y;
 }
 
-double RNordio_ang(f, S0,A0,A1,A2, Dz, Dx,delta)
-     double f, S0, Dz, Dx,A0,A1,A2,delta;
+double RNordio_ang( double f,  double S0, double A0, double A1, double A2,  double Dz,  double Dx, double delta)
 {
- double JRotNordio_2();
-  
   double y;
   double J1;
   double J2;
   double w;
-  double fij();
 
   w=2*pi*f;
   J1 = fij(1,0,delta)*JRotNordio_2(0,w,S0,A0,A1,A2,Dz,Dx)
@@ -57,11 +52,8 @@ double RNordio_ang(f, S0,A0,A1,A2, Dz, Dx,delta)
   return y;
 }
 
-double RNordio_poli(f, S0,A0,A1,A2, Dz, Dx)
-double f, S0, Dz, Dx,A0,A1,A2;
+double RNordio_poli( double f,  double S0, double A0, double A1, double A2,  double Dz,  double Dx)
 {
- double JRotNordio_2();
-  
   double y;
   double J1;
   double J2;
@@ -86,7 +78,7 @@ double f, S0, Dz, Dx,A0,A1,A2;
 double JRotNordio_(int mL, double w, double P2, double A0, double A1, double A2, double Dz, double Dx)
 {
   double y;
-  double c_(),itau_(),itau0,itau1,itau2;
+  double itau0,itau1,itau2;
 
   itau0=itau_(mL,0,Dz,Dx,P2);
   itau1=itau_(mL,1,Dz,Dx,P2);
@@ -101,7 +93,7 @@ double JRotNordio_(int mL, double w, double P2, double A0, double A1, double A2,
 double JRotNordio_2(int mL, double w, double P2, double A0, double A1, double A2, double Dz, double Dx)
 {
   double y;
-  double c_(),itau_(),itau0,itau1,itau2;
+  double itau0,itau1,itau2;
 
   itau0=itau_(mL,0,Dz,Dx,P2);
   itau1=itau_(mL,1,Dz,Dx,P2);
@@ -114,7 +106,7 @@ double JRotNordio_2(int mL, double w, double P2, double A0, double A1, double A2
 
 double itau_(int mL,int mM, double Dz, double Dx,double P2)
 {
-   double beta_(),y;
+   double y;
 
    y=Dx*(1.0/beta_(mL,mM,P2)+(Dz/Dx-1)*mM*mM);
    // printf("itau(%d,%d)=%lg\n",mL,mM,y);

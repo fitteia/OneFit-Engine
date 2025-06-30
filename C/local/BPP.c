@@ -1,9 +1,9 @@
 #include <math.h>
 #include <stdio.h>
+#include "lor.h"
+#include "BPP.h"
 
 #define pi 3.1415927  
-
-extern double lor(double t, double w);
 
 double BPP(double f,double a,double tauc)
 {

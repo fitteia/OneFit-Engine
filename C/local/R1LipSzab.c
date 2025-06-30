@@ -4,7 +4,8 @@
 #include <string.h>
 #include "globals.h"
 #include "struct.h"
-#include "userlib.h"
+#include "lor.h"
+#include "R1LipSzab.h"
 
 #define pi 3.1415926
 
@@ -33,7 +34,6 @@
 double R1LipSzab(double f, double q, double C, double ms, double rho, double S, double tm, double tR, double tv, double r, double Delta2, double Aoh, double SLS, double tl)
 {
   double af, R1m, R1msc, R1mdd, te, ws, wH, tc, tf, A;
-  double lor();
   
   wH    = 2*pi*f;
   ws    = wH*gammae/gamma;

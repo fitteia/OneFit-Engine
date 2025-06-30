@@ -8,20 +8,20 @@
 /* #include <processes.h> */
 #include <string.h>
 #include "globals.h"
+#include "gfit_out.h"
+#include "fitutil.h"
+#include "funcsn.h"
 
-void    gfit_outgraf(par)
-double  par[];
+void gfit_outgraf(double par[])
+// double  par[];
 {
   int     i,k,xi,ma,mode,nxy;
   
   char *typex;
   char aux1[40];
   double  *fs,f,ft,*x;
-  double  *dvector();
   
-  void    free_dvector(),free_vector(),funcsn();
-  
-  FILE    *openf(),*fptr;
+  FILE    *fptr;
   
   fs = dvector(1,Ma);
   ma = Ma;
@@ -54,7 +54,7 @@ double  par[];
 	f = pow(10.0,f);
       else if(!strncmp(typex,"sqrt",4))
 	f = pow(f,2.0);
-      else f=f;
+      else f=f*1.0;
       x[xi] = f;
 
       fprintf(fptr,"%lg ", x[xi]);

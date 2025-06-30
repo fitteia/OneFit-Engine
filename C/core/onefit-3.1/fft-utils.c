@@ -6,15 +6,16 @@
 #include	<math.h>
 #include	<stdio.h>
 #include	"struct.h"
+#include "fft-utils.h"
 
 #define		SWAP(a,b)	tempr=(a);(a)=(b);(b)=tempr
 
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-void	dfour1(data,nn,isign)
-double	data[];
-int	nn,isign;
+void	dfour1(double data[], int nn, int isign)
+// double	data[];
+// int	nn,isign;
 /*
 Replaces data by its discrete Fourier transform, if isign is input as 1; or 
 replaces data nn times its inverse discrete Fourier transform, if isign is input
@@ -67,9 +68,9 @@ nn MUST be an integer power of 2 (this is not checked for!).
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-void	dtwofft(data1,data2,fft1,fft2,n)
-double	data1[],data2[],fft1[],fft2[];
-int	n;
+void dtwofft(double data1[], double data2[], double fft1[], double fft2[], int n)
+// double	data1[],data2[],fft1[],fft2[];
+// int	n;
 /*
 Given two real input arrays data1[1..n] and data2[1..n], this routine calls 
 four1 and returns two complex output arrays, fft1, fft2. each of complex length
@@ -79,7 +80,6 @@ of the respective datas. n MUST be an integer power of 2.
 {
 	int	nn3,nn2,jj,j;
 	double	rep,rem,aip,aim;
-	void	dfour1();
 
 	nn3 = 1+(nn2=2+n+n);
 	for(j=1,jj=2;j<=n;j++,jj += 2) {
@@ -107,9 +107,9 @@ of the respective datas. n MUST be an integer power of 2.
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-void	drealfft(data,n,isign)
-double	data[];
-int	n,isign;
+void drealfft(double data[], int n, int isign)
+// double	data[];
+// int	n,isign;
 /*
 Calculates the Fourier Transform of a set of 2n real-valued data points.
 Replaces this data (which is stored in array data[1..2n] by the positive 
@@ -123,7 +123,6 @@ data.(Result in this case must be multiplied by 1/n.)
 	int	i,i1,i2,i3,i4,n2p3;
 	double	c1=0.5,c2,h1r,h1i,h2r,h2i;
 	double	wr,wi,wpr,wpi,wtemp,theta;
-	void 	dfour1();
 
 	theta = 3.141592653589793/(double) n;
 	if(isign == 1) {
@@ -165,9 +164,9 @@ data.(Result in this case must be multiplied by 1/n.)
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-void	expri(data,re,im,n)
-double	data[],re[],im[];
-int	n;
+void expri(double data[], double re[], double im[], int n)
+// double	data[],re[],im[];
+// int	n;
 /*
 Extract Real and Imaginary data out of a positive real-valued Complex data 
 vector.
@@ -187,9 +186,9 @@ vector.
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-void	exri(data,re,im,n)
-double	data[],re[],im[];
-int	n;
+void exri(double data[], double re[], double im[], int n)
+// double	data[],re[],im[];
+// int	n;
 /*
 Extract Real and Imaginary data out of a real-valued Complex data vector
 */
@@ -208,13 +207,12 @@ Extract Real and Imaginary data out of a real-valued Complex data vector
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void	area_fft(Re_data,Im_data,npoints,step,a_Re,a_Im)
-
-double	Re_data[],Im_data[];
-int	npoints;
-double	step;
-double	*a_Re;
-double	*a_Im;
+void area_fft(double Re_data[], double Im_data[], int npoints, double step, double *a_Re, double *a_Im)
+// double	Re_data[],Im_data[];
+// int	npoints;
+// double	step;
+// double	*a_Re;
+// double	*a_Im;
 {
 	int	i;
 
@@ -229,11 +227,10 @@ double	*a_Im;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double	pow_fft(Re_data,Im_data,npoints,step)
-
-double	Re_data[],Im_data[];
-int	npoints;
-double	step;
+double pow_fft(double Re_data[], double Im_data[], int npoints, double step)
+// double	Re_data[],Im_data[];
+// int	npoints;
+// double	step;
 {
 	int	i;
 	double	af=0.;

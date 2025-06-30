@@ -8,15 +8,13 @@
 #include "math.h"
 #include <stdlib.h>
 #include <string.h>
-
+#include "fitutil.h" 
 
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
 void nrerror(char error_text[])
 {
-   void exit();
-
    fprintf(stderr,"OneFit run-time error...\n");
    fprintf(stderr,"%s\n",error_text);
    fprintf(stderr,"...now exiting to system...\n");
@@ -27,8 +25,6 @@ void nrerror(char error_text[])
 /*****************************************************************************/
 void gfitn_error(char error_text[],char option_msg[])
 {
-   void exit();
-
    fprintf(stderr,"OneFit run-time error...\n");
    fprintf(stderr,"%s %s\n",error_text,option_msg);
    fprintf(stderr,"...now exiting to system...\n");
@@ -208,8 +204,6 @@ void free_ivector(int *v, int nl, int nh)
 /*****************************************************************************/
 FILE   *openf(char fname[],char mode[])
 {
-   void   exit();
-   FILE   *fopen();
    FILE   *f;
 
    if( (f = fopen(fname,mode)) == NULL) {
@@ -224,10 +218,9 @@ FILE   *openf(char fname[],char mode[])
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-int RRemove(fname)
-char *fname;
+int RRemove(char *fname)
+// char *fname;
 {
-  void nrerror();
   int f;
 
   if( (f = remove(fname)) == -1  ) {
@@ -241,11 +234,10 @@ char *fname;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-int Rename(oldfname,newfname)
-char *oldfname;
-char *newfname;
+int Rename(char *oldfname, char *newfname)
+// char *oldfname;
+// char *newfname;
 {
-  void nrerror();
   int f;
 
   if( (f = rename(oldfname,newfname)) != 0 ) {
@@ -259,8 +251,8 @@ char *newfname;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double   atanh(x)
-double   x;
+double atanh(double x)
+// double   x;
 {
    if( x <= -1.0 || x >= 1.0 ) nrerror("Error in function atanh() -1<x<1");
    return -0.5*log( (1-x)/(1+x) );
@@ -268,16 +260,16 @@ double   x;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double   Iden(x)
-double   x;
+double   Iden(double x)
+// double   x;
 {
    return x;
 }
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double   Inv(x)
-double   x;
+double Inv(double x)
+// double   x;
 {
    if(x == 0.0) {
        nrerror("arg = 0.0 in Inv.");
@@ -288,8 +280,8 @@ double   x;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double   logT1(x)
-double   x;
+double logT1(double x)
+// double   x;
 {
    if(x == 0.0) {
        nrerror("arg = 0.0 in Inv.");
@@ -309,8 +301,7 @@ ya, i=1,...,n, then the returned value y=P(x).
 {
    int   i,m,ns=1;
    double   den,dif,dift,ho,hp,w;
-   double   *c,*d,*dvector();
-   void   nrerror(),free_dvector();
+   double   *c,*d;
 
    dif=fabs(x-xa[1]);
    c=dvector(1,n);
@@ -349,7 +340,6 @@ void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y)
 {
    int klo,khi,k;
    double h,b,a;
-   void nrerror();
 
    klo=1;
    khi=n;
@@ -367,13 +357,12 @@ void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void dspline(x,y,n,yp1,ypn,y2)
-double x[],y[],yp1,ypn,y2[];
-int n;
+void dspline( double x[], double y[], int n, double yp1, double ypn, double y2[])
+// double x[],y[],yp1,ypn,y2[];
+// int n;
 {
    int i,k;
-   double p,qn,sig,un,*u,*dvector();
-   void free_dvector();
+   double p,qn,sig,un,*u;
 
    u=dvector(1,n-1);
    if (yp1 > 0.99e30)
@@ -403,9 +392,9 @@ int n;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void new_line(f,n)
-FILE *f;
-int n;
+void new_line(FILE *f, int n)
+// FILE *f;
+// int n;
 {
   int i;
   char c;
@@ -418,8 +407,8 @@ int n;
 #define IN  1
 #define OUT 0
 
-int swc(s)
-char *s;
+int swc(char *s)
+// char *s;
 {
   int nw,i,state;
   char c;
@@ -441,8 +430,8 @@ char *s;
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-int flc(file)
-FILE *file;
+int flc(FILE *file)
+// FILE *file;
 {
   char str[1024]="";
   int lc=0;
@@ -461,8 +450,8 @@ FILE *file;
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-void *Malloc(size)
-unsigned int size;
+void *Malloc(unsigned int size)
+// unsigned int size;
 {
   void *ptr;
 
@@ -475,9 +464,9 @@ unsigned int size;
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-void *Realloc(ptr,size)
-void *ptr;
-unsigned int size;
+void *Realloc(void *ptr,unsigned int size)
+// void *ptr;
+// unsigned int size;
 {
   if((ptr = realloc(ptr,size)) != NULL) return ptr;
   else {
@@ -488,9 +477,9 @@ unsigned int size;
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-int *Flc(file,nlines)
-FILE *file;
-int *nlines;
+int *Flc(FILE *file, int *nlines)
+// FILE *file;
+// int *nlines;
 {
   char c,*str;
   int lc=0,*char_count,nchar=0;
@@ -524,8 +513,8 @@ int *nlines;
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-char **nlnc(nlinhas,nchar_linha)
-int nlinhas,*nchar_linha;
+char **nlnc( int nlinhas, int *nchar_linha)
+// int nlinhas,*nchar_linha;
 {
   int i;
   char **opt;
@@ -540,9 +529,9 @@ int nlinhas,*nchar_linha;
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-void free_nlnc(m,nlinhas)
-char **m;
-int nlinhas;
+void free_nlnc(char **m, int nlinhas)
+// char **m;
+// int nlinhas;
 {
    int i;
 
@@ -552,9 +541,9 @@ int nlinhas;
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-char **lines(file,nlines,nchar_line)
-FILE *file;
-int nlines,*nchar_line;
+char **lines(FILE *file, int nlines, int *nchar_line)
+// FILE *file;
+// int nlines,*nchar_line;
 {
   char c,*str;
   int lc=0,nchar=0;
@@ -592,9 +581,9 @@ int nlines,*nchar_line;
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-char **getsstring(str,n)
-char *str;
-int *n;
+char **getsstring(char *str, int *n)
+// char *str;
+// int *n;
 {
   int i,state,nw,nc;
   char c,**ptr;
@@ -669,8 +658,8 @@ void putd(double x)
 /****************************************************************************/
 /*                                                                          */
 /****************************************************************************/
-double   ler_num(f)
-FILE   *f;
+double ler_num(FILE *f)
+// FILE   *f;
 {
    double   x;
    char   c;
@@ -693,9 +682,9 @@ int strplen(char **str)
 /****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-int *buffer_Flc(file,nlines)
-FILE *file;
-int *nlines;
+int *buffer_Flc(FILE *file, int *nlines)
+// FILE *file;
+// int *nlines;
 {
   char c,*str;
   int lc=0,*char_count,nchar=0;
@@ -727,9 +716,9 @@ int *nlines;
 /****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-char **buffer_lines(file,nlines,nchar_line)
-FILE *file;
-int nlines,*nchar_line;
+char **buffer_lines(FILE *file, int nlines, int *nchar_line)
+// FILE *file;
+// int nlines,*nchar_line;
 {
   char c,*str;
   int lc=0,nchar=0;

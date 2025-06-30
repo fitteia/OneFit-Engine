@@ -5,10 +5,11 @@
 #include	<math.h>
 #include        "globals.h"
 #include <string.h>
+#include "funcsn.h"
 
-void	funcsn(x,afunc,ma,par,t,mode)
-int	ma,mode;
-double 	x,*afunc,t,*par;
+void funcsn(double x, double *afunc, int ma, double *par, double t, int mode)
+// int	ma,mode;
+// double 	x,*afunc,t,*par;
 {
   int	i;
 /**
@@ -21,15 +22,16 @@ printf("mode=%d\n",mode);
 	printf("funcsn %s\n",Func_names[i-1]);
       */
     if(!strncmp(Func_names[i-1],"Perl",4)){
-      afunc[i]=(*function[i-1])(x,par,t,mode,Func_names[i-1]); 
+      afunc[i]=(*function[i-1])(x,par,t,mode,Func_names,0); 
+      // afunc[i]=(*function[i-1])(x,par,t,mode,Func_names[i-1],0); NOT SURE ABOUT THE REASON FOR THIS... 
     }
     else { 
-	if(Func_args[i-1] != NULL)
-	    afunc[i]=(*function[i-1])(x,par,t,mode,Func_args[i-1],Func_nargs[i-1]);
-	else
-	    afunc[i]=(*function[i-1])(x,par,t,mode,NULL,NULL);
+		if(Func_args[i-1] != NULL)
+	    	afunc[i]=(*function[i-1])(x,par,t,mode,Func_args[i-1],Func_nargs[i-1]);
+		else
+	    	afunc[i]=(*function[i-1])(x,par,t,mode,NULL,0);
     }
-  }
+  }	
   
 }
 /******************************************************************************/

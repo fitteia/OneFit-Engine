@@ -5,17 +5,18 @@
 #include <stdio.h>
 #include "globals.h"
 #include <string.h>
+#include "gchi2_vn.h"
+#include "funcsn.h"
+#include "lfit1n.h"
 
 #define PENA 1.0
 
-double   gchi2_vn(p,chisq)
-double    p[],chisq[];
+double gchi2_vn(double *p, double *chisq)
+// double    p[],chisq[];
 {
   int   ma,*lista,mfit,ndata,i,k,mode,j,u;
    double   chisqt=0.0;
    double   **Data,*x,*y,*sig,*a;
-   double   *dvector();
-   void   funcsn(),lfit1n(),free_dvector();
 
    a     = dvector(1,Ma);
 
@@ -54,7 +55,6 @@ double    p[],chisq[];
       mfit  = Mfit;
       ndata = Ndata[i];
       lista = Lista;
-
       if(_T!=NULL) lfit1n(x,y,sig,ndata,a,ma,lista,mfit,
 			 &chisq[i],funcsn,p,_T[i],mode);
       else lfit1n(x,y,sig,ndata,a,ma,lista,mfit,

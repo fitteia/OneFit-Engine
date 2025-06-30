@@ -80,7 +80,7 @@ double _E=0;
 int *num_gph_points=0;
 FILE *pointers_file=0;
 
-static option long_options[]={
+static const struct option long_options[]={
   {"autox_scale",0,&autox_flag,1},
   {"autox",0,&autox_flag,1},
   {"autoy_scale",0,&autoy_flag,1},
@@ -140,68 +140,75 @@ int Ma=0,Mfit=0,*Ndata,*Lista,NT=0;
 double ***VData=0,*_T=0,**AA=0,**Covar=0;
 double **Data;
 
-extern void nrerror();
-extern void gfitn_error();
-extern int *ivector();
-extern double *dvector();
-extern double **dmatrix();
-extern char **cmatrix();
-extern char *cvector();
-extern float *vector();
-extern float **matrix();
-extern void free_matrix();
-extern void free_cmatrix();
-extern void free_vector();
-extern void free_dvector();
-extern void free_cvector();
-extern void free_dmatrix();
-extern void free_ivector();
-extern FILE   *openf();
-extern int RRemove();
-extern int Rename();
-extern double   atanh();
-extern double   Iden();
-extern double   Inv();
-extern double   logT1();
-extern void dpolint();
-extern void dsplint();
-extern void dspline();
-extern void new_line();
-extern int swc();
-extern int flc();
-extern int *Flc();
-extern char **nlnc();
-extern void free_nlnc();
-extern char **lines();
-extern void *Malloc();
-extern void *Realloc();
-extern char **getsstring();
+extern void nrerror(char a[]);
+extern void gfitn_error(char error_text[],char option_msg[]);
+int *ivector(int nl, int nh);
+extern double *dvector(int nl, int nh);
+extern double **dmatrix(int nrl, int nrh, int ncl, int nch);
+extern char **cmatrix(int nrl, int nrh, int ncl, int nch);
+extern char *cvector(int nl, int nh);
+extern float *vector(int nl, int nh);
+extern float **matrix(int nrl, int nrh, int ncl, int nch);
+extern void free_matrix(float **m, int nrl, int nrh, int ncl, int nch);
+extern void free_cmatrix(char **m, int nrl, int nrh, int ncl, int nch);
+extern void free_vector(float *v, int nl, int nh);
+extern void free_cvector(char *v, int nl, int nh);
+extern void free_dmatrix(double **m, int nrl, int nrh, int ncl, int nch);
+void free_ivector(int *v, int nl, int nh);
+double   atanh(double a);
+extern void dpolint(double xa[], double ya[], int n, double x, double *y, double *dy);
+extern void dsplint(double *xa, double *ya, double *y2a, int n, double x, double *y);
 extern void initialize();
 extern void user_initialize();
-extern char *purges();
-extern void puti();
-extern void putd();
-extern double ler_num();
-extern int strplen();
-extern void ParFreeF();
-extern char **ReadParNames();
-extern void minuit_();
-extern void minuit_MSDOS();
-extern void fcn();
-extern double gchi2_vn();
-extern void usage();
-extern void gfit_outgraf();
-extern void inigfit();
-extern void plotfitn();
-extern int *buffer_Flc();
-extern char **buffer_lines();
 extern void mygnus();
-extern void xmgr();
+void xmgr(char prog[], char format[]);
 extern void grbatch();
 extern double PerlLF();
 extern double PerlNLF();
+extern double Ftotal();
+int RRemove(char *fname);
+void *Malloc(unsigned int size);
+void *Realloc(void *ptr,unsigned int size);
+int Rename(char *oldfname, char *newfname);
+int *Flc(FILE *file, int *nlines);
+char **nlnc( int nlinhas, int *nchar_linha);
+FILE *openf(char fname[],char mode[]);
+void free_nlnc(char **m, int nlinhas);
+double Iden( double x);
+char **lines(FILE *file, int nlines, int *nchar_line);
+char **getsstring(char *str, int *n);
+void nrerror(char error_text[]);
+char *purges(char *str);
+double Inv( double x);
+void puti(int i);
+void putd(double x);
+double *dvector(int nl, int nh);
+double ler_num(FILE *f);
+double logT1( double x);
+int strplen(char **str);
+int *buffer_Flc(FILE *file, int *nlines);
+void dpolint(double xa[],double ya[],int n, double x, double *y, double *dy);
+char **buffer_lines(FILE *file, int nlines, int *nchar_line);
+void dspline( double x[], double y[], int n, double yp1, double ypn, double y2[]);
+void free_dvector(double *v, int nl, int nh);
+void new_line(FILE *f, int n);
+void dsplint(double xa[], double ya[], double y2a[], int n, double x, double *y);
+int swc(char *s);
+int flc(FILE *file);
 
 
+extern void initialize();
+extern void user_initialize();
+extern void usage();
+extern void inigfit();
+extern void plotfitn();
+extern double PerlLF();
+extern double PerlNLF();
+
+void read_arguments(int argc, char *argv[]);
+void decode_funcao(char *optarg);
+double perl_func_call(char s[],char *spointer[]);
+int minuit_(void fcn(int *npar, double g[], double *f, double par[], int *iflag), int a);
 
 #define START_INITIALIZE \
 ({\

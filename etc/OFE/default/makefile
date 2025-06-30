@@ -4,6 +4,7 @@
 # 
 #ROOT=/user/home/OneFit
 
+OS=LINUX
 ARCH=x86_64
 ROOT=/home/fitteia
 PREFIX=
@@ -19,6 +20,7 @@ NAME=onefit-user
 PERLVERSION=5.36
 PERLLIB=/usr/lib/$(ARCH)-linux-gnu/libperl.so.$(PERLVERSION)
 PERLROOT=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
+PERLCORE=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
 # run to get above directory: perl -MConfig -e 'print $Config{archlib}'
 
 CERNLIBPATH=/usr/lib
@@ -30,16 +32,25 @@ CERNLIB= -L$(CERNLIBPATH)  $(CERNMATH) $(CERNPACK) $(F2C)
 #MINUIT=$(CERNLIB)
 MINUIT= -lminuit -lgfortran
 
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	GCCPATH := $(shell brew --prefix gcc)
+	LIBGFORTRAN = -L$(GCCPATH)/lib/gcc/current
+	CC = gcc -std=c99  $(FLAGS)
+else
+	LIBGFORTRAN=
+	CC = gcc $(FLAGS)
+endif
+
 # versao linux
-LIB=  -L$(DESTDIR)/lib -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm 
+LIB= $(LIBGFORTRAN) -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm 
 
-FLAGS=  -DLINUX -fPIC -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I$(DESTDIR)/include
+FLAGS= -D__GNU_LIBRARY__ -D$(OS) -fPIC -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I$(INCLUDEDIR)
 
-CCFLAGS=-D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I\$(PERLROOT)  -I\$(ONEFIT)/include
+CCFLAGS= -D__GNU_LIBRARY__ -D__GNU_LIBRARY__  -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE)  -I$(INCLUDEDIR) 
 
-LDFLAGS=-shared -L/usr/local/lib -fstack-protector -O3 -g
-
-CC = gcc $(FLAGS)
+LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
+LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
 #CC=gcc -I/usr/lib/perl/5.6.1/CORE -I/include
 
@@ -49,12 +60,13 @@ gfitn : clean module $(objects)
 	$(CC) $(objects) $(LIB) -o $(NAME) 
 
 module: AuxCode.c AuxCode.i
+ifeq ($(UNAME_S),Darwin)
+else
 	swig -perl AuxCode.i
-	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(DESTDIR)/include
-	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so
+	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
+	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
 	rm AuxCode_wrap.o AuxCode_wrap.c
-#	mv AuxCode.pm $ROOT/public_html/$numero/
-#	mv AuxCode.so $ROOT/public_html/$numero/
+endif
 
 clean:
 	rm -f *.o *~ *_ *.gph *.gp_ gnu*

@@ -3,6 +3,7 @@
 /******************************************************************************/
 #include <math.h>
 #include <stdio.h>
+#include "lor.h"
 
 double	lor(double t, double w)
 {

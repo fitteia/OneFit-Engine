@@ -6,6 +6,8 @@ our $SUDO = "sudo";
 
 our $DOCKER = False;
 
+our $OS = "LINUX";
+
 multi MAIN (
  	Bool :$dpkg is copy = True, # to install required debian packages
    	Bool :w(:$web-server) is copy = True, # to run tasksel install web-server
@@ -15,7 +17,7 @@ multi MAIN (
    	Bool :i(:$install) = True, # to install OneFit-Engine as a raku modules available to all users
    	Bool :U(:$Uninstall) = False, # to uninstall OneFit-Engine module					   
    	Bool :p(:$p6-modules) = True, # attempt to install raku module Inline::Perl5
-   	Bool :g(:$enable-gs) = True, # enable ghostscript in ImageMagick policy.xml
+   	Bool :g(:$enable-gs) is copy = True, # enable ghostscript in ImageMagick policy.xml
    	Bool :s(:$to-site) is copy = True, # install raku module to site (use --/to-site to install-to user)
    	Bool :u(:$to-user) = False, # if True --/dpkg -/w -/g --no-to-site
    	Bool :d(:$systemd-daemon) is copy = False, # if true runs sudo systemctl start onefite (or sudo service onefite start)			 
@@ -23,17 +25,18 @@ multi MAIN (
    	Bool :$shell = False, # by default it NOT will install shellinabox service in port 8100
    	Bool :$git = True, # By default it runs git to pull the package for remote repository
 	Bool :$wsl = False, # Flag for a WSL2 Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
+	Bool :$macos = False, # Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Bool :$docker = False, # Flag for a Docker Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Bool :$post-test is copy = True; # Run post install tests
 	Bool :$man-page = True; # Install man page
-   	Str  :$ip = '*',
+   	Str  :$ip is copy = '*',
    	Int  :$port = 8142,
    	Int  :$shell-port = 8100,
   	Str  :b(:$bindir) = "$*CWD/../bin", # choose /home/<user>/bin if you want and make sure it is included in the PATH
    	Str  :m(:$merge-site)='', # if merge string then merge site branch (it it exits) into current branch
 	){
    	
-	my %cpus = ("x86_64"  => "amd64", "aarch64" => "arm64");
+	my %cpus = ("x86_64"  => "amd64", "aarch64" => "arm64", "arm64" => "arm64");
 
    	if $git {
 		shell "git stash";
@@ -41,9 +44,10 @@ multi MAIN (
 		shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
    	}
    
-  	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail(2).head } unless so $cpu;
+  	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail( $macos ?? 1 !! 2  ).head.Str } unless so $cpu;
 	
    	my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
+   	my $perlcore =shell("perl -MConfig -e 'print \"\$Config\{archlib\}/CORE\"'",:out).out.lines(:close).head;
    	my $arch= shell("arch",:out).out.lines(:close).head;
    	my $root=$*CWD;
 
@@ -60,12 +64,43 @@ multi MAIN (
 		$post-test = False;
 	}
 	if $wsl {
-		$DOCKER = $docker;
+		$DOCKER = True;
 		$web-server = False;
 		$test = False;
 		$systemd-daemon = False;
 		$post-test = False;
 	}
+	if $macos {
+		shell("cpan CGI");
+		my @brew-packages=<
+			jq
+			swig
+			gcc
+			grace
+			imagemagick
+			texlive
+			ghostscript
+			zip
+			pdftk-java
+			openssl
+			hdf5
+			gnuplot
+		>;
+		for @brew-packages {
+			shell("brew install $_") unless shell("brew list --version $_").so;
+		}
+		shell "zef install App::Prove6" if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
+		$DOCKER = True;
+		$web-server = False;
+		$test = False;
+		$systemd-daemon = False;
+		$post-test = False;
+		$OS = "MacOSX";
+		$dpkg = False;
+		$enable-gs = False;
+		$ip="127.0.0.1";
+	}
+
 
    	uninstall() if $Uninstall;
 
@@ -79,7 +114,7 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-   	compile( root => $root, arch => $arch, bindir => $bindir, pv => $pv ) if $compile;
+   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore ) if $compile;
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
@@ -91,12 +126,14 @@ multi MAIN (
    	}	
 
    	systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
-
-   	add-show-ip-in-issue() if $to-site and !$docker;
-
+   	
+	add-show-ip-in-issue() if $to-site and !$DOCKER;
+	
    	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
 
-	install-manpage() if $man-page;
+	install-manpage(macos => $macos) if $man-page;
+
+	set-gcc-std() if $macos;
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -129,6 +166,7 @@ Usage:
     --man-page 	   # Install onefite man page
     --docker       # set options for a Docker install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
     --wsl          # set options for a WSL2 install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
+    --macos        # set options for a MacOS install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
     --ip = '*'     # creates the onefite.service for all IPv4 interfaces
     --port = 8142  # onefite web service service port defaults to 8142
     --merge-site=<Str> # merge git site files with git main/dev files when updating
@@ -251,13 +289,14 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root,:$arch,:$bindir,:$pv) {
+sub compile (:$root,:$arch,:$bindir,:$pv,:$perlcore) {
    	say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    	shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
    	shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && make install && make clean";
    	say "install source in $*CWD and binaries with perl version: $pv";
-  	shell "make MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install";
+  	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
+  	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
    	shell "find . -name .precomp -prune -o -name .git -prune -o -name .gitignore -prune -o -name .prove -prune -o -name .travis.yml -prune -o -name Makefile -prune -o -name \"*~\" -prune -o -name bugs -prune -o -type f -print | sort | cut -c 3- > MANIFEST";
 }
 
@@ -401,15 +440,21 @@ sub shellinabox(Bool $shell, $shell-port) {
 	}
 }
 
-sub install-manpage() {
+sub install-manpage( :$macos = False ) {
 	"onefite.1".IO.spurt: shell("raku --doc=Man $*CWD/bin/onefite",:out).out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");
 	"onefite.1".IO.spurt: "\n\n" ~ shell("$*CWD/bin/onefite -v",:out).out.lines.join("\n"), :append;
     "onefite.1.gz".IO(:e).unlink;
-   	shell("gzip -9 onefite.1");
 	say "onefite man page: onefite.1.gz";
 	if $SUDO {
-   		shell("$SUDO cp onefite.1.gz /usr/share/man/man1/");	
-		say "onefite.1.gz man page install in /usr/share/man/man1/";
+   		if $macos {
+   			shell("$SUDO cp onefite.1 /usr/local/share/man/man1/");	
+			say "onefite.1 man page install in /usr/local/share/man/man1/";
+		}
+		else {
+			shell("gzip -9 onefite.1");
+   			shell("$SUDO cp onefite.1.gz /usr/share/man/man1/");	
+			say "onefite.1.gz man page install in /usr/share/man/man1/";
+		}
 	}
 }
 
@@ -531,3 +576,6 @@ sub wait-for-port(Str:D $host, Int:D $port, Int:D $timeout = 30, Int:D $interval
     }
 }
 
+sub set-gcc-std () {
+
+}

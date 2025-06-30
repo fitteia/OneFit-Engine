@@ -1,6 +1,7 @@
-
 #include <math.h>
 #include <stdio.h>
+#include "lor.h"
+#include "R1ISsbm.h"
 
 #define pi 3.1415926
 
@@ -28,7 +29,6 @@
 double R1ISsbm(double f, double q, double C, double ms, double rho, double S, double tm, double tR, double tv, double r, double Delta2, double Aoh)
 {
   double x,wI,wS, Delta,af,R1m,R1mdd,R1msc,tc1,tc2,te2,it1s,it2s;
-  double lor();
   
    wI     = 2*pi*f;
    wS    = wI*gammae/gamma;

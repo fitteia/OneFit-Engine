@@ -3,12 +3,11 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "struct.h"
-#define pi      3.141592653589793238
+#include "fitutil.h"
+#include "integra.h"
+#include "GaussLegendreInt.h"
 
-extern double r_pval(Function *x, int n); 
-extern void	w_f_ptr(Function *x, double (*f)(Function *x));
-extern void	clear_struct(Function *f_struct, int n_par);
-extern double GaussLegendreInt(Function *X,int p,int n);
+#define pi      3.141592653589793238
 
 double _Bcoil_x(Function *X)
 {

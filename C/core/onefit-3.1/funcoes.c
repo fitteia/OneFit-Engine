@@ -2,52 +2,53 @@
 #include <stdio.h>
 #include "globals.h"
 #include <string.h>
+#include "funcoes.h"
 
-double _x0(x,par,t,mode)
-double x,*par,t;
-int mode;
+double _x0(double x,double *par,double t,int mode)
+// double x,*par,t;
+// int mode;
 {
   return 1.0;
 }
 
-double _x1(x,par,t,mode)
-double x,*par,t;
-int mode;
+double _x1(double x,double *par,double t,int mode)
+// double x,*par,t;
+// int mode;
 {
   return x;
 }
 
-double _x2(x,par,t,mode)
-double x,*par,t;
-int mode;
+double _x2(double x,double *par,double t,int mode)
+// double x,*par,t;
+// int mode;
 {
   return x*x;
 }
 
-double _x3(x,par,t,mode)
-double x,*par,t;
-int mode;
+double _x3(double x,double *par,double t,int mode)
+// double x,*par,t;
+// int mode;
 {
   return x*x*x;
 }
 
-double _x4(x,par,t,mode)
-double x,*par,t;
-int mode;
+double _x4(double x,double *par,double t,int mode)
+// double x,*par,t;
+// int mode;
 {
   return pow(x,4.0);
 }
 
-double _x5(x,par,t,mode)
-double x,*par,t;
-int mode;
+double _x5(double x,double *par,double t,int mode)
+// double x,*par,t;
+// int mode;
 {
   return pow(x,5.0);
 }
 
-double _x6(x,par,t,mode)
-double x,*par,t;
-int mode;
+double _x6(double x,double *par,double t,int mode)
+// double x,*par,t;
+// int mode;
 {
   return pow(x,6.0);
 }
@@ -55,10 +56,10 @@ int mode;
 static int _xn_first_time=YES;
 static int _xn_arg_a=-1;
 
-double _xn(x,par,t,mode,par_names,nnames)
-double x,*par,t;
-int mode,nnames;
-char **par_names;
+double _xn(double x,double *par,double t,int mode,char **par_names,int nnames)
+// double x,*par,t;
+// int mode,nnames;
+// char **par_names;
 {
   if(par_names != NULL){
     if(nnames<1) gfitn_error("exp: ","needs 1 fitting parameter as argument\n");
@@ -76,10 +77,10 @@ char **par_names;
 static int _exp_first_time=YES;
 static int _exp_arg_a=-1;
 
-double _exp(x,par,t,mode,par_names,nnames)
-double x,*par,t;
-int mode,nnames;
-char **par_names;
+double _exp(double x,double *par,double t,int mode,char **par_names,int nnames)
+// double x,*par,t;
+// int mode,nnames;
+// char **par_names;
 {
   if(par_names != NULL){
     if(nnames<1) gfitn_error("exp: ","needs 1 fitting parameter as argument\n");
@@ -96,12 +97,11 @@ char **par_names;
   return exp(par[_exp_arg_a]*x);
 }
 
-double PerlNLF(x,par,t,mode,name)
-double x,*par,t;
-int mode;
-char name[];
+double PerlNLF(double x,double *par,double t,int mode,char *name)
+// double x,*par,t;
+// int mode;
+// char name[];
 {
-  double perl_func_call();
   char **parametros;
   double result;
   int i,j,npar;
@@ -127,12 +127,11 @@ char name[];
 }
 
 
-double PerlLF(x,par,t,mode,name)
-double x,*par,t;
-int mode;
-char name[];
+double PerlLF(double x,double *par,double t,int mode,char *name)
+// double x,*par,t;
+// int mode;
+// char name[];
 {
-  double perl_func_call();
   char **parametros;
   double result;
 

@@ -3,15 +3,16 @@
 #include <string.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "plot.h"
+#include "funcsn.h"
 
 void plotfitn()
 {
   int nlinhas,*nchar_linha,pos=0;
   char **linhas;
   int npar,i,k;
-  double *par,lers_num();
+  double *par;
   FILE *fitout;
-  void plotgraf(),gfit_outgraf();
   /*
     printf("I am in plotfitn.c\n");
   */
@@ -71,16 +72,14 @@ void plotfitn()
 /*****************************************************************************/
 /*                                */
 /*****************************************************************************/
-void    plotgraf(par)
-double  *par;
+void plotgraf(double *par)
+// double  *par;
 {
   int     i,k,xi,ma,mode=0,nxy;
   
   char *typex;
   char aux1[100];
   double  *fs,f,ft,*x;
-  
-  void funcsn(),teste_func(),lixo();
   
   FILE    *fptr;
   
@@ -124,7 +123,7 @@ printf("f=%g\n",f);
 	f = pow(10.0,f);
       else if(!strncmp(typex,"sqrt",4))
 	f = pow(f,2.0);
-      else f=f;
+      else f=f*1.0;
 /**
 printf("f=%g\n",f);
 printf("xi=%d\n",xi);
@@ -175,8 +174,8 @@ printf("\n");
 /******************************************************************************/
 /*                                                                            */
 /******************************************************************************/
-double   lers_num(f)
-char *f;
+double lers_num(char *f)
+// char *f;
 {
    double   x;
    int i=0;

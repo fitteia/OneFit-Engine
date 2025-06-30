@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "readdat.h"
 
 #define GNUPLOT_3_5_beta_328 1
 
@@ -22,14 +23,12 @@ char wl[]="with lines";
 
 void mygnus()
 {
-  FILE *f,*openf();
+  FILE *f;
   char ins[2048],lixo[100],Files_gph[100];
   char lixo1[100],aux[100],dlixo[100],dlixo1[100],gph[100],gnu[100];
   int i,j,k,nchar;
   char *typex,*typey;
   char pt[10];
-  void new_line();
-  int print_data();
   int err = 1;
   
   if(Gnuplot == NULL) f = openf("gfitn.gnu","w");

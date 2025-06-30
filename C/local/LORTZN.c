@@ -1,6 +1,6 @@
 #include <math.h>
 #include <stdio.h>
-
+#include "LORTZN.h"
 
 double LORTZN(double f, double a, double b, double f0)
 {

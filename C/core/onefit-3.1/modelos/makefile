@@ -1,11 +1,14 @@
 # $Id: makefile,v 1.5 1998/07/04 10:54:48 pedros Exp $
+OS=LINUX
 ARCH=x86_64
 ROOT=/home/lfx/fitteia
+PERLVERSION=5.36
+PERLCORE=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
 PREFIX=
 DESTDIR=$(ROOT)/$(PREFIX)
 LIBDIR=$(DESTDIR)/lib
 LIBNUMBER=4.0.4
-FLAGS= -DLINUX -O2 -fPIC 
+FLAGS= -D$(OS) -O2 -fPIC -I$(PERLCORE) -I$(ROOT)/C/core/onefit-3.1/
 CC= gcc $(FLAGS)
 F77= gfortran -fPIC
 SRCDIR=$(DESTDIR)/src
@@ -13,18 +16,17 @@ SRCDIR=$(DESTDIR)/src
 LIBNAME=libonefit-modelos-$(LIBNUMBER).a
 
 
-OBJ=    dif_phase.o dimer.o fij.o lor.o odf.o rot.o sdvilfsa7.o \
+OBJ=    dimer.o fij.o lor.o odf.o rot.o sdvilfsa7.o \
         sdvilf5.o sdvilfjwn11_2.o sdvilfn11_1.o sdvilfn11_2.o sdvilfn11_201.o \
         sdvilfsa11.o sdvilfsa5.o sdvilfsa5Dll0.o sdvilfsa11_0.o sdvilfsa13_0.o\
-        t1rodelta.o \
         t1torrey.o t1_rot_vold.o t1vold_new.o t1vold_abc.o Ftotal.o
 
-SRC=	 dif_phase.c dimer.c fij.c lor.c odf.c rot.c sdvilfsa7.c \
+SRC=	dimer.c fij.c lor.c odf.c rot.c sdvilfsa7.c \
         sdvilf5.c sdvilfjwn11_2.c sdvilfn11_1.c sdvilfn11_2.c sdvilfn11_201.c\
         sdvilfsa11.c sdvilfsa5.c sdvilfsa5Dll0.c sdvilfsa11_0.c sdvilfsa13_0.c\
-        t1rodelta.c Ftotal.c \
+        Ftotal.c \
         t1torrey.c t1_rot_vold.c t1vold_new.f t1vold_abc.f makefile struct.h \
-        struf.h plot.h var.h
+        struf.h 
 
 Lib: $(OBJ)
 	$(AR) -rvs $(LIBNAME) $(OBJ)
@@ -36,8 +38,8 @@ install-lib: Lib
 tar: $(SRC)
 	tar zcvf modelos.tar $(SRC) 
 
-dif_phase.o: dif_phase.c
-	$(CC) -c dif_phase.c
+#dif_phase.o: dif_phase.c
+#	$(CC) -c dif_phase.c
 
 dimer.o: dimer.c
 	$(CC) -c dimer.c

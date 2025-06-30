@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include "iT1ISpara.h"
 
 #define pi 3.1415926
 
@@ -11,7 +12,7 @@
 
 double iT1ISpara(double f, double T, double td, double ts,double M, double r,double S)
 {
-   double J0ISpara(), J0ISpara_infts(), x,w, af,Sc,c;
+   double x,w, af,Sc,c;
 
    w = 2*pi*f;
    x=S*hbar*gammae*w/(gamma*k*T);

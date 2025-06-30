@@ -3,6 +3,8 @@
 /******************************************************************************/
 #include <math.h>
 #include <stdio.h>
+#include "sdvilfsa5.h"
+#include "fitutil.h"
 
 #define	C	0.569504e-12
 #define ndt1	19
@@ -41,13 +43,11 @@ static double	jwdev[][3]={
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double sdvilfSa5(I,d,n,t,w,delta)
-double I,d,n,t,w,delta;
+double sdvilfSa5(double I,double d,double n,double t,double w,double delta)
+// double I,d,n,t,w,delta;
 {
 	int	j,i,p;
 	double	wt,m,af,*x,*y,*y2,*xx,*yy,ypn;
-	double	*dvector();
-	void	free_dvector(),dsplint(),dpolint();
 
 	x  = dvector(1,Ndt+1);
 	y  = dvector(1,Ndt+1);

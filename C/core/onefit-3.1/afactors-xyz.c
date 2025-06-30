@@ -2,22 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "afactors-xyz.h"
 
 #define NMAX    100
 
-typedef struct {
-        int     numero;
-        char    nome[10];
-        double  x;
-        double  y;
-        double  z;
-
-} Atomo;
-
 int  main(int argc, char **argv)
 {
-    FILE    *fout,*fin,*openf();
-    void     Afactors(),r6medio();
+    FILE    *fout,*fin;
     int      e1,e2;
 
     fin  = openf(argv[1],"r");
@@ -39,13 +30,13 @@ int  main(int argc, char **argv)
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void Afactors(fin,fout,e1,e2)
-FILE    *fin,*fout;
-int e1,e2;
+void Afactors(FILE *fin, FILE *fout, int e1, int e2)
+// FILE    *fin,*fout;
+// int e1,e2;
 {
     int     c,i,j,natomos,nprotoes;
     double  b0,b1,b2;
-    double  angulo(),distancia(),angij,rij,re1e2,A00,A0,A1,A2,tmp,tmp1=0;
+    double  angij,rij,re1e2,A00,A0,A1,A2,tmp,tmp1=0;
     Atomo   A[500];
 
     fscanf(fin,"%d",&natomos);
@@ -115,11 +106,11 @@ int e1,e2;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-void r6medio(fin,fout)
-FILE    *fin,*fout;
+void r6medio( FILE *fin, FILE *fout)
+// FILE    *fin,*fout;
 {
     int     c,i,j,natomos,nprotoes;
-    double  angulo(),distancia(),rij,r6;
+    double  rij,r6;
     Atomo   A[500];
 
     fscanf(fin,"%d",&natomos);
@@ -161,8 +152,8 @@ FILE    *fin,*fout;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double  distancia(A1,A2)
-Atomo   A1,A2;
+double  distancia(Atomo A1, Atomo A2)
+// Atomo   A1,A2;
 {
     double d;
 
@@ -172,10 +163,10 @@ Atomo   A1,A2;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-double  angulo(A1,A2,A3,A4)
-Atomo   A1,A2,A3,A4;
+double  angulo(Atomo A1, Atomo A2, Atomo A3, Atomo A4)
+// Atomo   A1,A2,A3,A4;
 {
-    double  distancia(),ang,d12,d34,v;
+    double  ang,d12,d34,v;
 
     d12 = distancia(A1,A2);
     d34 = distancia(A3,A4);
@@ -188,12 +179,10 @@ Atomo   A1,A2,A3,A4;
 /*****************************************************************************/
 /*                                                                           */
 /*****************************************************************************/
-FILE    *openf(fname,mode)
-
-char    fname[];
-char    mode[];
+FILE *openf(char fname[], char mode[])
+// char    fname[];
+// char    mode[];
 {
-        FILE    *fopen();
         FILE    *f;
 
         if( (f = fopen(fname,mode)) == NULL) {

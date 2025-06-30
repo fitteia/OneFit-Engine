@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "globals.h"
 #include "struct.h"
-
+#include "ode2.h"
 
 static double k[]={0,0,0,0};
 static double l[]={0,0,0,0};
@@ -12,9 +12,9 @@ static double z[]={0,0};
 
 static int ruku4thode2_first_time=1;
 
-double RuKu4thODE2(xxx,ode2)
-double xxx;
-ODE2 *ode2;
+double RuKu4thODE2( double xxx, struct ODE2 *ode2)
+// double xxx;
+// ODE2 *ode2;
 {
   double h,af;
   

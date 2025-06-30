@@ -4,25 +4,26 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include <signal.h>
-#include <processes.h>
 #include <string.h>
+#include <signal.h>
 #include "struct.h"
 #include "plot.h"
-#include "nrutil.h"
+#include "phim.h"
+#include "integra.h"
+#include "globals.h"
+#include "dif_phase.h"
 
 #define PIO2 1.57079632679490
 /******************************************************************************/
 /*				PHIM.C					      */
 /******************************************************************************/
-main(argc,argv)
-int argc;
-char *argv[];
+int main( int argc, char *argv[])
+// int argc;
+// char *argv[];
 {
-	double	atof(),par[4];
-	void phiM_graf();
+	double par[4];
 
-        if(argc!=4) nrerror("param de entrada H0,K3/K1,niu");
+    if(argc!=4) nrerror("param de entrada H0,K3/K1,niu");
 	par[1] = atof(argv[1]);
 	par[2] = atof(argv[2]);
 	par[3] = atof(argv[3]);
@@ -32,14 +33,12 @@ char *argv[];
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-void    phiM_graf(par)
-double  par[];
+void    phiM_graf(double par[])
+// double  par[];
 {
 
 	Function X;
 	double	K,phiM,niu,H0,f;
-	double	calc_phiM(),szero();
-	void	w_f_ptr(),clear_struct();
 
         int     k,nxy;
 
@@ -49,10 +48,7 @@ double  par[];
         float   tsizxs,tsizxb,tsizys,tsizyb;
         float   xm,xM,ym,yM,*x,*yt,*y;
 
-        double  Inv(),Iden(),(*fx)(),(*fy)();
-	double	sqrt(),log10(),logT1();
-
-	FILE	*file,*openf();
+	FILE	*file;
 
 	file = openf("phim.gph","w");
 

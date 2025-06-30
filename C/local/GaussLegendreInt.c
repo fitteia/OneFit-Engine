@@ -3,17 +3,13 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "struct.h"
+#include "integra.h"
+#include "GaussLegendreInt.h"
+
 #define	pi	3.141592653589793238
 #define PI 3.1415926
 #define	C	0.569504e-12
 #define LIM	3.0e-11
-
-extern double r_pval(Function *x, int n); 
-extern void	w_f_ptr(Function *x, double (*f)(Function *x));
-extern void	clear_struct(Function *f_struct, int n_par);
-extern double r_plow(Function *x, int n);
-extern double r_phigh(Function *x, int n);
-extern void	w_pval(Function *x, int n, double v);
 
 double GaussLegendreInt(Function *X,int p,int n)
 {

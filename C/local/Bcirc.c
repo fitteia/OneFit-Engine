@@ -3,13 +3,17 @@
 #include <stdlib.h>
 #include "globals.h"
 #include "struct.h"
+#include "Bcirc.h"
+#include "integra.h"
+#include "fitutil.h"
+#include "GaussLegendreInt.h"
+
 #define pi      3.141592653589793238
 
 
 double Bcirc(double x, double z, double miu, double N, double R, double I, double NP, double flag) 
 {
-  double _Bcirc_x(),_Bcirc_z(),GaussLegendreInt(),af;
-    void w_f_ptr(),clear_struct();
+  	double af;
     Function X;
 
     clear_struct(&X,7);
@@ -33,7 +37,7 @@ double Bcirc(double x, double z, double miu, double N, double R, double I, doubl
 
 double _Bcirc_x(Function *X)
 {
-  double r_pval(),phi,x,z,miu,N,R,I,af,sphi;
+  double phi,x,z,miu,N,R,I,af,sphi;
 
    phi = r_pval(X,0);
    x     = r_pval(X,1);
@@ -52,7 +56,7 @@ double _Bcirc_x(Function *X)
 
 double _Bcirc_z(Function *X)
 {
-  double r_pval(),phi,x,z,miu,N,R,I,af,sphi;
+  double phi,x,z,miu,N,R,I,af,sphi;
 
    phi = r_pval(X,0);
    x     = r_pval(X,1);

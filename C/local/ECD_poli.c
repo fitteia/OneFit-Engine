@@ -2,12 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "globals.h"
+#include "ECD_poli.h"
 
 #define pi 3.141592653589793238
-#define		FILE_J1TAB	"/home/lfx/lib/j1tabodf.dat"
-#define		FILE_D2J1TAB	"/home/lfx/lib/d2J1tab.dat"
-#define		TABSIZE_R	90
-#define		TABSIZE_fr	72
 
 int	flag=0;  /* flag=0 primeira vez, flag!=0 vezes seguintes */
 		 /* flag!=0 nao carrega tabela			 */
@@ -21,7 +18,8 @@ double	tabfr[TABSIZE_fr],tabR[TABSIZE_R];
 /*** Le tabelas de J1odf ou das respectivas  2as derivadas ***/
 
 /* nome da file que contem a tabela, arrays com os valores de fr e R, matriz com os valores de J1 (ou das 2as derivadas) */
-void read_Jtab(char *tabfile, double *tabfr, double *tabR, double j1tab[TABSIZE_R][TABSIZE_fr]) {
+void read_Jtab(char *tabfile, double *tabfr, double *tabR, double j1tab[TABSIZE_R][TABSIZE_fr])
+{
 	FILE	*fp;
 	int	nR,nfr;		/* numero total de R's e f's */
 	int	iR,ifr;		/* contador de R's e f's     */
@@ -38,7 +36,7 @@ printf("nR=%d,nfr=%d\n",nR,nfr);
 	printf("R= %le\n",tabR[iR]);
 	*/
 		for(ifr=0; ifr<nfr; ifr++){
-	  		if (!fscanf(fp,"%le %le",tabfr+ifr,j1tab+iR*nfr+ifr)) printf("fscanf() call error in ECD_poli.c, read_Jtab() for loop ifr\n");
+	  		if (!fscanf(fp,"%le %le",&tabfr[ifr],&j1tab[iR][ifr])) printf("fscanf() call error in ECD_poli.c, read_Jtab() for loop ifr\n");
 		/* 
 		printf("fr=%le J1=%le\n",tabfr[ifr],*(J1tab+iR*nfr+ifr));
 		*/
@@ -49,7 +47,7 @@ printf("nR=%d,nfr=%d\n",nR,nfr);
 
 /**** limite a baixas frequencias - dependente de frequencia ******/
 
-double J1odf_low(double A, double R, double wr)    
+double J1odf_low(double A, double R, double wr)
 {
 	double a,C1,sqrt2,pol1,pol2,Jlow;
 
@@ -239,6 +237,10 @@ printf("tabR[0]=%le\n",tabR[0]);
 		printf("f e R certos\n");
 		*/
 			return(J1tab[itab][jtab]);
+
+		default:
+			exit(0);
+			return(-1.0);
 	}
 }
 

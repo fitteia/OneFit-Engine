@@ -1,0 +1,30 @@
+/** integra..h **/
+
+char *r_name(Function *x);
+char *r_pname(Function *x, int n);
+double	r_phigh(Function *x, int n);
+double	r_plow(Function *x, int n);
+double	r_pmin(Function	*x, int n);
+double	r_pstep(Function *x, int n);
+double	r_pval(Function	*x, int n);
+double	sqromo(Function *X,double (*choose)(Function *a, int b, int c), int p);
+double	szero(Function *X, int n, double eps);
+double smidpnt(Function *X, int p, int n);
+double sqgaus(Function *X, int p);
+double sqgausn(Function *X, int p, int n);
+int	r_n_par(Function *x);
+int	r_pstatus(Function *x, int n);
+int	r_status(Function *x);
+void	clear_struct(Function *f_struct, int n_par);
+void	w_f_ptr(Function *x, double (*f)(Function *x));
+void	w_name(Function *x, char name[]);
+void	w_phigh(Function *x, int n, double hv);
+void	w_plow(Function	*x, int n, double lv);
+void	w_pmin(Function *x, int n, double mv);
+void	w_pname(Function *x, int n, char name[]);
+void	w_pstatus(Function *x, int n, int status);
+void	w_pstep(Function *x, int n, double sv);
+void	w_pval(Function *x, int n, double v);
+void	w_status(Function *x, int status);
+void	wsval(Function *x);
+void gauleg(double x1, double x2, double x[], double w[], int n);

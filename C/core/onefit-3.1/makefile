@@ -1,6 +1,7 @@
 # $Id: makefile,v 1.12 1999/10/28 15:45:13 pedros Exp $
 ARCH=x86_64
 OS=LINUX
+CC=gcc
 ROOT=/home/lfx/fitteia
 PREFIX=
 DESTDIR=$(ROOT)$(PREFIX)
@@ -14,7 +15,7 @@ SRCDIR=$(DESTDIR)/src
 #
 PERLVERSION=5.36
 PERLLIB=/usr/lib/$(ARCH)-linux-gnu/libperl.so.$(PERLVERSION)
-PERLROOT=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
+PERLCORE=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
 
 # run to get above directory: perl -MConfig -e 'print $Config{archlib}'
 
@@ -33,9 +34,9 @@ LIB=  -L$(DESTDIR)/lib -lonefit-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -lonefit
 SRC= functions.c tabfunc.c
 OBJ= functions.o tabfunc.o
 
-FLAGS= -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLROOT) -I./ -Wall
+FLAGS= -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I./ -Wall
 
-CC = cc $(FLAGS)
+#CC = $(CC) $(FLAGS) 
 
 TAR = onefit-$(LIBNUMBER).tar
 
@@ -43,12 +44,12 @@ TAR = onefit-$(LIBNUMBER).tar
 OBJ= 	gfitn.o funcoes.o readdat.o \
 	loadpar.o fsn.o	gchi2_vn.o funcsn.o \
 	lfit1n.o usage.o gfitoutp.o \
-	pp3d.o gchi2out.o gfit_out.o plot.o mygnus.o xmgr.o
+	ppcovar.o pp3d.o gchi2out.o gfit_out.o plot.o mygnus.o xmgr.o
 
 SRC= 	gfitn.c fitutil.c funcoes.c  readdat.c \
 	loadpar.c fsn.c	gchi2_vn.c gfitoutp.c gfit_out.c funcsn.c \
 	lfit1n.c usage.c ppcovar.c ludcmp.c \
-	lubksb.c gamma.c pp3d.c gchi2out.c tabfunc.c plot.c mygnus.c getopt.c\
+	lubksb.c gamma.c ppcovar.c pp3d.c gchi2out.c tabfunc.c plot.c mygnus.c getopt.c\
 	getopt1.c getopt.h fitenv.c integra.c makefile gfitn.h globals.h \
 	struct.h mixed.h actpar.c xmgr.c
 
@@ -74,92 +75,92 @@ tar: $(CS1) $(CS2) $(OTHERS)
 	rm $(TAR)
 
 gfitn.o: gfitn.c gfitn.h
-	$(CC) -c gfitn.c
+	$(CC) $(FLAGS) -c gfitn.c
 
 fitutil.o: fitutil.c
-	$(CC) -c fitutil.c
+	$(CC)  $(FLAGS) -c fitutil.c
 
 funcoes.o: funcoes.c
-	$(CC) -c funcoes.c
+	$(CC)  $(FLAGS) -c funcoes.c
 
 
 readdat.o: globals.h readdat.c
-	$(CC) -c readdat.c
+	$(CC)  $(FLAGS) -c readdat.c
 
 fsn.o: fsn.c globals.h
-	$(CC) -c fsn.c
+	$(CC)  $(FLAGS) -c fsn.c
 
 gfit_out.o: gfit_out.c globals.h
-	$(CC) -c gfit_out.c
+	$(CC)  $(FLAGS) -c gfit_out.c
 
 gfitoutp.o: gfitoutp.c globals.h
-	$(CC) -c gfitoutp.c
+	$(CC)  $(FLAGS) -c gfitoutp.c
 
 funcsn.o: funcsn.c globals.h
-	$(CC) -c funcsn.c
+	$(CC)  $(FLAGS) -c funcsn.c
 
 loadpar.o: globals.h loadpar.c
-	$(CC) -c loadpar.c
+	$(CC)  $(FLAGS) -c loadpar.c
 
 gchi2_vn.o: globals.h gchi2_vn.c
-	$(CC) -c gchi2_vn.c
+	$(CC)  $(FLAGS) -c gchi2_vn.c
 
 lfit1n.o: lfit1n.c
-	$(CC) -c lfit1n.c
+	$(CC)  $(FLAGS) -c lfit1n.c
 
 usage.o: usage.c
-	$(CC) -c usage.c
+	$(CC)  $(FLAGS) -c usage.c
 
 ppcovar.o: ppcovar.c globals.h
-	$(CC) -c ppcovar.c
+	$(CC)  $(FLAGS) -c ppcovar.c
 
 ludcmp.o: ludcmp.c
-	$(CC) -c ludcmp.c
+	$(CC)  $(FLAGS) -c ludcmp.c
 
 lubksb.o: lubksb.c
-	$(CC) -c lubksb.c
+	$(CC)  $(FLAGS) -c lubksb.c
 
 gamma.o: gamma.c
-	$(CC) -c gamma.c
+	$(CC)  $(FLAGS) -c gamma.c
 
 gchi2out.o: gchi2out.c globals.h
-	$(CC) -c gchi2out.c
+	$(CC)  $(FLAGS) -c gchi2out.c
 
 pp3d.o: pp3d.c globals.h
-	$(CC) -c pp3d.c
+	$(CC)  $(FLAGS) -c pp3d.c
 
 tabfunc.o: tabfunc.c globals.h
-	$(CC) -c tabfunc.c
+	$(CC)  $(FLAGS) -c tabfunc.c
 
 plot.o: plot.c globals.h
-	$(CC) -c plot.c
+	$(CC)  $(FLAGS) -c plot.c
 
 mygnus.o: mygnus.c globals.h
-	$(CC) -c mygnus.c
+	$(CC)  $(FLAGS) -c mygnus.c
 
 xmgr.o: xmgr.c globals.h
-	$(CC) -c xmgr.c -DDEBIAN9
+	$(CC)  $(FLAGS) -c xmgr.c -DDEBIAN9
 
 fitenv.o: fitenv.c globals.h
-	$(CC) -c fitenv.c
+	$(CC)  $(FLAGS) -c fitenv.c
 
 getopt.o: getopt.c
-	$(CC) -c getopt.c 
+	$(CC)  $(FLAGS) -c getopt.c 
 
 getopt1.o: getopt1.c
-	$(CC) -c getopt1.c 
+	$(CC)  $(FLAGS) -c getopt1.c 
 
 integra.o: integra.c struct.h
-	$(CC) -c integra.c
+	$(CC)  $(FLAGS) -c integra.c
 
 ode2.o: ode2.c struct.h
-	$(CC) -c ode2.c
+	$(CC)  $(FLAGS) -c ode2.c
 
 teste: teste.o fitutil.o
-	$(CC) -o $(HOME)/bin/teste teste.o $(LIB)
+	$(CC)  $(FLAGS) -o $(HOME)/bin/teste teste.o $(LIB)
 
 teste.o: teste.c
-	$(CC) -c teste.c
+	$(CC)  $(FLAGS) -c teste.c
 
 clean:
 	rm -f *.o *.a  *~ fitenv actpar cop ccat
@@ -173,25 +174,25 @@ RMEXE:
 	rm -f gfitn
 
 fft: fft.c fft-utils.c
-	$(CC) fft.c fft-utils.c -lm fitutil.o -o fft
+	$(CC)  $(FLAGS) fft.c fft-utils.c -lm fitutil.o -o fft
 
 gfilt: gfilt.c 
-	$(CC) gfilt.c -lm fitutil.o -o gfilt
+	$(CC)  $(FLAGS) gfilt.c -lm fitutil.o -o gfilt
 
 ccat: ccat.c
-	$(CC) ccat.c fitutil.o -lm -o ccat
+	$(CC)  $(FLAGS) ccat.c fitutil.o -lm -o ccat
 
 cop: cop.c
-	$(CC) fitutil.o cop.c -lm -o cop
+	$(CC)  $(FLAGS) fitutil.o cop.c -lm -o cop
 
 fitenv: fitenv.o fitutil.o
-	$(CC) -o fitenv fitenv.o fitutil.o -lm
+	$(CC)  $(FLAGS) -o fitenv fitenv.o fitutil.o -lm
 
 actpar: actpar.c
-	$(CC) actpar.c $(LIBUTILNAME) -lm -o actpar 
+	$(CC)  $(FLAGS) actpar.c $(LIBUTILNAME) -lm -o actpar 
 
 afactors-xyz: afactors-xyz.c
-	$(CC) afactors-xyz.c -lm -O3 -o afactors-xyz
+	$(CC)  $(FLAGS) afactors-xyz.c -lm -O3 -o afactors-xyz
 
 install-fitteia: Lib fft cop gfilt ccat afactors-xyz
 	install -d $(BINDIR) $(LIBDIR) $(INCLUDEDIR) 

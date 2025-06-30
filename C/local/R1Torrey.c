@@ -1,11 +1,12 @@
 #include <math.h>
 #include <stdio.h>
+#include "R1Torrey.h"
 
 #define pi 3.1415927
 
 double R1Torrey(double f, double n, double d, double r, double tau)
 {
-  double JTorrey(),alpha,af,w;
+  double alpha,af,w;
   double Kdd=8.5444e-49;  /* 3/2*(mu0/(4*pi))^2*gamma^4*hbar^2 */
 
   af= Kdd*3.0/4.0*(JTorrey(f,n,d,r,tau)+4*JTorrey(2*f,n,d,r,tau));
@@ -15,7 +16,7 @@ double R1Torrey(double f, double n, double d, double r, double tau)
 double JTorrey(double f, double n, double d, double r, double tau)
 {
   /* J(0)=6J(1); J(2)=4J(1) */
-  double jTorrey(),alpha,w;
+  double alpha,w;
   
   alpha=r*r/(12*d*d);
   w=2*pi*f;

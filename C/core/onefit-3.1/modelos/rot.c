@@ -4,17 +4,21 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "rot.h"
+#include "fij.h"
+#include "lor.h"
+#include "fitutil.h"
+
 #define  CR    1.7086248e11   /* 3/2*gama^4*(h/2pi)^2*(4/15)*10^48*I*(I+1)*/
 			      /* para I=1/2 (protao)                      */
 			      /* multiplicar por <1/r^6> em Angstron^-6 */
 			      /* programa afactor caso isotropo         */
 #define  CR2   6.407343e11    /* idem sem o factor 4/15                 */
 
-double	rot(t,w,delta)
-double	t,w,delta;
+
+double	rot(double t, double w, double delta)
 {
 	double	lor1,lor2,J1wd,J2wd,af;
-	double 	lor(),fij();
 	
 	lor1 = lor(t,w);
 	lor2 = lor(t,2*w);
@@ -34,12 +38,9 @@ double	t,w,delta;
 /******************************************************************************/
 /*								   	      */
 /******************************************************************************/
-double	Pij(i,j,S,P4)
-int	i,j;
-double	S,P4;
+double	Pij(int i, int j, double S,double P4)
 {
 	double	af;
-	void	nrerror();
 	
 	i=abs(i);
 	j=abs(j);
@@ -69,12 +70,9 @@ double	S,P4;
 /******************************************************************************/
 /*								   	      */
 /******************************************************************************/
-double JR(k,w,S,P4,ts,tl,A0,A1,A2)
-int	k;
-double	w,S,P4,ts,tl,A0,A1,A2;
+double JR(int k, double w, double S, double P4, double ts, double tl, double A0, double A1, double A2)
 {
-	double af,Pij(),lor(),t0,t1,t2;
-	void   nrerror();
+	double af,t0,t1,t2;
 
 	t0 = ts;
 	t1 = 6.0/(1.0/tl+5.0/ts);
@@ -96,16 +94,16 @@ double	w,S,P4,ts,tl,A0,A1,A2;
 			break;
 		default:
 			nrerror("JR not defined!");
+			return 0.0;
+			break;
 	}
 }
 /******************************************************************************/
 /*								   	      */
 /******************************************************************************/
-double	rot_reor(ts,tl,w,delta,S,P4,A0,A1,A2)
-double	ts,tl,w,delta,S,P4,A0,A1,A2;
+double	rot_reor(double ts, double tl, double w, double delta, double S, double P4, double A0, double A1, double A2)
 {
 	double	J1wd,J2wd,af;
-	double 	fij(),JR();
 
 	J1wd = 	fij(1,0,delta)*JR(0,w,S,P4,ts,tl,A0,A1,A2)+
 	      	fij(1,1,delta)*JR(1,w,S,P4,ts,tl,A0,A1,A2)+
@@ -119,11 +117,9 @@ double	ts,tl,w,delta,S,P4,A0,A1,A2;
 /******************************************************************************/
 /*								   	      */
 /******************************************************************************/
-double	rot_reor_poli(ts,tl,w,S,P4,A0,A1,A2)
-double	ts,tl,w,S,P4,A0,A1,A2;
+double	rot_reor_poli(double ts, double tl, double w, double S, double P4, double A0, double A1, double A2)
 {
 	double	J1wd,J2wd,af;
-	double 	fij(),JR();
 
 	J1wd = 	1./30.*JR(0,w,S,P4,ts,tl,A0,A1,A2)+
 	      	2./5. *JR(1,w,S,P4,ts,tl,A0,A1,A2)+
@@ -148,11 +144,9 @@ CR2*0.2*J1wd,CR2*0.2*J2wd,CR2*0.2*(J1wd+J2wd));
 /******************************************************************************/
 /*								   	      */
 /******************************************************************************/
-double	rot_reor_ro(ts,tl,w1,w,delta,S,P4,A0,A1,A2)
-double	ts,tl,w,w1,delta,S,P4,A0,A1,A2;
+double	rot_reor_ro(double ts, double tl, double w1, double w, double delta, double S, double P4, double A0, double A1, double A2)
 {
 	double	J0wd,J1wd,J2wd,af;
-	double 	fij(),JR();
 
 	J0wd = 	fij(0,0,delta)*JR(0,2*w1,S,P4,ts,tl,A0,A1,A2)+
 	      	fij(0,1,delta)*JR(1,2*w1,S,P4,ts,tl,A0,A1,A2)+
@@ -170,16 +164,16 @@ double	ts,tl,w,w1,delta,S,P4,A0,A1,A2;
 /*								   	      */
 /******************************************************************************/
 
-double rot_reor_cad_poli(w,tauS,tauL,S,P4,tauSc,tauLc,Sc,P4c,A0,A1,A2)
-
+double rot_reor_cad_poli(double w, double tauS, double tauL, double S, double P4, double tauSc, double tauLc, double Sc, double P4c, double A0, double A1, double A2)
+/***
 double	w;
-double	tauS,tauL;	/* tempos de correlacao p/ rot corpo */
-double	S,P4;		/* parametros de ordem p/ corpo      */
-double	tauSc,tauLc;	/* tempos de correlacao p/ rot cadeia */
-double	Sc,P4c;		/* parametros de ordem p/ cadeia (relativos ao corpo) */
-double	A0,A1,A2;       /* "Afactors" */
+double	tauS,tauL;	* tempos de correlacao p/ rot corpo *
+double	S,P4;		* parametros de ordem p/ corpo      *
+double	tauSc,tauLc;	* tempos de correlacao p/ rot cadeia *
+double	Sc,P4c;		* parametros de ordem p/ cadeia (relativos ao corpo) *
+double	A0,A1,A2;       * "Afactors" *
+***/
 {
-double	Jcad();
 double	J1w;
 double	J2w;
 
@@ -201,15 +195,16 @@ return	(J1w+J2w);
 
 /******************************************************************************/
 
-double	Jcad(k,w,tauS,tauL,S,P4,tauSc,tauLc,Sc,P4c,A0,A1,A2)
-
+double	Jcad(int k, double w, double tauS, double tauL, double S, double P4, double tauSc, double tauLc, double Sc, double P4c, double A0, double A1, double A2)
+/***
 int	k;
 double	w;
-double	tauS,tauL;	/* tempos de correlacao p/ rot corpo */
-double	S,P4;		/* parametros de ordem p/ corpo      */
-double	tauSc,tauLc;	/* tempos de correlacao p/ rot cadeia */
-double	Sc,P4c;		/* parametros de ordem p/ cadeia (relativos ao corpo) */
-double	A0,A1,A2;       /* "Afactors" */
+double	tauS,tauL;	* tempos de correlacao p/ rot corpo *
+double	S,P4;		* parametros de ordem p/ corpo      *
+double	tauSc,tauLc;	* tempos de correlacao p/ rot cadeia *
+double	Sc,P4c;		* parametros de ordem p/ cadeia (relativos ao corpo) *
+double	A0,A1,A2;       * "Afactors" *
+***/
 {
 int	i,j;
 double	tau[3][3];
@@ -219,8 +214,6 @@ double	C[3][3];
 double	B[3][3];
 double	AB[3];
 double	Jwk;
-double	lor();
-double	d2ij2();
 
 tauM[0]=tauS;
 tauM[1]=1./(1./(6.*tauL)+5./(6.*tauS));
@@ -266,10 +259,11 @@ return Jwk;
 
 /******************************************************************************/
 
-double	d2ij2(i,j,S,P4)
-
-int	i,j; /* linha e coluna respectivamente */
+double	d2ij2(int i, int j, double S, double P4)
+/***
+int	i,j; * linha e coluna respectivamente *
 double	S,P4;
+***/
 {
 int	k;
 double	d2;

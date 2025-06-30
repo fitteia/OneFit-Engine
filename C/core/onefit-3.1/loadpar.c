@@ -2,22 +2,21 @@
 #include <math.h>
 #include <string.h>
 #include "globals.h"
+#include "loadpar.h"
 
 /**********************************************************************/
 /*                                                                    */
 /**********************************************************************/
-void ParFreeF(filePar)
-char filePar[];
+void ParFreeF(char filePar[])
+// char filePar[];
 {
    char   s[100]="",c;
-   double *dvector(),pn,pv;
-   int    *ivector();
-   void   new_line(),free_dvector(),free_ivector(),free_cmatrix();
+   double pn,pv;
    int    i,j,nd,fnd,*status=0;
    int    npar,*pParfree=0;
    int    err;
    
-   FILE   *fpar,*openf();
+   FILE   *fpar;
 
    fpar = openf(filePar,"r");
    new_line(fpar,1);
@@ -97,15 +96,14 @@ char filePar[];
 /**********************************************************************/
 /*                                                                    */
 /**********************************************************************/
-char **ReadParNames(filepar)
-char filepar[];
+char **ReadParNames(char filepar[])
+// char filepar[];
 {
-  char **cmatrix(),**m;
+  char **m;
   int i,npar;
   double x1,x2;
   char s[125]="",s1[11]="";
-  void new_line();
-  FILE *fin,*openf();
+  FILE *fin;
   int err=1;
   char *cerr=s;
   

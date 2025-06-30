@@ -1,11 +1,14 @@
 #include <math.h>
 #include <stdio.h>
+#include "struct.h"
+#include "ODFSmA.h"
+#include "odf.h"
 
 #define	pi	3.141592653589793238
 
 double ODFSmA(double f, double Alu, double fcm, double fcM, double delta)
 {
-  double w,wcm,wcM,af,odfSa();
+  double w,wcm,wcM,af;
   int i=1;
 
   wcm = 2*pi*fcm;

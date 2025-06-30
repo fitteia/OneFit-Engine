@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include "struct.h"
 #include "globals.h"
+#include "SDFreed.h"
+#include "integra.h"
 
 #define pi 3.141592654
 
@@ -16,7 +18,6 @@
 
 double SDFreed(double f, double tau, double n, double d, double NP)
 {
-    double __JSDFreed_();
     double Kdd1=1.70888e-49;  /* 3/10*(mu0/(4*pi))^2*gamma^4*hbar^2 */
     double RSD;
    
@@ -26,7 +27,6 @@ double SDFreed(double f, double tau, double n, double d, double NP)
 
 double SDFreedHF(double f1, double f2, double tau, double n, double d, double NP)
 {
-    double __JSDFreed_();
     double Kdd1=1.70888e-49;  /* 3/10*(mu0/(4*pi))^2*gamma^4*hbar^2 */
     double RSD;
    
@@ -41,7 +41,6 @@ double SDFreedHF(double f1, double f2, double tau, double n, double d, double NP
 
 double __JSDFreed_(double f, double tau, double NP)
 {
-    double __QSDFreed_();
     double af,w;
     w=2*pi*f;
     af=72*__QSDFreed_(w*tau,NP);
@@ -51,10 +50,9 @@ double __JSDFreed_(double f, double tau, double NP)
 
 double __QSDFreed_(double wt, double NP) 
 {
-    double __integral0_(),sqgausn(),a1,a2,af;
+    double a1,a2,af;
     double b,c,d,e,wtmax;
     int np;
-    void w_f_ptr(),clear_struct();
     Function X;
 
     np=(int) NP;
@@ -85,9 +83,10 @@ double __QSDFreed_(double wt, double NP)
     //printf("wt=%lf QSDFreed=%lf\n",wt,a1+a2);
     return (a1+a2);
 }
+
 double __integral0_(Function *X)
 {
-   double r_pval(),r_plow(),sqgausn(),af;
+   double af;
    double u,wt;
 
    u = r_pval(X,0);

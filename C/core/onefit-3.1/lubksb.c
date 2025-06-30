@@ -1,6 +1,8 @@
-void lubksb(a,n,indx,b)
-double **a,b[];
-int n,*indx;
+#include "lubksb.h"
+
+void lubksb(double **a, int n, int *indx, double b[])
+// double **a,b[];
+// int n,*indx;
 {
 	int i,ii=0,ip,j;
 	double sum;

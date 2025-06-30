@@ -3,6 +3,9 @@
 /******************************************************************************/
 #include <math.h>
 #include <stdio.h>
+#include "sdvilfjwn11_2.h"
+#include "fij.h"
+#include "fitutil.h"
 
 #define	C	0.569504e-12
 #define ndt1	46
@@ -61,12 +64,10 @@ static double	jwdev[][7]={
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double sdvilfjwN11_2(I,d,n,t,w,delta)
-double I,d,n,t,w,delta;
+double sdvilfjwN11_2(double I, double d, double n, double t, double w, double delta)
 {
 	int	j;
 	double	B,D,wt,m,j1,j2,af;
-	double	fij(),jwN11();
 
 	if(delta == 0.0){
 		af = jwN11(1,t,w) + jwN11(2,t,2*w);
@@ -86,12 +87,10 @@ double I,d,n,t,w,delta;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double sdvilfjwN11_2_poli(I,d,n,t,w)
-double I,d,n,t,w;
+double sdvilfjwN11_2_poli(double I, double d, double n, double t, double w)
 {
 	int	j;
 	double	B,D,wt,m,j1,j2,af;
-	double	fij(),jwN11();
 
 	j1 = 1.0/30.0*jwN11(0,t,w)+
 	  12.0/30.0*jwN11(1,t,w)+
@@ -107,14 +106,10 @@ double I,d,n,t,w;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double jwN11(k,t,w)
-int	k;
-double t,w;
+double jwN11(int k, double t, double w)
 {
 	int	j,i=-1,p,l=-1;
 	double	wt,m,af,*x,*y,*y2,*xx,*yy,ypn;
-	double	*dvector();
-	void	free_dvector(),dsplint(),dpolint();
 
 	wt = sqrt(w*t);
 
@@ -160,12 +155,12 @@ double t,w;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double	jwNd11(i,t,w,delta)
-int	i;
-double	t,w,delta;
+double	jwNd11(int i, double t, double w, double delta)
+// int	i;
+// double	t,w,delta;
 {
 	int	j;
-	double	af,jwN11(),fij();
+	double	af;
 
 	for(j=0,af=0.0;j<=2;j++) af += fij(i,j,delta)*jwN11(j,t,w);
 	return af;
@@ -173,13 +168,12 @@ double	t,w,delta;
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
-double t1roN11(I,d,n,t,w,w0,delta)
-double I,d,n,t,w,w0,delta;
+double t1roN11( double I, double d, double n, double t, double w, double w0, double delta)
+// double I,d,n,t,w,w0,delta;
 /* B*(J0(2*w1)+10*J1(w0)+J2(2*w0) */
 {
 	int	j;
 	double	B,D,wt,w0t,w2t,m,J0,J1,J2,af;
-	double	jwNd11();
 
 	J0 = jwNd11(0,t,2*w,delta);
 	J1 = jwNd11(1,t,w0,delta);

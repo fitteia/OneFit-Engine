@@ -1,5 +1,6 @@
 #include <math.h>
 #include <stdio.h>
+#include "ROUSE123.h"
 
 #define pi 3.1415927  
 

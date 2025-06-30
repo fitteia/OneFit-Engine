@@ -2,12 +2,13 @@
 #include <stdio.h>
 #include "globals.h"
 #include "struct.h"
+#include "RMTDnum.h"
+#include "integra.h"
 
 double RMTDnum(double f, double p, double Armtd, double fcm,double fcM)
 {
 	double	x;
-	double	sqgaus(),sqromo(),smidpnt(),jrmtd(),A,j1,j2,af;
-	void	w_f_ptr(),clear_struct();
+	double	A,j1,j2,af;
 
 	af =pow(1.0/f,p)*jrmtd(f,fcM,fcm,p) + 4*pow(0.5/f,p)*jrmtd(2*f,fcM,fcm,p);
 /*	printf("af=%le\n",af); */
@@ -21,7 +22,6 @@ double RMTDnum(double f, double p, double Armtd, double fcm,double fcM)
 double jrmtd_int(Function *X)
 {
 	double x,xM,xm,p,af;
-	double r_pval(),r_plow();
 
 	x    = r_pval(X,0);
 	p    = r_pval(X,1);
@@ -35,7 +35,6 @@ double jrmtd_int(Function *X)
 double jrmtd_int1(Function *X)
 {
 	double x,xM,xm,p,af;
-	double r_pval(),r_plow();
 
 	x    = r_pval(X,0);
 	p    = r_pval(X,1);
@@ -49,8 +48,7 @@ double jrmtd_int1(Function *X)
 
 double jrmtd(double f,double fcM,double fcm,double p)
 {
-	double	sqgaus(),sqromo(),smidpnt(),jrmtd_int(),jrmtd_int1(),A,j1,j2,af;
-	void	w_f_ptr(),clear_struct();
+	double	A,j1,j2,af;
 	Function X;
 
 	clear_struct(&X,2);

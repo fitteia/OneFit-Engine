@@ -8,21 +8,22 @@
 /* #include processes.h */
 #include <string.h>
 #include "globals.h"
+#include "pp3d.h"
+#include "ppcovar.h"
+#include "funcsn.h"
+#include "gchi2_vn.h"
+#include "gchi2out.h"
+#include "gamma.h"
 
-
-void    gfit_outpg(par)
-double  par[];
+void gfit_outpg(double par[])
+// double  par[];
 {
   int     i,k,xi,ma,mode;
   char    aux1[100];
   double  **Data,*fs,f,ft,*chisq,chi2t;
-  double  Inv(),Iden(),*dvector();
-  double   sqrt(),log10(),logT1(),gchi2_vn(),gchi2out();
-  double  gammq(),QL,ntotdat=0,ntotpar=0,a1,a2;
+  double  QL,ntotdat=0,ntotpar=0,a1,a2;
   
-  void    free_dvector(),free_vector(),pp3d(),ppcovar(),funcsn();
-  
-  FILE    *openf(),*fitout,*fptr;
+  FILE    *fitout,*fptr;
   
   fs    = dvector(1,Ma);
   chisq = dvector(1,NT);
@@ -71,7 +72,9 @@ double  par[];
   /*  printf("\n\n");*/
   
 #ifndef LINUX
+#ifndef MacOSX
   if(FPar+NT*Mfit >0 ) ppcovar(fitout,par);
+#endif
 #endif
 
   /*  printf("\n");*/

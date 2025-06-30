@@ -1,5 +1,7 @@
 #include <math.h>
 #include <stdio.h>
+#include "iT1osSmallS.h"
+#include "iT1ISpara.h"
 
 #define pi 3.1415926
 
@@ -12,7 +14,6 @@
 double iT1osSmallS(double f, double T, double D, double tv,double ZFS, double r,double Sp)
 {
   double x,w, af,Sc,Delta, td,it1s,it2s,ws;
-  double J0ISpara();
 
    w = 2*pi*f;
    ws=w*gammae/gamma;

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "fitutil.h"
 
 void usage()
 {
@@ -11,7 +12,7 @@ void usage()
 
 int main(int argc, char *argv[])
 {
-  FILE *f[16],*openf();
+  FILE *f[16];
   char out[4096],s[128];
   int i,j,nf[16],nopen;
 
