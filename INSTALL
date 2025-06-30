@@ -134,6 +134,8 @@ multi MAIN (
    	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
 
 	install-manpage(macos => $macos) if $man-page;
+
+	set-gcc-std() if $macos;
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -574,3 +576,6 @@ sub wait-for-port(Str:D $host, Int:D $port, Int:D $timeout = 30, Int:D $interval
     }
 }
 
+sub set-gcc-std () {
+
+}
