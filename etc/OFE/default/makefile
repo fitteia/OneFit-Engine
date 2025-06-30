@@ -36,8 +36,10 @@ UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	GCCPATH := $(shell brew --prefix gcc)
 	LIBGFORTRAN = -L$(GCCPATH)/lib/gcc/current
+	CC = gcc -std=c99  $(FLAGS)
 else
 	LIBGFORTRAN=
+	CC = gcc $(FLAGS)
 endif
 
 # versao linux
@@ -47,9 +49,8 @@ FLAGS= -D__GNU_LIBRARY__ -D$(OS) -fPIC -O3 -Wall -Werror=implicit-function-decla
 
 CCFLAGS= -D__GNU_LIBRARY__ -D__GNU_LIBRARY__  -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE)  -I$(INCLUDEDIR) 
 
-LDFLAGS= $(LIBGFORTRAN) -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  -shared -L/usr/local/lib -fstack-protector -O3 -g 
-
-CC = gcc -std=c99 $(FLAGS)
+LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
+LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
 #CC=gcc -I/usr/lib/perl/5.6.1/CORE -I/include
 
@@ -58,11 +59,14 @@ objects := $(patsubst %.c,%.o,$(wildcard *.c))
 gfitn : clean module $(objects)
 	$(CC) $(objects) $(LIB) -o $(NAME) 
 
-module: AuxCode.c AuxCode.i
-#	swig -perl AuxCode.i
-#	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
-#	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so
-#	rm AuxCode_wrap.o AuxCode_wrap.c
+module: AuxCode.c AuxCode.ii
+#ifeq ($(UNAME_S),Darwin)
+#else
+	swig -perl AuxCode.i
+	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
+	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
+	rm AuxCode_wrap.o AuxCode_wrap.c
+#endif
 
 clean:
 	rm -f *.o *~ *_ *.gph *.gp_ gnu*
