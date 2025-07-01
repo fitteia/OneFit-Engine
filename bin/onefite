@@ -824,18 +824,16 @@ multi MAIN ('test',
     "/tmp/OneFit-Engine-test".IO.mkdir unless "/tmp/OneFit-Engine-test".IO.d(:e);
     
     if @arr.elems > 0 {
-	my $fho = open :w, 'tests.log';
-	@arr.race.map(
-	    {
-		my $test = "$_.rakutest" unless .contains(/rakutest/);
-		say "testing....$test"; run "raku", "$test-path/$test" , :err<fho>
-	    }
-	);
-	$fho.close;
-	"tests.log".IO.slurp.say;
+		my $fho = open :w, '/tmp/tests.log';
+		@arr.race.map({
+			my $test = "$_.rakutest" unless .contains(/rakutest/);
+			say "testing....$test"; run "raku", "$test-path/$test" , :err<fho>
+	    });
+		$fho.close;
+		"/tmp/tests.log".IO.slurp.say;
     }
     else {
-	my $proc = run "prove6", "--lib", "$test-path","--err=ignore";
+		my $proc = run "prove6", "--lib", "$test-path","--err=ignore";
     }
     run-post-install-tests(:verbose($v));
     exit;
