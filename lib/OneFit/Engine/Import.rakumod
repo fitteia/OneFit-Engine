@@ -270,10 +270,10 @@ class Import is export {
 		my $path = self.path();
 		$ffc.IO.copy: "$path/$ffc";
 		my @files;
-		my @aux = "$path/$ffc".IO.slurp(:close).split(/endtau\n|shiFdt/)[0,1];	
+		my @aux = "$path/$ffc".IO.slurp(:close).split(/endtau\n|dumTau|shiFdt/)[0,1];	
 		my @freqs = gather for @aux[1].lines { take $_.split(',')[2] }
 		my @modes = gather for @aux[1].lines { take $_.split(',')[4] }
-		my @ntaus  = gather for @aux[1].lines { take $_.split(',')[5] }
+		my @ntaus  = gather for @aux[1].lines { take $_.split(',')[6] }
 		my @lines;	
 		for @aux[0].lines {
 			my @a = $_.split(',')[2,3];
@@ -282,7 +282,7 @@ class Import is export {
 		for (1 .. @ntaus.elems) {
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
 			my $datafile = "{ $ffc.IO.extension('').Str }-{ sprintf('%09d',(@freqs[$_-1]*1e3).Int) }-z{ sprintf('%03d',$_) }.dat";
-			my 	$header = "# DATA dum = @modes[$_-1] @freqs[$_-1]\n# TAG = zone{ sprintf('%03d',$_) }\n";
+			my 	$header = "# DATA dum = @modes[$_-1] { @freqs[$_-1]*1e3 }\n# TAG = zone{ sprintf('%03d',$_) }\n";
 				$header ~= "# fit if " ~ %!options<fit-if> ~ "\n" if %!options<fit-if>.so;
 				$header ~= "# plot if " ~ %!options<plot-if> ~ "\n" if %!options<plot-if>.so;
 
