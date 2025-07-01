@@ -86,7 +86,7 @@ multi MAIN (
 			hdf5
 			gnuplot
 		>;
-		my $brew-installed = shell("brew list --version",:out).out.lines(:close).map({ $_.words.head }.join(" ");
+		my $brew-installed = shell("brew list --version",:out).out.lines(:close).map({ $_.words.head }).join(" ");
 		for @brew-packages {
 			shell("brew install $_") unless $brew-installed.contains($_);
 		}
