@@ -35,7 +35,7 @@ wsl --install -d debian
 
 Install Colima and Docker with brew
 ```bash
-brew install calima docker
+brew install colima docker
 ```
 Start Colima with 4GB or RAM (less will not work)
 ```bash
