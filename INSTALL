@@ -88,7 +88,7 @@ multi MAIN (
 		>;
 		my $brew-installed = shell("brew list --version",:out).out.lines(:close).map({ $_.words.head }.join(" ");
 		for @brew-packages {
-			shell("brew install $_") unless $brew-installed.contains($_};
+			shell("brew install $_") unless $brew-installed.contains($_);
 		}
 		shell "zef install App::Prove6" if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
 		$DOCKER = True;
