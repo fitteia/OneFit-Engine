@@ -119,6 +119,15 @@ Clone OneFit-Engine
 ```bash
 mkdir ~/folder && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && ./INSTALL  --macos
 ```
+Start the OneFit-Engine service
+```bash
+onefite service start --ip=127.0.0.1
+```
+Run tests
+```bash
+onefite test --no-system-daemon 
+```
+
 
 
 ## Detailed installation
