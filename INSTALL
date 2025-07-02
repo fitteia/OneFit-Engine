@@ -456,7 +456,7 @@ sub install-manpage( :$macos = False ) {
 	}
 }
 
-sub run-post-install-tests(Bool :$daemon = True, :$port = 8142) {
+sub run-post-install-tests(Bool :$daemon = False, :$port = 8142) {
     my $data = q:to/EOT/;
 # DATA dum = 40616
 # TAG = zone12
