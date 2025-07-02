@@ -927,7 +927,7 @@ EOT
 			await $proc.start;
 			say "onefite service stoped";
 		}
-		my $proc = Proc::Async.new($SUDO, 'systemctl', 'start', 'onefite.service');
+		my $proc = Proc::Async.new("sudo", 'systemctl', 'start', 'onefite.service');
 		$proc.stdout.tap(-> $v { print "Output: $v" });
 		$proc.stderr.tap(-> $v { print "Err: $v" });
 		await $proc.start;
