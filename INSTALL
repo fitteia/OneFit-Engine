@@ -134,7 +134,6 @@ multi MAIN (
 
 	install-manpage(macos => $macos) if $man-page;
 
-	set-gcc-std() if $macos;
 }
 
 multi MAIN ('help') { MAIN :h }
@@ -459,8 +458,6 @@ sub install-manpage( :$macos = False ) {
 	}
 }
 
-
-
 sub run-post-install-tests(Bool :$daemon = False, :$port = 8142) {
     my $data = q:to/EOT/;
 # DATA dum = 40616
@@ -577,6 +574,3 @@ sub wait-for-port(Str:D $host, Int:D $port, Int:D $timeout = 30, Int:D $interval
     }
 }
 
-sub set-gcc-std () {
-
-}
