@@ -63,7 +63,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
-	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [--port=<Int>]
+	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon]
   
 	    <input-file>     name of the file to be converted (\.sav or \.json)
 	    <output-file>    name of the converted file (\.sav or \.json)
@@ -994,7 +994,7 @@ onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fi
 onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 onefite test list
-onefite test [<arr> ...] [--verbose|-v] [--d|--systemd-daemon] [--port=<Int>]
+onefite test [<arr> ...] [--verbose|-v] [--d|--systemd-daemon] 
 =end code
 
 =NOTE
@@ -1202,7 +1202,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 =begin code :lang<bash>
 onefite test list
 
-onefite test [<arr> ...] [--verbose|-v] [-d|systemd-daemo] [--port=<Int>]
+onefite test [<arr> ...] [--verbose|-v] [-d|systemd-daemon] 
 =end code
 =PARAMETERS
 =head2 File parameters
