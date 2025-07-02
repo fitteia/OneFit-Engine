@@ -63,7 +63,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
-	    onefite test [<arr> ...] [--verbose|-v]
+	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [--port=<Int>]
   
 	    <input-file>     name of the file to be converted (\.sav or \.json)
 	    <output-file>    name of the converted file (\.sav or \.json)
@@ -816,6 +816,8 @@ multi MAIN ('test','list') {
 
 multi MAIN ('test',
 	    *@arr,
+		Bool :d(:$systemd-daemon) = True,
+   		Int  :$port = 8142,
 	    Bool :verbose(:$v) = False
 	   ){
     my $test-path=OFE-PATH ~ "/t";
@@ -835,7 +837,7 @@ multi MAIN ('test',
     else {
 		my $proc = run "prove6", "--lib", "$test-path","--err=ignore";
     }
-    run-post-install-tests(:verbose($v));
+    run-post-install-tests(:daemon($systemd-daemon), :verbose($v), port => $port);
     exit;
 }
 
@@ -891,7 +893,97 @@ sub zip-fit ($engine,$work-folder,$name) {
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
 }
 
-sub run-post-install-tests(Bool :$verbose = False) {
+sub run-post-install-tests(Bool :$daemon = True, Bool :$verbose = False, :$port = 8142) {
+    my $data = q:to/EOT/;
+# DATA dum = 40616
+# TAG = zone12
+# R1 = 16.9554
+2.4 0.4950845801988824 1
+1.60968 0.5030929382053178 1
+1.07962 0.5071383400239955 1
+0.724101 0.5192948321930172 1
+0.485656 0.5160022771910805 1
+0.32573 0.5291235757829099 1
+0.218468 0.5350239458592603 1
+0.146527 0.5898993575693909 1
+0.098276 0.6180204586347606 1
+0.065914 0.6826722682863811 1
+0.044208 0.752954560068173 1
+0.029651 0.8279391722256552 1
+0.019887 0.8918345724621874 1
+0.013338 0.9470250641189731 1
+0.008946 0.9713798167045512 1
+0.006 1.0 1.0 
+EOT
+
+    say "Running post-install tests...";
+    "/tmp/zone12.dat".IO.spurt: $data;
+	my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
+	if $daemon {
+		if $service {
+			my $proc= Proc::Async.new($SUDO, 'systemctl', 'stop', 'onefite.service');
+			$proc.stdout.tap(-> $v { print "Output: $v" });
+			$proc.stderr.tap(-> $v { print "Err: $v" });
+			await $proc.start;
+			say "onefite service stoped";
+		}
+		my $proc = Proc::Async.new($SUDO, 'systemctl', 'start', 'onefite.service');
+		$proc.stdout.tap(-> $v { print "Output: $v" });
+		$proc.stderr.tap(-> $v { print "Err: $v" });
+		await $proc.start;
+		say "onefite service started" if shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
+	
+    	wait-for-port('127.0.0.1', $port, 10 ,1);
+	
+		my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
+	    say $result;
+	    $result = shell("cd /tmp && $result");
+	    $result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
+	    say $result;
+	    if $result.contains("zone12, 16") {
+			say "localhost web service works OK";
+	    }
+	    else {
+			say "localhost web service error!";
+	    }
+	}
+	else {
+		if $service { say "onefite service status unchanged: is running" }
+		else 	{
+		   	my $pid = shell("onefite service PID",:out).out.slurp(:close);
+			if $pid.so {
+				say "onefite is running with PID: $pid";
+				my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
+	    		say $result;
+	    		$result = shell("cd /tmp && $result");
+	    		$result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
+	    		say $result;
+	    		if $result.contains("zone12, 16") { say "localhost web service works OK"; }
+	    		else { say "localhost web service error!"; }
+			}					
+			else { say "onefite is not running. Consider: 'sudo systemctl start onefite.service' first, or 'onefite service start'"; } 
+		}
+	}
+	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
+	</tmp/ofe-tmp>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
+
+	my $result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
+	say $result;
+	if $result.contains("zone12, 16") {
+	    say "command line onefite OK\n\n";
+	}
+	else {
+	    say "command line onefite error!\n\n";
+	}
+#	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
+#	my $SUDO="";
+#	$SUDO = "sudo" if any( (fileowner("/tmp/ofe-tmp"), fileowner("/tmp/ofe-test.log"), fileowner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"))>>.contains("root"));
+#	shell "$SUDO rm -fr /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
+	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
+}
+
+
+sub old-run-post-install-tests(Bool :$daemon = True, Bool :$verbose = False) {
     my $data = q:to/EOT/;
 # DATA dum = 40616
 # TAG = zone12
@@ -993,7 +1085,7 @@ onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fi
 onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 onefite test list
-onefite test [<arr> ...] [--verbose|-v]
+onefite test [<arr> ...] [--verbose|-v] [--d|--systemd-daemon] [--port=<Int>]
 =end code
 
 =NOTE
@@ -1201,7 +1293,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 =begin code :lang<bash>
 onefite test list
 
-onefite test [<arr> ...] [--verbose|-v]
+onefite test [<arr> ...] [--verbose|-v] [-d|systemd-daemo] [--port=<Int>]
 =end code
 =PARAMETERS
 =head2 File parameters
