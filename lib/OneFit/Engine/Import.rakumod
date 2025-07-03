@@ -260,6 +260,7 @@ class Import is export {
 			@zones[$_] = (@tau Z @Mz.map({ $_/$max}))>>.join(" ").join("\n");
 			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = { $datafile.IO.extension('').Str }\n" ~ @zones[$_].join("\n");
 			@files.push: $datafile;
+			say $datafile;
 		}
 		if %!options<sef-R1-file> { @files = merge(self.path,%!options<sef-R1-file>,@files) }
 		return  @files;
