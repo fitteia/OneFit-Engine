@@ -355,7 +355,7 @@ class Import is export {
 		for 0 ..^ @files.elems {
 		   	my $file = @files[$_];	
 			$file = $file.subst(/z\d+/,sprintf("%09d-z%03d",(@BR[$_]*1e6).Int,$_+1));
-			shell("sed -E -i -e 's/dum = [0-9]+/dum = { @BR[$_]*1e6 }/' -e 's/TAG = .*/TAG = $file/' $path/@files[$_]");
+			shell("sed -E -i -e 's/dum = [0-9]+/dum = { @BR[$_]*1e6 }/' -e 's/TAG = .*/TAG = { $file.IO.extension('').Str }/' $path/@files[$_]");
 		   	"$path/@files[$_]".IO.rename: "$path/$file";
 			@files[$_]= $file
 		}
