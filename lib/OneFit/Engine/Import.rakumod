@@ -111,7 +111,7 @@ class Import is export {
 	    	}
 			my $BR = ($buf.split("ATTRIBUTE")[1].split('(0):')[1].words.head.Rat * 1e6).round(0.0001);
 	    	my $datafile = "{$stelar-hdf5.IO.extension('').Str}-{ sprintf('%09d',$BR.Int) }-z{ sprintf('%03d',$_.Int) }.dat";
-	    	my 	$header = "# DATA dum = $BR\n# TAG = zone{$_}\n# R1 = "
+	    	my 	$header = "# DATA dum = $BR\n# TAG = { $datafile.IO.extension('').Str }\n# R1 = "
 					~
 					$buf.split("ATTRIBUTE")[4].split('(0):')[1].words.head;
 				$header ~= "\n# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
@@ -188,7 +188,7 @@ class Import is export {
 				my $index=$buf.words.head.split('.').map({ sprintf('%03d',$_.Int) }).join('_');
 				my $datafile = "{$stelar-sdf.IO.extension('').Str}-{ sprintf('%09d',$BR.Int) }-z{ $index }.dat";
 				my $T1MAX =	$buf.split(/T1MAX <ws> '=' <ws>/)[1].words.head.Rat * 1e-6;
-		    	my 	$header = "# DATA dum = $BR\n# TAG = zone{ $index }\n";
+		    	my 	$header = "# DATA dum = $BR\n# TAG = { $datafile.IO.extension('').Str }\n";
 					$header ~= "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
 					$header ~= "# plot if " ~ %options<plot-if> ~ "\n" if %options<plot-if>.so;
 				my @x;
@@ -256,9 +256,10 @@ class Import is export {
 				@Mz.push: $_.words[1].Num;
 			}	
 			my $max = @Mz.max;
+			my $datafile = "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat";  
 			@zones[$_] = (@tau Z @Mz.map({ $_/$max}))>>.join(" ").join("\n");
-			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = zone{$_+1}\n" ~ @zones[$_].join("\n");
-			@files.push: "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat"  
+			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = { $datafile.IO.extension('').Str }\n" ~ @zones[$_].join("\n");
+			@files.push: $datafile;
 		}
 		if %!options<sef-R1-file> { @files = merge(self.path,%!options<sef-R1-file>,@files) }
 		return  @files;
@@ -282,7 +283,7 @@ class Import is export {
 		for (1 .. @ntaus.elems) {
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
 			my $datafile = "{ $ffc.IO.extension('').Str }-{ sprintf('%09d',(@freqs[$_-1]*1e3).Int) }-z{ sprintf('%03d',$_) }.dat";
-			my 	$header = "# DATA dum = @modes[$_-1] { @freqs[$_-1]*1e3 }\n# TAG = zone{ sprintf('%03d',$_) }\n";
+			my 	$header = "# DATA dum = @modes[$_-1] { @freqs[$_-1]*1e3 }\n# TAG = { $datafile.IO.extension('').Str }\n";
 				$header ~= "# fit if " ~ %!options<fit-if> ~ "\n" if %!options<fit-if>.so;
 				$header ~= "# plot if " ~ %!options<plot-if> ~ "\n" if %!options<plot-if>.so;
 
@@ -354,7 +355,7 @@ class Import is export {
 		for 0 ..^ @files.elems {
 		   	my $file = @files[$_];	
 			$file = $file.subst(/z\d+/,sprintf("%09d-z%03d",(@BR[$_]*1e6).Int,$_+1));
-			shell("sed -E -i -e 's/dum = [0-9]+/dum = { @BR[$_]*1e6 }/' $path/@files[$_]");
+			shell("sed -E -i -e 's/dum = [0-9]+/dum = { @BR[$_]*1e6 }/' -e 's/TAG = .*/TAG = { $file.IO.extension('').Str }/' $path/@files[$_]");
 		   	"$path/@files[$_]".IO.rename: "$path/$file";
 			@files[$_]= $file
 		}
