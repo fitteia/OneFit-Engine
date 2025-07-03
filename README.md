@@ -47,6 +47,10 @@ A litle bit of hacking might be necessary but...start with brew
 ```bash
 brew install rakudo gcc
 ```
+A litle bit of hacking might be necessary. Install raku zef module.
+```bash
+mkdir ~/.raku $$ cd $_ && git clone https://github.com/ugexe/zef.git && cd zef && raku -I. bin/zef install . && ln -s /opt/homebrew/share/perl6/site/bin/zef /usr/local/bin/zef
+```
 
 ### Full features OneFit Engine Server
 
