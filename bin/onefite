@@ -817,7 +817,7 @@ multi MAIN ('test','list') {
 multi MAIN ('test',
 	    *@arr,
 		Bool :d(:$systemd-daemon) = True,
-		Bool :p(:$post-install) = True
+		Bool :p(:$post-install) = True,
 	    Bool :verbose(:$v) = False
 	   ){
     my $test-path=OFE-PATH ~ "/t";
