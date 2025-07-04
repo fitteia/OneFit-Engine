@@ -94,41 +94,41 @@ class Engine is export {
 		   Bool :$autox = False,
 		   Bool :$autoy = False,
 		  ) {
-	if $r.Bool {
-	    my @arr = ($data.Bool) ??  $data.split( /'#' <ws> DATA <ws>/) !! %!engine<Dados>.split( /'#' <ws> DATA <ws>/);
-	    @!blocks = gather {
-		my $i=0;
-		for @arr[1 ..^ @arr.elems].hyper {
-		    $_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
-		    if $All {
-			try {
-				take Block.new.read( '# DATA ' ~ $_,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
-				CATCH {
-					default {
-						die "Error reading block" ~.Str;
+		if $r.Bool {
+	    	my @arr = ($data.Bool) ??  $data.split( /'#' <ws> DATA <ws>/) !! %!engine<Dados>.split( /'#' <ws> DATA <ws>/);
+	    	@!blocks = gather {
+			my $i=0;
+			for @arr[1 ..^ @arr.elems].hyper {
+		    	$_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
+		    	if $All {
+					try {
+						take Block.new.read( '# DATA ' ~ $_,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
+						CATCH {
+							default {
+								die "Error reading block" ~.Str;
+							}
+						}	
 					}
-				}
+		    	}
+		    	else {
+					if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
+			    		if $fit.defined {
+							take Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+			    		}
+			    		if $plot.defined {
+							take Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+			    		}
+			    			if none($fit,$plot) {
+								take Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+			    			}
+					}
+					else {
+			    			if $verbose.Bool {
+								$*ERR.say $<tag>.Str, " not selected in list ", %!engine<Tags>.Slip.join(" ")
+			    			}
+					}
+		    	}
 			}
-		    }
-		    else {
-			if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
-			    if $fit.defined {
-				take Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
-			    }
-			    if $plot.defined {
-				take Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
-			    }
-			    if none($fit,$plot) {
-				take Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
-			    }
-			}
-			else {
-			    if $verbose.Bool {
-				say $<tag>.Str, " not selected in list ", %!engine<Tags>.Slip.join(" ")
-			    }
-			}
-		    }
-		}
 	    }
 	    for <Xmin Xmax Ymin Ymax> {
 		%!engine{$_} = { my @a= $^a.split(',');
@@ -289,7 +289,7 @@ class Engine is export {
 		Bool :$quiet=False
 	       ) {
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
-	 say "read blocks" unless $quiet;
+	 $*ERR.say "read blocks" unless $quiet;
 	 self.blocks(:read,
 		     :fit,:export,
 		     :autox($autox.Bool),
@@ -298,28 +298,28 @@ class Engine is export {
 		     :logy($logy),
 		     :quiet($quiet)
 		    );
-	 say "read pars" unless $quiet;
+	 $*ERR.say "read pars" unless $quiet;
 	 self.parameters(:read);
-	 say "read functions" unless $quiet;
+	 $*ERR.say "read functions" unless $quiet;
 	 self.functions(:read);
-	 say "write stp" unless $quiet;
+	 $*ERR.say "write stp" unless $quiet;
 	 self.stp;
-	 say "write code" unless $quiet;
+	 $*ERR.say "write code" unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
 	 if %!engine<FitType> ~~ /Individual/ {
 	     for (1 .. @!blocks.elems).race {
-		 shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
 	     }
 	     for (1 .. @!blocks.elems).race {
-		 shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
+		 	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
 	     }
 	     @!blocks.race.map( { .export(:plot) });
 	     self.parameters(:read, :from-output, :from-log);
 	     do {
-		 self.agr;
-		 for (1 .. @!blocks.elems).race {
-		     shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
-		 }
+		 	self.agr;
+		 	for (1 .. @!blocks.elems).race {
+		     	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+		 	}
 	     } unless $no-plot.Bool;
 	 }
 	 else {
@@ -328,8 +328,8 @@ class Engine is export {
 	     @!blocks.race.map( { .export(:plot) });
 	     self.parameters(:read, :from-output, :from-log);
 	     do {
-		 self.agr;
-		 shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
+		 	self.agr;
+		 	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
 	     }  unless $no-plot;
 	 }
 	 my $TXT = self!results();
