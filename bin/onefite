@@ -633,7 +633,8 @@ multi MAIN  ('random',
 	     Bool :$global,
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts) = +100
+	     Int  :Num(:$npts) = +100,
+		 Bool :q(:$quiet) = False,
 	    ){
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitType>="Global" if $global;
@@ -654,11 +655,12 @@ multi MAIN  ('random',
     for @data-files { $_.IO.copy("$work-folder/$name/$_") };
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
-	:no-plot($no-plot),
-	:autox($autox or $autoxy),
-	:autoy($autoy or $autoxy),
-	:logx($loglin or $loglog),
-	:logy($linlog or $loglog)
+		:no-plot($no-plot),
+		:autox($autox or $autoxy),
+		:autoy($autoy or $autoxy),
+		:logx($loglin or $loglog),
+		:logy($linlog or $loglog),
+		:quiet($quiet)
     );
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
@@ -692,6 +694,7 @@ multi MAIN  ('fit',
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts) = +100,
+		 Bool :q(:$quiet) = False,
 		 *%_
 	    ){
     my $name = "ofe-tmp";
@@ -729,7 +732,8 @@ multi MAIN  ('fit',
 		:autox($autox or $autoxy),
 		:autoy($autoy or $autoxy),
 		:logx($loglin or $loglog),
-		:logy($linlog or $loglog)
+		:logy($linlog or $loglog),
+		:quiet($quiet)
     );
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
@@ -753,6 +757,7 @@ multi MAIN  ('fit',
 	     Str  :$zip-to = $input-file.IO.extension('').Str,
 	     Str  :$work-folder = '.',
 	     Int  :Num(:$npts),
+		 Bool :q(:$quiet) = False,
 		 *%_
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
@@ -768,7 +773,8 @@ multi MAIN  ('fit',
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
 			:logx($loglin or $loglog),
-			:logy($linlog or $loglog)
+			:logy($linlog or $loglog),
+			:quiet($quiet)
 	    );
 	    $engine.save($to) if $to.defined;
 	    zip-fit($engine,$work-folder,$name);
