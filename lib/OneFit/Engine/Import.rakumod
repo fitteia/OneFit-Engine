@@ -34,7 +34,7 @@ class Import is export {
 		my @files=();
 		for @input-files -> $file {
 			given self.is-type($file) {
-				$*ERR.say "\nfile $file is type: ",$_;
+				$*ERR.say("\nfile $file is type: ",$_);
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
 					shell "unzip -jo $file";
