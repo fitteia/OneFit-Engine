@@ -309,7 +309,7 @@ class Import is export {
 		my @err;
 		my $erro = %!options<err>;
 		$ist-ffc.IO.copy: "$path/$ist-ffc";
-		for "$ist-ffc".IO.lines {
+		for "$ist-ffc".IO.lines.grep(/^<![#]>/) {
 			my @a = $_.split(',')[1,2,3];
 			@f.push: @a[0]*1e3;
 			@R1.push: 1e6/@a[1];
