@@ -21,20 +21,20 @@ class Import is export {
 
     multi method filename () { @!Input-files[0] }
     
-	method filter-with (%options) {
+	method filter-with (%options, Bool :q(:$quiet) = False) {
 		my @files=();
 		%!options = %!options, %options;
 		
-		@files = self.import();
+		@files = self.import(:quiet($quiet));
 
 		return @files;
 	}
-	multi method import (:@infiles) {
+	multi method import (:@infiles,. Bool :q(:$quiet) = False) {
 		my @input-files = @infiles.so ?? @infiles !! @!Input-files;
 		my @files=();
 		for @input-files -> $file {
 			given self.is-type($file) {
-				$*ERR.say("\nfile $file is type: ",$_);
+				$*ERR.say("\nfile $file is type: ",$_) unless $quiet;
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
 					shell "unzip -jo $file";
