@@ -29,7 +29,7 @@ class Import is export {
 
 		return @files;
 	}
-	multi method import (:@infiles,. Bool :q(:$quiet) = False) {
+	multi method import (:@infiles, Bool :q(:$quiet) = False) {
 		my @input-files = @infiles.so ?? @infiles !! @!Input-files;
 		my @files=();
 		for @input-files -> $file {
