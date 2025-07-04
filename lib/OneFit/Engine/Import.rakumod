@@ -346,7 +346,7 @@ class Import is export {
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) 
 	}
 	method is-ffc ($file) 	 { 
-		return $file.IO.slurp(:enc('utf8'),:close).contains(/endtau/) 
+		return $file.IO.slurp(:enc('utf8'),:close).contains(/:i endtau|FFC001/) 
 	}
 
 
