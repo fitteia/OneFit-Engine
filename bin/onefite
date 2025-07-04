@@ -63,7 +63,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
-	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon]
+	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install]
   
 	    <input-file>     name of the file to be converted (\.sav or \.json)
 	    <output-file>    name of the converted file (\.sav or \.json)
@@ -817,6 +817,7 @@ multi MAIN ('test','list') {
 multi MAIN ('test',
 	    *@arr,
 		Bool :d(:$systemd-daemon) = True,
+		Bool :p(:$post-install) = True,
 	    Bool :verbose(:$v) = False
 	   ){
     my $test-path=OFE-PATH ~ "/t";
@@ -836,7 +837,7 @@ multi MAIN ('test',
     else {
 		my $proc = run "prove6", "--lib", "$test-path","--err=ignore";
     }
-    run-post-install-tests(:daemon($systemd-daemon), :verbose($v));
+    run-post-install-tests(:daemon($systemd-daemon), :verbose($v)) if $post-install;
     exit;
 }
 
@@ -994,7 +995,7 @@ onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fi
 onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 onefite test list
-onefite test [<arr> ...] [--verbose|-v] [--d|--systemd-daemon] 
+onefite test [<arr> ...] [--verbose|-v] [--d|--systemd-daemon] [-p|--post-install] 
 =end code
 
 =NOTE
@@ -1202,7 +1203,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 =begin code :lang<bash>
 onefite test list
 
-onefite test [<arr> ...] [--verbose|-v] [-d|systemd-daemon] 
+onefite test [<arr> ...] [--verbose|-v] [-d|systemd-daemon] [-p|--post-install]
 =end code
 =PARAMETERS
 =head2 File parameters
