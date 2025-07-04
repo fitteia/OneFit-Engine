@@ -124,7 +124,7 @@ class Engine is export {
 					}
 					else {
 			    			if $verbose.Bool {
-								$*ERR.say $<tag>.Str, " not selected in list ", %!engine<Tags>.Slip.join(" ")
+								$*ERR.say($<tag>.Str, " not selected in list ", %!engine<Tags>.Slip.join(" "))
 			    			}
 					}
 		    	}
@@ -289,7 +289,7 @@ class Engine is export {
 		Bool :$quiet=False
 	       ) {
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
-	 $*ERR.say "read blocks" unless $quiet;
+	 $*ERR.say("read blocks") unless $quiet;
 	 self.blocks(:read,
 		     :fit,:export,
 		     :autox($autox.Bool),
@@ -298,13 +298,13 @@ class Engine is export {
 		     :logy($logy),
 		     :quiet($quiet)
 		    );
-	 $*ERR.say "read pars" unless $quiet;
+	 $*ERR.say("read pars") unless $quiet;
 	 self.parameters(:read);
-	 $*ERR.say "read functions" unless $quiet;
+	 $*ERR.say("read functions") unless $quiet;
 	 self.functions(:read);
-	 $*ERR.say "write stp" unless $quiet;
+	 $*ERR.say("write stp") unless $quiet;
 	 self.stp;
-	 $*ERR.say "write code" unless $quiet;
+	 $*ERR.say("write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
 	 if %!engine<FitType> ~~ /Individual/ {
 	     for (1 .. @!blocks.elems).race {
