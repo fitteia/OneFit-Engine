@@ -23,18 +23,18 @@ plan 2;
 $time = now;
 my $eng = OneFit::Engine.new.path("$workfolder").read("$test-path/1/test1.sav");
 my $output = do {
-    my $*OUT = OutputCapture.new;
+    my $*ERR = OutputCapture.new;
     $eng.blocks(:r,:q).functions(:r).code(:w,:c);
-    $*OUT.captured;
+    $*ERR.captured;
 }
 is $output, "C code extracted compiled OK!\n", "compile works! ({ now - $time } sec)";
 
 $time = now;
 $eng = OneFit::Engine.new.path("$workfolder").read("$test-path/2/test2.sav");
 $output = do {
-    my $*OUT = OutputCapture.new;
+    my $*ERR = OutputCapture.new;
     $eng.blocks(:r,:q).functions(:r).code: :w, :c;
-    $*OUT.captured;
+    $*ERR.captured;
 }
 is $output, "C code extracted compiled OK!\n", "compile works! ({ now - $time } sec)";
 

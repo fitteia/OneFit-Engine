@@ -51,16 +51,16 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list aliases [-q|--quiet]
 	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
-	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
 	    onefite help <model> <key>] [-q|--quiet]
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-            onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+            onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
+	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
 	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install]
@@ -165,19 +165,22 @@ multi MAIN ('upgrade',
       Bool :$shell = False,
       Int  :$shell-port = 8100,
       Str  :$ip = '*',
+	  Bool :$wsl = False,
+	  Bool :$macos = False,
+	  Bool :$docker = False,
       Int  :p(:$port) = 8142,
       Bool :$test = False,
       Str  :m(:$merge-site) = '',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { "--shell --shell-port=$shell-port" if $shell }";
+      shell "cd { ::('OFE-PATH') }  && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker }";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
 multi MAIN ('uninstall'){
       MAIN('stop-web-engine');
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -U";
+      shell "cd { ::('OFE-PATH') } && git stash && git pull && ./INSTALL -U";
       exit;  
 }
 
@@ -571,7 +574,8 @@ multi MAIN  ('create',
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
 	     Str  :save-to(:$to), # write fit settings to json or sav file"
 	     Str  :$work-folder = '.',
-             Int  :Num(:$npts) = +100
+         Int  :Num(:$npts) = +100,
+		 Bool :q(:$quiet) = False
 	    ){
     my $name = "ofe-tmp";
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
@@ -586,7 +590,7 @@ multi MAIN  ('create',
 	%options.push('err' => $err) if $err.so;
 	%options.push('range' => $range) if $range.so;
 
-	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
+	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options, quiet => $quiet);	
 
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) { 
@@ -633,7 +637,8 @@ multi MAIN  ('random',
 	     Bool :$global,
 	     Str  :$save-to, # write fit settings to json or sav file 
 	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts) = +100
+	     Int  :Num(:$npts) = +100,
+		 Bool :q(:$quiet) = False,
 	    ){
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitType>="Global" if $global;
@@ -654,11 +659,12 @@ multi MAIN  ('random',
     for @data-files { $_.IO.copy("$work-folder/$name/$_") };
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
-	:no-plot($no-plot),
-	:autox($autox or $autoxy),
-	:autoy($autoy or $autoxy),
-	:logx($loglin or $loglog),
-	:logy($linlog or $loglog)
+		:no-plot($no-plot),
+		:autox($autox or $autoxy),
+		:autoy($autoy or $autoxy),
+		:logx($loglin or $loglog),
+		:logy($linlog or $loglog),
+		:quiet($quiet)
     );
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
@@ -667,38 +673,40 @@ multi MAIN  ('random',
 }
 
 multi MAIN  ('fit',
-	     Str  $function is copy, 
-	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Str  :data-label(:$data-labels),
-         Str  :$fit-methods = "simp scan min minos",
-	     Str  :$tags,
-	     Str  :$zip-to,
-	     Bool :$no-plot,
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
-	     Bool :$global,
-		 Str  :$fit-if = "",
-		 Str  :$plot-if = "",
-		 Str  :$sef-R1-file = "",
-		 Str  :$range = "",
-		 Bool :$R1 = False,
-		 Int  :$gfilt,
-		 Rat  :$err,
-	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
-	     Str  :$save-to, # write fit settings to json or sav file 
-	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts) = +100,
-		 *%_
-	    ){
-    my $name = "ofe-tmp";
-    if $zip-to.Bool {
+	Str  $function is copy, 
+   	*@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
+   	Str  :data-label(:$data-labels),
+   	Str  :$fit-methods = "simp scan min minos",
+   	Str  :$tags,
+   	Str  :$zip-to,
+   	Bool :$no-plot,
+   	Bool :$autox,
+   	Bool :$autoy,
+   	Bool :$autoxy,
+   	Bool :logy(:$linlog),
+   	Bool :logx(:$loglin),
+   	Bool :logxy(:$loglog),
+   	Bool :$global,
+	Str  :$fit-if = "",
+	Str  :$plot-if = "",
+	Str  :$sef-R1-file = "",
+ 	Str  :$range = "",
+	Bool :$R1 = False,
+	Int  :$gfilt,
+	Rat  :$err,
+    Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
+    Str  :$save-to, # write fit settings to json or sav file 
+    Str  :$work-folder = '.',
+    Int  :Num(:$npts) = +100,
+	Bool :q(:$quiet) = False,
+	*%_
+    ){
+	$*ERR.say("onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue...") if %_.keys;
+	my $name = "ofe-tmp";
+   	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
-    }
-    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+   	}
+   	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 	my %options =();
 
@@ -710,7 +718,7 @@ multi MAIN  ('fit',
 	%options.push('err' => $err) if $err.so;
 	%options.push('range' => $range) if $range.so;
 
-	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options);	
+	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options, quiet => $quiet);	
     
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) {
@@ -729,7 +737,8 @@ multi MAIN  ('fit',
 		:autox($autox or $autoxy),
 		:autoy($autoy or $autoxy),
 		:logx($loglin or $loglog),
-		:logy($linlog or $loglog)
+		:logy($linlog or $loglog),
+		:quiet($quiet)
     );
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
@@ -740,35 +749,38 @@ multi MAIN  ('fit',
 }
 
 multi MAIN  ('fit',
-	     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
-         Str  :$fit-methods = "simp scan min minos",
-	     Bool :$no-plot,
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
-	     Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
-	     Str  :$zip-to = $input-file.IO.extension('').Str,
-	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts),
-		 *%_
-	    ){
-	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
-	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-	    "$work-folder/$name".IO.mkdir;
-	    $input-file.IO.copy("$work-folder/$name/$input-file");
-	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
-#	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
-	    $engine.Num($npts) if $npts.Bool;
-	    $engine.fit-methods($fit-methods);
-	    $engine.fit(
+     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
+     Str  :$fit-methods = "simp scan min minos",
+     Bool :$no-plot,
+     Bool :$autox,
+     Bool :$autoy,
+     Bool :$autoxy,
+     Bool :logy(:$linlog),
+     Bool :logx(:$loglin),
+     Bool :logxy(:$loglog),
+     Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
+     Str  :$zip-to = $input-file.IO.extension('').Str,
+     Str  :$work-folder = '.',
+     Int  :Num(:$npts),
+	 Bool :q(:$quiet) = False,
+	 *%_
+    ){
+	$*ERR.say("onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue...") if %_.keys;
+	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
+	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	"$work-folder/$name".IO.mkdir;
+	$input-file.IO.copy("$work-folder/$name/$input-file");
+	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+#	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
+    $engine.Num($npts) if $npts.Bool;
+    $engine.fit-methods($fit-methods);
+    $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
 			:logx($loglin or $loglog),
-			:logy($linlog or $loglog)
+			:logy($linlog or $loglog),
+			:quiet($quiet)
 	    );
 	    $engine.save($to) if $to.defined;
 	    zip-fit($engine,$work-folder,$name);
@@ -983,16 +995,16 @@ onefite list models [-q|--quiet]
 onefite list aliases [-q|--quiet]
 onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
 onefite convert <input-file> <output-file> [--work-folder=<Str>]
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
 onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 onefite stop-web-engine
 onefite help <model> [-q|--quiet]
 onefite help <model> <key>] [-q|--quiet]
 onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 onefite test list
 onefite test [<arr> ...] [--verbose|-v] [--d|--systemd-daemon] [-p|--post-install] 
@@ -1128,7 +1140,7 @@ onefite stop-web-engine
 =head2 Create command
 
 =begin code :lang<bash>
-onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 =end code
 
 	Creates a json file with the function and datafiles provided.
@@ -1161,9 +1173,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--err=<Rat>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int] [-q|--quiet]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -1172,7 +1184,7 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 =head2 Version upgrade
 
 =begin code
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
 =end code
 
 	At the host prompt run I<onefite updatde -d --shell --test>  
