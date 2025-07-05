@@ -121,7 +121,7 @@ class Import is export {
 	    	my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
 	    	my $mmax = @module.max;
 			my $rmax = @Re_.max;
-			mu $imax = @Im_.max;
+			my $imax = @Im_.max;
 	    	my @y = @module.map({ $_ / $mmax }) if !$Re and !$Im;
 	    	@y = @Re_.map({ $_ / $rmax }) if $Re;
 	    	@y = @Im_.map({ $_ / $imax }) if $Im;
