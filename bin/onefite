@@ -174,13 +174,13 @@ multi MAIN ('upgrade',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker }";
+      shell "cd { ::('OFE-PATH') }  && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker }";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
 multi MAIN ('uninstall'){
       MAIN('stop-web-engine');
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL -U";
+      shell "cd { ::('OFE-PATH') } && git stash && git pull && ./INSTALL -U";
       exit;  
 }
 
