@@ -670,39 +670,40 @@ multi MAIN  ('random',
 }
 
 multi MAIN  ('fit',
-	     Str  $function is copy, 
-	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Str  :data-label(:$data-labels),
-         Str  :$fit-methods = "simp scan min minos",
-	     Str  :$tags,
-	     Str  :$zip-to,
-	     Bool :$no-plot,
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
-	     Bool :$global,
-		 Str  :$fit-if = "",
-		 Str  :$plot-if = "",
-		 Str  :$sef-R1-file = "",
-		 Str  :$range = "",
-		 Bool :$R1 = False,
-		 Int  :$gfilt,
-		 Rat  :$err,
-	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
-	     Str  :$save-to, # write fit settings to json or sav file 
-	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts) = +100,
-		 Bool :q(:$quiet) = False,
-		 *%_
-	    ){
-    my $name = "ofe-tmp";
-    if $zip-to.Bool {
+	Str  $function is copy, 
+   	*@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
+   	Str  :data-label(:$data-labels),
+   	Str  :$fit-methods = "simp scan min minos",
+   	Str  :$tags,
+   	Str  :$zip-to,
+   	Bool :$no-plot,
+   	Bool :$autox,
+   	Bool :$autoy,
+   	Bool :$autoxy,
+   	Bool :logy(:$linlog),
+   	Bool :logx(:$loglin),
+   	Bool :logxy(:$loglog),
+   	Bool :$global,
+	Str  :$fit-if = "",
+	Str  :$plot-if = "",
+	Str  :$sef-R1-file = "",
+ 	Str  :$range = "",
+	Bool :$R1 = False,
+	Int  :$gfilt,
+	Rat  :$err,
+    Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
+    Str  :$save-to, # write fit settings to json or sav file 
+    Str  :$work-folder = '.',
+    Int  :Num(:$npts) = +100,
+	Bool :q(:$quiet) = False,
+	*%_
+    ){
+	$*ERR.say("onefite options: {%_.keys} not defined...continue...") if %_.kyes;
+	my $name = "ofe-tmp";
+   	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
-    }
-    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+   	}
+   	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 	my %options =();
 
@@ -745,31 +746,32 @@ multi MAIN  ('fit',
 }
 
 multi MAIN  ('fit',
-	     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
-         Str  :$fit-methods = "simp scan min minos",
-	     Bool :$no-plot,
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
-	     Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
-	     Str  :$zip-to = $input-file.IO.extension('').Str,
-	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts),
-		 Bool :q(:$quiet) = False,
-		 *%_
-	    ){
-	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
-	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-	    "$work-folder/$name".IO.mkdir;
-	    $input-file.IO.copy("$work-folder/$name/$input-file");
-	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
-#	    my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
-	    $engine.Num($npts) if $npts.Bool;
-	    $engine.fit-methods($fit-methods);
-	    $engine.fit(
+     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
+     Str  :$fit-methods = "simp scan min minos",
+     Bool :$no-plot,
+     Bool :$autox,
+     Bool :$autoy,
+     Bool :$autoxy,
+     Bool :logy(:$linlog),
+     Bool :logx(:$loglin),
+     Bool :logxy(:$loglog),
+     Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
+     Str  :$zip-to = $input-file.IO.extension('').Str,
+     Str  :$work-folder = '.',
+     Int  :Num(:$npts),
+	 Bool :q(:$quiet) = False,
+	 *%_
+    ){
+	$*ERR.say("onefite options: {%_.keys} not defined...continue...") if %_.kyes;
+	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
+	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	"$work-folder/$name".IO.mkdir;
+	$input-file.IO.copy("$work-folder/$name/$input-file");
+	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+#	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
+    $engine.Num($npts) if $npts.Bool;
+    $engine.fit-methods($fit-methods);
+    $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
