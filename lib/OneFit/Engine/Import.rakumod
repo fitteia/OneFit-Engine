@@ -293,8 +293,8 @@ class Import is export {
 			my @y;
 			for @zone {
 			   	my @w = $_.words;	
-				@x.push: @w[0];
-				@y.push: @w[1];
+				@x.push: @w[0].Num;
+				@y.push: @w[1].Num;
 			}
 			my $max = @y.max;	
 			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
