@@ -51,7 +51,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list aliases [-q|--quiet]
 	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
-	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
@@ -165,13 +165,16 @@ multi MAIN ('upgrade',
       Bool :$shell = False,
       Int  :$shell-port = 8100,
       Str  :$ip = '*',
+	  Bool :$wsl = False,
+	  Bool :$macos = False,
+	  Bool :$docker = False,
       Int  :p(:$port) = 8142,
       Bool :$test = False,
       Str  :m(:$merge-site) = '',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
-      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { "--shell --shell-port=$shell-port" if $shell }";
+      shell "cd $*HOME/.local/OneFit-Engine && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker }";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
@@ -698,7 +701,7 @@ multi MAIN  ('fit',
 	Bool :q(:$quiet) = False,
 	*%_
     ){
-	$*ERR.say("onefite options: {%_.keys} not defined...continue...") if %_.keys;
+	$*ERR.say("onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue...") if %_.keys;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -762,7 +765,7 @@ multi MAIN  ('fit',
 	 Bool :q(:$quiet) = False,
 	 *%_
     ){
-	$*ERR.say("onefite options: {%_.keys} not defined...continue...") if %_.keys;
+	$*ERR.say("onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue...") if %_.keys;
 	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	"$work-folder/$name".IO.mkdir;
@@ -992,7 +995,7 @@ onefite list models [-q|--quiet]
 onefite list aliases [-q|--quiet]
 onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
 onefite convert <input-file> <output-file> [--work-folder=<Str>]
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
 onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 onefite stop-web-engine
 onefite help <model> [-q|--quiet]
@@ -1181,7 +1184,7 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 =head2 Version upgrade
 
 =begin code
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
 =end code
 
 	At the host prompt run I<onefite updatde -d --shell --test>  
