@@ -702,7 +702,7 @@ multi MAIN  ('fit',
 	*%_
     ){
 	$*ERR.say("onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue...") if %_.keys and !$quiet;
-	nmy $name = "ofe-tmp";
+	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
    	}
