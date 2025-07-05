@@ -119,10 +119,12 @@ class Import is export {
 
 	    	my $sqr =  { $^a.map({ $_ ** 2 }) };
 	    	my @module = ($sqr(@Re_) Z+ $sqr(@Im_))>>.sqrt;
-	    
-	    	my @y = @module.map({ $_ / @module.max }) if !$Re and !$Im;
-	    	@y = @Re_.map({ $_ / @Re_.max }) if $Re;
-	    	@y = @Im_.map({ $_ / @Im_.max }) if $Im;
+	    	my $mmax = @module.max;
+			my $rmax = @Re_.max;
+			mu $imax = @Im_.max;
+	    	my @y = @module.map({ $_ / $mmax }) if !$Re and !$Im;
+	    	@y = @Re_.map({ $_ / $rmax }) if $Re;
+	    	@y = @Im_.map({ $_ / $imax }) if $Im;
 	    	my @err = (1 .. @x.elems).map({1});
 
 	    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
@@ -218,8 +220,8 @@ class Import is export {
 					}
 					else { @y.push: @m.splice(0,$BS.Int)[$i .. $f].sum/$N; }
 				}
-
-		    	@y = @y.map({ $_ / @y.max });
+				my $ymax=@y.max;
+		    	@y = @y.map({ $_ / $ymax });
 		    	my @err = (1 .. @x.elems).map({1});
 
 		    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
@@ -294,8 +296,8 @@ class Import is export {
 				@x.push: @w[0];
 				@y.push: @w[1];
 			}
-			say @y, @y.max;
-			@zone = (@x Z @y.map({ $_/@y.max}))>>.join(" ").join("\n");
+			my $max = @y.max;	
+			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 		}
