@@ -294,6 +294,7 @@ class Import is export {
 				@x.push: @w[0];
 				@y.push: @w[1];
 			}
+			say @y, @y.max;
 			@zone = (@x Z @y.map({ $_/@y.max}))>>.join(" ").join("\n");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
