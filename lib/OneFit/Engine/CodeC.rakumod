@@ -229,10 +229,10 @@ END
 	my $proc = shell "cd $!path; make ROOT=$path -f $path/etc/OFE/default/makefile gfitn", :out($fho), :err($fho);
 	$fho.close;
 	if "$!path/compile.log".IO.lines.Array.pop.contains("onefit-user") {
-	    $*ERR.say("C code extracted compiled OK!") unless $quiet
+	    note "C code extracted compiled OK!" unless $quiet
 	}
 	else {
-	    $*ERR.say("C code extracted compiled with errors. Please check the compile.log file for more information.")
+	    note "C code extracted compiled with errors. Please check the compile.log file for more information." unless $quiet
 	}
 	
 	$proc = shell "cd $!path; make ROOT=$path -f $path/etc/OFE/default/makefile clean", :out, :err;
