@@ -144,6 +144,7 @@ class Engine is export {
 		.Graph.Xaxis.scale( min => .X.min, max => .X.max, nt => 5 , auto => True) if $autox;
 		.Graph.Yaxis.scale( :min(.Y.min), :max(.Y.max), :nt(5), auto => True) if $autoy;
 		say .Graph.Xaxis.h<min> ~ "  " ~ .Graph.Yaxis.h<min>;
+		say .Y.min ~ "  " ~ .X.min;
 	    }
 	} 
 	if $export.Bool { @!blocks.race.map( { .export(path => $!path, :fit($fit),:plot($plot)) }) }
