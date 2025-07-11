@@ -143,7 +143,7 @@ class Engine is export {
 		.Graph.Yaxis.scale( :min(%!engine<Ymin>.split(/<[\\]>+ <[,]>/)[.No]), :max(%!engine<Ymax>.split(/<[\\]>+ <[,]>/)[.No]), :nt(5) ) if all(%!engine<Ymin Ymax>)>>.defined and .Graph.Yaxis.auto;
 		.Graph.Xaxis.scale( min => .X.min, max => .X.max, nt => 5 , auto => True) if $autox;
 		.Graph.Yaxis.scale( :min(.Y.min), :max(.Y.max), :nt(5), auto => True) if $autoy;
-		say .Graph.Xaxis<min> ~ "  " ~ .Graph.Yaxis<min>;
+		say .Graph.Xaxis.axis<min> ~ "  " ~ .Graph.Yaxis.axis<min>;
 	    }
 	} 
 	if $export.Bool { @!blocks.race.map( { .export(path => $!path, :fit($fit),:plot($plot)) }) }
