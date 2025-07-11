@@ -152,6 +152,7 @@ class Engine is export {
 				.Graph.Yaxis.scale( :min(.Y.min), :max(.Y.max), :nt(5), auto => True);
 	 			note  "Attention: you have --logx with Yaxis<min> {.Graph.Yaxis.h<min>}. Setting Yaxis<min>= { .Y.min }";
 			}	
+
 	    }
 	} 
 	if $export.Bool { @!blocks.race.map( { .export(path => $!path, :fit($fit),:plot($plot)) }) }
