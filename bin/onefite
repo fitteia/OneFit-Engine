@@ -701,7 +701,7 @@ multi MAIN  ('fit',
 	Bool :q(:$quiet) = False,
 	*%_
     ){
-	$*ERR.say("onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue...") if %_.keys and !$quiet;
+	 note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -765,7 +765,7 @@ multi MAIN  ('fit',
 	 Bool :q(:$quiet) = False,
 	 *%_
     ){
-	$*ERR.say("onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue...") if %_.keys and !$quiet;
+	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	"$work-folder/$name".IO.mkdir;
