@@ -96,7 +96,7 @@ In debian shell
 mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
 ```
 ```bash  
-cd /home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start --ip=127.0.0.1 && onefite test --ip=127.0.0.1
+cd /home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start --ip=127.0.0.1 && onefite test 
 ```
 
  ** MacOS Colima+Docker
