@@ -1,4 +1,4 @@
-#!/usr/bin/env raku
+#!/usr/bin/env rakui
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
