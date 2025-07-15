@@ -1,4 +1,4 @@
-#!/usr/bin/env rakui
+#!/usr/bin/env raku
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
@@ -207,6 +207,7 @@ sub aptpkgs () {
    	sudo
    	curl
 	jq
+	debianutils
    	libssl-dev
    	hdf5-tools
    	tasksel
