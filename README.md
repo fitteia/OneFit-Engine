@@ -93,6 +93,9 @@ wsl -d debian
 ```
 In debian shell
 ```bash
+sudo apt install raku git
+```
+```bash
 mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
 ```
 ```bash  
