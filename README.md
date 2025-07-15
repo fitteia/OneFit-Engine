@@ -19,17 +19,13 @@ The copyright will be defined at the end of the devolopment process. For now the
 
  ** Windows WSL2
 	
-Install WSL
+Install WSL debian
 ```powershell
-wsl --install
+wsl --install -d debian
 ```
 Set default to WSL2
 ```powershell
 wsl --set-default-version 2
-```
-Install debian
-```powershell
-wsl --install -d debian
 ```
  ** MacOS Colima+Docker
 
@@ -97,10 +93,13 @@ wsl -d debian
 ```
 In debian shell
 ```bash
+sudo apt install raku git
+```
+```bash
 mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
 ```
 ```bash  
-cd /Home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start && onefite test
+cd /home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start --ip=127.0.0.1 && onefite test 
 ```
 
  ** MacOS Colima+Docker
