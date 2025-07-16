@@ -42,7 +42,7 @@ multi MAIN (Bool :h(:help($))) {
 		onefite [--man]
 		onefite [-v|--version]
 	    onefite uninstall
-	    onefite service start
+	    onefite service start [--ip=<Str>] [-d|--systemd-deamon] [-p|--port=<Int>]
 	    onefite service stop
 	    onefite service log
 	    onefite service PID
@@ -1111,12 +1111,15 @@ onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
 =item1 Systemd service 
 
 =begin code :lang<bash>
-onefite service start
+onefite service start [--ip=<Str>] [-d|--systemd-deamon] [-p|--port=<Int>]
 onefite service stop
 =end code
 
 	[start] Is: sudo systemctl daemon-reload; systemctl enable onefite.service; service onefite start
 	[stop] Is: kill -9 <star-web-service>
+	[--ip=<Str>] Is: '*' by default. When [--macos] or [--wsl] use --ip=127.0.0.1
+	[-p|--port=<Int>] Is: 8142 byt default. Check your Firewall just in case
+	[-d|--systemd-daemon] Is: False by default. When [--docker] [--macos] or [--wsl] keep the default.
 
 =item1 LOG and PID services
 
@@ -1217,17 +1220,20 @@ onefite test list
 
 onefite test [<arr> ...] [--verbose|-v] [-d|systemd-daemon] [-p|--post-install]
 =end code
+
+
 =PARAMETERS
 =head2 File parameters
 =item input-file- name of the file to be converted (file extensions: sav or json)
 =item output-file- name of the converted file (file extensions: sav or json)
+=item data files- can be one or more files including plain text ASCII (.dat, .txt). Zip files are accepted.
+	Special cases: Stelar S.R.l files (.sdf, .hdf5, .sef).
 
 =head2 Fit methods
 =item fit-methods - simp scan min minos
 
 
 =para 
-this is the first example
 
 =end pod
 
