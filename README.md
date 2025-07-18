@@ -624,7 +624,7 @@ git commit -a && git chekout main && git pull & git merge -m "some info" site &&
 or as the last step
 
 ```bash
-onefite upgrade -systemd-daemon --merge-info="some info"
+onefite upgrade -systemd-daemon --merge-site=site
 ```
 
 

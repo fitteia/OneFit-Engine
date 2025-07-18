@@ -1202,7 +1202,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 	[-c|--compile] Compile the OneFit-Engine C and F source.  Default is True
 	[--ip] Ip range access to the OneFit-Engine web service. Default '*' (All)
 	[-p] Port number for the OneFit-Engine web service. Default 8142
-	[-m|--merge-site] Git pull OneFit-Engine and merge with local site sources. Default True
+	[-m|--merge-site=<Str>] Git pull OneFit-Engine and merge with local site <Str> sources. Default ''
 
 	[-u|--to-user] Install OneFit-Engine in the user space.  Default is False
 	[-d|--systema-daemon] Create a systemd service.config and install service.  Default is False
