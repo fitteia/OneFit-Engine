@@ -95,8 +95,9 @@ In debian shell
 ```bash
 sudo apt install raku git
 ```
+In the following commands, replace "ofe" by the username you choosed when you installed wsl
 ```bash
-mkdir /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
+mkdir /home/ofe/public_html /home/ofe/.local && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git
 ```
 ```bash  
 cd /home/ofe/.local/OneFit-Engine && ./INSTALL --wsl && onefite service start --ip=127.0.0.1 && onefite test 
@@ -624,7 +625,7 @@ git commit -a && git chekout main && git pull & git merge -m "some info" site &&
 or as the last step
 
 ```bash
-onefite upgrade -systemd-daemon --merge-info="some info"
+onefite upgrade -systemd-daemon --merge-site=site
 ```
 
 
