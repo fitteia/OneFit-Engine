@@ -986,7 +986,7 @@ EOT
 =begin code :lang<bash>
 onefite [-h|--help]
 onefite uninstall
-onefite service start
+onefite service start [--ip=<Str>] [-d|--systemd-deamon] [-p|--port=<Int>]
 onefite service stop
 onefite service log
 onefite service PID
