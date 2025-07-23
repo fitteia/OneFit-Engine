@@ -207,6 +207,9 @@ sub aptpkgs () {
    	sudo
    	curl
 	jq
+	vim
+	man
+	gnuplot
 	debianutils
    	libssl-dev
    	hdf5-tools
