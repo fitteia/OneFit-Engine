@@ -205,7 +205,7 @@ install-fitteia: Lib fft cop gfilt ccat afactors-xyz
 install: all
 	install -d $(BINDIR) $(LIBDIR) $(LIBEXECDIR) $(INCLUDEDIR) $(PERLDIR)
 	install -m 0644 $(LIBUTILNAME) $(LIBNAME) $(LIBDIR)
-	install -m 0644 globals.h struct.h mixed.h $(INCLUDEDIR)
+	install -m 0644 globals.h struct.h mixed.h integra.h $(INCLUDEDIR)
 	install cop fitenv actpar afactors-xyz ccat fft gfilt $(BINDIR)
 #	make -C examples install
 	make -C modelos install
