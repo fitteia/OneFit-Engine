@@ -197,7 +197,7 @@ afactors-xyz: afactors-xyz.c
 install-fitteia: Lib fft cop gfilt ccat afactors-xyz
 	install -d $(BINDIR) $(LIBDIR) $(INCLUDEDIR) 
 	install -m 0644 $(LIBNAME) $(LIBUTILNAME) $(LIBDIR)
-	install -m 0644 globals.h struct.h mixed.h $(INCLUDEDIR)
+	install -m 0644 globals.h struct.h mixed.h integra.h $(INCLUDEDIR)
 	install -m 0755 fft cop gfilt ccat afactors-xyz $(BINDIR)
 	make -C modelos install-lib
 	make -C perl install-pcop
