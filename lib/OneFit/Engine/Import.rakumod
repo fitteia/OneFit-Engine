@@ -407,7 +407,7 @@ class Import is export {
 						$mean += @xy[1];
 					}		
 					my $N=@Y2.elems;
-					$err = (@Y2.sum - $mean**2/$N)/($N-1);
+					$err = sqrt(abs(@Y2.sum - $mean**2/$N)/($N-1)));
 				}		
 			}
 			elsif $err.contains("%") {
