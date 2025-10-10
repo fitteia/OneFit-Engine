@@ -416,7 +416,7 @@ class Import is export {
 			else { $err }
 			
 			$filename.IO.copy("/tmp/{$*PID}-lixo.txt");
-			shell "cat /tmp/{$*PID}-lixo.txt | awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' > $filename"; 
+			shell "cat /tmp/{$*PID}-lixo.txt | awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' > $filename && rm /tmp/{$*PID}-lixo.txt"; 
 		}
 	}	
 }
