@@ -397,7 +397,7 @@ class Import is export {
 	sub set-err($path,@files,$err is copy) {
 		for @files {
 			my $filename = "$path/$_";
-			if $err.contains("var") {
+			if $err.contains("std") {
 				my @Y2;
 				my $mean=+0;
 				for $filename.IO.lines(:close) {
@@ -415,8 +415,8 @@ class Import is export {
 			}
 			else { $err }
 			
-			$filename.IO.copy("/tmp/lixo.txt");
-			shell "cat /tmp/lixo.txt | awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' > $filename"; 
+			$filename.IO.copy("/tmp/{$*PID}-lixo.txt");
+			shell "cat /tmp/{$*PID}-lixo.txt | awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' > $filename && rm /tmp/{$*PID}-lixo.txt"; 
 		}
 	}	
 }
