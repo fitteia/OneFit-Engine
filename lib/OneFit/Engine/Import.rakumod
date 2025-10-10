@@ -413,7 +413,7 @@ class Import is export {
 			elsif $err.contains("%") {
 					$err = $err.subst("%","").Num /100 ;
 			}
-			else $err;
+			else { $err }
 			
 			$filename.IO.copy("/tmp/lixo.txt");
 			shell "cat /tmp/lixo.txt | awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' > $filename"; 
