@@ -406,7 +406,7 @@ class Import is export {
 						@Y2.push: @xy[1]**2;
 						$mean += @xy[1];
 					}		
-					my $N=@xy.elems;
+					my $N=@Y2.elems;
 					$err = (@Y2.sum - $mean**2/$N)/($N-1);
 				}		
 			}
