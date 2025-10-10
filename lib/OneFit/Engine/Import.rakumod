@@ -61,7 +61,7 @@ class Import is export {
 				}
 			}
 		}
-		set-err(self.path,@files,$err);
+		set-err(self.path,@files,%!options<err>) if %!options<err>.so;
 		return @files; 
 	}
 
