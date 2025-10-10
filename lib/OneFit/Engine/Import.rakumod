@@ -61,6 +61,7 @@ class Import is export {
 				}
 			}
 		}
+		set-err(self.path,@files,%!options<err>) if %!options<err>.so;
 		return @files; 
 	}
 
@@ -143,6 +144,8 @@ class Import is export {
 		my @BR;
 		my @R1;
 		my $err = %!options<err> if %!options.so;
+		$err = $err.contains("%") ?? $err.subst("%","").Num /100 !! "";
+	   	say $err;	
 		for @zones.hyper {
 	    	for shell("cd $path && h5dump -d $_ $stelar-hdf5",:out).out.slurp(:close) {
 				my @c = $_.split: "ATTRIBUTE";
@@ -237,6 +240,7 @@ class Import is export {
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
 		my $err = %!options<err>;
+		$err = $err.contains("%") ?? $err.subst("%","").Num /100 !! "";
 		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
 		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\s*\d+/) } .map({ [ ($_[0] * 1e6).round(0.0001) ,$_[1]] }).Array;
 		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1].Rat * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
@@ -311,6 +315,7 @@ class Import is export {
 		my @R1;
 		my @err;
 		my $erro = %!options<err>;
+		$erro = $erro.contains("%") ?? $erro.subst("%","").Num /100 !! "";
 		$ist-ffc.IO.copy: "$path/$ist-ffc";
 		for "$ist-ffc".IO.lines.grep(/^<![#]>/) {
 			my @a = $_.split(',')[1,2,3];
@@ -388,7 +393,32 @@ class Import is export {
 		}	
 		return @z
 	}	
-		
+
+	sub set-err($path,@files,$err is copy) {
+		for @files {
+			my $filename = "$path/$_";
+			if $err.contains("var") {
+				my @Y2;
+				my $mean=+0;
+				for $filename.IO.lines(:close) {
+					my @xy = $_.words;
+					if none($_.contains("#"),@xy.elems < 2) {
+						@Y2.push: @xy[1]**2;
+						$mean += @xy[1];
+					}		
+					my $N=@Y2.elems;
+					$err = sqrt(abs(@Y2.sum - $mean**2/$N)/($N-1));
+				}		
+			}
+			elsif $err.contains("%") {
+					$err = '$2*' ~ $err.subst("%","").Num /100 ;
+			}
+			else { $err }
+			
+			$filename.IO.copy("/tmp/lixo.txt");
+			shell "cat /tmp/lixo.txt | awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' > $filename"; 
+		}
+	}	
 }
 
 
