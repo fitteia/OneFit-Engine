@@ -394,7 +394,7 @@ class Import is export {
 		return @z
 	}	
 
-	sub set-err($path,@files,$err) {
+	sub set-err($path,@files,$err is copy) {
 		$err = $err.contains("%") ?? $err.subst("%","").Num /100 !! $err;
 		for @files {
 			my $filename = "$path/$_";
