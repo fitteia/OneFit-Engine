@@ -403,7 +403,7 @@ class Import is export {
 				my $mean=+0;
 				for $filename.IO.lines(:close) {
 					my @xy = $_.words;
-					if none($_.contains("#",@xy.elems < 2) {
+					if none($_.contains("#"),@xy.elems < 2) {
 						@Y2.push: @xy[1]**2;
 						$mean += @xy[1];
 					}		
