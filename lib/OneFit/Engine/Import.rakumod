@@ -397,25 +397,24 @@ class Import is export {
 	sub set-err($path,@files,$err is copy) {
 		for @files {
 			my $filename = "$path/$_";
-			given $err {
-				when "var" {
-					my @Y2;
-					my $mean=+0;
-					for $filename.IO.lines(:close) {
-						my @xy = $_.words;
-						if none($_.contains("#"),@xy.elems < 2) {
-							@Y2.push: @xy[1]**2;
-							$mean += @xy[1];
-						}		
-						my $N=@xy.elems;
-						$err = (@Y2.sum - $mean**2/$N)/($N-1);
+			if $err.contains("var") {
+				my @Y2;
+				my $mean=+0;
+				for $filename.IO.lines(:close) {
+					my @xy = $_.words;
+					if none($_.contains("#"),@xy.elems < 2) {
+						@Y2.push: @xy[1]**2;
+						$mean += @xy[1];
 					}		
-				}
-				when "%" {
-					$err = $err.subst("%","").Num /100 ;
-				}
-				default { $err }
+					my $N=@xy.elems;
+					$err = (@Y2.sum - $mean**2/$N)/($N-1);
+				}		
 			}
+			elsif $err.contains("%") {
+					$err = $err.subst("%","").Num /100 ;
+			}
+			else $err;
+			
 			$filename.IO.copy("/tmp/lixo.txt");
 			shell "cat /tmp/lixo.txt | awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' > $filename"; 
 		}
