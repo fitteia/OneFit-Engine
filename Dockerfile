@@ -53,4 +53,3 @@ EXPOSE 8142
 
 # Start services on container launch
 CMD onefite
-
