@@ -411,7 +411,7 @@ class Import is export {
 				}		
 			}
 			elsif $err.contains("%") {
-					$err = '\$2*' ~ $err.subst("%","").Num /100 ;
+					$err = '$2*' ~ $err.subst("%","").Num /100 ;
 			}
 			else { $err }
 			
