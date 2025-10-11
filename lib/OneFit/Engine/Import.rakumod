@@ -61,7 +61,7 @@ class Import is export {
 				}
 			}
 		}
-		set-err(self.path,@files,%!options<err>) if %!options<err>.so;
+		set-errors(self.path,@files,%!options<err>) if %!options<err>.so;
 		return @files; 
 	}
 
@@ -145,7 +145,6 @@ class Import is export {
 		my @R1;
 		my $err = %!options<err> if %!options.so;
 		$err = $err.contains("%") ?? $err.subst("%","").Num /100 !! "";
-	   	say $err;	
 		for @zones.hyper {
 	    	for shell("cd $path && h5dump -d $_ $stelar-hdf5",:out).out.slurp(:close) {
 				my @c = $_.split: "ATTRIBUTE";
@@ -394,31 +393,72 @@ class Import is export {
 		return @z
 	}	
 
-	sub set-err($path,@files,$err is copy) {
-		for @files {
-			my $filename = "$path/$_";
-			if $err.contains("std") {
-				my @Y2;
-				my $mean=+0;
-				for $filename.IO.lines(:close) {
-					my @xy = $_.words;
-					if none($_.contains("#"),@xy.elems < 2) {
-						@Y2.push: @xy[1]**2;
-						$mean += @xy[1];
-					}		
-					my $N=@Y2.elems;
-					$err = sqrt(abs(@Y2.sum - $mean**2/$N)/($N-1));
-				}		
-			}
-			elsif $err.contains("%") {
-					$err = '$2*' ~ $err.subst("%","").Num /100 ;
-			}
-			else { $err }
-			
-			$filename.IO.copy("/tmp/{$*PID}-lixo.txt");
-			shell "cat /tmp/{$*PID}-lixo.txt | awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' > $filename && rm /tmp/{$*PID}-lixo.txt"; 
+	sub set-err-stdv($filename, $split-at) {
+		my $tmp="/tmp/{$*PID}-lixo.txt";
+		$filename.IO.copy($tmp);
+		my @errs=(+0,+0);
+		my @Ys;
+		my @means=(+0,+0);
+		my @xy;
+		my @Ns=(+0,+0);
+		for $filename.IO.lines(:close) {
+			@xy.push($_.words.join(" ")) if none($_.contains("#"),$_.words.elems < 2);
+		}		
+		for @xy.sort {
+			if $_.words[0] <= $split-at { 
+				@Ys[0].push: $_.words[1]**2;
+				@means[0] += $_.words[1];
+				@Ns[0]++;
+	   		}
+			else { 
+				@Ys[1].push: $_.words[1]**2; 
+				@means[1] += $_.words[1];
+				@Ns[1]++;
+	   		}
 		}
-	}	
+
+		for 0 ..^@Ys.elems {
+			@means[$_] = @means[$_]/@Ns[$_];
+			@errs[$_]	= sqrt(abs(@Ys[$_].sum - @Ns[$_]*@means[$_]**2)/(@Ns[$_]-1));
+		}
+		$filename.IO.spurt: shell("awk -v err1={@errs[0]} -v err2={@errs[1]} -v splitAt={$split-at} ' \{ if ( !/#/ && NF>2 ) \{ \$3 = ( \$1 <= splitAt ) ?  err1 : err2; print; } else \{ print; \} \}' $tmp", :out).out.slurp;
+	
+   		unlink $tmp;		
+	}
+
+	sub set-err($filename,$err is copy) {
+		my $tmp = "/tmp/{$*PID}-lixo.txt";	
+		$filename.IO.copy($tmp);
+		if $err.contains("std") {
+			my @Y2;
+			my $mean=+0;
+			for $filename.IO.lines(:close) {
+				my @xy = $_.words;
+				if none($_.contains("#"),@xy.elems < 2) {
+					@Y2.push: @xy[1]**2;
+					$mean += @xy[1];
+				}		
+				my $N=@Y2.elems;
+				$err = sqrt(abs(@Y2.sum - $mean**2/$N)/($N-1));
+			}		
+		}
+		elsif $err.contains("%") {
+			$err = '$2*' ~ $err.subst("%","").Num /100 ;
+		}
+		else { $err }
+
+		$filename.IO.spurt: shell("awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' $tmp", :out).out.slurp;
+	   unlink $tmp;	
+	}
+
+	sub set-errors($path,@files,$err) {
+		for @files {
+			if $err.contains("split") { set-err-stdv("$path/$_",$err.words.tail); }
+			else { set-err("$path/$_", $err); }
+		}
+	}
+
+
 }
 
 
