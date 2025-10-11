@@ -145,7 +145,6 @@ class Import is export {
 		my @R1;
 		my $err = %!options<err> if %!options.so;
 		$err = $err.contains("%") ?? $err.subst("%","").Num /100 !! "";
-	   	say $err;	
 		for @zones.hyper {
 	    	for shell("cd $path && h5dump -d $_ $stelar-hdf5",:out).out.slurp(:close) {
 				my @c = $_.split: "ATTRIBUTE";
