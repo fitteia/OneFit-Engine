@@ -801,6 +801,7 @@ multi MAIN  ('fit',
 				@p.head.head[$_]<name> 
 				{ @p.head.head[$_]<free> ?? ':' !! '=' }
 				EOC
+				say $par;
 			}
 			say $engine.h<Function>.subst('\\','\\\\',:g).subst(/\n|\r/,"",:g);
 		   	say $engine.h<Parameters>;
