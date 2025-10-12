@@ -795,11 +795,11 @@ multi MAIN  ('fit',
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 		if $a2a.so {
 			my @p = $engine.h<par-tables>;
-			say @p.head.head.^name;
-			for @p.head.head {
+			say @p.head.head[0];
+			for 0 ..^ @p.head.head.elems {
 				my $par = qq:to/EOC/;
-				$_<name> 
-				{ $_<free> ?? ':' !! '=' }
+				@p.head.head[$_]<name> 
+				{ @p.head.head[$_]<free> ?? ':' !! '=' }
 				EOC
 			}
 			say $engine.h<Function>.subst('\\','\\\\',:g).subst(/\n|\r/,"",:g);
