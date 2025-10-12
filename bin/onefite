@@ -111,7 +111,7 @@ multi MAIN ('list','aliases',
 	%aliases.append( from-json("$*PWD/aliases.json") ) if "$*PWD/aliases.json".IO.e; 
  	
 	#	my $txt = "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
-	my $txt = to-json(%aliases)
+	my $txt = to-json(%aliases);
 	if not $quiet {
            say "listing aliases @  { ::('OFE-PATH') }/../etc/aliases.json"  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
            say "listing aliases @ ./aliases.json"  if  "./aliases.json".IO.e;
