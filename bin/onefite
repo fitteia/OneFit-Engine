@@ -797,8 +797,8 @@ multi MAIN  ('fit',
 			say $engine.h<par-tables>;
 			say $engine.h<Function>.subst('\\','\\\\',:g).subst("n","",:g);
 		   	say $engine.h<Parameters>;
-			say $engine.h<Xmin>.split(/\\\,/).head,$engine.h<Xmax>.split(/\\\,/).head;
-			say $engine.h<Ymin>.split(/\\\,/).head,$engine.h<Ymax>.split(/\\\,/).head;
+			say $engine.h<Xmin>.subst('\\',"",:g).split(",").head,$engine.h<Xmax>.subst('\\',"",:g).split(",").head;
+			say $engine.h<Ymin>.subst('\\',"",:g).split(",").head,$engine.h<Ymax>.subst('\\',"",:g).split(",").head;
 		}
 
 	    exit;
