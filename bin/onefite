@@ -795,17 +795,25 @@ multi MAIN  ('fit',
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 		if $a2a.so {
 			my @p = $engine.h<par-tables>;
-			say @p.head.head[0];
+			my @pars;
 			for 0 ..^ @p.head.head.elems {
-				my $par = @p.head.head[$_]<name>  
-					~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
-					~ @p.head.head[$_]<value>
-					~ '['
-					~ @p.head.head[$_]<min>
-			   		~ '<'
-					~ @p.head.head[$_]<max>
-					~ ']';
-				say $par;
+				my $par;
+			   	if all(@p.head.head[$_]<min>, @p.head.head[$_]<max>) {
+					$par = @p.head.head[$_]<name>  
+						~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
+						~ @p.head.head[$_]<value>
+						~ '['
+						~ @p.head.head[$_]<min>
+			   			~ '<'
+						~ @p.head.head[$_]<max>
+						~ ']';
+				}
+				else {
+					$par = @p.head.head[$_]<name>  
+						~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
+						~ @p.head.head[$_]<value>;
+				}
+				@pars.push: $par;
 			}
 			say $engine.h<Function>.subst('\\','\\\\',:g).subst(/\n|\r/,"",:g);
 		   	say $engine.h<Parameters>;
@@ -817,7 +825,7 @@ multi MAIN  ('fit',
 				'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
 				'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
 				']';
-			say "$Y\($X\)";
+			say "$Y\($X, { @pars.join(', ')}\)";
 		}
 
 	    exit;
