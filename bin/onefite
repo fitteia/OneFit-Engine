@@ -794,7 +794,8 @@ multi MAIN  ('fit',
 	    shell "mv $name.zip $zip-to" unless $name eq $zip-to;
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 		if $a2a.so {
-			say $engine.h<par-tables>>.a, $engine.h<Function>.subst('\\','\\\\',:g), $engine.h<Parameters>;
+			say $engine.h<par-tables>;
+			say $engine.h<Function>.subst('\\','\\\\',:g), $engine.h<Parameters>;
 			say $engine.h<Xmin>,$engine.h<Xmax>,$engine.h<free>;
 			say $engine.h<Ymin>,$engine.h<Ymax>,$engine.h<free>;
 		}
