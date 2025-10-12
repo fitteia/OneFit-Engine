@@ -823,7 +823,7 @@ multi MAIN  ('fit',
 				'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
 				'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
 				']';
-			my $values = "$Y\($X, { @pars.join(', ')}\)="
+			my $value = "$Y\($X, { @pars.join(', ')}\)="
 						~	
 						$engine.h<Function>.subst('\\','\\\\',:g).subst(/\n|\r/,"",:g).split('=').tail;
 			my %aliases;
