@@ -728,6 +728,7 @@ multi MAIN  ('fit',
     
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
 	%aliases = %aliases.Slip, from-json("{$*CWD}/aliases.json".IO.slurp).Hash.Slip  if "{$*CWD}/aliases.json".IO.e; 
+
     if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) {
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
