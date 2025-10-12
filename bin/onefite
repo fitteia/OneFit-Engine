@@ -798,8 +798,13 @@ multi MAIN  ('fit',
 			say @p.head.head[0];
 			for 0 ..^ @p.head.head.elems {
 				my $par = qq:to/EOC/;
-				@p.head.head[$_]<name> 
+				{ @p.head.head[$_]<name> } 
 				{ @p.head.head[$_]<free> ?? ':' !! '=' }
+				'['
+				{ @p.head.head[$_]<min> }
+			   	'<'
+				{ @p.head.head[$_]<max> }
+				']'
 				EOC
 				say $par;
 			}
