@@ -815,8 +815,6 @@ multi MAIN  ('fit',
 				}
 				@pars.push: $par;
 			}
-			say $engine.h<Function>.subst('\\','\\\\',:g).subst(/\n|\r/,"",:g);
-		   	say $engine.h<Parameters>;
 			my $X =   $engine.h<X> ~ 
 				'[' ~ $engine.h<Xmin>.subst('\\',"",:g).split(",").head ~ 
 				'<' ~ $engine.h<Xmax>.subst('\\',"",:g).split(",").head ~
@@ -825,7 +823,14 @@ multi MAIN  ('fit',
 				'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
 				'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
 				']';
-			say "$Y\($X, { @pars.join(', ')}\)";
+			my $values = "$Y\($X, { @pars.join(', ')}\)="
+						~	
+						$engine.h<Function>.subst('\\','\\\\',:g).subst(/\n|\r/,"",:g).split('=').tail;
+			my %aliases;
+			%aliases = from-json("./aliases.json".IO.slurp) if "./aliases.json".IO.e;
+			%aliases{$a2a}=$value;
+			"./aliases.json".IO.spurt: to-json(%aliases);
+			say $a2a,$value;
 		}
 
 	    exit;
