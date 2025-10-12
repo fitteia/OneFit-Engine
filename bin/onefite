@@ -769,6 +769,7 @@ multi MAIN  ('fit',
      Str  :$work-folder = '.',
      Int  :Num(:$npts),
 	 Bool :q(:$quiet) = False,
+	 Str  :add-to-alias-as(:$a2a)="",
 	 *%_
     ){
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -792,6 +793,10 @@ multi MAIN  ('fit',
 	    zip-fit($engine,$work-folder,$name);
 	    shell "mv $name.zip $zip-to" unless $name eq $zip-to;
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+		if $a2a.so {
+			say $engine<par-tables>, $engine<Function>, $engine<Parameters>;
+		}
+
 	    exit;
 }
 
