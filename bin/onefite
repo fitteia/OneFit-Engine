@@ -795,9 +795,7 @@ multi MAIN  ('fit',
 	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 		if $a2a.so {
 			my @p = $engine.h<par-tables>;
-			for @p {
-				say $_;
-			}
+			say @p.head;
 			say $engine.h<Function>.subst('\\','\\\\',:g).subst(/\n|\r/,"",:g);
 		   	say $engine.h<Parameters>;
 			say $engine.h<Xmin>.subst('\\',"",:g).split(",").head;
