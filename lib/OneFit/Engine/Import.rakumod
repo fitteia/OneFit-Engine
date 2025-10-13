@@ -422,8 +422,8 @@ class Import is export {
 				@errs[$_]	= sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 			}
 			else {
-				my $N=@Y.elems;
-				@errs[$_] = @Y.sum/$N*$err.split("%").head.Num/100;
+				my $N=@Ys[$_].elems;
+				@errs[$_] = $mean*$err.split("%").head.Num/100;
 			}
 		}
 		$filename.IO.spurt: shell("awk -v err1={@errs[0]} -v err2={@errs[1]} -v splitAt={$split-at} ' \{ if ( !/#/ && NF>2 ) \{ \$3 = ( \$1 <= splitAt ) ?  err1 : err2; print; } else \{ print; \} \}' $tmp", :out).out.slurp;
