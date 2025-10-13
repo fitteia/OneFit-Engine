@@ -415,7 +415,7 @@ class Import is export {
 		}
 
 		for 0 ..^@Ys.elems {
-			my $N = $Ys[$_].elems;
+			my $N = @Ys[$_].elems;
 			my $mean = $Ys[$_].sum/$N;
 			my $Y2 = @Y.map({ $_ ** 2 }).sum; 
 			if $err.contains("std") {
