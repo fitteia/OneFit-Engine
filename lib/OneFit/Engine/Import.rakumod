@@ -445,7 +445,7 @@ class Import is export {
 		elsif $err.contains("%") {
 			$err = '$2*' ~ $err.subst("%","").Num /100 ;
 		}
-		else { $err }
+		else { $err = $err }
 
 		$filename.IO.spurt: shell("awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' $tmp", :out).out.slurp;
 	   unlink $tmp;	
