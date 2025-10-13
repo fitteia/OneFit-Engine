@@ -430,19 +430,29 @@ class Import is export {
 		my $tmp = "/tmp/{$*PID}-lixo.txt";	
 		$filename.IO.copy($tmp);
 		if $err.contains("std") {
-			my @Y2;
-			my $mean=+0;
+			my @Y;
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
 				if none($_.contains("#"),@xy.elems < 2) {
-					@Y2.push: @xy[1]**2;
-					$mean += @xy[1];
+					@Y.push: @xy[1]**2;
 				}		
-				my $N=@Y2.elems;
-				$err = sqrt(abs(@Y2.sum - $mean**2/$N)/($N-1));
 			}		
+			my $N=@Y.elems;
+			my $mean=@Y.sum/$N;
+			my $Y2 = @Y.map({ $_ ** 2 }).sum; 
+			$err = sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 		}
-		elsif $err.contains("%") {
+		elsif $err.contains("avg") {
+			my @Y;
+			for $filename.IO.lines(:close) {
+				my @xy = $_.words;
+				if none($_.contains("#"),@xy.elems < 2) {
+					@Y.psuh: abs(@xy[1]);
+				}		
+			}
+			$err = @Y.sum/$N*$err.split("%").head.Num/100;
+		}
+		elsif $err.contains("%") and !$err.contains("avg"){
 			$err = '$2*' ~ $err.subst("%","").Num /100 ;
 		}
 		else { $err = $err }
