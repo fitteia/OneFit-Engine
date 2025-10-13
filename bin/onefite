@@ -262,7 +262,7 @@ multi MAIN ('start-web-engine',
 		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="logy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>ist-ffc: </td><td><input name="ist-ffc" type="radio" value="yes">/<input name="ist-ffc" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>R1: </td><td><input name="R1" type="radio" value="yes">/<input name="R1" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>err: </td><td><input name="err" type="text" value="">(number, num%, word stdv, words stdv split xvalue; ex. 1.0, 10%, stdv, "stdv split at 2e4")</td></tr>
+		       <tr><td>err: </td><td><input name="err" type="text" value="">(number, num%, num%avg, num% avg split xvalue, stdv, stdv split xvalue; ex. 1.0, 10%, 10%avg, 1% avg split at 2e4, stdv, "stdv split at 2e4")</td></tr>
 		       <tr><td>range: </td><td><input name="range" type="text" value="">(window range: i:f)</td></tr>
 		       <tr><td>plot-if: </td><td><input name="plot-if" type="text" value="">(ex: c1>0.5,1)</td></tr>
 		       <tr><td>fit-if: </td><td><input name="fit-if" type="text" value="">(ex: c1<2,10)</td></tr>
