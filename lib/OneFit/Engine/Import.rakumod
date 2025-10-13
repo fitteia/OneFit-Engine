@@ -393,7 +393,7 @@ class Import is export {
 		return @z
 	}	
 
-	sub set-err-stdv($filename, $split-at) {
+	sub set-err-split($filename, $err) {
 		my $tmp="/tmp/{$*PID}-lixo.txt";
 		$filename.IO.copy($tmp);
 		my @errs=(+0,+0);
@@ -401,25 +401,30 @@ class Import is export {
 		my @means=(+0,+0);
 		my @xy;
 		my @Ns=(+0,+0);
+		my $split-at = $err.words.tail;
 		for $filename.IO.lines(:close) {
 			@xy.push($_.words.join(" ")) if none($_.contains("#"),$_.words.elems < 2);
 		}		
 		for @xy.sort {
 			if $_.words[0] <= $split-at { 
-				@Ys[0].push: $_.words[1]**2;
-				@means[0] += $_.words[1];
-				@Ns[0]++;
+				@Ys[0].push: $_.words[1];
 	   		}
 			else { 
-				@Ys[1].push: $_.words[1]**2; 
-				@means[1] += $_.words[1];
-				@Ns[1]++;
+				@Ys[1].push: $_.words[1]; 
 	   		}
 		}
 
 		for 0 ..^@Ys.elems {
-			@means[$_] = @means[$_]/@Ns[$_];
-			@errs[$_]	= sqrt(abs(@Ys[$_].sum - @Ns[$_]*@means[$_]**2)/(@Ns[$_]-1));
+			my $N = $Ys[$_].elems;
+			my $mean = $Ys[$_].sum/$N;
+			my $Y2 = @Y.map({ $_ ** 2 }).sum; 
+			if $err.contains("std") {
+				@errs[$_]	= sqrt(abs($Y2 - $N*$mean**2)/($N-1));
+			}
+			else {
+				my $N=@Y.elems;
+				@errs[$_] = @Y.sum/$N*$err.split("%").head.Num/100;
+			}
 		}
 		$filename.IO.spurt: shell("awk -v err1={@errs[0]} -v err2={@errs[1]} -v splitAt={$split-at} ' \{ if ( !/#/ && NF>2 ) \{ \$3 = ( \$1 <= splitAt ) ?  err1 : err2; print; } else \{ print; \} \}' $tmp", :out).out.slurp;
 	
@@ -464,7 +469,7 @@ class Import is export {
 
 	sub set-errors($path,@files,$err) {
 		for @files {
-			if $err.contains("split") { set-err-stdv("$path/$_",$err.words.tail); }
+			if $err.contains("split") { set-err-split("$path/$_",$err); }
 			else { set-err("$path/$_", $err); }
 		}
 	}
