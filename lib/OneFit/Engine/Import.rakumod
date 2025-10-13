@@ -423,7 +423,6 @@ class Import is export {
 			}
 			else {
 				my $mean = @Ys[$_]>>.abs.sum/$N;
-				my $N=@Ys[$_].elems;
 				@errs[$_] = $mean*$err.split("%").head.Num/100;
 			}
 		}
