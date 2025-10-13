@@ -416,12 +416,13 @@ class Import is export {
 
 		for 0 ..^@Ys.elems {
 			my $N = @Ys[$_].elems;
-			my $mean = @Ys[$_].sum/$N;
 			my $Y2 = @Ys[$_].map({ $_ ** 2 }).sum; 
 			if $err.contains("std") {
+				my $mean = @Ys[$_].sum/$N;
 				@errs[$_]	= sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 			}
 			else {
+				my $mean = @Ys[$_]>>.abs.sum/$N;
 				my $N=@Ys[$_].elems;
 				@errs[$_] = $mean*$err.split("%").head.Num/100;
 			}
