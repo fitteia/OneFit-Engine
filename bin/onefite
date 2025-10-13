@@ -1233,6 +1233,11 @@ onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
+	Options
+	
+	[--define-alias|--dali=<Str>] adds alias Str do the function used to fit the date in the ./aliases.json file. Overwrites exiting alias
+
+
 =end code
 
 =head2 Version upgrade
