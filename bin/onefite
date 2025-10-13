@@ -783,7 +783,7 @@ multi MAIN  ('fit',
 	$input-file.IO.copy("$work-folder/$name/$input-file");
 	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
-	"{$input-file.IO.extension('').Str }-data.txt" .spurt: $engine.h<Dados>;
+	"{$input-file.IO.extension('').Str }-data.txt".IO.spurt: $engine.h<Dados>;
     $engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
     $engine.fit(
