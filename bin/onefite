@@ -59,8 +59,8 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
         onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-        onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
-	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--add-to-alias|--a2a=<Str>]
+        onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet][--define-alias|--dali=<Str>]
+	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>]
 	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 	    onefite test list
 	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install]
@@ -705,6 +705,7 @@ multi MAIN  ('fit',
     Str  :$work-folder = '.',
     Int  :Num(:$npts) = +100,
 	Bool :q(:$quiet) = False,
+	Str  :define-alias(:$dali)="",
 	*%_
     ){
 	 note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -753,6 +754,7 @@ multi MAIN  ('fit',
 
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
+	define-alias($engine,$dali);
     exit;
 }
 
@@ -771,7 +773,7 @@ multi MAIN  ('fit',
      Str  :$work-folder = '.',
      Int  :Num(:$npts),
 	 Bool :q(:$quiet) = False,
-	 Str  :add-to-alias(:$a2a)="",
+	 Str  :define-alias(:$dali)="",
 	 *%_
     ){
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -791,50 +793,13 @@ multi MAIN  ('fit',
 			:logy($linlog or $loglog),
 			:quiet($quiet)
 	    );
-	    $engine.save($to) if $to.defined;
-	    zip-fit($engine,$work-folder,$name);
-	    shell "mv $name.zip $zip-to" unless $name eq $zip-to;
-	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
-		if $a2a.so {
-			my @p = $engine.h<par-tables>;
-			my @pars;
-			for 0 ..^ @p.head.head.elems {
-				my $par;
-			   	if all(@p.head.head[$_]<min>, @p.head.head[$_]<max>) {
-					$par = @p.head.head[$_]<name>  
-						~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
-						~ @p.head.head[$_]<value>
-						~ '['
-						~ @p.head.head[$_]<min>
-			   			~ '<'
-						~ @p.head.head[$_]<max>
-						~ ']';
-				}
-				else {
-					$par = @p.head.head[$_]<name>  
-						~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
-						~ @p.head.head[$_]<value>;
-				}
-				@pars.push: $par;
-			}
-			my $X =   $engine.h<X> ~ 
-				'[' ~ $engine.h<Xmin>.subst('\\',"",:g).split(",").head ~ 
-				'<' ~ $engine.h<Xmax>.subst('\\',"",:g).split(",").head ~
-				']';
-			my $Y =  $engine.h<Y> ~ 
-				'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
-				'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
-				']';
-			my $value = "$Y\($X, { @pars.join(', ')}\)="
-						~	
-						$engine.h<Function>.subst(/\n|\r/,"",:g).split('=').tail;
-			my %aliases;
-			%aliases = from-json("./aliases.json".IO.slurp) if "./aliases.json".IO.e;
-			%aliases{$a2a}=$value;
-			"./aliases.json".IO.spurt: to-json(%aliases, :sorted-keys);
-		}
+    $engine.save($to) if $to.defined;
+    zip-fit($engine,$work-folder,$name);
+    shell "mv $name.zip $zip-to" unless $name eq $zip-to;
+    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	    exit;
+	define-alias($engine,$dali);
+    exit;
 }
 
 
@@ -1025,6 +990,47 @@ EOT
 	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 }
 
+sub define-alias($engine,$dali) {
+		if $dali.so {
+			my @p = $engine.h<par-tables>;
+			my @pars;
+			for 0 ..^ @p.head.head.elems {
+				my $par;
+			   	if all(@p.head.head[$_]<min>, @p.head.head[$_]<max>) {
+					$par = @p.head.head[$_]<name>  
+						~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
+						~ @p.head.head[$_]<value>
+						~ '['
+						~ @p.head.head[$_]<min>
+			   			~ '<'
+						~ @p.head.head[$_]<max>
+						~ ']';
+				}
+				else {
+					$par = @p.head.head[$_]<name>  
+						~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
+						~ @p.head.head[$_]<value>;
+				}
+				@pars.push: $par;
+			}
+			my $X =   $engine.h<X> ~ 
+				'[' ~ $engine.h<Xmin>.subst('\\',"",:g).split(",").head ~ 
+				'<' ~ $engine.h<Xmax>.subst('\\',"",:g).split(",").head ~
+				']';
+			my $Y =  $engine.h<Y> ~ 
+				'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
+				'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
+				']';
+			my $value = "$Y\( $X, { @pars.join(', ')} \) = "
+						~	
+						$engine.h<Function>.subst(/\n|\r/,"",:g).split('=').tail;
+			my %aliases;
+			%aliases = from-json("./aliases.json".IO.slurp) if "./aliases.json".IO.e;
+			%aliases{$dali}=$value;
+			"./aliases.json".IO.spurt: to-json(%aliases, :sorted-keys);
+		}
+}
+
 =begin pod
 
 =NAME 
@@ -1051,8 +1057,8 @@ onefite help <model> <key>] [-q|--quiet]
 onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
 onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--add-to-alias|--a2a=<Str>]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>]
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 onefite test list
 onefite test [<arr> ...] [--verbose|-v] [--d|--systemd-daemon] [-p|--post-install] 
@@ -1221,9 +1227,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet [--define-alias|--dali=<Str>]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int] [-q|--quiet] [--add-to-alias|--a2a=<Str>]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int] [-q|--quiet] [--define-alias|--dali=<Str>]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
