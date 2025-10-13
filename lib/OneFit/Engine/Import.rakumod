@@ -434,7 +434,7 @@ class Import is export {
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
 				if none($_.contains("#"),@xy.elems < 2) {
-					@Y.push: @xy[1]**2;
+					@Y.push: @xy[1];
 				}		
 			}		
 			my $N=@Y.elems;
