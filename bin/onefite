@@ -772,7 +772,7 @@ multi MAIN  ('fit',
      Str  :$zip-to = $input-file.IO.extension('').Str,
      Str  :$work-folder = '.',
      Int  :Num(:$npts),
-	 Bool :export-data = False,
+	 Bool :$export-data = False,
 	 Bool :q(:$quiet) = False,
 	 Str  :define-alias(:$dali)="",
 	 *%_
