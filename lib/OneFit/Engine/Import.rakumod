@@ -453,7 +453,7 @@ class Import is export {
 			my $N=@Y.elems;
 			$err = @Y.sum/$N*$err.split("%").head.Num/100;
 		}
-		elsif $err.contains("%") and !$err.contains("avg"){
+		elsif $err.contains("%") and !$err.contains("avg") {
 			$err = '$2*' ~ $err.subst("%","").Num /100 ;
 		}
 		else { $err = $err }
