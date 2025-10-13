@@ -450,6 +450,7 @@ class Import is export {
 					@Y.psuh: abs(@xy[1]);
 				}		
 			}
+			my $N=@Y.elems;
 			$err = @Y.sum/$N*$err.split("%").head.Num/100;
 		}
 		elsif $err.contains("%") and !$err.contains("avg"){
