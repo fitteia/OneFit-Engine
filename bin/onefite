@@ -580,7 +580,7 @@ multi MAIN  ('create',
 	     Str  :save-to(:$to), # write fit settings to json or sav file"
 	     Str  :$work-folder = '.',
          Int  :Num(:$npts) = +100,
-		 Bool :q(:$quiet) = False
+		 Bool :q(:$quiet) = False,
 		 Str  :$aux-code = "",
 		 *%_
 	    ){
