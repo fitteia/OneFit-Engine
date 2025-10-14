@@ -615,8 +615,8 @@ multi MAIN  ('create',
     %e<SymbSize>=$ssz.Rat;
 
 	if $aux-code.so {	
-		my @aux = $aux-code.splice(0,1).split(/ <ws> ',' <ws>/);
-		%e<AuxCode> = @aux.head.IO.slurp;
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
 		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subs(/ <ws> 'double' <ws> /,"",:g) }),join(', ');
 	}
     my $engine = Engine.new.path("$work-folder").set(%e);
@@ -752,8 +752,8 @@ multi MAIN  ('fit',
     %e<SymbSize>=$ssz.Rat;
 
 	if $aux-code.so {	
-		my @aux = $aux-code.splice(0,1).split(/ <ws> ',' <ws>/);
-		%e<AuxCode> = @aux.head.IO.slurp;
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
 		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subs(/ <ws> 'double' <ws> /,"",:g) }),join(', ');
 	}
 
