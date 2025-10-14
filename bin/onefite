@@ -613,7 +613,12 @@ multi MAIN  ('create',
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
-	%e<AuxCode> = $aux-code.IO.slurp if $aux-code.so;
+
+	if $aux-code.so {	
+		my @aux = $aux-code.splice(0,1).split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.head.IO.slurp;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subs(/ <ws> 'double' <ws> /,"",:g) }),join(', ');
+	}
     my $engine = Engine.new.path("$work-folder").set(%e);
     $engine.blocks(
 	:read,
@@ -745,7 +750,13 @@ multi MAIN  ('fit',
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
-	%e<AuxCode> = $aux-code.IO.slurp if $aux-code.so;
+
+	if $aux-code.so {	
+		my @aux = $aux-code.splice(0,1).split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.head.IO.slurp;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subs(/ <ws> 'double' <ws> /,"",:g) }),join(', ');
+	}
+
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     $engine.fit(
 		:no-plot($no-plot),
