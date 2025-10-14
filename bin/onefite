@@ -1260,7 +1260,8 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 	Options
 	
 	[--define-alias|--dali=<Str>] adds alias Str do the function used to fit the date in the ./aliases.json file. Overwrites exiting alias
-
+	[--export] to write data and AuxCode in files for later use with onefite fit <funtion>
+   	[--aux-code] accepts the name of the file with the AuxCode and the new fitting functions declarations	
 
 =end code
 
