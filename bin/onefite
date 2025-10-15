@@ -747,7 +747,7 @@ multi MAIN  ('fit',
 		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
     }
 	if $function.contains(/ 'MIXED' <ws> '='/) {
-		$global = True if $function.split(/ 'MIXED' <ws> '=' /).words.head.Num == 1);
+		$global = True if $function.split(/ 'MIXED' <ws> '=' /).words.head.Num == 1;
 	}
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
