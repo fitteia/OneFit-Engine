@@ -702,7 +702,7 @@ multi MAIN  ('fit',
    	Bool :logy(:$linlog),
    	Bool :logx(:$loglin),
    	Bool :logxy(:$loglog),
-   	Bool :$global,
+   	Bool :$global is copy,
 	Str  :$fit-if = "",
 	Str  :$plot-if = "",
 	Str  :$sef-R1-file = "",
@@ -747,6 +747,7 @@ multi MAIN  ('fit',
 		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
     }
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) {
+		say $function;
 		say $function.split(/ 'MIXED' <ws> '=' /).words.tail;
 		$global = True;
 	}
