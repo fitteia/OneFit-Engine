@@ -51,7 +51,7 @@ multi MAIN (Bool :h(:help($))) {
 	    onefite list aliases [-q|--quiet]
 	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
 	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
-	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
+	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
 	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 	    onefite stop-web-engine
 	    onefite help <model> [-q|--quiet]
@@ -175,11 +175,12 @@ multi MAIN ('upgrade',
 	  Bool :$docker = False,
       Int  :p(:$port) = 8142,
       Bool :$test = False,
+	  Bool :$dpkg = True,
       Str  :m(:$merge-site) = '',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
-      shell "cd { ::('OFE-PATH') }  && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker }";
+      shell "cd { ::('OFE-PATH') }  && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg}";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
@@ -701,7 +702,7 @@ multi MAIN  ('fit',
    	Bool :logy(:$linlog),
    	Bool :logx(:$loglin),
    	Bool :logxy(:$loglog),
-   	Bool :$global,
+   	Bool :$global is copy,
 	Str  :$fit-if = "",
 	Str  :$plot-if = "",
 	Str  :$sef-R1-file = "",
@@ -745,6 +746,10 @@ multi MAIN  ('fit',
 		if so $falias { $function = $falias }
 		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
     }
+	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
+		note "you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
+		$global = True;
+	}
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
@@ -1073,7 +1078,7 @@ onefite list models [-q|--quiet]
 onefite list aliases [-q|--quiet]
 onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
 onefite convert <input-file> <output-file> [--work-folder=<Str>]
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
 onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
 onefite stop-web-engine
 onefite help <model> [-q|--quiet]
@@ -1268,7 +1273,7 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 =head2 Version upgrade
 
 =begin code
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
 =end code
 
 	At the host prompt run I<onefite updatde -d --shell --test>  
@@ -1291,7 +1296,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
 	[--cernlib] Use debian cernlib package or compile fortran version from source. Default False
 	[--shell] Install debian package to create a wes shell service on defaul port 8100 or port define in option --shell-port. Default False
 	[--shell-port] Port number for the web shell service. Default 8100
-
+	[--dpkg] run apt update by default. Use --no-dpkg otherwise
 	Use --/<option> or --no-<option> for disable default option value (ex: --no-test or --/test)	
 
 =head2 Test commands
