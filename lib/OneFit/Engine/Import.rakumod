@@ -300,9 +300,11 @@ class Import is export {
 				@y.push: @w[1].Num;
 			}
 			my $max = @y.max;	
+			next unless $max.so;
 			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
+			last unless @lines.so;
 		}
 		return @files.sort.reverse
 	}
