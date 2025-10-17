@@ -300,6 +300,7 @@ class Import is export {
 				@y.push: @w[1].Num;
 			}
 			my $max = @y.max;	
+			say $max.Num;
 			next if $max.Num == 0;
 			NEXT { note "...skiping empty zone!" }
 			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
