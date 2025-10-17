@@ -300,12 +300,12 @@ class Import is export {
 				@y.push: @w[1].Num;
 			}
 			my $max = @y.max;	
-			next unless $max.so;
+			next if $max.Num == 0;
 			NEXT { note "...skiping empty zone!" }
 			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
-			last unless @lines.so;
+			last if @lines.elems == 0;
 			LEAVE { note "...skiping missing zones" }
 			LAST { note "All zoness read" } 
 		}
