@@ -301,7 +301,7 @@ class Import is export {
 			}
 			my $max = @y.max;	
 			say $max.Num;
-			#			next if $max.Num == 0;
+			next if $max.Num == 0;
 			#	NEXT { note "...skiping empty zone!" }
 			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
