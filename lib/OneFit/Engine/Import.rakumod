@@ -34,7 +34,7 @@ class Import is export {
 		my @files=();
 		for @input-files -> $file {
 			given self.is-type($file) {
-				 note "\nfile $file is type: ", $_ unless $quiet;
+				note "\nFile $file is type: ", $_ unless $quiet;
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
 					shell "unzip -jo $file";
@@ -301,10 +301,13 @@ class Import is export {
 			}
 			my $max = @y.max;	
 			next unless $max.so;
+			NEXT note "...skiping empty zone!";
 			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 			last unless @lines.so;
+			LEAVE note "...skiping missing zones";
+			LAST note "All zoness read";
 		}
 		return @files.sort.reverse
 	}
