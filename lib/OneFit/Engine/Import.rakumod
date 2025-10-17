@@ -307,8 +307,7 @@ class Import is export {
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 			say @lines.elems;
-			# last if @lines.elems == 0;
-			LEAVE { note "...skiping missing zones" }
+			last if @lines.elems <= 0;
 			LAST { note "All zoness read" } 
 		}
 		return @files.sort.reverse
