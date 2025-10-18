@@ -744,7 +744,11 @@ multi MAIN  ('fit',
     if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) {
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
-		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
+		else { 
+			say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; 
+			say %aliases.keys;  
+			exit(1);
+		}
     }
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
 		note "you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
@@ -781,7 +785,7 @@ $!
 Consider using --aux-code=\"AuxCode-file.c, double $undeclared, ...\"
 to add the undeclared functions";
 MSG
-		exit;
+		exit(1);
 	}
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
