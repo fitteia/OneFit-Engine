@@ -774,7 +774,6 @@ multi MAIN  ('fit',
     	);
 	} or die qq:to/MSG/;
 	$!
-	Consider use --aux-code=\"AuxCode-file.c, double f1(), f2(),...\" where f1() and f2() are the undeclared function"; 
 	MSG
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
