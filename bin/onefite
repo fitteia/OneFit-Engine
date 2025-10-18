@@ -773,7 +773,7 @@ multi MAIN  ('fit',
 			:quiet($quiet)
     	);
 	}
-	if $! { say "$!; exit }
+	if $! { say "$!"; exit }
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
