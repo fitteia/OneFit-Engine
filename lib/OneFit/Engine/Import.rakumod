@@ -285,7 +285,10 @@ class Import is export {
 			my @a = $_.split(',')[2,3];
 			@lines.push: @a[0]*1e-6 ~ ' ' ~ @a[1]; 
 		}
+		my $empty=@ntaus.elems;
+		my $proc=0;
 		for (1 .. @ntaus.elems) {
+			$proc++;
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
 			my $datafile = "{ $ffc.IO.extension('').Str }-{ sprintf('%09d',(@freqs[$_-1]*1e3).Int) }-z{ sprintf('%03d',$_) }.dat";
 			my 	$header = "# DATA dum = @modes[$_-1] { @freqs[$_-1]*1e3 }\n# TAG = { $datafile.IO.extension('').Str }\n";
@@ -301,10 +304,12 @@ class Import is export {
 			}
 			my $max = @y.max;	
 			next if $max.Num == 0;
+			$empty--;
 			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 			last if @lines.elems <= 0;
+			LAST { note "processed zones: $proc/@ntaus.elems, $empty empty" }
 		}
 		return @files.sort.reverse
 	}
