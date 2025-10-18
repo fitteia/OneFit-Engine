@@ -772,9 +772,15 @@ multi MAIN  ('fit',
 			:logy($linlog or $loglog),
 			:quiet($quiet)
     	);
-	} or die qq:to/MSG/;
-	$!
-	MSG
+	} 
+	
+	if $! { 
+		say $!;
+		"ofe-tmp/compile.log".IO.slupr.say;
+		say "Consider using --aux-code=\"AuxCode-file.c, double f1(), f2(),...\"";
+		say "to add the undeclared functions";
+		exit;
+	}
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
