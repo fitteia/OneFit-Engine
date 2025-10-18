@@ -774,12 +774,11 @@ multi MAIN  ('fit',
     	);
 	} 
 	if $! {
+		my $undeclared = "ofe-tmp/compile.log".IO.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'',:g) ~ '()' }).join(','); 
 		say qq:to/MSG/;
 $!  
 {'-' x 80}
-{ 'ofe-tmp/compile.log'.IO.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'') ~ '()' }).join(',') }
-{'-' x 80}
-Consider using --aux-code=\"AuxCode-file.c, double f1(), f2(),...\"
+Consider using --aux-code=\"AuxCode-file.c, double $undeclared\"
 to add the undeclared functions";
 MSG
 		exit;
