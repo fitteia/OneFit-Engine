@@ -763,7 +763,7 @@ multi MAIN  ('fit',
 	}
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
-    TRY {
+    try {
 		$engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
