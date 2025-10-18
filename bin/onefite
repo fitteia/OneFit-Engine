@@ -763,7 +763,6 @@ multi MAIN  ('fit',
 	}
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
-	my $compile-log;
     try {
 		$engine.fit(
 			:no-plot($no-plot),
@@ -773,8 +772,10 @@ multi MAIN  ('fit',
 			:logy($linlog or $loglog),
 			:quiet($quiet)
     	);
-		"ofe-tmp/compile.log".IO.slurp;
-	} or die "$!\n $compile-log\n. Consider use --aux-code=\"AuxCode-file.c, double f1(), f2(),...\" where f1() and f2() are the undeclared function"; 
+	} or die qq:to/MSG/
+	$!
+	Consider use --aux-code=\"AuxCode-file.c, double f1(), f2(),...\" where f1() and f2() are the undeclared function"; 
+	MSG
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
