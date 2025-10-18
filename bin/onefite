@@ -775,9 +775,9 @@ multi MAIN  ('fit',
 	} or die qq:to/MSG/;
 		$!  
 		{'-' x 60}
-		"ofe-tmp/compile.log".IO.slurp
+		{ 'ofe-tmp/compile.log'.IO.slurp }
 		{'-' x 60}
-		Consider using --aux-code=\"AuxCode-file.c, double f1(), f2(),...\""
+		Consider using --aux-code=\"AuxCode-file.c, double f1(), f2(),...\"
 		to add the undeclared functions";
 	MSG
     $engine.save($save-to) if $save-to.defined;
