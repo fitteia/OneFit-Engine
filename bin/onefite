@@ -772,7 +772,7 @@ multi MAIN  ('fit',
 			:logy($linlog or $loglog),
 			:quiet($quiet)
     	);
-	} or die qq:to/MSG/
+	} or die qq:to/MSG/;
 	$!
 	Consider use --aux-code=\"AuxCode-file.c, double f1(), f2(),...\" where f1() and f2() are the undeclared function"; 
 	MSG
