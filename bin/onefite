@@ -776,7 +776,7 @@ multi MAIN  ('fit',
 	
 	if $! { 
 		say $!;
-		"ofe-tmp/compile.log".IO.slupr.say;
+		"ofe-tmp/compile.log".IO.slurp.say;
 		say "Consider using --aux-code=\"AuxCode-file.c, double f1(), f2(),...\"";
 		say "to add the undeclared functions";
 		exit;
