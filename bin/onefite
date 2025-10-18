@@ -833,7 +833,6 @@ multi MAIN  ('fit',
 		note "and to export AuxCode to: Auxcode-{ $input-file.IO.extension('').Str }.c";
 	}
 
-	}
     $engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
     $engine.fit(
