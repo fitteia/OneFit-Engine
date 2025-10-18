@@ -34,7 +34,7 @@ class Import is export {
 		my @files=();
 		for @input-files -> $file {
 			given self.is-type($file) {
-				 note "\nfile $file is type: ", $_ unless $quiet;
+				note "\nFile $file is type: ", $_ unless $quiet;
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
 					shell "unzip -jo $file";
@@ -85,6 +85,7 @@ class Import is export {
 			$file-name = $file unless @blocks.elems > 2;
 			@files.push: $file-name; 
 			"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
+			LAST { note "processed blocks: { @blocks.elems - 1 }" }
 		}
 		return @files;	
 	}
@@ -130,6 +131,7 @@ class Import is export {
 
 	    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
 	    	@data-files.push: $datafile;
+			LAST { note "processed zones: { @zones.elems }" }
 		}
 		"$path/$stelar-hdf5".IO.unlink;
 		return @data-files.sort.reverse;
@@ -228,6 +230,7 @@ class Import is export {
 
 		    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
 		    	@data-files.push: $datafile;
+				LAST { note "processed zones: { @zones.elems }" }
 			}
 		}
 		"$path/$stelar-sdf".IO.unlink;
@@ -265,6 +268,7 @@ class Import is export {
 			@zones[$_] = (@tau Z @Mz.map({ $_/$max}))>>.join(" ").join("\n");
 			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = { $datafile.IO.extension('').Str }\n" ~ @zones[$_].join("\n");
 			@files.push: $datafile;
+			LAST { note "processed zones: { @zones.elems }" }
 		}
 		if %!options<sef-R1-file> { @files = merge(self.path,%!options<sef-R1-file>,@files) }
 		return  @files;
@@ -285,7 +289,10 @@ class Import is export {
 			my @a = $_.split(',')[2,3];
 			@lines.push: @a[0]*1e-6 ~ ' ' ~ @a[1]; 
 		}
+		my $empty=@ntaus.elems;
+		my $proc=0;
 		for (1 .. @ntaus.elems) {
+			$proc++;
 			my @zone = @lines.splice(0,@ntaus[$_-1].Int);
 			my $datafile = "{ $ffc.IO.extension('').Str }-{ sprintf('%09d',(@freqs[$_-1]*1e3).Int) }-z{ sprintf('%03d',$_) }.dat";
 			my 	$header = "# DATA dum = @modes[$_-1] { @freqs[$_-1]*1e3 }\n# TAG = { $datafile.IO.extension('').Str }\n";
@@ -300,9 +307,13 @@ class Import is export {
 				@y.push: @w[1].Num;
 			}
 			my $max = @y.max;	
+			next if $max.Num == 0;
+			$empty--;
 			@zone = (@x Z @y.map({ $_/$max}))>>.join(" ").join("\n");
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
+			last if @lines.elems <= 0;
+			LAST { note "processed zones: $proc/{ @ntaus.elems }, $empty empty" }
 		}
 		return @files.sort.reverse
 	}
