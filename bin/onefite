@@ -848,7 +848,7 @@ multi MAIN  ('fit',
     shell "mv $name.zip $zip-to" unless $name eq $zip-to;
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	define-alias($engine,$ali) if $dali.so;
+	define-alias($engine,$dali) if $dali.so;
     exit;
 }
 
