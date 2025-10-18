@@ -745,8 +745,11 @@ multi MAIN  ('fit',
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { 
-			say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json or ./aliases.json"; 
-			say %aliases.keys;  
+			say qq:to/MSG/;
+{'-' x 80}
+function alias not found in { ::('OFE-PATH') }/../etc/aliases.json or ./aliases.json 
+{ %aliases.keys }
+			MSG
 			exit(1);
 		}
     }
