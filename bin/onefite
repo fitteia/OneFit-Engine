@@ -777,7 +777,7 @@ multi MAIN  ('fit',
 		say qq:to/MSG/;
 $!  
 {'-' x 80}
-{ 'ofe-tmp/compile.log'.IO.lines.grep(/undeclared/).map({ .words[6].subst(';','') }) }
+{ 'ofe-tmp/compile.log'.IO.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'') ~ '()' }).join(',') }
 {'-' x 80}
 Consider using --aux-code=\"AuxCode-file.c, double f1(), f2(),...\"
 to add the undeclared functions";
