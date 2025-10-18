@@ -744,7 +744,15 @@ multi MAIN  ('fit',
     if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) {
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
-		else { say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; say %aliases.keys;  }
+		else { 
+			say qq:to/MSG/;
+{'-' x 80}
+function alias not found in { ::('OFE-PATH') }/../etc/aliases.json or ./aliases.json 
+{ %aliases.keys }
+{'-' x 80}
+MSG
+			exit(1);
+		}
     }
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
 		note "you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
@@ -763,20 +771,33 @@ multi MAIN  ('fit',
 	}
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
-    $engine.fit(
-		:no-plot($no-plot),
-		:autox($autox or $autoxy),
-		:autoy($autoy or $autoxy),
-		:logx($loglin or $loglog),
-		:logy($linlog or $loglog),
-		:quiet($quiet)
-    );
+    try {
+		$engine.fit(
+			:no-plot($no-plot),
+			:autox($autox or $autoxy),
+			:autoy($autoy or $autoxy),
+			:logx($loglin or $loglog),
+			:logy($linlog or $loglog),
+			:quiet($quiet)
+    	);
+	} 
+	if $! {
+		my $undeclared = "ofe-tmp/compile.log".IO.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'',:g) ~ '()' }).join(','); 
+		say qq:to/MSG/;
+$!  
+{'-' x 80}
+Consider using --aux-code=\"AuxCode-file.c, double $undeclared, ...\"
+to add the undeclared functions
+{'-' x 80}
+MSG
+		exit(1);
+	}
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	define-alias($engine,$dali);
+	define-alias($engine,$dali) if $dali.so;
     exit;
 }
 
@@ -807,11 +828,26 @@ multi MAIN  ('fit',
 	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
 	if $export {
-		"data-{$input-file.IO.extension('').Str }.txt".IO.spurt: $engine.h<Dados>;
-		note "data exported to: data-{ $input-file.IO.extension('').Str }.txt";
-		"AuxCode-{$input-file.IO.extension('').Str }.c".IO.spurt: $engine.h<AuxCode>;
-		note "AuxCode exported to: Auxcode-{ $input-file.IO.extension('').Str }.c";
+		my $basename = $input-file.IO.extension("").Str; 
+		"data-$basename.txt".IO.spurt: $engine.h<Dados>;
+		"AuxCode-$basename.c".IO.spurt: $engine.h<AuxCode>;
+		note qq:to/MSG/;
+{'-' x 80}
+data exported to: data-$basename.txt
+AuxCode exported to: Auxcode-$basename.c
+{'-' x 80}
+MSG
 	}
+	else {
+		my $basename = $input-file.IO.extension("").Str; 
+		note qq:to/MSG/;
+{'-' x 80}
+consider using --export to export data to: data-$basename.txt
+and to export AuxCode to: Auxcode-$basename.c
+{'-' x 80}
+MSG
+	}
+
     $engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
     $engine.fit(
@@ -827,7 +863,7 @@ multi MAIN  ('fit',
     shell "mv $name.zip $zip-to" unless $name eq $zip-to;
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	define-alias($engine,$dali);
+	define-alias($engine,$dali) if $dali.so;
     exit;
 }
 
