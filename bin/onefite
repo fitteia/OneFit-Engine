@@ -749,6 +749,7 @@ multi MAIN  ('fit',
 {'-' x 80}
 function alias not found in { ::('OFE-PATH') }/../etc/aliases.json or ./aliases.json 
 { %aliases.keys }
+{'-' x 80}
 MSG
 			exit(1);
 		}
@@ -786,7 +787,8 @@ MSG
 $!  
 {'-' x 80}
 Consider using --aux-code=\"AuxCode-file.c, double $undeclared, ...\"
-to add the undeclared functions";
+to add the undeclared functions
+{'-' x 80}
 MSG
 		exit(1);
 	}
@@ -826,14 +828,24 @@ multi MAIN  ('fit',
 	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
 	if $export {
-		"data-{$input-file.IO.extension('').Str }.txt".IO.spurt: $engine.h<Dados>;
-		note "data exported to: data-{ $input-file.IO.extension('').Str }.txt";
-		"AuxCode-{$input-file.IO.extension('').Str }.c".IO.spurt: $engine.h<AuxCode>;
-		note "AuxCode exported to: Auxcode-{ $input-file.IO.extension('').Str }.c";
+		my $basename = $input-file.IO.extension("").Str; 
+		"data-$basename.txt".IO.spurt: $engine.h<Dados>;
+		"AuxCode-$basename.c".IO.spurt: $engine.h<AuxCode>;
+		note qq:to/MSG/;
+{'-' x 80}
+data exported to: data-$basename.txt
+AuxCode exported to: Auxcode-$basename.c
+{'-' x 80}
+MSG
 	}
 	else {
-		note "consider using --export to export data to: data-{ $input-file.IO.extension('').Str }.txt";
-		note "and to export AuxCode to: Auxcode-{ $input-file.IO.extension('').Str }.c";
+		my $basename = $input-file.IO.extension("").Str; 
+		note qq:to/MSG/;
+{'-' x 80}
+consider using --export to export data to: data-$basename.txt
+and to export AuxCode to: Auxcode-$basename.c
+{'-' x 80}
+MSG
 	}
 
     $engine.Num($npts) if $npts.Bool;
