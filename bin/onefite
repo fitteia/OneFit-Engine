@@ -772,14 +772,18 @@ multi MAIN  ('fit',
 			:logy($linlog or $loglog),
 			:quiet($quiet)
     	);
-	} or die qq:to/MSG/;
-		$!  
-		{'-' x 60}
-		{ 'ofe-tmp/compile.log'.IO.slurp }
-		{'-' x 60}
-		Consider using --aux-code=\"AuxCode-file.c, double f1(), f2(),...\"
-		to add the undeclared functions";
-	MSG
+	} 
+	if $! {
+		say qq:to/MSG/;
+$!  
+{'-' x 60}
+{ 'ofe-tmp/compile.log'.IO.slurp }
+{'-' x 60}
+Consider using --aux-code=\"AuxCode-file.c, double f1(), f2(),...\"
+to add the undeclared functions";
+MSG
+		exit;
+	}
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
