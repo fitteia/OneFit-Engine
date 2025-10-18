@@ -745,7 +745,7 @@ multi MAIN  ('fit',
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { 
-			say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json"; 
+			say "function alias not found in { ::('OFE-PATH') }/../etc/aliases.json or ./aliases.json"; 
 			say %aliases.keys;  
 			exit(1);
 		}
@@ -792,7 +792,7 @@ MSG
 
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	define-alias($engine,$dali);
+	define-alias($engine,$dali) if $dali.so;
     exit;
 }
 
@@ -828,6 +828,12 @@ multi MAIN  ('fit',
 		"AuxCode-{$input-file.IO.extension('').Str }.c".IO.spurt: $engine.h<AuxCode>;
 		note "AuxCode exported to: Auxcode-{ $input-file.IO.extension('').Str }.c";
 	}
+	else {
+		note "consider using --export to export data to: data-{ $input-file.IO.extension('').Str }.txt";
+		note "and to export AuxCode to: Auxcode-{ $input-file.IO.extension('').Str }.c";
+	}
+
+	}
     $engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
     $engine.fit(
@@ -843,7 +849,7 @@ multi MAIN  ('fit',
     shell "mv $name.zip $zip-to" unless $name eq $zip-to;
     shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	define-alias($engine,$dali);
+	define-alias($engine,$ali) if $dali.so;
     exit;
 }
 
