@@ -309,7 +309,7 @@ class Import is export {
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 			last if @lines.elems <= 0;
-			LAST { note "processed zones: $proc/@ntaus.elems, $empty empty" }
+			LAST { note "processed zones: $proc/{ @ntaus.elems }, $empty empty" }
 		}
 		return @files.sort.reverse
 	}
