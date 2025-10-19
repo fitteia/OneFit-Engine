@@ -802,7 +802,8 @@ MSG
 }
 
 multi MAIN  ('fit',
-     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
+#Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
+     Str  $input-file, # name of the (sav or json) to compile
      Str  :$fit-methods = "simp scan min minos",
      Bool :$no-plot,
      Bool :$autox,
@@ -820,6 +821,10 @@ multi MAIN  ('fit',
 	 Str  :define-alias(:$dali)="",
 	 *%_
     ){
+	do {
+		note "$input-file dosen't exits!";
+		exit(1);
+	} unless $input-file.IO.e;
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
