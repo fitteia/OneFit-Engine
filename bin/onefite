@@ -840,6 +840,7 @@ multi MAIN  ('fit',
 {'-' x 80}
 I am not sure about your list of arguments: \"{ @*ARGS[0] ~ ' "' ~ @*ARGS[1] ~ '" ' ~ @*ARGS[2..*].join(' ') }\" 
 { @*ARGS[1].contains(':') ?? 'I think you mean \'onefite ' ~ @args.join(' ') ~ '\''  !! ''}
+{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, or { '" ' ~ @*ARGS[1] ~ '"'} also work
 {'-' x 80}
 MSG
 		}
