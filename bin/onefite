@@ -805,10 +805,10 @@ multi MAIN  ('fit',
      Str  $input-file where {
 		my $file = $input-file; 
 		try { 
-			$input-file.IO.e 
+			$file.IO.e 
 		} 
 		if $! {
-			"$input-file dosen't exist!"; 
+			"$file dosen't exist!"; 
 			exit(1); 
 		}
 	 }, # name of the (sav or json) to compile
