@@ -822,7 +822,7 @@ multi MAIN  ('fit',
 	 *%_
     ){
 	do {
-		note "file $input-file dosen't exits!";
+		note "file $input-file dosen't exist!";
 		exit(1);
 	} unless $input-file.IO.e;
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -833,14 +833,22 @@ multi MAIN  ('fit',
 	}
 	if $! {
 		my @args = @*ARGS;
+		my $msg;
 		if @*ARGS[1].contains(':') {
 			@args[1] = '"alias' ~ @args[1] ~ '"';
+			$msg = qq:to/MSG/;
+{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, or { '" ' ~ @*ARGS[1] ~ '"'} also work
+MSG
+		}
+		else {
+			@args[1] = '"<missing function>" ' ~ @args[1] ;
+			$msg = "";
 		}
 		say qq:to/MSG/;
 {'-' x 80}
 I am not sure about your list of arguments: \"{ @*ARGS[0] ~ ' "' ~ @*ARGS[1] ~ '" ' ~ @*ARGS[2..*].join(' ') }\" 
 { @*ARGS[1].contains(':') ?? 'I think you mean \'onefite ' ~ @args.join(' ') ~ '\''  !! ''}
-{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, or { '" ' ~ @*ARGS[1] ~ '"'} also work
+$msg
 {'-' x 80}
 MSG
 		exit(1)
