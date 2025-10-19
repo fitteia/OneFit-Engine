@@ -837,20 +837,22 @@ multi MAIN  ('fit',
 		if @*ARGS[1].contains(':') {
 			@args[1] = '"alias' ~ @args[1] ~ '"';
 			$msg = qq:to/MSG/;
-{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, or { '" ' ~ @*ARGS[1] ~ '"'} also work
+{'-' x 80}
+I am not sure about your list of arguments: \"{ @*ARGS[0] ~ ' "' ~ @*ARGS[1] ~ '" ' ~ @*ARGS[2..*].join(' ') }\" 
+{ @*ARGS[1].contains(':') ?? 'I think you mean \'onefite ' ~ @args.join(' ') ~ '\''  !! ''}
+{'-' x 80}
 MSG
 		}
 		else {
 			@args[1] = '"<missing function>" ' ~ @args[1] ;
-			$msg = "";
-		}
-		say qq:to/MSG/;
+			$msg = qq:to/MSG/;
 {'-' x 80}
-I am not sure about your list of arguments: \"{ @*ARGS[0] ~ ' "' ~ @*ARGS[1] ~ '" ' ~ @*ARGS[2..*].join(' ') }\" 
-{ @*ARGS[1].contains(':') ?? 'I think you mean \'onefite ' ~ @args.join(' ') ~ '\''  !! ''}
-$msg
+I am not sure about your list of arguments: \"{ @*ARGS[0..*].join(' ') }\" 
+I think you mean \'onefite {  @args.join(' ') ~ '\''  !! ''}
 {'-' x 80}
 MSG
+		}
+		say $msg;
 		exit(1)
 	}
 	$input-file.IO.copy("$work-folder/$name/$input-file");
