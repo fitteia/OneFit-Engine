@@ -802,7 +802,15 @@ MSG
 }
 
 multi MAIN  ('fit',
-     Str  $input-file where { $input-file.IO.e or { "$input-file dosen't exist!"; exit(1) }}, # name of the (sav or json) to compile
+     Str  $input-file where { 
+		 try { 
+			 $input-file.IO.e 
+		 } 
+		 if $! {
+			 "$input-file dosen't exist!"; 
+			 exit(1); 
+		 }
+	 }, # name of the (sav or json) to compile
      Str  :$fit-methods = "simp scan min minos",
      Bool :$no-plot,
      Bool :$autox,
