@@ -834,7 +834,7 @@ multi MAIN  ('fit',
 		say qq:to/MSG/;
 {'-' x 80}
 I am not sure it you about you list of arguments: \"{ @*ARGS }\" 
-{ @*ARGS[1].contains(':') ?? 'I think you mean onefite ' ~ @args.join(' ')  !! ''}
+{ @*ARGS[1].contains(':') ?? 'I think you mean \'onefite ' ~ @args.join(' ') ~ '\''  !! ''}
 {'-' x 80}
 MSG
 		exit(1)
