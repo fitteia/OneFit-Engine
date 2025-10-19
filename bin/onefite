@@ -741,7 +741,7 @@ multi MAIN  ('fit',
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
 	%aliases = %aliases.Slip, from-json("{$*CWD}/aliases.json".IO.slurp).Hash.Slip  if "{$*CWD}/aliases.json".IO.e; 
 
-    if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) {
+    if $function.contains(/^ <ws> \w* <ws> ':' <ws> /) {
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { 
@@ -754,6 +754,14 @@ MSG
 			exit(1);
 		}
     }
+	else {
+		say qq:to/MSG/;
+{'-' x 80}
+$function contains ':' but I am not sure it referis to an alias to a function included in aliases.json library
+consider using \"alias\"$function
+{'-' x 80}
+MSG
+	}
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
 		note "you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
 		$global = True;
@@ -1303,6 +1311,15 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 	[--define-alias|--dali=<Str>] adds alias Str do the function used to fit the date in the ./aliases.json file. Overwrites exiting alias
 	[--export] to write data and AuxCode in files for later use with onefite fit <funtion>
    	[--aux-code] accepts the name of the file with the AuxCode and the new fitting functions declarations	
+
+	Examples
+
+	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
+	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
+y
+	onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
+	onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
+
 
 =end code
 
