@@ -719,7 +719,7 @@ multi MAIN  ('fit',
 	Str  :$aux-code = "",
 	*%_
     ){
-	 note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -754,14 +754,6 @@ MSG
 			exit(1);
 		}
     }
-	else {
-		say qq:to/MSG/;
-{'-' x 80}
-$function contains ':' but I am not sure it referis to an alias to a function included in aliases.json library
-consider using \"alias\"$function
-{'-' x 80}
-MSG
-	}
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
 		note "you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
 		$global = True;
@@ -831,7 +823,17 @@ multi MAIN  ('fit',
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-	"$work-folder/$name".IO.mkdir;
+	try {
+		"$work-folder/$name".IO.mkdir;
+	}
+	if $! {
+		say qq:to/MSG/;
+{'-' x 80}
+I am not sure it you about you list of arguments: \"@*ARGS\" 
+{'-' x 80}
+MSG
+		exit(1)
+	}
 	$input-file.IO.copy("$work-folder/$name/$input-file");
 	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
