@@ -829,7 +829,7 @@ multi MAIN  ('fit',
 	if $! {
 		say qq:to/MSG/;
 {'-' x 80}
- am not sure it you about you list of arguments: \"{ @*ARGS }\" 
+I am not sure it you about you list of arguments: \"{ @*ARGS }\" 
 {'-' x 80}
 MSG
 		exit(1)
