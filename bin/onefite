@@ -794,7 +794,7 @@ MSG
 			}
 			else {
 				my @arguments = $function.split(/ ')' <ws> '=' /).head.split(/'('/).tail.split(',');
-				@arguments.push: $_.words.tail.subst(';','');
+				@arguments.push: $_.words.tail.subst(/ ';'|'\'','',:g);
 				$msg = qq:to/MSG/;
 Consider resetting your function's arguments list to ({ @arguments.join(', ') })
 MSG
