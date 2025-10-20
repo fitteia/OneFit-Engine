@@ -428,7 +428,7 @@ class Import is export {
 		for 0 ..^@Ys.elems {
 			my $N = @Ys[$_].elems;
 			my $Y2 = @Ys[$_].map({ $_ ** 2 }).sum; 
-			if $err.contains("std") {
+			if $err.contains(/ 'std' | 'standard' <ws> 'deviation' /) {
 				my $mean = @Ys[$_].sum/$N;
 				@errs[$_]	= sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 			}
