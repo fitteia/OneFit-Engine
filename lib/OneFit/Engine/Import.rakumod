@@ -55,6 +55,8 @@ class Import is export {
 					if %!options<R1> { @files.push: self.import('ist-ffc-R1', file => $file).Slip }
 					else { @files.push: self.import('ist-ffc', file => $file).Slip }
 				}
+				when 'sav' { note "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
+				when 'json' { note "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
 				default {
 		   			@files.push: $file;
 		   			$file.IO.copy("{self.path}/$file");
@@ -346,23 +348,35 @@ class Import is export {
 			self.is-sdf($file) ?? "stelar-sdf" !! 
 			self.is-ffc($file) ?? 'ist-ffc' !! 
 			self.is-sef-Mz($file) ?? "stelar-sef-Mz" !! 
-			self.is-sef-R1($file) ?? "stelar-sef-R1" !! "";	
+			self.is-sef-R1($file) ?? "stelar-sef-R1" !! 
+			self.is-sav($file) ?? "sav" !!
+			self.is-json($file) ?? "json" !! "";	
 	}
 
+	method is-sav ($file) { return $file.IO.extension.contains("sav") }
+	
+	method is-json ($file) { return $file.IO.extension.contains("json") }
+	
 	method is-hdf5 ($file)  { 
 		return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A); 
 	}
+	
 	method is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
+	
 	method is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
+	
 	method is-sdf ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) 
 	}
+	
 	method is-sef-R1 ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) 
 	}
+	
 	method is-sef-Mz ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) 
 	}
+	
 	method is-ffc ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/:i endtau|FFC001/) 
 	}
