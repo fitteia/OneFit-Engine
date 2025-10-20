@@ -459,9 +459,7 @@ class Import is export {
 			$err = sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 		}
 		elsif $err.contains(/'avg' | 'average'/) {
-			note qq:to/MSG/;
-using the average of the absolute value of your dependent variable to calculate its uncertainty
-MSG
+			note "using the average of the absolute value of your dependent variable to calculate its uncertainty";
 			my @Y;
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
