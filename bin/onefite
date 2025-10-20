@@ -802,7 +802,7 @@ MSG
 		}
 		say qq:to/MSG/;
 $! 
-{@errors.join("\n")};
+{@errors.join("\n")}
 {'-' x 80}
 $msg
 {'-' x 80}
