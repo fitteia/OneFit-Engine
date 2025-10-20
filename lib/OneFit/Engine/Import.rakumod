@@ -445,7 +445,7 @@ class Import is export {
 	sub set-err($filename,$err is copy) {
 		my $tmp = "/tmp/{$*PID}-lixo.txt";	
 		$filename.IO.copy($tmp);
-		if $err.contains("std") {
+		if $err.contains(/'std' | 'standard deviation'/) {
 			my @Y;
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
@@ -458,7 +458,7 @@ class Import is export {
 			my $Y2 = @Y.map({ $_ ** 2 }).sum; 
 			$err = sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 		}
-		elsif $err.contains("avg") {
+		elsif $err.contains(/'avg' | 'average'/) {
 			my @Y;
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
@@ -469,7 +469,7 @@ class Import is export {
 			my $N=@Y.elems;
 			$err = @Y.sum/$N*$err.split("%").head.Num/100;
 		}
-		elsif $err.contains("%") and !$err.contains("avg") {
+		elsif $err.contains("%") and !$err.contains(/ 'avg' | 'average'/) {
 			$err = '$2*' ~ $err.subst("%","").Num /100 ;
 		}
 		else { $err = $err }
