@@ -719,7 +719,7 @@ multi MAIN  ('fit',
 	Str  :$aux-code = "",
 	*%_
     ){
-	 note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -741,7 +741,7 @@ multi MAIN  ('fit',
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
 	%aliases = %aliases.Slip, from-json("{$*CWD}/aliases.json".IO.slurp).Hash.Slip  if "{$*CWD}/aliases.json".IO.e; 
 
-    if $function.contains(/^ <ws> \w* <ws> ':' <ws>/) {
+    if $function.contains(/^ <ws> \w* <ws> ':' <ws> /) {
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { 
@@ -782,12 +782,29 @@ MSG
     	);
 	} 
 	if $! {
-		my $undeclared = "ofe-tmp/compile.log".IO.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'',:g) ~ '()' }).join(','); 
-		say qq:to/MSG/;
-$!  
-{'-' x 80}
+		my @errors = "ofe-tmp/compile.log".IO.lines.grep(/ error ':' /).map({ .split(/error ':'/).tail.split(';').head  });
+		my $msg;
+		for @errors {
+			if $_.contains('function') {
+				my $undeclared = "ofe-tmp/compile.log".IO.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'',:g) ~ '()' }).join(','); 
+				$msg = qq:to/MSG/;
 Consider using --aux-code=\"AuxCode-file.c, double $undeclared, ...\"
 to add the undeclared functions
+MSG
+			}
+			else {
+				my @arguments = $function.split(/ ')' <ws> '=' /).head.split(/'('/).tail.split(',');
+				@arguments.push: $_.words.tail.subst(/ ';'|'\''/,'',:g);
+				$msg = qq:to/MSG/;
+Consider resetting your function's arguments list to ({ @arguments.join(', ') })
+MSG
+			}
+		}
+		say qq:to/MSG/;
+$! 
+{@errors.join("\n")}
+{'-' x 80}
+$msg
 {'-' x 80}
 MSG
 		exit(1);
@@ -802,7 +819,8 @@ MSG
 }
 
 multi MAIN  ('fit',
-     Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
+#	 Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
+     Str  $input-file, # name of the (sav or json) to compile
      Str  :$fit-methods = "simp scan min minos",
      Bool :$no-plot,
      Bool :$autox,
@@ -820,10 +838,41 @@ multi MAIN  ('fit',
 	 Str  :define-alias(:$dali)="",
 	 *%_
     ){
+	do {
+		note "file $input-file dosen't exist!";
+		exit(1);
+	} unless $input-file.IO.e;
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
-	"$work-folder/$name".IO.mkdir;
+	try {
+		"$work-folder/$name".IO.mkdir;
+	}
+	if $! {
+		my @args = @*ARGS;
+		my $msg;
+		if @*ARGS[1].contains(':') {
+			@args[1] = '"alias' ~ @args[1] ~ '"';
+			$msg = qq:to/MSG/;
+{'-' x 80}
+I am not sure about your list of arguments: \"{ @*ARGS[0] ~ ' "' ~ @*ARGS[1] ~ '" ' ~ @*ARGS[2..*].join(' ') }\" 
+{ @*ARGS[1].contains(':') ?? 'I think you mean \'onefite ' ~ @args.join(' ') ~ '\''  !! ''}
+{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, or { '" ' ~ @*ARGS[1] ~ '"'} also work
+{'-' x 80}
+MSG
+		}
+		else {
+			@args[1] = '"<missing function>" ' ~ @args[1] ;
+			$msg = qq:to/MSG/;
+{'-' x 80}
+I am not sure about your list of arguments: \"{ @*ARGS[0..*].join(' ') }\" 
+I think you mean \'onefite {  @args.join(' ') }\' 
+{'-' x 80}
+MSG
+		}
+		say $msg;
+		exit(1)
+	}
 	$input-file.IO.copy("$work-folder/$name/$input-file");
 	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
 #	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
@@ -1303,6 +1352,15 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 	[--define-alias|--dali=<Str>] adds alias Str do the function used to fit the date in the ./aliases.json file. Overwrites exiting alias
 	[--export] to write data and AuxCode in files for later use with onefite fit <funtion>
    	[--aux-code] accepts the name of the file with the AuxCode and the new fitting functions declarations	
+
+	Examples
+
+	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
+	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
+y
+	onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
+	onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
+
 
 =end code
 
