@@ -351,7 +351,7 @@ class Import is export {
 			self.is-sdf($file) ?? "stelar-sdf" !! 
 			self.is-ffc($file) ?? 'ist-ffc' !! 
 			self.is-sef-Mz($file) ?? "stelar-sef-Mz" !! 
-			self.is-sef-R1($file) ?? "stelar-sef-R1" !! !! ""; 
+			self.is-sef-R1($file) ?? "stelar-sef-R1" !! ""; 
 	}
 
 	method is-sav ($file) { return $file.IO.extension.contains("sav") }
