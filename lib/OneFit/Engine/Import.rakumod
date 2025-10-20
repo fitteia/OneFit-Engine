@@ -445,7 +445,7 @@ class Import is export {
 	sub set-err($filename,$err is copy) {
 		my $tmp = "/tmp/{$*PID}-lixo.txt";	
 		$filename.IO.copy($tmp);
-		if $err.contains(/'std' | 'standard deviation'/) {
+		if $err.contains(/'std' | 'standard' <ws> 'deviation'/) {
 			note "using the standard deviation of your dependent variable to calculate its uncertainty";
 			my @Y;
 			for $filename.IO.lines(:close) {
