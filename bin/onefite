@@ -782,9 +782,11 @@ MSG
     	);
 	} 
 	if $! {
+		my @errors = "ofe-tmp/compile.log".IO.lines.grep(/error/)>>.split(':')[2];
 		my $undeclared = "ofe-tmp/compile.log".IO.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'',:g) ~ '()' }).join(','); 
 		say qq:to/MSG/;
-$!  
+$! 
+say @erros;
 {'-' x 80}
 Consider using --aux-code=\"AuxCode-file.c, double $undeclared, ...\"
 to add the undeclared functions
