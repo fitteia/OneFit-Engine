@@ -1357,9 +1357,23 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 
 	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
 	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
-y
+
 	onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
 	onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
+
+	onefite fit "a: 1exp" file.txt --autox --logx --autoy
+	onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
+	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
+	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
+	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="standard deviation" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std split at 5" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% avg" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% average" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5"
 
 
 =end code
