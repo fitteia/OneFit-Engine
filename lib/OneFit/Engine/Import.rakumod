@@ -36,7 +36,7 @@ class Import is export {
 			given self.is-type($file) {
 				note "\nFile $file is type: ", $_ unless $quiet;
 				when 'sav' { note "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
-				when 'json' { note "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
+				when 'json' { note "{'-' x 80}\nyou cannot define a function to fit a fitteia json file\n{'-' x 80}"; exit(1) }
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
 					shell "unzip -jo $file";
@@ -342,15 +342,16 @@ class Import is export {
 
 
 	method is-type ($file)  {
-	   	return self.is-hdf5($file) ?? 'stelar-hdf5' !! 
+	   	return 
+			self.is-sav($file) ?? "sav" !!
+			self.is-json($file) ?? "json" !! 	
+			self.is-hdf5($file) ?? 'stelar-hdf5' !! 
 			self.is-zip($file) ?? 'zip' !! 
 			self.is-block($file) ?? 'fitteia-blocks' !! 
 			self.is-sdf($file) ?? "stelar-sdf" !! 
 			self.is-ffc($file) ?? 'ist-ffc' !! 
 			self.is-sef-Mz($file) ?? "stelar-sef-Mz" !! 
-			self.is-sef-R1($file) ?? "stelar-sef-R1" !! 
-			self.is-sav($file) ?? "sav" !!
-			self.is-json($file) ?? "json" !! "";	
+			self.is-sef-R1($file) ?? "stelar-sef-R1" !! !! ""; 
 	}
 
 	method is-sav ($file) { return $file.IO.extension.contains("sav") }
