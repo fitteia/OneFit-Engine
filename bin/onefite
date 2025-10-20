@@ -1142,6 +1142,7 @@ sub define-alias($engine,$dali) {
 			%aliases = from-json("./aliases.json".IO.slurp) if "./aliases.json".IO.e;
 			%aliases{$dali}=$value;
 			"./aliases.json".IO.spurt: to-json(%aliases, :sorted-keys);
+			note "alias $dali replaced in ./aliases.json";
 		}
 }
 
