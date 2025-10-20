@@ -460,7 +460,6 @@ class Import is export {
 		}
 		elsif $err.contains(/'avg' | 'average'/) {
 			note qq:to/MSG/;
-{'-' x 80}
 using the average of the absolute value of your dependent variable to calculate its uncertainty
 MSG
 			my @Y;
