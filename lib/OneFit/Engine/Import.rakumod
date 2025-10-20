@@ -35,8 +35,8 @@ class Import is export {
 		for @input-files -> $file {
 			given self.is-type($file) {
 				note "\nFile $file is type: ", $_ unless $quiet;
-				when 'sav' { note "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
-				when 'json' { note "{'-' x 80}\nyou cannot define a function to fit a fitteia json file\n{'-' x 80}"; exit(1) }
+				when 'sav' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
+				when 'json' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia json file\n{'-' x 80}"; exit(1) }
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
 					shell "unzip -jo $file";

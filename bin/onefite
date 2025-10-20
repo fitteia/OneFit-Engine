@@ -839,7 +839,7 @@ multi MAIN  ('fit',
 	 *%_
     ){
 	do {
-		note "file $input-file dosen't exist!";
+		say "{'-' x 80}\nfile $input-file dosen't exist\n{'-' x 80}";
 		exit(1);
 	} unless $input-file.IO.e;
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
