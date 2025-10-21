@@ -36,10 +36,12 @@ class Import is export {
 		for @input-files -> $file {
 			given self.is-type($file) {
 				note "\nFile $file is type: ", $_ unless $quiet;
-				when 'sav' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
-				#			when 'json' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia json file\n{'-' x 80}"; exit(1) }
+				when 'sav' {
+					shell "onefite convert $file ofe-tmp-json.json" if $file.IO.e;
+					return self.import( @infiles => [$file]);
+				}
 				when 'json' { 
-					my %json = from-json( $file.IO.slurp);
+					my %json = from-json( $file.IO.slurpi(:close) );
 					my $name = "ofe-tmp-json.txt";
 					$name.IO.spurt: %json<Dados>;
 					my @out = self.import(infiles => [$name]);
