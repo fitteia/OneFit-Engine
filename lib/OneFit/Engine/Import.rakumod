@@ -39,7 +39,7 @@ class Import is export {
 				when 'sav' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
 				#			when 'json' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia json file\n{'-' x 80}"; exit(1) }
 				when 'json' { 
-					my %json = from-json($file);
+					my %json = from-json($file.IO.slurp);
 					my $name = "/tmp/json-{ $*PID }.json";
 					$name.IO.spurt: %json<Dados>;
 					my @out = self.import(($name));
