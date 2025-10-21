@@ -42,7 +42,7 @@ class Import is export {
 					my %json = from-json( $file.IO.slurp);
 					my $name = "/tmp/json-{ $*PID }.json";
 					$name.IO.spurt: %json<Dados>;
-					my @out = self.import(infiles => ($name));
+					my @out = self.import(infiles => [$name]);
 					unlink $name;
 					return @out;
 				}
