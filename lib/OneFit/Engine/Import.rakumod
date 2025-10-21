@@ -41,11 +41,10 @@ class Import is export {
 					return self.import( infiles => ["ofe-tmp-json.json"] );
 				}
 				when 'json' { 
-					my %json = from-json( $file.IO.slurpi(:close) );
+					my %json = from-json( $file.IO.slurp(:close) );
 					my $name = "ofe-tmp-json.txt";
 					$name.IO.spurt: %json<Dados>;
-					my @out = self.import(infiles => [$name]);
-					return @out;
+					return  self.import( infiles => [$name] );
 				}
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
