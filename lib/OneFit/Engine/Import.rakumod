@@ -37,8 +37,14 @@ class Import is export {
 			given self.is-type($file) {
 				note "\nFile $file is type: ", $_ unless $quiet;
 				when 'sav' {
-					shell "onefite convert $file ofe-tmp-json.json" if $file.IO.e;
-					return self.import( infiles => ["ofe-tmp-json.json"] );
+					use Inline::Perl5;
+	    			use CGI:from<Perl5>;
+					my %json;
+	    			my $sav = CGI.new( $file.IO.open );
+	    			for $sav.param { %json{$_} = $sav.param($_) }	 
+					my $name = "ofe-tmp-json.txt";
+					$name.IO.spurt: %json<Dados>;
+					return  self.import( infiles => [$name] );
 				}
 				when 'json' { 
 					my %json = from-json( $file.IO.slurp(:close) );
