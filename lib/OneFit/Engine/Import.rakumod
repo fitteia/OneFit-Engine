@@ -40,7 +40,7 @@ class Import is export {
 				#			when 'json' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia json file\n{'-' x 80}"; exit(1) }
 				when 'json' { 
 					my %json = from-json( $file.IO.slurp);
-					my $name = "/tmp/ofe-tmp-json.txt";
+					my $name = "ofe-tmp-json.txt";
 					$name.IO.spurt: %json<Dados>;
 					my @out = self.import(infiles => [$name]);
 					return @out;
