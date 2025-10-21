@@ -1,5 +1,6 @@
 unit module OneFit::Engine::Import;
 
+use JSON::Fast;
 
 class Import is export {
 	has @!Input-files;
@@ -36,7 +37,15 @@ class Import is export {
 			given self.is-type($file) {
 				note "\nFile $file is type: ", $_ unless $quiet;
 				when 'sav' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia sav file\n{'-' x 80}"; exit(1) }
-				when 'json' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia json file\n{'-' x 80}"; exit(1) }
+				#			when 'json' { say "{'-' x 80}\nyou cannot define a function to fit a fitteia json file\n{'-' x 80}"; exit(1) }
+				when 'json' { 
+					my %json = from-json($file);
+					my $name = "/tmp/json-{ $*PID }.json";
+					$name.IO.spurt: %json<Dados>;
+					@out = self.import(($name));
+					unlink $name;
+					return @out;
+				}
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
 					shell "unzip -jo $file";
