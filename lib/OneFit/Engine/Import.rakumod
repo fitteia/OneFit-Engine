@@ -38,7 +38,7 @@ class Import is export {
 				note "\nFile $file is type: ", $_ unless $quiet;
 				when 'sav' {
 					shell "onefite convert $file ofe-tmp-json.json" if $file.IO.e;
-					return self.import( @infiles => [$file]);
+					return self.import( infiles => [$file]);
 				}
 				when 'json' { 
 					my %json = from-json( $file.IO.slurpi(:close) );
