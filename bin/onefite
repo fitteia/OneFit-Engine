@@ -780,7 +780,8 @@ MSG
 			:logx($loglin or $loglog),
 			:logy($linlog or $loglog),
 			:quiet($quiet)
-		}),
+			) 
+		},
 		:label('+Fitting')
 	);
 	} 
