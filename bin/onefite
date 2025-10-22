@@ -773,14 +773,14 @@ MSG
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     try {
 	with-spinner (
-		&$engine.fit(
+		{ $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
 			:logx($loglin or $loglog),
 			:logy($linlog or $loglog),
 			:quiet($quiet)
-    	),
+    	) }(),
 		:label('+Fitting')
 	);
 	} 
