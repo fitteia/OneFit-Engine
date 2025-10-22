@@ -68,7 +68,6 @@ int First_Make_Individual_Fits(double N, double *par, double no);
 	    fprintf(fout,"%-10s",val);				\
 		strcpy(val,"");							\
 	    sscanf(&s[50],"%s",val);				\
-		strcpy(val,"");							\
 	    fprintf(fout,"%-10s",val);				\
 		strcpy(val,"");							\
 	  }							\
