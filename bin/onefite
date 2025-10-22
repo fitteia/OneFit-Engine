@@ -772,18 +772,14 @@ MSG
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     try {
-	with-spinner (
-		{ $engine.fit(
+		 $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
 			:logx($loglin or $loglog),
 			:logy($linlog or $loglog),
 			:quiet($quiet)
-			) 
-		},
-		:label('+Fitting')
-	);
+		);
 	} 
 	if $! {
 		my @errors = "ofe-tmp/compile.log".IO.lines.grep(/ error ':' /).map({ .split(/error ':'/).tail.split(';').head  });
@@ -1148,31 +1144,6 @@ sub define-alias($engine,$dali) {
 			"./aliases.json".IO.spurt: to-json(%aliases, :sorted-keys);
 			note "{'-' x 80}\nalias $dali replaced in ./aliases.json\n{'-' x 80}";
 		}
-}
-
-
-sub with-spinner(&work, :$label = 'Working', :$fps = 12, :@frames = ['|','/','-','|','\\','-'] ) {
-    my $done = Promise.new;
-    my $i = 0;
-    my $tick = 1 / $fps;
-
-    # spinner on STDERR so normal output stays clean
-    my $spinner = start {
-        loop {
-            last if $done.status ~~ Kept|Broken;
-            $*ERR.print: "\r$label " ~ @frames[$i++ % @frames.elems] ~ ' ';
-            $*ERR.flush;
-            sleep $tick;
-        }
-    };
-
-    my $p = start { work() };            # run the work concurrently
-    $p.then({ $done.keep(True) });       # stop spinner when done
-    my $result = $p.result;              # wait for the work
-
-    await $spinner;                      # let spinner exit cleanly
-    $*ERR.say: "\r$label done   ";
-    $result
 }
 
 
