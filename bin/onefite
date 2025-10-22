@@ -1150,8 +1150,7 @@ sub define-alias($engine,$dali) {
 }
 
 
-sub with-spinner(&work, :$label = 'Working', :$fps = 12,
-                 @frames = '|','/','-','|','\\','-') {
+sub with-spinner(&work, :$label = 'Working', :$fps = 12, :@frames = '|','/','-','|','i\\','-') {
     my $done = Promise.new;
     my $i = 0;
     my $tick = 1 / $fps;
