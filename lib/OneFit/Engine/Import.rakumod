@@ -1,5 +1,6 @@
 unit module OneFit::Engine::Import;
 
+use JSON::Fast;
 
 class Import is export {
 	has @!Input-files;
@@ -35,6 +36,22 @@ class Import is export {
 		for @input-files -> $file {
 			given self.is-type($file) {
 				note "\nFile $file is type: ", $_ unless $quiet;
+				when 'sav' {
+					use Inline::Perl5;
+	    			use CGI:from<Perl5>;
+					my %json;
+	    			my $sav = CGI.new( $file.IO.open );
+	    			for $sav.param { %json{$_} = $sav.param($_) }	 
+					my $name = "ofe-tmp-json.txt";
+					$name.IO.spurt: %json<Dados>;
+					return  self.import( infiles => [$name] );
+				}
+				when 'json' { 
+					my %json = from-json( $file.IO.slurp(:close) );
+					my $name = "ofe-tmp-json.txt";
+					$name.IO.spurt: %json<Dados>;
+					return  self.import( infiles => [$name] );
+				}
 				when 'zip' {
 					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
 					shell "unzip -jo $file";
@@ -340,29 +357,42 @@ class Import is export {
 
 
 	method is-type ($file)  {
-	   	return self.is-hdf5($file) ?? 'stelar-hdf5' !! 
+	   	return 
+			self.is-sav($file) ?? "sav" !!
+			self.is-json($file) ?? "json" !! 	
+			self.is-hdf5($file) ?? 'stelar-hdf5' !! 
 			self.is-zip($file) ?? 'zip' !! 
 			self.is-block($file) ?? 'fitteia-blocks' !! 
 			self.is-sdf($file) ?? "stelar-sdf" !! 
 			self.is-ffc($file) ?? 'ist-ffc' !! 
 			self.is-sef-Mz($file) ?? "stelar-sef-Mz" !! 
-			self.is-sef-R1($file) ?? "stelar-sef-R1" !! "";	
+			self.is-sef-R1($file) ?? "stelar-sef-R1" !! ""; 
 	}
 
+	method is-sav ($file) { return $file.IO.extension.contains("sav") }
+	
+	method is-json ($file) { return $file.IO.extension.contains("json") }
+	
 	method is-hdf5 ($file)  { 
 		return $file.IO.open(:bin).read(8,:close) eq Buf[uint8].new(0x89, 0x48, 0x44, 0x46, 0x0D, 0x0A, 0x1A, 0x0A); 
 	}
+	
 	method is-zip($file)    { return $file.IO.open(:bin).read(4,:close) eq Buf[uint8].new(0x50, 0x4B, 0x03, 0x04) }
+	
 	method is-block ($file) { return $file.IO.slurp(:close).contains(/'#' <ws> DATA <ws>/) }
+	
 	method is-sdf ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/T1MAX/) 
 	}
+	
 	method is-sef-R1 ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/_BRLX__/) 
 	}
+	
 	method is-sef-Mz ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) 
 	}
+	
 	method is-ffc ($file) 	 { 
 		return $file.IO.slurp(:enc('utf8'),:close).contains(/:i endtau|FFC001/) 
 	}
@@ -428,7 +458,7 @@ class Import is export {
 		for 0 ..^@Ys.elems {
 			my $N = @Ys[$_].elems;
 			my $Y2 = @Ys[$_].map({ $_ ** 2 }).sum; 
-			if $err.contains("std") {
+			if $err.contains(/ 'std' | 'standard' <ws> 'deviation' /) {
 				my $mean = @Ys[$_].sum/$N;
 				@errs[$_]	= sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 			}
@@ -445,7 +475,8 @@ class Import is export {
 	sub set-err($filename,$err is copy) {
 		my $tmp = "/tmp/{$*PID}-lixo.txt";	
 		$filename.IO.copy($tmp);
-		if $err.contains("std") {
+		if $err.contains(/'std' | 'standard' <ws> 'deviation'/) {
+			note "using the standard deviation of your dependent variable to calculate its uncertainty";
 			my @Y;
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
@@ -458,7 +489,8 @@ class Import is export {
 			my $Y2 = @Y.map({ $_ ** 2 }).sum; 
 			$err = sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 		}
-		elsif $err.contains("avg") {
+		elsif $err.contains(/'avg' | 'average'/) {
+			note "using the average of the absolute value of your dependent variable to calculate its uncertainty";
 			my @Y;
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
@@ -469,7 +501,7 @@ class Import is export {
 			my $N=@Y.elems;
 			$err = @Y.sum/$N*$err.split("%").head.Num/100;
 		}
-		elsif $err.contains("%") and !$err.contains("avg") {
+		elsif $err.contains("%") and !$err.contains(/ 'avg' | 'average'/) {
 			$err = '$2*' ~ $err.subst("%","").Num /100 ;
 		}
 		else { $err = $err }

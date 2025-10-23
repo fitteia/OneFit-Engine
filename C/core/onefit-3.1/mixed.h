@@ -63,10 +63,13 @@ int First_Make_Individual_Fits(double N, double *par, double no);
 	    /* printf("%d\n",k);	*/			\
 	    sscanf(&s[30],"%s",val);				\
 	    fprintf(fout," %-9s",val);				\
+		strcpy(val,"");						\
 	    sscanf(&s[40],"%s",val);				\
 	    fprintf(fout,"%-10s",val);				\
+		strcpy(val,"");							\
 	    sscanf(&s[50],"%s",val);				\
 	    fprintf(fout,"%-10s",val);				\
+		strcpy(val,"");							\
 	  }							\
 	  fprintf(fout,"\n");					\
 	} else {						\

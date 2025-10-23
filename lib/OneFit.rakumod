@@ -355,7 +355,7 @@ class Engine is export {
 	     @fit-residues.push: "$!path/fit-residues-$_.res".IO.slurp
 	 }
 	 %!engine<fit-residues> = @fit-residues;
-	 say $TXT unless $quiet;
+	 say "{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 	 self
      }
 
