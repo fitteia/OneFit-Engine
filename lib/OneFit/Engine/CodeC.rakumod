@@ -239,7 +239,7 @@ END
 		}
 	}
 	else {
-	   	note "C code extracted compiled with errors (gcc exitcode { $proc.exitcode })!" unless $quiet;
+	   	note "C code extracted compiled with errors (gcc exitcode: { $proc.exitcode })!" unless $quiet;
 		if any(@errors.so, @warnings.so) {
 	    	note "compilation warnings and errors:\n{ @warnings.join('\n') if @warnings.so } { @errors.join('\n') if @errors.so}" unless $quiet;
 		}
