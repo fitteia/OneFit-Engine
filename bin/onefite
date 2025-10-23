@@ -696,7 +696,7 @@ multi MAIN  ('fit',
    	*@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
    *%options
    ){
-	   MAIN('fit',$function,@args,%options);
+	   MAIN('fit',$function,@data-files, %options);
 	   exit(0);
 }	
 multi MAIN  ('fit',
