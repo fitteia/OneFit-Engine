@@ -228,15 +228,23 @@ END
 	"$!path/compile.log".IO(:e).unlink;
 	my $fho = open :a, "$!path/compile.log";
 	my $proc = shell "cd $!path; make ROOT=$path -f $path/etc/OFE/default/makefile gfitn", :out($fho), :err($fho);
-	say $proc.exitcode;
 	$fho.close;
-	if "$!path/compile.log".IO.lines.Array.pop.contains("onefit-user") {
-	    note "C code extracted compiled OK!" unless $quiet
+	my @log-lines="$!path/compile.log".IO.lines;
+	my @warnings = @log-lines.grep(/'warning:'/);
+	my @errors = @log-lines.grep(/'error:'/);
+	if !$proc.exitcode {
+	   	note "C code extracted compiled OK (gcc exitcode: { $proc.exitcode })!" unless $quiet
+		#		if "$!path/compile.log".IO.lines.Array.pop.contains("onefit-user") {
+		if @warnings.so {
+	    	note "compilation warnings:\n{ @warnings.join('\n') }" unless $quiet
+		}
 	}
 	else {
-	    note "C code extracted compiled with errors. Please check the compile.log file for more information." unless $quiet
+	   	note "C code extracted compiled with errors ({ $proc.exitcode })!" unless $quiet
+		if any(@errors.so, @warnings.so) {
+	    	note "compilation warnings and errors:\n{ @warnings.join('\n') if @warnings.so } { @errors.join('\n') if @errors.so}" unless $quiet
+		}
 	}
-	
 	$proc = shell "cd $!path; make ROOT=$path -f $path/etc/OFE/default/makefile clean", :out, :err;
 	self
     }
