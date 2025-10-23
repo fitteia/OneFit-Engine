@@ -772,14 +772,14 @@ MSG
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     try {
-		$engine.fit(
+		 $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
 			:logx($loglin or $loglog),
 			:logy($linlog or $loglog),
 			:quiet($quiet)
-    	);
+		);
 	} 
 	if $! {
 		my @errors = "ofe-tmp/compile.log".IO.lines.grep(/ error ':' /).map({ .split(/error ':'/).tail.split(';').head  });
@@ -819,7 +819,6 @@ MSG
 }
 
 multi MAIN  ('fit',
-#	 Str  $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
      Str  $input-file, # name of the (sav or json) to compile
      Str  :$fit-methods = "simp scan min minos",
      Bool :$no-plot,
@@ -839,7 +838,7 @@ multi MAIN  ('fit',
 	 *%_
     ){
 	do {
-		note "file $input-file dosen't exist!";
+		say "{'-' x 80}\nfile $input-file dosen't exist\n{'-' x 80}";
 		exit(1);
 	} unless $input-file.IO.e;
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -1142,8 +1141,10 @@ sub define-alias($engine,$dali) {
 			%aliases = from-json("./aliases.json".IO.slurp) if "./aliases.json".IO.e;
 			%aliases{$dali}=$value;
 			"./aliases.json".IO.spurt: to-json(%aliases, :sorted-keys);
+			note "{'-' x 80}\nalias $dali replaced in ./aliases.json\n{'-' x 80}";
 		}
 }
+
 
 =begin pod
 
@@ -1357,9 +1358,23 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 
 	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
 	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
-y
+
 	onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
 	onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
+
+	onefite fit "a: 1exp" file.txt --autox --logx --autoy
+	onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
+	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
+	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
+	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="standard deviation" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std split at 5" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% avg" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% average" 
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5"
 
 
 =end code
