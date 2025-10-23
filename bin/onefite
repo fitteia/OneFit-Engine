@@ -24,6 +24,8 @@ use JSON::Fast;
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
+proto MAIN(|) { * };
+
 multi MAIN (Bool :$man!) {
 	my $txt = pod2text $=pod;
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
@@ -175,8 +177,8 @@ multi MAIN ('upgrade',
 	  Bool :$docker = False,
       Int  :p(:$port) = 8142,
       Bool :$test = False,
-	  Bool :$dpkg = True,
-      Str  :m(:$merge-site) = '',
+	  Bool :apt(:apt-get(:$dpkg)) = True,
+      Str  :m(:merge-from(:merge-with(:$merge-site))) = '',
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
@@ -696,12 +698,12 @@ multi MAIN  ('fit',
    	Str  :$tags,
    	Str  :$zip-to,
    	Bool :$no-plot,
-   	Bool :$autox,
-   	Bool :$autoy,
-   	Bool :$autoxy,
-   	Bool :logy(:$linlog),
-   	Bool :logx(:$loglin),
-   	Bool :logxy(:$loglog),
+   	Bool :auto-x(:$autox),
+   	Bool :auto-y(:$autoy),
+   	Bool :auto-xy(:$autoxy),
+   	Bool :logy(:log-y(:ylog(:$linlog))),
+   	Bool :logx(:log-x(:xlog(:$loglin))),
+   	Bool :logxy(:log-xy(:$loglog)),
    	Bool :$global is copy,
 	Str  :$fit-if = "",
 	Str  :$plot-if = "",
@@ -716,7 +718,7 @@ multi MAIN  ('fit',
     Int  :Num(:$npts) = +100,
 	Bool :q(:$quiet) = False,
 	Str  :define-alias(:$dali)="",
-	Str  :$aux-code = "",
+	Str  :AuxCode(:auxcode(:$aux-code)) = "",
 	*%_
     ){
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -822,12 +824,12 @@ multi MAIN  ('fit',
      Str  $input-file, # name of the (sav or json) to compile
      Str  :$fit-methods = "simp scan min minos",
      Bool :$no-plot,
-     Bool :$autox,
-     Bool :$autoy,
-     Bool :$autoxy,
-     Bool :logy(:$linlog),
-     Bool :logx(:$loglin),
-     Bool :logxy(:$loglog),
+     Bool :auto-x(:$autox),
+     Bool :auto-y(:$autoy),
+     Bool :auto-xy(:$autoxy),
+     Bool :logy(:log-y(:ylog(:$linlog))),
+     Bool :logx(:log-x(:xlog(:$loglin))),
+     Bool :logxy(:log-xy(:xy-log(:$loglog))),
      Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
      Str  :$zip-to = $input-file.IO.extension('').Str,
      Str  :$work-folder = '.',
