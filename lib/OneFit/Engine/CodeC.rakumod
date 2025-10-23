@@ -106,7 +106,7 @@ double template1(double x, double a)
 {
   double result;
   result = a;
-  return a;
+  return result;
 }
 
 double template2(double x, double a)
