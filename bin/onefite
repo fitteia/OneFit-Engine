@@ -692,6 +692,16 @@ multi MAIN  ('random',
 
 multi MAIN  ('fit',
 	Str  $function is copy, 
+	'to',
+   	*@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
+   *@args,
+   *%options
+   ){
+	   MAIN('fit',$function,@args,%options);
+	   exit(0);
+}	
+multi MAIN  ('fit',
+	Str  $function is copy, 
    	*@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
    	Str  :data-label(:$data-labels),
    	Str  :$fit-methods = "simp scan min minos",
