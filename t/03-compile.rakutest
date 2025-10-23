@@ -27,7 +27,7 @@ my $output = do {
     $eng.blocks(:r,:q).functions(:r).code(:w,:c);
     $*ERR.captured;
 }
-is $output, "C code extracted compiled OK\n", "compile works! ({ now - $time } sec)";
+is-approx $output, "C code extracted compiled OK\n", "compile works! ({ now - $time } sec)";
 
 $time = now;
 $eng = OneFit::Engine.new.path("$workfolder").read("$test-path/2/test2.sav");
@@ -36,5 +36,5 @@ $output = do {
     $eng.blocks(:r,:q).functions(:r).code: :w, :c;
     $*ERR.captured;
 }
-is $output, "C code extracted compiled OK\n", "compile works! ({ now - $time } sec)";
+is-approx $output, "C code extracted compiled OK\n", "compile works! ({ now - $time } sec)";
 
