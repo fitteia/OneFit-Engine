@@ -105,6 +105,7 @@ class Code is export {
 double template1(double x, double a)
 {
   double result;
+  result = a;
   return a;
 }
 
