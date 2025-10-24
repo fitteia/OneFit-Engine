@@ -1071,23 +1071,23 @@ EOT
 	    	if $result.contains("zone12, 16") { put "OK\n"; }
 	    	else { put "error!\n"; }
 		}
-		else { say "Curl exitcode: $result.exitcode. Uncessefull test of onefite web service!"; }
+		else { say "Curl exitcode: $result.exitcode. Unsuccessefull test of onefite web service!"; }
 	}
 	else {
 	   	my $pid = shell("onefite service PID",:out).out.slurp(:close);
 		if $pid.so {
 			say "onefite is running with PID: $pid";
 			my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
-			#			say $result;
+						say $result;
 	   		$result = shell("cd /tmp && $result");
 			if !$result.exitcode {
 	   			$result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
-			#			say $result;
+						say $result;
 	   			if $result.contains("zone12, 16") { say "localhost web service works OK"; }
 	   			else { say "localhost web service error!"; }
 
 			}
-			else { say "Curl exitcode: $result.exitcode. Uncessefull test of onefite web service!"; }
+			else { say "Curl exitcode: $result.exitcode. Unsuccessefull test of onefite web service!"; }
 		}
 		else { say "onefite service if off in all ports" }
 	}
