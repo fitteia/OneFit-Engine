@@ -1071,7 +1071,7 @@ EOT
 	    	if $result.contains("zone12, 16") { put "OK\n"; }
 	    	else { put "error!\n"; }
 		}
-		else { say "Curl exitcode: { $result.exitcode }. Unsuccessefull test of onefite web service!"; }
+		else { say "Curl exitcode: { $result.exitcode }. Unsuccessfull test of onefite web service!"; }
 	}
 	else {
 	   	my $pid = shell("onefite service PID",:out).out.slurp(:close);
@@ -1087,7 +1087,7 @@ EOT
 	   			else { say "localhost web service error!"; }
 
 			}
-			else { say "Curl exitcode: { $result.exitcode }. Unsuccessefull test of onefite web service!"; }
+			else { say "Curl exitcode: { $result.exitcode }. Unsuccessfull test of onefite web service!"; }
 		}
 		else { say "onefite service if off in all ports" }
 	}
