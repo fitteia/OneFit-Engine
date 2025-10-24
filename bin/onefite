@@ -1062,37 +1062,40 @@ EOT
 	my $service = $daemon ?? shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running)") !! False;
 	if $service {
 	    put "testing localhost onefite web service... ";
-	    my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"stelar-hdf5=no\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
+	    my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
 	    say $result if $verbose;
 	    $result = shell("cd /tmp && $result");
-	    $result = "/tmp/ofe-test.log".IO.slurp(:close);
-	    say $result if $verbose;
-	    if $result.contains("zone12, 16") {
-		put "OK\n";
-	    }
-	    else {
-		put "error!\n";
-	    }
+		if !$result.exitcode {
+		    $result = "/tmp/ofe-test.log".IO.slurp(:close);
+		    say $result if $verbose;
+	    	if $result.contains("zone12, 16") { put "OK\n"; }
+	    	else { put "error!\n"; }
+		}
+		else { say "Curl exitcode: { $result.exitcode }. Unsuccessfull test of onefite web service!"; }
 	}
 	else {
 	   	my $pid = shell("onefite service PID",:out).out.slurp(:close);
 		if $pid.so {
 			say "onefite is running with PID: $pid";
 			my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
-			#			say $result;
+			say $result if $verbose;
 	   		$result = shell("cd /tmp && $result");
-	   		$result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
-			#			say $result;
-	   		if $result.contains("zone12, 16") { say "localhost web service works OK"; }
-	   		else { say "localhost web service error!"; }
-		}					
+			if !$result.exitcode {
+	   			$result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
+				say $result if $verbose;
+	   			if $result.contains("zone12, 16") { say "localhost web service works OK"; }
+	   			else { say "localhost web service error!"; }
+
+			}
+			else { say "Curl exitcode: { $result.exitcode }. Unsuccessfull test of onefite web service!"; }
+		}
 		else { say "onefite service if off in all ports" }
 	}
 	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
 	</tmp/ofe-tmp>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 
 	put "testing command line onefite...";
-	my $result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
+	my $result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --autox --logx", :out).out.slurp(:close);
 	say $result if $verbose;
 	if $result.contains("zone12, 16") {
 	    put "OK\n";
@@ -1100,8 +1103,6 @@ EOT
 	else {
 	    put "error!\n\n";
 	}
-#	$SUDO = "sudo" if any( (fileowner("/tmp/ofe-tmp"), fileowner("/tmp/ofe-test.log"), fileowner("/tmp/OneFit-Engine-test"), fileowner("/tmp/zone12.dat"))>>.contains("root"));
-#	shell "$SUDO rm -fr /tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log " if "/tmp/zone12.dat".IO.e;
 	</tmp/ofe-tmp /tmp/OneFit-Engine-test /tmp/zone12.dat /tmp/ofe-test.log>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 }
 
