@@ -3,6 +3,11 @@
   "authors": [
     "Pedro Sebastião"
   ],
+  "bin": [ 
+	  'onefite', 
+	  'ofe',
+	  'onefit'
+  ],
   "build-depends": [
   ],
   "depends": [
