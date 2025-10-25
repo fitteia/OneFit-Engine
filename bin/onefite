@@ -26,7 +26,7 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
-multi MAIN() { say $*USAGE; }
+multi MAIN() is default { say $*USAGE; }
 
 #multi MAIN ('man') {
 multi MAIN (Bool :$man!) {
