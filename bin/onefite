@@ -29,7 +29,7 @@ proto MAIN(|) { * };
 multi MAIN() { say $*USAGE; }
 
 #multi MAIN ('man') {
-multi MAIN (Bool :$man) {
+multi MAIN (Bool :$man!) {
 	my $txt = pod2text $=pod;
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
 	say $txt;
