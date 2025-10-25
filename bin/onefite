@@ -26,16 +26,18 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
-multi MAIN ('man') {
-#multi MAIN (Bool :$man) {
+multi MAIN() { say $*USAGE; }
+
+#multi MAIN ('man') {
+multi MAIN (Bool :$man) {
 	my $txt = pod2text $=pod;
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
 	say $txt;
 	$txt
 }
 
-multi MAIN ('help') {
-	#multi MAIN (Bool :h(:help($))) {
+#multi MAIN ('help') {
+multi MAIN (Bool :h(:help($))) {
 #        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
 
 	#    my $p= shell "onefite help", :err;
