@@ -26,7 +26,7 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
-#|(is it the man age)
+#|(is it the man page)
 multi MAIN (Bool :$man!) {
 	my $txt = pod2text $=pod;
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
@@ -34,7 +34,8 @@ multi MAIN (Bool :$man!) {
 	$txt
 }
 
-multi MAIN (Bool :h(:help($))!) {
+#|(is it the usage help)
+multi MAIN (Bool :h(:help($))) {
 	say $*USAGE;   
 	note qq:to/END_USAGE/;
     <input-file>     name of the file to be converted (\.sav or \.json)
