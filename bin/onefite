@@ -35,7 +35,9 @@ multi MAIN (Bool :$man!) {
 }
 
 #|(is it the usage help)
-multi MAIN (Bool :h(:help($))) {
+multi MAIN (
+	Bool :h(:help($help)) #= help option true by default 
+) {
 	say $*USAGE;   
 	note qq:to/END_USAGE/;
     <input-file>     name of the file to be converted (\.sav or \.json)
@@ -53,6 +55,7 @@ multi MAIN (Bool :h(:help($))) {
 END_USAGE
 }
 
+#|(list library models)
 multi MAIN ('list',
       	   Bool :q(:$quiet) = False
 	   ){
