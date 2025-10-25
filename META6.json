@@ -4,9 +4,9 @@
     "Pedro Sebastião"
   ],
   "bin": [ 
-	  'onefite', 
-	  'ofe',
-	  'onefit'
+	  "onefite", 
+	  "ofe",
+	  "onefit"
   ],
   "build-depends": [
   ],
