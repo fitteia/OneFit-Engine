@@ -41,7 +41,9 @@ multi MAIN (Bool :h(:help($))!) {
 #        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
 
 	#    my $p= shell "onefite help", :err;
-	#    say $p.err.slurp(:close);
+	#   
+	say $*USAGE;   
+	say $p.err.slurp(:close);
 	note qq:to/END_USAGE/;
     Usage:
         onefite [-h|--help]
@@ -85,8 +87,6 @@ multi MAIN (Bool :h(:help($))!) {
     \"f(x,p1: 2, p2=0.3, p3[5<10]) :[-5;5]=p1*exp(-p2*x)*sin(2*pi*x/p3)\" p1 is initialized to 1, p2 is fixed to 2 p3 will be in the range 5 to 10
 END_USAGE
 }
-
-multi MAIN() is default { say $*USAGE; }
 
 multi MAIN ('list',
       	   Bool :q(:$quiet) = False
