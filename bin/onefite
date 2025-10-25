@@ -26,9 +26,7 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
-multi MAIN() is default { say $*USAGE; }
-
-#multi MAIN ('man') {
+#|(is it the man age)
 multi MAIN (Bool :$man!) {
 	my $txt = pod2text $=pod;
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
@@ -36,48 +34,14 @@ multi MAIN (Bool :$man!) {
 	$txt
 }
 
-#multi MAIN ('help') {
 multi MAIN (Bool :h(:help($))!) {
-#        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
-
-	#    my $p= shell "onefite help", :err;
-	#   
-	#    say $p.err.slurp(:close);
 	say $*USAGE;   
 	note qq:to/END_USAGE/;
-    Usage:
-        onefite [-h|--help]
-		onefite [--man]
-		onefite [-v|--version]
-	    onefite uninstall
-	    onefite service start [--ip=<Str>] [-d|--systemd-deamon] [-p|--port=<Int>]
-	    onefite service stop
-	    onefite service log
-	    onefite service PID
-	    onefite list [-q|--quiet]
-	    onefite list models [-q|--quiet]
-	    onefite list aliases [-q|--quiet]
-	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
-	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
-	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
-	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
-	    onefite stop-web-engine
-	    onefite help <model> [-q|--quiet]
-	    onefite help <model> <key>] [-q|--quiet]
-	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-        onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--aux-code=<Str>]
-	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-        onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet][--define-alias|--dali=<Str>] [--aux-code=<Str>]
-	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export]
-	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
-	    onefite test list
-	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install]
-  
-	    <input-file>     name of the file to be converted (\.sav or \.json)
-	    <output-file>    name of the converted file (\.sav or \.json)
-	    fit-methods: simp scan min minos
+    <input-file>     name of the file to be converted (\.sav or \.json)
+    <output-file>    name of the converted file (\.sav or \.json)
+    fit-methods: simp scan min minos
 
-	    <function> syntax alternatives:
+    <function> syntax alternatives:
     /\"y(x,a,b,c)=a + b*x + c*pow(x,2.0)\"
     \"y(t,A,lambda: 0.1)=A*exp(-lambda*t)\" 0.1 is the initial value to start mimimization
     \"y (t,A,B=2,lambda)=A * (1 - B*exp(-lambda*t) )\" B is fixed with value 2
