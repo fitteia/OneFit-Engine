@@ -34,6 +34,9 @@ multi MAIN (Bool :$man!) {
 	$txt
 }
 
+#| Get onefite man page
+multi MAIN('man') { MAIN(:man) }
+
 #| Get onefite usage help
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
