@@ -37,7 +37,7 @@ multi MAIN (Bool :$man!) {
 }
 
 #multi MAIN ('help') {
-multi MAIN (Bool :h(:help($))) {
+multi MAIN (Bool :h(:help($))!) {
 #        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
 
 	#    my $p= shell "onefite help", :err;
