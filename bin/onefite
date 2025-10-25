@@ -86,6 +86,8 @@ multi MAIN (Bool :h(:help($))!) {
 END_USAGE
 }
 
+multi MAIN() is default { say $*USAGE; }
+
 multi MAIN ('list',
       	   Bool :q(:$quiet) = False
 	   ){
