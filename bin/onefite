@@ -26,9 +26,7 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
-#| onefite (ofe for short)
-#|
-#| is it the man page
+#| Get onefite man page
 multi MAIN (Bool :$man!) {
 	my $txt = pod2text $=pod;
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
@@ -36,7 +34,7 @@ multi MAIN (Bool :$man!) {
 	$txt
 }
 
-#| onefite usage help
+#| Get onefite usage help
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
 ) {
@@ -57,9 +55,9 @@ multi MAIN (
 END_USAGE
 }
 
-#|(list library models)
+#| Get onefite library models and aliases lists
 multi MAIN ('list',
-      	   Bool :q(:$quiet) = False
+      	   Bool :q(:$quiet) = False #= reduces output log info, false by default
 	   ){
 #    my @list = dir(::('OFE-PATH') ~ "/C/local");
 #    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
@@ -74,6 +72,7 @@ multi MAIN ('list',
     $txt;
 }
 
+#| Get onefite library models list
 multi MAIN ('list','models',
       	   Bool :q(:$quiet) = False
 	   ){
@@ -82,6 +81,7 @@ multi MAIN ('list','models',
      $txt;
 }
 
+#| Get onefite library models aliases list
 multi MAIN ('list','aliases',
       	   Bool :q(:$quiet) = False
 	   ){
@@ -98,10 +98,11 @@ multi MAIN ('list','aliases',
 	$txt;
 }
 
+#| onefite convert sav <-> json files 
 multi MAIN ('convert',
-	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the file to be converted (sav or json)
-	    Str $output-file, # name of the converted file (sav or json)
-            Str :$work-folder = "."
+	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (sav or json)
+	    Str $output-file, #= name of the converted file (sav or json)
+            Str :$work-folder = "." #= work folder for onefite convert
 	   ) {
     my $eng = Engine.new.path($work-folder).read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
     return 0;
