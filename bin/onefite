@@ -217,8 +217,8 @@ multi MAIN ('stop-web-engine'){
 
 #|(onefite web service)
 multi MAIN ('start-web-engine',
-	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>, #= get IP from system ip cmd
-	    :p(:$port) = 8142, #= onefite web service port  
+	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>, 
+	    :p(:$port) = 8142, 
 	   ){
 	   my $log-file="{ ::('OFE-PATH') }/../log/onefite";
 	   my $log-fh = open($log-file, :a);
