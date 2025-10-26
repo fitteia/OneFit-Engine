@@ -111,15 +111,20 @@ multi MAIN ('convert',
     return 0;
 }
 
+#|( Get onefite paths to src, etc
+
+
+this is a test
+)
 multi MAIN ('path',
-      Bool :s(:$src) = False,
-      Bool :$t = False,
-      Bool :e(:$examples) = False,
-      Bool :b(:$bin) = False,
-      Bool :l(:$lib) = False,	
-      Bool :c(:$C) = False,
-      Bool :$log = False,
-	  Bool :a(:$aliases) = False
+      Bool :s(:$src) = False, #= path to src
+      Bool :$t = False, #= path to test
+      Bool :e(:$examples) = False, #= path to examples
+      Bool :b(:$bin) = False, #= path to bin
+      Bool :l(:$lib) = False, #= path to lib
+      Bool :c(:$C) = False, #= path to C code
+      Bool :$log = False, #= path to log
+	  Bool :a(:$aliases) = False # path to aliases
       ){
       if none($src,$t,$bin,$lib,$C,$examples,$aliases) {
       	 say ::('OFE-PATH');
