@@ -168,16 +168,18 @@ multi MAIN ('upgrade',
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
+#|(onefite uninstall)
 multi MAIN ('uninstall'){
       MAIN('stop-web-engine');
       shell "cd { ::('OFE-PATH') } && git stash && git pull && ./INSTALL -U";
       exit;  
 }
 
+#|(onefite web service start)
 multi MAIN ('service','start',	
-      Bool :d(:$systemd-daemon) = False,
-      Str  :$ip = '*',
-      Int  :p(:$port) = 8142,
+      Bool :d(:$systemd-daemon) = False, #= start systemd-daemon
+      Str  :$ip = '*', #= accept access form IP
+      Int  :p(:$port) = 8142, #= onefite werbservice port
       ) {
       if $systemd-daemon {
            say "stoping onefite service...";
@@ -198,20 +200,25 @@ multi MAIN ('service','start',
       exit
 }
 
+#|(onefite web service stop)
 multi MAIN ('service','stop') { MAIN('stop-web-engine'); exit }
 
+#|(onefite web service log)
 multi MAIN ('service','log') { "{ ::('OFE-PATH') }/../log/onefite".IO.slurp.say; exit }
 
+#|(get onefite service PID)
 multi MAIN ('service','PID') { shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1].say; exit }
 
+#|(onefite web service stop by removing service process)
 multi MAIN ('stop-web-engine'){
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       shell "kill -9 $proc" if so $proc;
 }
 
+#|(onefite web service)
 multi MAIN ('start-web-engine',
-	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
-	    :p(:$port) = 8142,   
+	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>, #= get IP from system ip cmd
+	    :p(:$port) = 8142, #= onefite web service port  
 	   ){
 	   my $log-file="{ ::('OFE-PATH') }/../log/onefite";
 	   my $log-fh = open($log-file, :a);
@@ -462,10 +469,10 @@ HTML
     }
 }
 
-
+#|(onefite help on models)
 multi MAIN ('help',
-	    Str $model,
-	    Bool :q(:$quiet),
+	    Str $model, #= model name
+	    Bool :q(:$quiet), #= quiet for reduced log info
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
@@ -477,10 +484,11 @@ multi MAIN ('help',
     $txt
 }
 
+#|(onefite help on model and keys)
 multi MAIN ('help',
-	    Str $model,
-            Str $key,
-	    Bool :q(:$quiet),
+	    Str $model, #= model name
+            Str $key, #= model key info
+	    Bool :q(:$quiet), #= quite for reduced log info
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
@@ -492,10 +500,11 @@ multi MAIN ('help',
     $txt
 }
  
+#!(onefite non-web engine service)
 multi MAIN ('start-engine',
-	    Bool :$no-plot,
-	    Bool :q(:$quiet)=False, # Don't show log messages
-	    Str :$work-folder = '.'
+	    Bool :$no-plot, #= no plot
+	    Bool :q(:$quiet)=False, #= Don't show log messages
+	    Str :$work-folder = '.', #= onefite engine work folder
 	   ){
     my $supplier = Supplier.new;
     $supplier.Supply.tap: -> $f {
