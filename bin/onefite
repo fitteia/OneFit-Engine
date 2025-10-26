@@ -159,7 +159,7 @@ multi MAIN ('upgrade',
 	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
       Int  :p(:$port) = 8142, #= onefite service port
       Bool :$test = False, #= perform tests
-	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/ugpgrade
+	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with locl branch
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
