@@ -218,7 +218,7 @@ multi MAIN ('stop-web-engine'){
 #|(onefite web engine)
 multi MAIN ('start-web-engine',
 	    Str :$ip is copy, #= accept connections from IP
-		Num :p(:$port) = 8142, #= onefite web service port
+		Num :p(:$port) = +8142, #= onefite web service port
 	   ){
 	my $ip-proc = shell("ip -4 -br -j add",:out);
 	$ip = !$ip-proc.exitcode ?? from-json($ip-proc.out.slurp(:close)).tail<addr_info>.head<local> !! "127.0.0.1"; 
