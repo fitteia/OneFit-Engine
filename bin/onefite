@@ -26,17 +26,6 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
-#| Get onefite man page
-multi MAIN (Bool :$man!) {
-	my $txt = pod2text $=pod;
-	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
-	say $txt;
-	$txt
-}
-
-#| Get onefite man page
-multi MAIN('man') { MAIN(:man) }
-
 #| Get onefite usage help
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
@@ -57,6 +46,18 @@ multi MAIN (
     \"f(x,p1: 2, p2=0.3, p3[5<10]) :[-5;5]=p1*exp(-p2*x)*sin(2*pi*x/p3)\" p1 is initialized to 1, p2 is fixed to 2 p3 will be in the range 5 to 10
 END_USAGE
 }
+
+#| Get onefite man page
+multi MAIN (Bool :$man!) {
+	my $txt = pod2text $=pod;
+	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
+	say $txt;
+	$txt
+}
+
+#| Get onefite man page
+multi MAIN('man') { MAIN(:man) }
+
 
 #| Get onefite library models and aliases lists
 multi MAIN ('list',
@@ -217,7 +218,8 @@ multi MAIN ('stop-web-engine'){
 
 #|(onefite web engine)
 multi MAIN ('start-web-engine',
-	    Str :$ip is copy, #= accept connections from IP
+		Str $ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
+		#	    Str :$ip is copy, #= accept connections from IP
 		Num :p(:$port) = +8142, #= onefite web service port
 	   ){
 	my $ip-proc = shell("ip -4 -br -j add",:out);
