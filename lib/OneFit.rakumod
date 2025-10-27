@@ -277,15 +277,16 @@ class Engine is export {
 
 		if $parameters.table.tail<name value> ~~ <MIXED 1> {
 			for (1 .. @!blocks.elems).race -> $i {
-				my $parameters;
-				if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
-				else { $parameters = Parameters::Parameters.new.path($!path) }
+				my $params;
+				if @!blocks[$i-1].parameters.defined { $params = @!blocks[$i-1].parameters }
+				else { $params = Parameters::Parameters.new.path($!path) }
 
-				$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
-				$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
-				$parameters.from-log(file=>"fit$i.log") if $from-log.Bool;
-				@!par-tables[$i-1]= $parameters;
-				@!blocks[$i-1].parameters=$parameters;
+				$params.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
+				$params.from-output(file=>"fit$i.out") if $from-output.Bool;
+				$params.from-log(file=>"fit$i.log") if $from-log.Bool;
+				@!par-tables[$i-1]= $params;
+				@!blocks[$i-1].parameters=$params
+				say $params.table;
 			}
 		}
 	}
