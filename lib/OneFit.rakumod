@@ -447,6 +447,7 @@ class Engine is export {
 		 		else { @line-fields.push: .<value err>.Slip  }
 	     	}
 	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
+			say "inside cicle";
 	 	}
 		say @!par-tables>>.table;
 		%!engine<par-tables> = @!par-tables>>.table;
