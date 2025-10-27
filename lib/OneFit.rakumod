@@ -437,7 +437,7 @@ class Engine is export {
 		 		.parameters.from-output(file => "fit{ .No+1 }.out");
 		 		.parameters.from-log(file => "fit{ .No+1 }.log");
 #		 @!par-tables[$i] = .parameters;
-		 		@!par-tables[$_.No}] = .parameters;
+		 		@!par-tables[$_.No] = .parameters;
 				say .No;
 				say @!par-tables[0].table;
 	     	}
