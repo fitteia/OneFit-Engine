@@ -286,11 +286,11 @@ class Engine is export {
 				$params.from-log(file=>"fit$i.log") if $from-log.Bool;
 				@!par-tables[$i-1]= $params;
 				@!blocks[$i-1].parameters=$params;
-				say $params.table;
 			}
 		}
 	}
 	%!engine<par-tables>=@!par-tables>>.table;
+	say %!engine<par-tables>;
 	if $to-json { to-json(@!par-tables>>.table, :sorted-keys) } 
 	else { self }
      }
