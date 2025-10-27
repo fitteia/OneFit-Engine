@@ -248,9 +248,10 @@ class Engine is export {
 
 	 	$parameters.from-engine(self);
 		$FitType = $parameters.table.tail<name value> ~~ <MIXED 1> ?? "Individual" !! "Global";		
+		say $FitType;
 	 }
 
-	 if $FitType ~~ /Individual/ {
+	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race -> $i {
 			my $parameters;
 			if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
