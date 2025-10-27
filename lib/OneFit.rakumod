@@ -447,6 +447,7 @@ class Engine is export {
 	     	}
 	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
 	 	}
+		say @!par-tables.elems;
 		%!engine<par-tables> = @!par-tables>>.table;
 		say %!engine<par-tables>;
 	 	return $TXT;
