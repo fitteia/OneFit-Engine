@@ -218,12 +218,13 @@ multi MAIN ('stop-web-engine'){
 
 #|(onefite web engine)
 multi MAIN ('start-web-engine',
-		:$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
+#		:$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
+		:$ip = "127.0.0.1" is copy, #= run onefite web service in ip 
 		#	    Str :$ip is copy, #= accept connections from IP
-		:p(:$port) = +8142, #= onefite web service port
+		:p(:$port) = 8142, #= onefite web service port
 	   ){
-		   #	my $ip-proc = shell("ip -4 -br -j add",:out);
-		   #	$ip = !$ip-proc.exitcode ?? from-json($ip-proc.out.slurp(:close)).tail<addr_info>.head<local> !! "127.0.0.1"; 
+	my $ip-proc = shell("ip -4 -br -j add",:out);
+	$ip = from-json($ip-proc.out.slurp(:close)).tail<addr_info>.head<local> unless $ip-proc.exitcode; 
 	my $log-file="{ ::('OFE-PATH') }/../log/onefite";
     my $log-fh = open($log-file, :a);
     my $application = route {
