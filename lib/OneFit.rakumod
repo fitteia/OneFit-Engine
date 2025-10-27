@@ -254,7 +254,7 @@ class Engine is export {
 	    for (1 .. @!blocks.elems).race -> $i {
 			my $parameters;
 			if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
-			else { v$parameters = Parameters::Parameters.new.path($!path) }
+			else { $parameters = Parameters::Parameters.new.path($!path) }
 
 			$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 			$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
