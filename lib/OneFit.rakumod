@@ -439,7 +439,7 @@ class Engine is export {
 #		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[.No] = .parameters;
 				say .No;
-				say @!par-tables[.No].table;
+				say @!par-tables[0].table;
 	     	}
 
 	     	for @!par-tables[$i].a {
