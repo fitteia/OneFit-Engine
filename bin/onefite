@@ -556,18 +556,19 @@ multi MAIN ('start-engine',
     
 }
 
+#|(onefite create a json file from cmd line))
 multi MAIN  ('create',
-	     Str  $function is copy,
-	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Str  :data-label(:$data-labels),
-         Str  :$fit-methods = "simp scan min minos",
-	     Str  :$tags,
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
+	     Str  $function is copy, #= fitting fucntion
+	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) }, 
+	     Str  :data-label(:$data-labels), #= data labels and values
+         Str  :$fit-methods = "simp scan min minos", #= minuit fir methods
+	     Str  :$tags, #= Data blocks TAGS
+	     Bool :$autox, #= auto scale x
+	     Bool :$autoy, #= auto scale y
+	     Bool :$autoxy, #= auto scle both x and y
+	     Bool :logy(:$linlog), #= logarithmic y scale
+	     Bool :logx(:$loglin), #= logaroithmic x scale
+	     Bool :logxy(:$loglog), # log log scale
 	     Bool :$global,
 	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False,
 		 Str  :$fit-if = "",
