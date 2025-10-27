@@ -276,7 +276,6 @@ class Engine is export {
 	    self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool);
 	}
 	%!engine<par-tables>=@!par-tables>>.table;
-	say %!engine<par-tables>;
 	if $to-json { to-json(@!par-tables>>.table, :sorted-keys) } 
 	else { self }
      }
