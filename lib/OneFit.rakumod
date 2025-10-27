@@ -285,7 +285,7 @@ class Engine is export {
 				$params.from-output(file=>"fit$i.out") if $from-output.Bool;
 				$params.from-log(file=>"fit$i.log") if $from-log.Bool;
 				@!par-tables[$i-1]= $params;
-				@!blocks[$i-1].parameters=$params
+				@!blocks[$i-1].parameters=$params;
 				say $params.table;
 			}
 		}
