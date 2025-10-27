@@ -239,18 +239,6 @@ class Engine is export {
 
 	 $!fit-methods = %!engine<FitMethods> if %!engine<FitMethods>.Bool;
 	
-	 my $FitType = "Individual";
-
-	 if %!engine<FitType> ~~ /Global/ {
-		my $parameters;
-	    if @!blocks.head.parameters.defined { $parameters = @!blocks.head.parameters }
-	    else { $parameters = Parameters::Parameters.new.path($!path) }
-
-	 	$parameters.from-engine(self);
-		$FitType = $parameters.table.tail<name value> ~~ <MIXED 1> ?? "Individual" !! "Global";		
-		say $FitType;
-	 }
-
 	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race -> $i {
 			my $parameters;
@@ -276,11 +264,27 @@ class Engine is export {
 	    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 	    $parameters.from-output(path => $!path) if $from-output.Bool;
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
-	    @!par-tables[0]= $parameters;
-	    for @!blocks {
-			.parameters = $parameters;
-			.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
-	    }
+
+		if $parameters.table.tail<name value> ~~ <MIXED 1> {
+			for (1 .. @!blocks.elems).race -> $i {
+				my $parameters;
+				if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
+				else { $parameters = Parameters::Parameters.new.path($!path) }
+
+				$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
+				$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
+				$parameters.from-log(file=>"fit$i.log") if $from-log.Bool;
+				@!par-tables[$i-1]= $parameters;
+				@!blocks[$i-1].parameters=$parameters;
+			}
+		}
+		else {
+		 	@!par-tables[0]= $parameters;
+		    for @!blocks {
+				.parameters = $parameters;
+				.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
+	    	}
+		}
 	    if $fix-all.Bool { $parameters.parfile.write( $parameters.a, path => $!path, :fix-all, :fit-methods($!fit-methods) ) }
 	    else { $parameters.parfile.write( $parameters.a, path => $!path, :fit-methods($!fit-methods) ) }
 	    self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool);
