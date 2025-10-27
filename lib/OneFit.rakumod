@@ -384,7 +384,7 @@ class Engine is export {
 	     self.agr;
 	     for (1 .. @!blocks.elems).race {
 		 shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
-	     }
+		 #}
 	 }
 	 else {
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
@@ -448,7 +448,7 @@ class Engine is export {
 	     	}
 	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
 	 	}
-		say @!par-tables.elems;
+		say @!par-tables>>.table;
 		%!engine<par-tables> = @!par-tables>>.table;
 		#	say %!engine<par-tables>;
 	 	return $TXT;
