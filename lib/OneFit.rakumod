@@ -247,13 +247,10 @@ class Engine is export {
 	    else { $parameters = Parameters::Parameters.new.path($!path) }
 
 	 	$parameters.from-engine(self);
-		say $parameters.table.tail<name value>;		
-	 }
-	 else {
-		say "nope";
+		$FitType = $parameters.table.tail<name value> ~~ <MIXED 1> ?? "Individual" !! "Global";		
 	 }
 
-	 if %!engine<FitType> ~~ /Individual/ {
+	 if $FitType ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race -> $i {
 			my $parameters;
 			if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
