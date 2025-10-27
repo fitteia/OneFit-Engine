@@ -242,7 +242,10 @@ class Engine is export {
 	 my $FitType = "Individual";
 
 	 if %!engine<FitType> ~~ /Global/ {
-		my $parameters = Parameters::Parameters.new.path($!path);
+		my $parameters;
+	    if @!blocks.head.parameters.defined { $parameters = @!blocks.head.parameters }
+	    else { $parameters = Parameters::Parameters.new.path($!path) }
+
 	 	$parameters.from-engine(self);
 		say $parameters;		
 	 }
