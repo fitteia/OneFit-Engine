@@ -556,7 +556,7 @@ multi MAIN ('start-engine',
     
 }
 
-#|(onefite create a json file from cmd line))
+#|(onefite create a json file from cmd line)
 multi MAIN  ('create',
 	     Str  $function is copy, #= fitting fucntion
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) }, 
