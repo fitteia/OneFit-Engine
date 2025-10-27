@@ -274,20 +274,6 @@ class Engine is export {
 	    if $fix-all.Bool { $parameters.parfile.write( $parameters.a, path => $!path, :fix-all, :fit-methods($!fit-methods) ) }
 	    else { $parameters.parfile.write( $parameters.a, path => $!path, :fit-methods($!fit-methods) ) }
 	    self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool);
-
-		if $parameters.table.tail<name value> ~~ <MIXED 1> {
-			for (1 .. @!blocks.elems).race -> $i {
-				my $params;
-				if @!blocks[$i-1].parameters.defined { $params = @!blocks[$i-1].parameters }
-				else { $params = Parameters::Parameters.new.path($!path) }
-
-				$params.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
-				$params.from-output(file=>"fit$i.out") if $from-output.Bool;
-				$params.from-log(file=>"fit$i.log") if $from-log.Bool;
-				@!par-tables[$i-1]= $params;
-				@!blocks[$i-1].parameters=$params;
-			}
-		}
 	}
 	%!engine<par-tables>=@!par-tables>>.table;
 	say %!engine<par-tables>;
@@ -462,6 +448,8 @@ class Engine is export {
 	     	}
 	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
 	 	}
+		%!engine<par-tables> = @!par-tables>>.table;
+		say %!engine<par-tables>;
 	 	return $TXT;
     }
 }
