@@ -215,13 +215,15 @@ multi MAIN ('stop-web-engine'){
       shell "kill -9 $proc" if so $proc;
 }
 
-#|(onefite web service)
+#|(onefite web engine)
 multi MAIN ('start-web-engine',
-	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>, 
-	    :p(:$port) = 8142, 
+	    Str :$ip is copy, #= accept connections from IP
+		Num :p(:$port) = 8142, #= onefite web service port
 	   ){
-	   my $log-file="{ ::('OFE-PATH') }/../log/onefite";
-	   my $log-fh = open($log-file, :a);
+	my $ip-proc = from-json(shell("ip -4 -br -j add",:out);
+	$ip = !$ip-proc.exitcode ?? $ip-proc.out.slurp(:close)).tail<addr_info>.head<local> !! "127.0.0.1"; 
+	my $log-file="{ ::('OFE-PATH') }/../log/onefite";
+    my $log-fh = open($log-file, :a);
     my $application = route {
 	   get -> {
 	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) get webform");
