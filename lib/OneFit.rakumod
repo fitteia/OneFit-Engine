@@ -265,6 +265,16 @@ class Engine is export {
 	    $parameters.from-output(path => $!path) if $from-output.Bool;
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
 
+		@!par-tables[0]= $parameters;
+		for @!blocks {
+			.parameters = $parameters;
+			.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
+	    }
+		
+	    if $fix-all.Bool { $parameters.parfile.write( $parameters.a, path => $!path, :fix-all, :fit-methods($!fit-methods) ) }
+	    else { $parameters.parfile.write( $parameters.a, path => $!path, :fit-methods($!fit-methods) ) }
+	    self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool);
+
 		if $parameters.table.tail<name value> ~~ <MIXED 1> {
 			for (1 .. @!blocks.elems).race -> $i {
 				my $parameters;
@@ -278,16 +288,6 @@ class Engine is export {
 				@!blocks[$i-1].parameters=$parameters;
 			}
 		}
-		else {
-		 	@!par-tables[0]= $parameters;
-		    for @!blocks {
-				.parameters = $parameters;
-				.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
-	    	}
-		}
-	    if $fix-all.Bool { $parameters.parfile.write( $parameters.a, path => $!path, :fix-all, :fit-methods($!fit-methods) ) }
-	    else { $parameters.parfile.write( $parameters.a, path => $!path, :fit-methods($!fit-methods) ) }
-	    self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool);
 	}
 	%!engine<par-tables>=@!par-tables>>.table;
 	if $to-json { to-json(@!par-tables>>.table, :sorted-keys) } 
