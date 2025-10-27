@@ -247,7 +247,7 @@ class Engine is export {
 	    else { $parameters = Parameters::Parameters.new.path($!path) }
 
 	 	$parameters.from-engine(self);
-		say $parameters.table;		
+		say $parameters.table.tail<name value>;		
 	 }
 	 else {
 		say "nope";
