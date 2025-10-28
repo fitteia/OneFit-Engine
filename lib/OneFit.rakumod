@@ -267,8 +267,16 @@ class Engine is export {
 
 		@!par-tables[0]= $parameters;
 		for @!blocks {
-			.parameters = $parameters;
-			.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
+			my $params
+			if @!blocks[.No].parameters.defined { $params = @!blocks[.No].parameters }
+			else { $parameters = Parameters::Parameters.new.path($!path) }
+	
+		    $params.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
+	   		$params.from-output(path => $!path) if $from-output.Bool;
+	   		$params.from-log(path => $!path) if $from-log.Bool;
+
+			.parameters = $params;
+			.chi2 = $params.output{'chi2['~ .No+1 ~']'} if $params.output{'chi2[' ~ .No+1 ~ ']'};
 	    }
 		
 	    if $fix-all.Bool { $parameters.parfile.write( $parameters.a, path => $!path, :fix-all, :fit-methods($!fit-methods) ) }
