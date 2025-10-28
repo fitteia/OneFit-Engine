@@ -447,7 +447,7 @@ class Engine is export {
 #		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[$_.No] = .parameters;
 				say .No;
-				say @!par-tables[0].table;
+				say @!par-tables[.No].table;
 	     	}
 
 	     	for @!par-tables[$i].a {
@@ -458,7 +458,7 @@ class Engine is export {
 	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
 			say "inside cicle";
 	 	}
-		say @!par-tables[0].table;
+		say @!par-tables>>.table;
 		%!engine<par-tables> = @!par-tables>>.table;
 		#	say %!engine<par-tables>;
 	 	return $TXT;
