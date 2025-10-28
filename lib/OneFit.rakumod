@@ -445,12 +445,12 @@ class Engine is export {
 		 		.parameters.from-output(file => "fit{ .No+1 }.out");
 		 		.parameters.from-log(file => "fit{ .No+1 }.log");
 #		 @!par-tables[$i] = .parameters;
-		 		@!par-tables[$_.No] = .parameters;
+		 		@!par-tables[.No] = .parameters;
 				say .No;
 				say @!par-tables[.No].table;
 	     	}
 
-	     	for @!par-tables[$i].a {
+	     	for @!par-tables[.No].a {
 		 		.<err>="-" unless .<err>.defined;
 		 		if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 		else { @line-fields.push: .<value err>.Slip  }
@@ -459,9 +459,9 @@ class Engine is export {
 			say "inside cicle";
 			say $TXT;
 	 	}
-		say @!par-tables>>.table;
+		#		say @!par-tables>>.table;
 		%!engine<par-tables> = @!par-tables>>.table;
-		#	say %!engine<par-tables>;
+		say %!engine<par-tables>;
 	 	return $TXT;
     }
 }
