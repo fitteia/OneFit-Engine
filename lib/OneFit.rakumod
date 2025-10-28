@@ -449,7 +449,7 @@ class Engine is export {
 				#		say .No;
 				#say @!par-tables[.No].table;
 	     	}
-
+ say $i, $MIXED;
 	     	for @!par-tables[$i].a {
 		 		.<err>="-" unless .<err>.defined;
 		 		if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
