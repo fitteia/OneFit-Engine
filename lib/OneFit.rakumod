@@ -267,7 +267,7 @@ class Engine is export {
 
 		@!par-tables[0]= $parameters;
 		for @!blocks {
-			my $params
+			my $params;
 			if @!blocks[.No].parameters.defined { $params = @!blocks[.No].parameters }
 			else { $parameters = Parameters::Parameters.new.path($!path) }
 	
