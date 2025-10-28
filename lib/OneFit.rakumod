@@ -457,6 +457,7 @@ class Engine is export {
 	     	}
 	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
 			say "inside cicle";
+			say $TXT;
 	 	}
 		say @!par-tables>>.table;
 		%!engine<par-tables> = @!par-tables>>.table;
