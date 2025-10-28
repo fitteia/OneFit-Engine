@@ -415,7 +415,7 @@ class Engine is export {
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
-		say %last<name value>;
+		#		say %last<name value>;
 	 	my @fields = ("# TAG");
 	 	@fields.push: "Npts";
 	 	@fields.push: "chi2";
@@ -451,8 +451,8 @@ class Engine is export {
 				#		say .No;
 				#say @!par-tables[.No].table;
 	     	}
- say $i, $MIXED;
-	     	for @!par-tables[$i].a {
+	     	
+			for @!par-tables[$i].a {
 		 		.<err>="-" unless .<err>.defined;
 		 		if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 		else { @line-fields.push: .<value err>.Slip  }
