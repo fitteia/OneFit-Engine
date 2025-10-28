@@ -407,7 +407,7 @@ class Engine is export {
      }
 
     method !to-engine($parameters) {
-		for (0 ..^ $parameters.a) { %!engine{"Pval$_"} = $parameters.a[$_]<value>   }
+		for (0 ..^ $parameters.a) { %!engine{"Pval$_"} = $parameters.a[$_]<value>.Str   }
 		self
     }
 
