@@ -446,8 +446,8 @@ class Engine is export {
 		 		.parameters.from-log(file => "fit{ .No+1 }.log");
 #		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[.No] = .parameters;
-				say .No;
-				say @!par-tables[.No].table;
+				#		say .No;
+				#say @!par-tables[.No].table;
 	     	}
 
 	     	for @!par-tables[.No].a {
@@ -456,12 +456,12 @@ class Engine is export {
 		 		else { @line-fields.push: .<value err>.Slip  }
 	     	}
 	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
-			say "inside cicle";
-			say $TXT;
+			#say "inside cicle";
+			#say $TXT;
 	 	}
 		#		say @!par-tables>>.table;
 		%!engine<par-tables> = @!par-tables>>.table;
-		say %!engine<par-tables>;
+		# say %!engine<par-tables>;
 	 	return $TXT;
     }
 }
