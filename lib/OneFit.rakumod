@@ -413,7 +413,7 @@ class Engine is export {
 
     method !results (:$fmt = ', ') {
 		my Bool $MIXED=False;
-		$MIXED = @!par-tables[0].a.tail<name>.contains("MIXED") and { @!par-tables[0].a.tail<value> > 0.0}();
+		$MIXED = @!par-tables[0].a.tail<name>.contains("MIXED") and @!par-tables[0].a.tail<value> > 0.0;
 	 	my @fields = ("# TAG");
 	 	@fields.push: "Npts";
 	 	@fields.push: "chi2";
