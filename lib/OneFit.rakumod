@@ -436,7 +436,7 @@ class Engine is export {
 	 	}
 	 	for @!blocks {
 	     	my @line-fields;
-	     	my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
+	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED) ?? .No !! 0;
 	     	@line-fields.push: .Tag;
 	     	@line-fields.push: .X.elems;
 	     	@line-fields.push: .chi2;
@@ -450,7 +450,7 @@ class Engine is export {
 				#say @!par-tables[.No].table;
 	     	}
 
-	     	for @!par-tables[.No].a {
+	     	for @!par-tables[$i].a {
 		 		.<err>="-" unless .<err>.defined;
 		 		if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 		else { @line-fields.push: .<value err>.Slip  }
