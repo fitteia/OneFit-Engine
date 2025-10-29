@@ -238,22 +238,22 @@ class Engine is export {
 	 #	say "Greatings from update parameters form log" if $from-log;
 
 	 $!fit-methods = %!engine<FitMethods> if %!engine<FitMethods>.Bool;
-	 
+	
 	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race -> $i {
-		my $parameters;
-		if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
-		else { $parameters = Parameters::Parameters.new.path($!path) }
+			my $parameters;
+			if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
+			else { $parameters = Parameters::Parameters.new.path($!path) }
 
-		$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
-		$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
-		$parameters.from-log(file=>"fit$i.log") if $from-log.Bool;
-		@!par-tables[$i-1]= $parameters;
-		@!blocks[$i-1].parameters=$parameters;
-		if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all, :fit-methods($!fit-methods) ) }
-		else {$parameters.parfile.write($parameters.a, No => $i, :fit-methods($!fit-methods) ) }
-		self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
-		@!blocks[$i-1].chi2=$parameters.output{"chi2\[1\]"} if $parameters.output{"chi2\[1\]"};
+			$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
+			$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
+			$parameters.from-log(file=>"fit$i.log") if $from-log.Bool;
+			@!par-tables[$i-1]= $parameters;
+			@!blocks[$i-1].parameters=$parameters;
+			if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all, :fit-methods($!fit-methods) ) }
+			else {$parameters.parfile.write($parameters.a, No => $i, :fit-methods($!fit-methods) ) }
+			self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
+			@!blocks[$i-1].chi2=$parameters.output{"chi2\[1\]"} if $parameters.output{"chi2\[1\]"};
 	    }
 	}
 	else {
@@ -264,11 +264,21 @@ class Engine is export {
 	    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 	    $parameters.from-output(path => $!path) if $from-output.Bool;
 	    $parameters.from-log(path => $!path) if $from-log.Bool;
-	    @!par-tables[0]= $parameters;
-	    for @!blocks {
-		.parameters = $parameters;
-		.chi2 = $parameters.output{'chi2['~ .No+1 ~']'} if $parameters.output{'chi2[' ~ .No+1 ~ ']'};
+
+		@!par-tables[0]= $parameters;
+		for @!blocks {
+			my $params;
+			if @!blocks[.No].parameters.defined { $params = @!blocks[.No].parameters }
+			else { $params = Parameters::Parameters.new.path($!path) }
+	
+		    $params.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
+	   		$params.from-output(path => $!path) if $from-output.Bool;
+	   		$params.from-log(path => $!path) if $from-log.Bool;
+
+			.parameters = $params;
+			.chi2 = $params.output{'chi2['~ .No+1 ~']'} if $params.output{'chi2[' ~ .No+1 ~ ']'};
 	    }
+		
 	    if $fix-all.Bool { $parameters.parfile.write( $parameters.a, path => $!path, :fix-all, :fit-methods($!fit-methods) ) }
 	    else { $parameters.parfile.write( $parameters.a, path => $!path, :fit-methods($!fit-methods) ) }
 	    self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool);
@@ -382,7 +392,7 @@ class Engine is export {
 	     self.agr;
 	     for (1 .. @!blocks.elems).race {
 		 shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
-	     }
+		 }
 	 }
 	 else {
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
@@ -397,13 +407,15 @@ class Engine is export {
      }
 
     method !to-engine($parameters) {
-		for (0 ..^ $parameters.a) { %!engine{"Pval$_"} = $parameters.a[$_]<value>   }
+		for (0 ..^ $parameters.a) { %!engine{"Pval$_"} = $parameters.a[$_]<value>.Str   }
 		self
     }
 
     method !results (:$fmt = ', ') {
 		my Bool $MIXED=False;
-		$MIXED = @!par-tables[0].a.tail<name>.contains("MIXED") and { @!par-tables[0].a.tail<value> > 0.0}();
+		my %last = @!par-tables[0].a.tail;
+		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
+		#		say %last<name value>;
 	 	my @fields = ("# TAG");
 	 	@fields.push: "Npts";
 	 	@fields.push: "chi2";
@@ -426,7 +438,7 @@ class Engine is export {
 	 	}
 	 	for @!blocks {
 	     	my @line-fields;
-	     	my $i = %!engine<FitType> ~~ /Individual/ ?? .No !! 0;
+	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED) ?? .No !! 0;
 	     	@line-fields.push: .Tag;
 	     	@line-fields.push: .X.elems;
 	     	@line-fields.push: .chi2;
@@ -436,15 +448,22 @@ class Engine is export {
 		 		.parameters.from-log(file => "fit{ .No+1 }.log");
 #		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[.No] = .parameters;
+				#		say .No;
+				#say @!par-tables[.No].table;
 	     	}
-
-	     	for @!par-tables[$i].a {
+	     	
+			for @!par-tables[$i].a {
 		 		.<err>="-" unless .<err>.defined;
 		 		if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
 		 		else { @line-fields.push: .<value err>.Slip  }
 	     	}
 	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
+			#say "inside cicle";
+			#say $TXT;
 	 	}
+		#		say @!par-tables>>.table;
+		%!engine<par-tables> = @!par-tables>>.table;
+		# say %!engine<par-tables>;
 	 	return $TXT;
     }
 }
