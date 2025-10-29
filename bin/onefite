@@ -26,52 +26,17 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
-multi MAIN (Bool :$man!) {
-	my $txt = pod2text $=pod;
-	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
-	say $txt;
-	$txt
-}
-
-multi MAIN (Bool :h(:help($))) {
-#        say 'onefite is a script that implements fitteia.org fitting settings and fitting strategies in the form of a fiiting engine accessíble from the command line';
-
-	#    my $p= shell "onefite help", :err;
-	#    say $p.err.slurp(:close);
+#| Get onefite usage help
+multi MAIN (
+	Bool :h(:help($help)) #= help option true by default 
+) {
+	say $*USAGE;   
 	note qq:to/END_USAGE/;
-    Usage:
-        onefite [-h|--help]
-		onefite [--man]
-		onefite [-v|--version]
-	    onefite uninstall
-	    onefite service start [--ip=<Str>] [-d|--systemd-deamon] [-p|--port=<Int>]
-	    onefite service stop
-	    onefite service log
-	    onefite service PID
-	    onefite list [-q|--quiet]
-	    onefite list models [-q|--quiet]
-	    onefite list aliases [-q|--quiet]
-	    onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
-	    onefite convert <input-file> <output-file> [--work-folder=<Str>]
-	    onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
-	    onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
-	    onefite stop-web-engine
-	    onefite help <model> [-q|--quiet]
-	    onefite help <model> <key>] [-q|--quiet]
-	    onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-        onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--aux-code=<Str>]
-	    onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-        onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet][--define-alias|--dali=<Str>] [--aux-code=<Str>]
-	    onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export]
-	    onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
-	    onefite test list
-	    onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install]
-  
-	    <input-file>     name of the file to be converted (\.sav or \.json)
-	    <output-file>    name of the converted file (\.sav or \.json)
-	    fit-methods: simp scan min minos
+    <input-file>     name of the file to be converted (\.sav or \.json)
+    <output-file>    name of the converted file (\.sav or \.json)
+    fit-methods: simp scan min minos
 
-	    <function> syntax alternatives:
+    <function> syntax alternatives:
     /\"y(x,a,b,c)=a + b*x + c*pow(x,2.0)\"
     \"y(t,A,lambda: 0.1)=A*exp(-lambda*t)\" 0.1 is the initial value to start mimimization
     \"y (t,A,B=2,lambda)=A * (1 - B*exp(-lambda*t) )\" B is fixed with value 2
@@ -82,8 +47,21 @@ multi MAIN (Bool :h(:help($))) {
 END_USAGE
 }
 
+#| Get onefite man page
+multi MAIN (Bool :$man!) {
+	my $txt = pod2text $=pod;
+	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
+	say $txt;
+	$txt
+}
+
+#| Get onefite man page
+multi MAIN('man') { MAIN(:man) }
+
+
+#| Get onefite library models and aliases lists
 multi MAIN ('list',
-      	   Bool :q(:$quiet) = False
+      	   Bool :q(:$quiet) = False #= reduces output log info, false by default
 	   ){
 #    my @list = dir(::('OFE-PATH') ~ "/C/local");
 #    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
@@ -98,6 +76,7 @@ multi MAIN ('list',
     $txt;
 }
 
+#| Get onefite library models list
 multi MAIN ('list','models',
       	   Bool :q(:$quiet) = False
 	   ){
@@ -106,6 +85,7 @@ multi MAIN ('list','models',
      $txt;
 }
 
+#| Get onefite library models aliases list
 multi MAIN ('list','aliases',
       	   Bool :q(:$quiet) = False
 	   ){
@@ -122,24 +102,26 @@ multi MAIN ('list','aliases',
 	$txt;
 }
 
+#| onefite convert sav <-> json files 
 multi MAIN ('convert',
-	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the file to be converted (sav or json)
-	    Str $output-file, # name of the converted file (sav or json)
-            Str :$work-folder = "."
+	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (sav or json)
+	    Str $output-file, #= name of the converted file (sav or json)
+            Str :$work-folder = "." #= work folder for onefite convert
 	   ) {
     my $eng = Engine.new.path($work-folder).read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
     return 0;
 }
 
+#|( Get onefite paths to src, etc)
 multi MAIN ('path',
-      Bool :s(:$src) = False,
-      Bool :$t = False,
-      Bool :e(:$examples) = False,
-      Bool :b(:$bin) = False,
-      Bool :l(:$lib) = False,	
-      Bool :c(:$C) = False,
-      Bool :$log = False,
-	  Bool :a(:$aliases) = False
+      Bool :s(:$src) = False, #= path to src
+      Bool :$t = False, #= path to test
+      Bool :e(:$examples) = False, #= path to examples
+      Bool :b(:$bin) = False, #= path to bin
+      Bool :l(:$lib) = False, #= path to lib
+      Bool :c(:$C) = False, #= path to C code
+      Bool :$log = False, #= path to log
+	  Bool :a(:$aliases) = False # path to aliases
       ){
       if none($src,$t,$bin,$lib,$C,$examples,$aliases) {
       	 say ::('OFE-PATH');
@@ -164,21 +146,22 @@ multi MAIN ('path',
       }
 }
 
+#|(onefite upgrade)
 multi MAIN ('upgrade',
-      Bool :u(:$to-user) = False,
-      Bool :c(:$compile) = True,
-      Bool :d(:$systemd-daemon) = False,
-      Bool :$cernlib = False,
-      Bool :$shell = False,
-      Int  :$shell-port = 8100,
-      Str  :$ip = '*',
-	  Bool :$wsl = False,
-	  Bool :$macos = False,
-	  Bool :$docker = False,
-      Int  :p(:$port) = 8142,
-      Bool :$test = False,
-	  Bool :apt(:apt-get(:$dpkg)) = True,
-      Str  :m(:merge-from(:merge-with(:$merge-site))) = '',
+      Bool :u(:$to-user) = False, #= install to user
+      Bool :c(:$compile) = True, #= compile before install
+      Bool :d(:$systemd-daemon) = False, #= create a sysmtemd-daemon service
+      Bool :$cernlib = False, #= install cern lib instead of just minuit.a from src
+      Bool :$shell = False, #= install shellinabox
+      Int  :$shell-port = 8100, #= shellinabox port
+      Str  :$ip = '*', #= set IP
+	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
+	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
+	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
+      Int  :p(:$port) = 8142, #= onefite service port
+      Bool :$test = False, #= perform tests
+	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
+      Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with locl branch
       ){
       shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
       
@@ -186,16 +169,18 @@ multi MAIN ('upgrade',
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
+#|(onefite uninstall)
 multi MAIN ('uninstall'){
       MAIN('stop-web-engine');
       shell "cd { ::('OFE-PATH') } && git stash && git pull && ./INSTALL -U";
       exit;  
 }
 
+#|(onefite web service start)
 multi MAIN ('service','start',	
-      Bool :d(:$systemd-daemon) = False,
-      Str  :$ip = '*',
-      Int  :p(:$port) = 8142,
+      Bool :d(:$systemd-daemon) = False, #= start systemd-daemon
+      Str  :$ip = '*', #= accept access form IP
+      Int  :p(:$port) = 8142, #= onefite werbservice port
       ) {
       if $systemd-daemon {
            say "stoping onefite service...";
@@ -216,23 +201,34 @@ multi MAIN ('service','start',
       exit
 }
 
+#|(onefite web service stop)
 multi MAIN ('service','stop') { MAIN('stop-web-engine'); exit }
 
+#|(onefite web service log)
 multi MAIN ('service','log') { "{ ::('OFE-PATH') }/../log/onefite".IO.slurp.say; exit }
 
+#|(get onefite service PID)
 multi MAIN ('service','PID') { shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1].say; exit }
 
+#|(onefite web service stop by removing service process)
 multi MAIN ('stop-web-engine'){
       my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
       shell "kill -9 $proc" if so $proc;
 }
 
+#|(onefite web engine)
 multi MAIN ('start-web-engine',
-	    :$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
-	    :p(:$port) = 8142,   
+#		:$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
+		:$ip is copy, #= run onefite web service in ip 
+		#	    Str :$ip is copy, #= accept connections from IP
+		:p(:$port) = 8142, #= onefite web service port
 	   ){
-	   my $log-file="{ ::('OFE-PATH') }/../log/onefite";
-	   my $log-fh = open($log-file, :a);
+	do {
+		my $ip-proc = shell("ip -4 -br -j add",:out);
+		$ip = !$ip-proc.exitcode ?? from-json($ip-proc.out.slurp(:close)).tail<addr_info>.head<local> !! "127.0.0.1"; 
+	} unless $ip.so;
+	my $log-file="{ ::('OFE-PATH') }/../log/onefite";
+    my $log-fh = open($log-file, :a);
     my $application = route {
 	   get -> {
 	     $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) get webform");
@@ -480,10 +476,10 @@ HTML
     }
 }
 
-
+#|(onefite help on models)
 multi MAIN ('help',
-	    Str $model,
-	    Bool :q(:$quiet),
+	    Str $model, #= model name
+	    Bool :q(:$quiet), #= quiet for reduced log info
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
@@ -495,10 +491,11 @@ multi MAIN ('help',
     $txt
 }
 
+#|(onefite help on model and keys)
 multi MAIN ('help',
-	    Str $model,
-            Str $key,
-	    Bool :q(:$quiet),
+	    Str $model, #= model name
+            Str $key, #= model key info
+	    Bool :q(:$quiet), #= quite for reduced log info
 	   ){
     my @list = dir(::('OFE-PATH') ~ "/C/local");
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
@@ -510,10 +507,11 @@ multi MAIN ('help',
     $txt
 }
  
+#!(onefite non-web engine service)
 multi MAIN ('start-engine',
-	    Bool :$no-plot,
-	    Bool :q(:$quiet)=False, # Don't show log messages
-	    Str :$work-folder = '.'
+	    Bool :$no-plot, #= no plot
+	    Bool :q(:$quiet)=False, #= Don't show log messages
+	    Str :$work-folder = '.', #= onefite engine work folder
 	   ){
     my $supplier = Supplier.new;
     $supplier.Supply.tap: -> $f {
@@ -558,33 +556,34 @@ multi MAIN ('start-engine',
     
 }
 
+#|(onefite create a json file from cmd line)
 multi MAIN  ('create',
-	     Str  $function is copy,
-	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Str  :data-label(:$data-labels),
-         Str  :$fit-methods = "simp scan min minos",
-	     Str  :$tags,
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
-	     Bool :$global,
-	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False,
-		 Str  :$fit-if = "",
-		 Str  :$plot-if = "",
-		 Str  :$sef-R1-file = "",
-		 Str  :$range = "",
-		 Bool :$R1 = False,
-		 Int  :$gfilt,
-		 Str  :set-err(:$err)="",
-	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
-	     Str  :save-to(:$to), # write fit settings to json or sav file"
-	     Str  :$work-folder = '.',
-         Int  :Num(:$npts) = +100,
-		 Bool :q(:$quiet) = False,
-		 Str  :$aux-code = "",
+	     Str  $function is copy, #= fitting fucntion
+	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) }, 
+	     Str  :data-label(:$data-labels), #= data labels and values
+         Str  :$fit-methods = "simp scan min minos", #= minuit fir methods
+	     Str  :$tags, #= Data blocks TAGS
+	     Bool :$autox, #= auto scale x
+	     Bool :$autoy, #= auto scale y
+	     Bool :$autoxy, #= auto scle both x and y
+	     Bool :logy(:$linlog), #= logarithmic y scale
+	     Bool :logx(:$loglin), #= logaroithmic x scale
+	     Bool :logxy(:$loglog), # log log scale
+	     Bool :$global = False, #= global/individual 
+	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False, #= import Mz data from ist-ffc 
+		 Str  :$fit-if = "", #= include fit if condition when fitting data
+		 Str  :$plot-if = "", #= include plot if tag condition when plotting data and fitting curves
+		 Str  :$sef-R1-file = "", #= use file to get freqs when importing data from Stelar sef files
+		 Str  :$range = "", #= define range when importing data zones form Stelar data
+		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc files
+		 Int  :$gfilt, #= used a Gaussian filter to smooth data
+		 Str  :set-err(:$err)="", #= set err in data files 
+	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
+	     Str  :save-to(:$to), #= write fit settings and results to json or sav file
+	     Str  :$work-folder = '.', #= set a different work folder
+         Int  :Num(:$npts) = +100, #= number of points in the theoretical curves
+		 Bool :q(:$quiet) = False, #= reduce log output
+		 Str  :AuxCode(:auxcode(:$aux-code)) = "", #= additional auxiliar code
 		 *%_
 	    ){
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -1148,39 +1147,16 @@ sub define-alias($engine,$dali) {
 		}
 }
 
-
 =begin pod
 
 =NAME 
 	onefite - Raku script interface to the OneFit-Engine (OFE)
 
 =SYNOPSIS
-=begin code :lang<bash>
-onefite [-h|--help]
-onefite uninstall
-onefite service start [--ip=<Str>] [-d|--systemd-deamon] [-p|--port=<Int>]
-onefite service stop
-onefite service log
-onefite service PID
-onefite list [-q|--quiet]
-onefite list models [-q|--quiet]
-onefite list aliases [-q|--quiet]
-onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log]
-onefite convert <input-file> <output-file> [--work-folder=<Str>]
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
-onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
-onefite stop-web-engine
-onefite help <model> [-q|--quiet]
-onefite help <model> <key>] [-q|--quiet]
-onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
-onefite create <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--aux-code=<Str>]
-onefite random <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>]
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export]
-onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
-onefite test list
-onefite test [<arr> ...] [--verbose|-v] [--d|--systemd-daemon] [-p|--post-install] 
-=end code
+	onefite stands for OneFit Engine, OFE for short. It helps users to perform model fits to data. 
+	It aims at obtaining the "best fit with just one go" keeping true to the fitteia's moto 
+
+	"Keeping the simple easy, making the complex feasible, and getting the impossible within reach."  
 
 =NOTE
 	This man page is expected to help you to take full advanatge of onefite both on the server and on the client sides
