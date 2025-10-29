@@ -558,14 +558,14 @@ multi MAIN ('start-engine',
 
 #|(onefite create a json file from cmd line)
 multi MAIN  ('create',
-	     Str  $function is copy, #= fitting fucntion
+	     Str  $function is copy, #= fitting function
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) }, 
 	     Str  :data-label(:$data-labels), #= data labels and values
-         Str  :$fit-methods = "simp scan min minos", #= minuit fir methods
+         Str  :$fit-methods = "simp scan min minos", #= minuit fit methods
 	     Str  :$tags, #= Data blocks TAGS
 	     Bool :$autox, #= auto scale x
 	     Bool :$autoy, #= auto scale y
-	     Bool :$autoxy, #= auto scle both x and y
+	     Bool :$autoxy, #= auto scale both x and y
 	     Bool :logy(:$linlog), #= logarithmic y scale
 	     Bool :logx(:$loglin), #= logaroithmic x scale
 	     Bool :logxy(:$loglog), # log log scale
@@ -1149,134 +1149,146 @@ sub define-alias($engine,$dali) {
 
 =begin pod
 
-=NAME 
-	onefite - Raku script interface to the OneFit-Engine (OFE)
+=NAME
+    onefite - Raku script interface to the OneFit-Engine (OFE)
 
 =SYNOPSIS
-	onefite stands for OneFit Engine, OFE for short. It helps users to perform model fits to data. 
-	It aims at obtaining the "best fit with just one go" keeping true to the fitteia's moto 
+    onefite stands for OneFit Engine, OFE for short. It helps users to perform model fits to data.
+    It aims at obtaining the "best fit with just one go" keeping true to the fitteia motto:
 
-	"Keeping the simple easy, making the complex feasible, and getting the impossible within reach."  
+    "Keeping the simple easy, making the complex feasible, and getting the impossible within reach."
 
 =NOTE
-	This man page is expected to help you to take full advanatge of onefite both on the server and on the client sides
-	
+    This man page is expected to help you take full advantage of onefite on both the server and client sides.
 
-
-=DESCRIPTION 
-		this is it
+=DESCRIPTION
+    this is it
 
 =USAGE
 
 =head2 Basic commands
 
-=item1 onefite
+=begin itemize
+
+=item onefite
+
 =begin code :lang<bash>
 onefite [-h|--help]
 =end code
 
-	Options
+    Options
 
-	[-h|--help] Basic help
+    [-h|--help] Basic help
 
-=item1 Uninstall
+=item Uninstall
+
 =begin code :lang<bash>
- onefite uninstall
+onefite uninstall
 =end code
 
-=item1 Help on models
+=item Help on models
+
 =begin code :lang<bash>
- onefite help <model> [-q|--quiet]
- onefite help <model> <key>] [-q|--quiet]
+onefite help <model> [-q|--quiet]
+onefite help <model> <key> [-q|--quiet]
 =end code
-	
-	Provides information on the <model> equation included in the models fitting library
-	Sub-option <key> provides just the specific information on the key 
 
-	Options
+    Provides information on the <model> equation included in the models fitting library.
+    Sub-option <key> provides just the specific information on the key.
 
-	[-q|--quiet] No screen print of log information 
+    Options
 
-=item1 List models
+    [-q|--quiet] No screen print of log information
+
+=item List models
+
 =begin code :lang<bash>
 onefite list [-q|--quiet]
 onefite list models [-q|--quiet]
 onefite list aliases [-q|--quiet]
 =end code
-	
-	Lists models included in the models fitting library and aliases defined in $HOME/.local/etc/aliases.json)i
-	Lists just the models
-	Lists just the aliases
 
-	Options
+    Lists models included in the models fitting library and aliases defined in $HOME/.local/etc/aliases.json
+    Lists just the models
+    Lists just the aliases
 
-	[-q|--quiet] No screen print of log information 
+    Options
 
-=item1 Paths finder
+    [-q|--quiet] No screen print of log information
+
+=item Paths finder
+
 =begin code :lang<bash>
 onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
 =end code
 
-	Paths to OneFit-Engine folders installed. 
-	Combined use with "cd" and "awk" in the examples below
+    Paths to OneFit-Engine folders installed.
+    Combined use with "cd" and "awk" in the examples below
 
-	Options
+    Options
 
-	[-s|--src] Source
-	[-t] Raku test folder
-	[-e|--examples] Examples folder
-	[-b|--bin] Binaries folder
-	[-l|--lib] Libraries folder
-	[-c|-C] C code/F code folders
-	[--log] Log folder
-	[-a|--aliases] Aliases folder
-	
-	Examples
+    [-s|--src]       Source
+    [-t]             Raku test folder
+    [-e|--examples]  Examples folder
+    [-b|--bin]       Binaries folder
+    [-l|--lib]       Libraries folder
+    [-c|-C]          C code/F code folders
+    [--log]          Log folder
+    [-a|--aliases]   Aliases folder
 
-	cd $(onefite path -s)
-	vi $(onefite path -a)/aliases.json
+    Examples
+
+    cd $(onefite path -s)
+    vi $(onefite path -a)/aliases.json
+=end itemize
 
 =head2 Files conversion
 
-=item1 sav <--> json files conversion
+=begin itemize
+
+=item sav <--> json files conversion
+
 =begin code :lang<bash>
 onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
 =end code
-	
-	Converts fitteia's sav files to OFE json files
 
-	Options
+    Converts fitteia's sav files to OFE json files
 
-	[--work-folder] Folder where the coversion will be performed
+    Options
 
-	Examples
-	
-	onefite convert some-fitteia-fit.sav ofe-version.json
+    [--work-folder] Folder where the conversion will be performed
 
+    Examples
+
+    onefite convert some-fitteia-fit.sav ofe-version.json
+=end itemize
 
 =head2 OFE service commands
 
-=item1 Systemd service 
+=begin itemize
+
+=item Systemd service
 
 =begin code :lang<bash>
-onefite service start [--ip=<Str>] [-d|--systemd-deamon] [-p|--port=<Int>]
+onefite service start [--ip=<Str>] [-d|--systemd-daemon] [-p|--port=<Int>]
 onefite service stop
 =end code
 
-	[start] Is: sudo systemctl daemon-reload; systemctl enable onefite.service; service onefite start
-	[stop] Is: kill -9 <star-web-service>
-	[--ip=<Str>] Is: '*' by default. When [--macos] or [--wsl] use --ip=127.0.0.1
-	[-p|--port=<Int>] Is: 8142 byt default. Check your Firewall just in case
-	[-d|--systemd-daemon] Is: False by default. When [--docker] [--macos] or [--wsl] keep the default.
+    [start] Is: sudo systemctl daemon-reload; systemctl enable onefite.service; service onefite start
+    [stop]  Is: kill -9 <start-web-engine>
+    [--ip=<Str>]      Default '*'. For [--macos] or [--wsl] use --ip=127.0.0.1
+    [-p|--port=<Int>] Default 8142. Check your Firewall just in case
+    [-d|--systemd-daemon] Default False. For [--docker], [--macos], or [--wsl] keep the default.
 
-=item1 LOG and PID services
+=item LOG and PID services
 
 =begin code :lang<bash>
-onefite service log|PID
+onefite service log
+onefite service PID
 =end code
 
-	Shows log OFE service log file	
-	Prints OFE Process IDentifier 
+    Shows OFE service log file
+    Prints OFE Process Identifier
 
 =item OFE manual web service
 
@@ -1286,129 +1298,133 @@ onefite stop-web-engine
 (OBSOLETE) onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
 =end code
 
-	User command line to start|stop OFE web service
+    User command line to start/stop OFE web service
+=end itemize
 
 =head2 Create command
 
 =begin code :lang<bash>
-onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
+onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
 =end code
 
-	Creates a json file with the function and datafiles provided.
+    Creates a json file with the function and datafiles provided.
 
-	Function
+    Function
 
-	The function syntax has the follwing rules:
-		[ x < y ] Defines a range of vales [ x ; y], that is between x and y, inclusive. Spaces can be removed. '<' and ';' can be use as limits separators but '<' present less escape issues in argument passing   
-    	':'	Initializing symbol
-		'=' Fix a value
+    The function syntax has the following rules:
+        [ x < y ] Defines a range of values [ x ; y ], that is between x and y, inclusive. Spaces can be removed.
+                  '<' and ';' can be used as limit separators but '<' presents fewer escape issues in argument passing
+        ':'  Initializing symbol
+        '='  Fix a value
 
-	Example
+    Example
 
-		"Mz [ -1 < 1] ( t[1e-3 < 10], M0:0.5[-1<1], Mi=1[-2<2], T1:0.5 [ 1e-3 < 10]) = Mi \+ (M0-Mi)*exp(-t/T1)"
-		Mz is the dependent variable with a plot range will be form -1 to 1. Mz is a function with arguments: t,M0,Mi, and T1
-		t  is the independent variable with a plot range between 1e-3 and 10
-		M0 is a model parameter initiallized to 0.5 and the non linier Least-Squares minimization performed by CERN lib MINUIT will be restrited to the range [-1;1]
-		Mi is a model parameter with a fixed value 1 but a possible range [-2;2]
-		T1 is a model parameter initialized to 0.5 in a range [1e-2; 10]
-	
-		The expression "Mi \+ (M0-Mi)*exp(-t/T1)" contains '\+' that sets the plotting individual model contributions option to True
+        "Mz [-1 < 1] ( t[1e-3 < 10], M0:0.5[-1<1], Mi=1[-2<2], T1:0.5[1e-3 < 10]) = Mi \+ (M0-Mi)*exp(-t/T1)"
+        Mz is the dependent variable with a plot range from -1 to 1. Mz is a function with arguments: t, M0, Mi, and T1
+        t  is the independent variable with a plot range between 1e-3 and 10
+        M0 is a model parameter initialized to 0.5 and the non-linear Least-Squares minimization performed by CERN lib MINUIT will be restricted to the range [-1;1]
+        Mi is a model parameter with a fixed value 1 but a possible range [-2;2]
+        T1 is a model parameter initialized to 0.5 in a range [1e-3; 10]
 
-	Options
+        The expression "Mi \+ (M0-Mi)*exp(-t/T1)" contains '\+' which sets plotting of individual model contributions to True
+
+    Options
 
 =head2 Fit commands
 
 =begin code :lang<bash>
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global]  [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet [--define-alias|--dali=<Str>] [--aux-code=<Str>]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int] [-q|--quiet] [--define-alias|--dali=<Str>] [--export]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
-
-	Options
-	
-	[--define-alias|--dali=<Str>] adds alias Str do the function used to fit the date in the ./aliases.json file. Overwrites exiting alias
-	[--export] to write data and AuxCode in files for later use with onefite fit <funtion>
-   	[--aux-code] accepts the name of the file with the AuxCode and the new fitting functions declarations	
-
-	Examples
-
-	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
-	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
-
-	onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
-	onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
-
-	onefite fit "a: 1exp" file.txt --autox --logx --autoy
-	onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
-	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
-	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
-	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0" 
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%" 
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std" 
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="standard deviation" 
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std split at 5" 
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% avg" 
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% average" 
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5"
-
-
 =end code
+
+    Options
+
+    [--define-alias|--dali=<Str>] adds alias Str to the function used to fit the data in the ./aliases.json file (overwrites existing alias)
+    [--export] writes data and AuxCode to files for later use with: onefite fit <function>
+    [--aux-code] accepts the name of the file with the AuxCode and the new fitting functions declarations
+
+    Examples
+
+    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
+    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
+
+    onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
+    onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
+
+    onefite fit "a: 1exp" file.txt --autox --logx --autoy
+    onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
+    onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
+    onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
+    onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="standard deviation"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std split at 5"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% avg"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% average"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5"
 
 =head2 Version upgrade
 
 =begin code
+
 onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
+
 =end code
 
-	At the host prompt run I<onefite updatde -d --shell --test>  
+    At the host prompt run I<onefite update -d --shell --test>
 
-	This will upgrade the current (main or dev) version of the OneFit-Engine. github.com/fitteia/OneFit-Engine.git 
-	is downloaded and expanded. OneFit-Engine/INSTALL is called with options --system-daemon and --shell an --test options.  
-	Port 8142 will be open to onefite requests.
-	Port 8100 will be open to shell command accces via a web browser 
+    This will upgrade the current (main or dev) version of the OneFit-Engine. github.com/fitteia/OneFit-Engine.git
+    is downloaded and expanded. OneFit-Engine/INSTALL is called with options --systemd-daemon and --shell and --test.
+    Port 8142 will be open to onefite requests.
+    Port 8100 will be open to shell command access via a web browser.
 
-	Options
-	
-	[-c|--compile] Compile the OneFit-Engine C and F source.  Default is True
-	[--ip] Ip range access to the OneFit-Engine web service. Default '*' (All)
-	[-p] Port number for the OneFit-Engine web service. Default 8142
-	[-m|--merge-site=<Str>] Git pull OneFit-Engine and merge with local site <Str> sources. Default ''
+    Options
 
-	[-u|--to-user] Install OneFit-Engine in the user space.  Default is False
-	[-d|--systema-daemon] Create a systemd service.config and install service.  Default is False
-	[--test] Run install tests.  Default False
-	[--cernlib] Use debian cernlib package or compile fortran version from source. Default False
-	[--shell] Install debian package to create a wes shell service on defaul port 8100 or port define in option --shell-port. Default False
-	[--shell-port] Port number for the web shell service. Default 8100
-	[--dpkg] run apt update by default. Use --no-dpkg otherwise
-	Use --/<option> or --no-<option> for disable default option value (ex: --no-test or --/test)	
+    [-c|--compile] Compile the OneFit-Engine C and Fortran sources. Default True
+    [--ip]          IP range access to the OneFit-Engine web service. Default '*'
+    [-p]            Port number for the OneFit-Engine web service. Default 8142
+    [-m|--merge-site=<Str>] Merge remote with local site <Str> sources. Default ''
+
+    [-u|--to-user] Install OneFit-Engine in the user space. Default False
+    [-d|--systemd-daemon] Create a systemd service and install it. Default False
+    [--test]       Run install tests. Default False
+    [--cernlib]    Use Debian cernlib package or compile from source. Default False
+    [--shell]      Install a web shell service (default port 8100 or --shell-port). Default False
+    [--shell-port] Port number for the web shell service. Default 8100
+    [--dpkg]       Run apt update by default. Use --no-dpkg otherwise
+
+    Use --/<option> or --no-<option> to negate defaults (e.g., --no-test or --/test)
 
 =head2 Test commands
 
 =begin code :lang<bash>
 onefite test list
-
-onefite test [<arr> ...] [--verbose|-v] [-d|systemd-daemon] [-p|--post-install]
+onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install]
 =end code
 
-
 =PARAMETERS
+
 =head2 File parameters
-=item input-file- name of the file to be converted (file extensions: sav or json)
-=item output-file- name of the converted file (file extensions: sav or json)
-=item data files- can be one or more files including plain text ASCII (.dat, .txt). Zip files are accepted.
-	Special cases: Stelar S.R.l files (.sdf, .hdf5, .sef).
+
+=begin itemize
+=item input-file - name of the file to be converted (file extensions: .sav or .json)
+
+=item output-file - name of the converted file (file extensions: .sav or .json)
+
+=item data files - one or more files including plain text ASCII (.dat, .txt). Zip files are accepted.
+      Special cases: Stelar S.R.l files (.sdf, .hdf5, .sef).
+=end itemize
 
 =head2 Fit methods
+
+=begin itemize
 =item fit-methods - simp scan min minos
-
-
-=para 
-
+=end itemize
 =end pod
-
-
