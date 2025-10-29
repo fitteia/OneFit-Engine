@@ -569,21 +569,21 @@ multi MAIN  ('create',
 	     Bool :logy(:$linlog), #= logarithmic y scale
 	     Bool :logx(:$loglin), #= logaroithmic x scale
 	     Bool :logxy(:$loglog), # log log scale
-	     Bool :$global,
-	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False,
-		 Str  :$fit-if = "",
-		 Str  :$plot-if = "",
-		 Str  :$sef-R1-file = "",
-		 Str  :$range = "",
-		 Bool :$R1 = False,
-		 Int  :$gfilt,
-		 Str  :set-err(:$err)="",
-	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
-	     Str  :save-to(:$to), # write fit settings to json or sav file"
-	     Str  :$work-folder = '.',
-         Int  :Num(:$npts) = +100,
-		 Bool :q(:$quiet) = False,
-		 Str  :$aux-code = "",
+	     Bool :$global = False, #= global/individual 
+	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False, #= import Mz data from ist-ffc 
+		 Str  :$fit-if = "", #= include fit if condition when fitting data
+		 Str  :$plot-if = "", #= include plot if tag condition when plotting data and fitting curves
+		 Str  :$sef-R1-file = "", #= use file to get freqs when importing data from Stelar sef files
+		 Str  :$range = "", #= define range when importing data zones form Stelar data
+		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc files
+		 Int  :$gfilt, #= used a Gaussian filter to smooth data
+		 Str  :set-err(:$err)="", #= set err in data files 
+	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
+	     Str  :save-to(:$to), #= write fit settings and results to json or sav file
+	     Str  :$work-folder = '.', #= set a different work folder
+         Int  :Num(:$npts) = +100, #= number of points in the theoretical curves
+		 Bool :q(:$quiet) = False, #= reduce log output
+		 Str  :AuxCode(:auxcode(:$aux-code)) = "", #= additional auxiliar code
 		 *%_
 	    ){
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
