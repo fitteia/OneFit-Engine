@@ -418,15 +418,15 @@ sub shellinabox(Bool $shell, $shell-port) {
 
 sub install-manpage( :$macos = False ) {
 	#"onefite.1".IO.spurt: shell("raku --doc=Man $*CWD/bin/onefite",:out).out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");
-	my $txt;
+	my $p;
 	try {
- 		$txt = shell("$*CWD/bin/onefite man --man",:out).out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");
+ 		$p = shella;("$*CWD/bin/onefite man --man",:out);
 	}
-	if $! {
+	if $p.exitcode {
 		say "man page couldn't be created! Use onefite man for man page";
 	}
 	else {	
-		"onefite.1".IO.spurt: $txt;
+		"onefite.1".IO.spurt: $p.out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");;
 		"onefite.1".IO.spurt: "\n\n" ~ shell("$*CWD/bin/onefite -v",:out).out.lines.join("\n"), :append;
     	"onefite.1.gz".IO(:e).unlink;
 		say "onefite man page: onefite.1.gz";
