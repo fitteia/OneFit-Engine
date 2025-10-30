@@ -420,7 +420,7 @@ sub install-manpage( :$macos = False ) {
 	#"onefite.1".IO.spurt: shell("raku --doc=Man $*CWD/bin/onefite",:out).out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");
 	my $p;
 	try {
- 		$p = shella;("$*CWD/bin/onefite man --man",:out);
+ 		$p = shell("$*CWD/bin/onefite man --man",:out);
 	}
 	if $p.exitcode {
 		say "man page couldn't be created! Use onefite man for man page";
