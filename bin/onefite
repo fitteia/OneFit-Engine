@@ -58,7 +58,7 @@ multi MAIN (
 }
 
 #| Get onefite man page
-multi MAIN('man', Bool :m(:man) = "text") { MAIN( :man ) }
+multi MAIN( 'man', Bool :m(:$man) ) { MAIN( :man($man) ) }
 
 
 #| Get onefite library models and aliases lists
