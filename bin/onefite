@@ -49,7 +49,7 @@ END_USAGE
 
 #| Get onefite man page
 multi MAIN (Str :$man="text") {
-	my $txt = $man ~~ /text/ ?? pod2text $=pod !! pod2man $=pod;
+	my $txt = $man ~~ /text/ ?? pod2text $=pod !! Pod::To::Man.pod2man($=pod);
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
 	say $txt;
 	$txt
