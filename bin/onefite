@@ -48,15 +48,17 @@ END_USAGE
 }
 
 #| Get onefite man page
-multi MAIN (Str :$man="text") {
-	my $txt = $man ~~ /text/ ?? pod2text $=pod !! Pod::To::Man.pod2man($=pod);
+multi MAIN (
+	Bool :m(:$man) = False, 
+) {
+	my $txt = $man ?? Pod::To::Man.pod2man($=pod) !! pod2text $=pod;
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
 	say $txt;
 	$txt
 }
 
 #| Get onefite man page
-multi MAIN('man', Str :$type = "text") { MAIN( :man($type) ) }
+multi MAIN('man', Bool :m(:man) = "text") { MAIN( :man ) }
 
 
 #| Get onefite library models and aliases lists
