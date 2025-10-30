@@ -487,7 +487,7 @@ multi MAIN ('help',
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
-    my %info = %meta-c{ @list.grep(/$model/).Str };
+    my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str };
     my $txt = "$model => " ~ to-json(%info, :sorted-keys);
     say $txt unless $quiet;
     $txt
