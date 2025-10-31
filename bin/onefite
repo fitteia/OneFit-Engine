@@ -446,8 +446,9 @@ multi MAIN ('upgrade',
       Bool :$test = False, #= perform tests
 	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with locl branch
-      ){
-      shell "sudo service onefite stop" if $systemd-daemon and !$to-user and shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out).out.slurp.Bool;
+){
+	  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
+      shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, $!p.exitcode, $p.out.slurp.Bool);
       
       shell "cd { ::('OFE-PATH') }  && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg}";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
