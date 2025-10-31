@@ -130,8 +130,8 @@ multi MAIN (
    	systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
    	
 	add-show-ip-in-issue() if $to-site and !$DOCKER;
-	
-   	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
+   	
+	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
 
 	install-manpage(macos => $macos) if $man-page;
 
@@ -466,7 +466,11 @@ EOT
 
     say "Running post-install tests...";
     "/tmp/zone12.dat".IO.spurt: $data;
-	my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
+	#my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
+	my $service = False; 
+	my $p = shell("systemctl status onefite.service",:out,:err);
+	$service = True if !$p.exitcode && $p.out.slurp(:close).contains("active (running)");
+
 	if $daemon {
 		if $service {
 			my $proc= Proc::Async.new($SUDO, 'systemctl', 'stop', 'onefite.service');

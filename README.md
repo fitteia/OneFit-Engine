@@ -113,6 +113,11 @@ Run the onefite container
 ```bash
 docker run -e UID=$(id -u) -e GID=$(id -g) -p 8142:8142 -it --mount type=bind,source=/Users/$(id -nu)/Docker,target=/home/ofe/public_html  --name onefite onefite bash
 ```
+or
+```bash
+docker run -d -e UID=$(id -u) -e GID=$(id -g) -p 8142:8142 -it --mount type=bind,source=/Users/$(id -nu)/Docker,target=/home/ofe/public_html  --name onefite onefite bash
+docker exec -it onefite bash
+```
 In the container
 ```bash
 cd /home/ofe/public_html && onefite service start && onefite test
