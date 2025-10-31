@@ -1343,7 +1343,7 @@ EOT
 
         say "Running post-install tests...\n";
         "/tmp/zone12.dat".IO.spurt: $data;
-	my $service = $daemon ?? shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running)") !! False;
+	my $service = $daemon ?? shell("systemctl status onefite",:out,:err).out.slurp(:close).contains("active (running)") !! False;
 	if $service {
 	    put "testing localhost onefite web service... ";
 	    my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
