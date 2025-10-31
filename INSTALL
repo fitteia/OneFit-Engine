@@ -130,7 +130,7 @@ multi MAIN (
    	systemd-daemon($ip,$port) if $systemd-daemon and $to-site;
    	
 	add-show-ip-in-issue() if $to-site and !$DOCKER;
-	
+say $post-test;	
    	run-post-install-tests(:daemon($systemd-daemon), port => $port) if $post-test;
 
 	install-manpage(macos => $macos) if $man-page;
