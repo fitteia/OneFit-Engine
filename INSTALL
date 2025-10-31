@@ -1,8 +1,5 @@
 #!/usr/bin/env raku
 
-use Pod::To::Text;
-use Pod::To::Man;
-
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 our $SUDO = "sudo";
