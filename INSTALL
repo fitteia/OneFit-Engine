@@ -423,7 +423,7 @@ sub install-manpage( :$macos = False ) {
  		$p = shell("$*CWD/bin/onefite man --man",:out,:err);
 	}
 	if $p.exitcode {
-		say "man page couldn't be created! Use onefite man for man page";
+		say "man page couldn't be created on site, using default man page";
 	}
 	else {	
 		"onefite.1".IO.spurt: $p.out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");;
@@ -431,7 +431,7 @@ sub install-manpage( :$macos = False ) {
     	"onefite.1.gz".IO(:e).unlink;
 		say "onefite man page: onefite.1.gz";
 	}
-	if $SUDO && !$p.exitcode {
+	if $SUDO {
    		if $macos {
    			shell("$SUDO cp onefite.1 /usr/local/share/man/man1/");	
 			say "onefite.1 man page install in /usr/local/share/man/man1/";
