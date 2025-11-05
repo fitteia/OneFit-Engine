@@ -38,7 +38,11 @@ multi MAIN (
   	Str  :b(:$bindir) = "$*CWD/../bin", #= choose /home/<user>/bin if you want and make sure it is included in the PATH
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
 	){
-   	
+ 
+	$docker = is-sys-summary().contains("docker") unless $docker;
+	$wsl = is-sys-summary().contains("wsl") unless $wsl;
+	$macos = is-sys-summary().contains("macos") unless $macos;
+  	
 	my %cpus = ("x86_64"  => "amd64", "aarch64" => "arm64", "arm64" => "arm64");
 
    	if $git {
@@ -58,10 +62,6 @@ multi MAIN (
    
    	$SUDO = "" unless $to-site;
 
-	$docker = is-sys-summary().contains("docker") unless $docker;
-	$wsl = is-sys-summary().contains("wsl") unless $wsl;
-	$macos = is-sys-summary().contains("macos") unless $macos;
-	
 	if $docker {
 		$DOCKER = $docker;
 		$web-server = False;
