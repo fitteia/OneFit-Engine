@@ -312,7 +312,7 @@ proto MAIN(|) { * };
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
 ) {
-	say $*USAGE;   
+	say $*USAGE;
 	note qq:to/END_USAGE/;
     <input-file>     name of the file to be converted (\.sav or \.json)
     <output-file>    name of the converted file (\.sav or \.json)
@@ -1341,9 +1341,10 @@ sub run-post-install-tests(Bool :$daemon = True, Bool :$verbose = False) {
 EOT
 
 
-        say "Running post-install tests...\n";
-        "/tmp/zone12.dat".IO.spurt: $data;
-	my $service = $daemon ?? shell("systemctl status onefite",:out).out.slurp(:close).contains("active (running)") !! False;
+    say "Running post-install tests...\n";
+    "/tmp/zone12.dat".IO.spurt: $data;
+	my $p = shell("systemctl status onefite",:out,:err);
+	my $service = $daemon && !$p.exitcode ?? $p.out.slurp(:close).contains("active (running)") !! False;
 	if $service {
 	    put "testing localhost onefite web service... ";
 	    my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
