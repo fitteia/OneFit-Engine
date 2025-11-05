@@ -312,7 +312,7 @@ proto MAIN(|) { * };
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
 ) {
-	say $*USAGE.lines.sort.join("\n");   
+	say $*USAGE;
 	note qq:to/END_USAGE/;
     <input-file>     name of the file to be converted (\.sav or \.json)
     <output-file>    name of the converted file (\.sav or \.json)

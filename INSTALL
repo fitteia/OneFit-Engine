@@ -1,5 +1,7 @@
 #!/usr/bin/env raku
 
+use v6.d;
+
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 our $SUDO = "sudo";
@@ -56,6 +58,8 @@ multi MAIN (
    
    	$SUDO = "" unless $to-site;
 
+	is-sys-summary();
+	
 	if $docker {
 		$DOCKER = $docker;
 		$web-server = False;
@@ -561,3 +565,146 @@ sub wait-for-port(Str:D $host, Int:D $port, Int:D $timeout = 30, Int:D $interval
     }
 }
 
+sub slurp-or-empty(Str $p) {
+    try { return $p.IO.slurp; }
+    CATCH { default { return "" } }
+}
+sub file-exists(Str $p) { $p.IO.e }
+sub dir-exists(Str $p)  { $p.IO.d }
+
+sub in-path(Str $cmd) {
+    my $path = %*ENV<PATH> // '';
+    for $path.split(':') -> $d {
+        next unless $d.chars;
+        my $p = "{$d.IO.path}/$cmd";
+        return True if $p.IO.e && $p.IO.r && !$p.IO.d;
+    }
+    False
+}
+
+# ---------- Debian/Linux detection ----------
+sub is-debian() {
+    my $osr = slurp-or-empty('/etc/os-release');
+    if $osr.chars {
+		my %kv = $osr.lines.grep(*.contains('='))
+			.map({ 
+				my ($k, $v) = .split('=', 2); 
+				$k => $v.trim.trim-trailing.trim-leading.subst(/^'"'|'"'$/,:g) 
+			}).hash;
+        my $id      = (%kv< ID > // %kv<ID> // "").lc;
+        my $id_like = (%kv< ID_LIKE > // %kv<ID_LIKE> // "").lc;
+        return True if $id eq 'debian' || $id_like.contains('debian');
+    }
+    # Fallback: dpkg presence
+    return file-exists('/usr/bin/dpkg') || file-exists('/bin/dpkg') || file-exists('/usr/sbin/dpkg');
+}
+
+sub is-wsl() {
+    my $osrel = slurp-or-empty('/proc/sys/kernel/osrelease') ~ slurp-or-empty('/proc/version');
+    return True if $osrel.lc ~~ /microsoft|wsl/;
+    return True if file-exists('/proc/sys/fs/binfmt_misc/WSLInterop');
+    False
+}
+
+sub in-container() {
+    return True if file-exists('/.dockerenv') || file-exists('/run/.containerenv');
+    my $cg  = slurp-or-empty('/proc/1/cgroup') ~ slurp-or-empty('/proc/self/cgroup');
+    return True if $cg ~~ /docker|containerd|podman|kubepods|lxc/;
+    False
+}
+
+sub container-runtime() {
+    if file-exists('/.dockerenv') { return 'docker' }
+    if file-exists('/run/.containerenv') { return 'podman' }
+    my $cg = slurp-or-empty('/proc/1/cgroup');
+    return 'kubernetes' if $cg ~~ /kubepods/;
+    return 'docker'     if $cg ~~ /docker|containerd/;
+    return 'lxc'        if $cg ~~ /lxc/;
+    'container'
+}
+
+sub probably-colima() {
+    # Heuristics only (inside container)
+    my $cg  = slurp-or-empty('/proc/1/cgroup') ~ slurp-or-empty('/proc/self/cgroup');
+    my $res = slurp-or-empty('/etc/resolv.conf') ~ slurp-or-empty('/etc/hosts');
+    return True if $cg.lc  ~~ /colima|lima/;
+    return True if $res.lc ~~ /colima|lima/;
+    False
+}
+
+sub hypervisor-hint() {
+    my $cpuinfo = slurp-or-empty('/proc/cpuinfo').lc;
+    my $dmi     = slurp-or-empty('/sys/class/dmi/id/product_name').lc;
+    return 'kvm'         if $cpuinfo ~~ /kvm/         || $dmi ~~ /kvm/;
+    return 'vmware'      if $cpuinfo ~~ /vmware/      || $dmi ~~ /vmware/;
+    return 'hyperv'      if $cpuinfo ~~ /hyper '-' v/     || $dmi ~~ /hyper '-' v/;
+    return 'virtualbox'  if $cpuinfo ~~ /virtualbox/  || $dmi ~~ /virtualbox/;
+    return 'qemu'        if $cpuinfo ~~ /qemu/        || $dmi ~~ /qemu/;
+    return Nil;
+}
+
+# ---------- macOS detection ----------
+sub is-macos() {
+    # Raku reports 'darwin' on macOS
+    my $k = $*KERNEL.name.lc;
+    return True if $k eq 'darwin';
+    # Fallback: well-known macOS path
+    return True if dir-exists('/System/Library/CoreServices');
+    False
+}
+
+sub has-homebrew() {
+    # Either Intel (/usr/local) or Apple Silicon (/opt/homebrew)
+    return True if dir-exists('/opt/homebrew') || dir-exists('/usr/local/Homebrew');
+    return True if in-path('brew');
+    False
+}
+
+sub has-docker-desktop() {
+    # CLI may exist even if app not open; prefer app bundle or info markers
+    return True if dir-exists('/Applications/Docker.app');
+    my $cfg = slurp-or-empty("$*HOME/Library/Group Containers/group.com.docker/settings.json").lc;
+    return True if $cfg ~~ /docker <ws> desktop/;
+    # As a fallback, presence of 'Docker Desktop' hint in config file names
+    return False;
+}
+
+sub has-colima() {
+    return True if in-path('colima') || dir-exists("$*HOME/.colima");
+    # Colima rides on Lima; but we only mark Colima if its own artifacts are present
+    False
+}
+
+sub has-lima() {
+    return True if in-path('limactl') || dir-exists("$*HOME/.lima");
+    False
+}
+
+sub is-sys-summary() {
+    # First branch: macOS host
+    if is-macos() {
+        my $brew = has-homebrew() ?? '-homebrew' !! '';
+
+        return "macos-colima$brew" if has-colima();
+        return "macos-docker-desktop$brew" if has-docker-desktop();
+        return "macos-lima$brew" if has-lima();
+        return  "macos-bare$brew";
+    }
+
+    # Second branch: Linux/Debian environments
+    if is-debian() {
+        return "debian-wsl" if is-wsl();
+        if in-container() {
+            my $rt = container-runtime();
+            if $rt eq 'docker' && probably-colima() {
+                return "debian-container-colima";
+            } else {
+                return "debian-container-$rt";
+            }
+        }
+        my $hv = hypervisor-hint();
+        return "debian-pure (virtualized: $hv)" if $hv.defined;
+        return "debian-pure";
+    }
+    return "Not Debian or macOS (no classification).";
+}
