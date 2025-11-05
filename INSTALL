@@ -39,9 +39,12 @@ multi MAIN (
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
 	){
  
-	$docker = is-sys-summary().contains("docker") unless $docker;
-	$wsl = is-sys-summary().contains("wsl") unless $wsl;
-	$macos = is-sys-summary().contains("macos") unless $macos;
+	my $system = is-sys-summary();
+	note "Install OneFit-Engine for: $system";
+
+	$docker = $system.contains("docker") unless $docker;
+	$wsl = $system.contains("wsl") unless $wsl;
+	$macos = $system.contains("macos") unless $macos;
   	
 	my %cpus = ("x86_64"  => "amd64", "aarch64" => "arm64", "arm64" => "arm64");
 
