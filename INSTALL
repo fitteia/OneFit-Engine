@@ -58,7 +58,7 @@ multi MAIN (
    
    	$SUDO = "" unless $to-site;
 
-	is-sys-summary();
+	say is-sys-summary();
 	
 	if $docker {
 		$DOCKER = $docker;
