@@ -27,9 +27,9 @@ multi MAIN (
    	Bool :$cernlib = False, #= by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings
    	Bool :$shell = False, #= by default it NOT will install shellinabox service in port 8100
    	Bool :$git = True, #= By default it runs git to pull the package for remote repository
-	Bool :$wsl = False, #= Flag for a WSL2 Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
-	Bool :$macos = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
-	Bool :$docker = False, #= Flag for a Docker Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
+	Bool :$wsl is copy = False, #= Flag for a WSL2 Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
+	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
+	Bool :$docker is copy = False, #= Flag for a Docker Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Bool :$post-test is copy = True; #= Run post install tests
 	Bool :$man-page = True; #= Install man page
    	Str  :$ip is copy = '*', #= accept access from IP
@@ -58,7 +58,9 @@ multi MAIN (
    
    	$SUDO = "" unless $to-site;
 
-	say is-sys-summary();
+	$docker = is-sys-summary().contains("docker") unless $docker;
+	$wsl = is-sys-summary().contains("wsl") unless $wsl;
+	$macos = is-sys-summary().contains("macos") unless $macos;
 	
 	if $docker {
 		$DOCKER = $docker;
