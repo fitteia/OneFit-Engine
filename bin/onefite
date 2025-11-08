@@ -1100,7 +1100,7 @@ MSG
     $engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
-    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	define-alias($engine,$dali) if $dali.so;
     exit;
@@ -1197,7 +1197,8 @@ MSG
     $engine.save($to) if $to.defined;
     zip-fit($engine,$work-folder,$name);
     shell "mv $name.zip $zip-to" unless $name eq $zip-to;
-    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+	
+	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	define-alias($engine,$dali) if $dali.so;
     exit;
