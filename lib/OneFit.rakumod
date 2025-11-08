@@ -383,7 +383,6 @@ class Engine is export {
 		 		for (1 .. @!blocks.elems).race {
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}a.out --grbatch=PDF data{$_}a.dat <fit$_.par >plot{$_}a.log 2>&1";
 		 		}
-				say $!path.IO.dir(:test({ .IO.f })).grep(*.basename.lc.contains('.pdf'))>>.Str;
 				my @pdfsa = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
     			for (0 ..^ @pdfsa.elems) -> $i {
 					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
@@ -395,6 +394,7 @@ class Engine is export {
 	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	     	} unless $no-plot.Bool;
 		}
+		say $!path.IO.dir(:test({ .IO.f })).grep(*.basename.lc.contains('.pdf'))>>.Str;
 	 }
 	 else {
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
