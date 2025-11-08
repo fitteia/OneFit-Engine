@@ -329,8 +329,13 @@ class Engine is export {
 	 self.code(:write,:compile, :quiet($quiet));
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
 	 say @outliers;
-	 my $f = { my @b = $^a.split(/ '..' | '-' | ':' /); say @b; @b.elems > 1 ?? [+@b.head, +@b.tail-@b.head+1]  !! [+@b[0],+1] };
-	 if @outliers.so && @outliers.elems > 1 { say "here"; @outliers.map({ $f($_) }) }
+	 my $f = { 
+		 my @b = $^a.split(/ '.' '.' | '-' | ':' /); 
+		 @b.elems > 1 
+		 	?? [+@b.head, +@b.tail - +@b.head +1]  
+			!! [+@b[0], 1] 
+		};
+	 if @outliers.elems > 1 { @outliers.map({ $f($_) }) }
 	 say @outliers;
 	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race {
