@@ -335,9 +335,9 @@ class Engine is export {
 		 	?? [+@b.head, +@b.tail - +@b.head +1]  
 			!! [+@b[0], 1] 
 		};
-	 
+	say @outliers; 
 	 if @outliers.elems > 1 { @outliers = @outliers.map({ $f($_) }) }
-	 
+	 say @outliers;
 	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
 	 if %!engine<FitType> ~~ /Individual/ {
