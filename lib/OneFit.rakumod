@@ -394,7 +394,6 @@ class Engine is export {
 	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	     	} unless $no-plot.Bool;
 		}
-		say $!path.IO.dir(:test({ .IO.f })).grep(*.basename.lc.contains('.pdf'))>>.Str;
 	 }
 	 else {
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
@@ -421,7 +420,7 @@ class Engine is export {
 	 }
 	 %!engine<fit-residues> = @fit-residues;
 	 say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
-
+	 say $!path.IO.dir(:test({ .IO.f })).grep(*.basename.lc.contains('.pdf'))>>.Str;
 	 self
      }
 
