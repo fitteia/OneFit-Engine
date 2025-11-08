@@ -327,6 +327,7 @@ class Engine is export {
 	 self.stp;
 	 $*ERR.say("write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
+	 
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
 	 my $f = { 
 		 my @b = $^a.split(/ '.' '.' | '-' | ':' /); 
@@ -334,19 +335,14 @@ class Engine is export {
 		 	?? [+@b.head, +@b.tail - +@b.head +1]  
 			!! [+@b[0], 1] 
 		};
+	 
 	 if @outliers.elems > 1 { @outliers = @outliers.map({ $f($_) }) }
+	 
 	 if %!engine<FitType> ~~ /Individual/ {
-	    for (1 .. @!blocks.elems).race {
+		 for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-			my @teste="$!path/data$_.dat".IO.lines;
-			my $removed = 0;
-			for @outliers {
-					@teste.splice(+.head - $removed,+.tail).join("\n").say;
-					$removed +=  +.tail;
-		 	}
-			say @teste.join("\n");
-		}
-     	for (1 .. @!blocks.elems).race {
+		 }
+     	 for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
 	     }
 	     @!blocks.race.map( { .export(:plot) });
@@ -357,6 +353,31 @@ class Engine is export {
 		     	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
 	     } unless $no-plot.Bool;
+
+	   	if $outliers.so {
+			for (1 .. @!blocks.elems).race {
+				my @pruned-data="$!path/data$_.dat".IO.lines;
+				my $removed = 0;
+				for @outliers {
+					@pruned-data.splice( +.head - $removed, +.tail ).join("\n").say;
+					$removed +=  +.tail;
+	 			}
+				#			say @pruned-data.join("\n");
+				"$!path/data{$_}a.dat".IO.spurt: @pruned-data.join("\n");
+	 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data{$_}a.dat <fit$_.par >fit{$_}a.log 2>&1; cp fit-residues-1.res fit-residues-{$_}a.res-tmp";
+		 	}
+     	 	for (1 .. @!blocks.elems).race {
+		 		shell "cd $!path; mv fit-residues-{$_}a.res-tmp fit-residues-{$_}a.res" ;
+	     	}
+	     	@!blocks.race.map( { .export(:plot) });
+	     	self.parameters(:read, :from-output, :from-log);
+	     	do {
+		 		self.agr;
+		 		for (1 .. @!blocks.elems).race {
+		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+		 		}
+	     	} unless $no-plot.Bool;
+		}
 	 }
 	 else {
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
@@ -382,6 +403,13 @@ class Engine is export {
 	 }
 	 %!engine<fit-residues> = @fit-residues;
 	 say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+
+	 my @pdfs = 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf';
+
+	 say @pdfs; 
+
+     shell "cd $!path && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+
 	 self
      }
 
