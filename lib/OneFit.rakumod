@@ -331,12 +331,12 @@ class Engine is export {
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
 	 my $f = { 
 		 my @b = $^a.split(/ '..' | '-' | ':' /); 
-		 @b.elems > 1 
+		 @b.elems >= 1 
 		 	?? [+@b.head, +@b.tail - +@b.head +1]  
 			!! [+@b[0], 1] 
 		};
 	say @outliers; 
-	 if @outliers.elems > 1 { @outliers = @outliers.map({ $f($_) }) }
+	 if @outliers.elems >= 1 { @outliers = @outliers.map({ $f($_) }) }
 	 say @outliers;
 	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
