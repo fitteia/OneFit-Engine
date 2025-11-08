@@ -380,7 +380,7 @@ class Engine is export {
 				}
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}a.out --grbatch=PDF data{$_}a.dat <fit$_.par >plot{$_}a.log 2>&1";
 		 		}
     			for @pdfs -> $name {
 					"$!path/$name".IO.rename("$!path/{$name.subst('.pdf','')}a.pdf");
@@ -419,8 +419,6 @@ class Engine is export {
 	 }
 	 %!engine<fit-residues> = @fit-residues;
 	 say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
-
-     shell "cd $!path && pdftk { 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	 self
      }
