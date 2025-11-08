@@ -386,7 +386,7 @@ class Engine is export {
     			for 0 ..^ @pdfsa.elems -> $i {
 					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
 					"$!path/@pdfs[$i]".IO.rename("$!path/@pdfsa[$i]");
-					"$!path/{@pfds[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
+					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
 				}
 				my @pdfs-all = flat @pdfs Z @pdfsa;
 	
