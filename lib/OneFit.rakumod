@@ -376,8 +376,8 @@ class Engine is export {
 						~ "\n" ~ 
 						@pruned-data
 							.head(* + @outliers.head)
-							.map({ .words.head(2).join(' ') })
-							.sort( *.words.head.Numeric )
+							.map({ .words.head(2).push(1).join(' ') })
+							.sort( *.words.head.Numeric ).join("\n")
 					;
 				}
 				else {
