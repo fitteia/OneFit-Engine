@@ -328,7 +328,6 @@ class Engine is export {
 	 $*ERR.say("write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
-	 say @outliers;
 	 my $f = { 
 		 my @b = $^a.split(/ '.' '.' | '-' | ':' /); 
 		 @b.elems > 1 
@@ -336,16 +335,14 @@ class Engine is export {
 			!! [+@b[0], 1] 
 		};
 	 if @outliers.elems > 1 { @outliers = @outliers.map({ $f($_) }) }
-	 say @outliers;
 	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-			 my @teste="$!path/data$_.dat".IO.lines;
-			 for @outliers -> $i, $n {
-				 say "$i $n";
-				 #		@teste.splice($i,$n).join("\n").say;
+			my @teste="$!path/data$_.dat".IO.lines;
+			for @outliers -> $i, $n {
+					@teste.splice($i,$n).join("\n").say;
 		 	}
-			# 	say @teste.join("\n");
+			say @teste.join("\n");
 		}
      	for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
