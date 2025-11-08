@@ -374,7 +374,7 @@ class Engine is export {
 				 	"$!path/data{$_}a.dat".IO.spurt: 
 						"$!path/data$_.dat".IO.lines.head
 						~ "\n" ~ 
-						@prune-data
+						@pruned-data
 							.head(* + @outliers.head)
 							.map({ .words.head(2).join(' ') })
 							.sort( .words.head.Numeric )
