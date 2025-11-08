@@ -371,7 +371,7 @@ class Engine is export {
 	 			}
 				#			say @pruned-data.join("\n");
 				"$!path/data{$_}a.dat".IO.spurt: @pruned-data.join("\n");
-	 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data{$_}a.dat <fit$_.par >fit{$_}a.log 2>&1; cp fit-residues-1.res fit-residues-{$_}a.res-tmp";
+	 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}a.out data{$_}a.dat <fit$_.par >fit{$_}a.log 2>&1; cp fit-residues-1.res fit-residues-{$_}a.res-tmp";
 		 	}
      	 	for (1 .. @!blocks.elems).race {
 		 		shell "cd $!path; mv fit-residues-{$_}a.res-tmp fit-residues-{$_}a.res" ;
