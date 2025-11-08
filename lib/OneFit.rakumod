@@ -328,10 +328,17 @@ class Engine is export {
 	 $*ERR.say("write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
+	 my $f = { my @b = $^a.split(/ '..' | '-' | ':' /); @b.elems > 1 ?? [+@b.head, +@b.tail-@b.head+1]  !! [+@b[0],+1] };
+	 @outliers.map({ $f($_) }) if @oulieres.so;
 	 if %!engine<FitType> ~~ /Individual/ {
 	     for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
 	     }
+		 my @teste="data$_.dat".IO.lines;
+		 for @outliers -> $i, $n {
+			@teste.splice($i,$n).join("\n").say;
+		 }
+		 say @teste.join("\n");
 	     for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
 	     }
