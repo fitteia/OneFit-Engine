@@ -370,7 +370,12 @@ class Engine is export {
 	
 			for (1 .. @!blocks.elems).race {
 				if @outliers.head.Num < 0 {
-					my @pruned-data="$!path/fit-residues-$_.res".IO.lines.grep(/^<![#]>/).sort: *.words.tail.abs.Numeric;
+					my @pruned-data="$!path/fit-residues-$_.res"
+						.IO
+						.lines
+						.grep(/^<![#]>/)
+						.map({ my @a = .words; +@a.tail.abs; @a.join(' ')  })
+						.sort: *.words.tail.Numeric;
 					say @pruned-data.join("\n");
 				 	"$!path/data{$_}a.dat".IO.spurt: 
 						"$!path/data$_.dat".IO.lines.head
