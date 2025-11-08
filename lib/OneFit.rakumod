@@ -335,7 +335,7 @@ class Engine is export {
 		 	?? [+@b.head, +@b.tail - +@b.head +1]  
 			!! [+@b[0], 1] 
 		};
-	 if @outliers.elems > 1 { @outliers.map({ $f($_) }) }
+	 if @outliers.elems > 1 { @outliers.map({ $f($_) }).say }
 	 say @outliers;
 	 if %!engine<FitType> ~~ /Individual/ {
 	    for (1 .. @!blocks.elems).race {
