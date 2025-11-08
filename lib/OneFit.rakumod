@@ -388,7 +388,6 @@ class Engine is export {
 				}
 				my @pdfs-tmp = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
 				my @pdfs-all = flat @pdfs Z @pdfs-tmp;
-				say @pdfs-all;
 	
 	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	     	} unless $no-plot.Bool;
