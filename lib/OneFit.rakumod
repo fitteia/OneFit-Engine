@@ -381,14 +381,20 @@ class Engine is export {
     				$dst.e and next;                                     # skip if already exists (or die)
     				$src.rename($dst);
 				}
-				my @pdfs-tmp = @pdfs >>~>> '-tmp';
+				my @pdfs-tmp = @pdfs>>.IO.extension("").Str  >>~>> 'a.pdf';
 				my @pdfs-all = flat @pdfs Z @pdfs-tmp;
-				say @pdfs;
+				say @pdfs-all;
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
-     				shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 		 		}
+    			for @pdfs -> $name {
+				    my $src = $!path.IO.add($name);                      # join path safely
+    				my $dst = $src.sibling($src.extension("").Str ~ 'a.pdf');     # e.g., foo.pdf → foo.pdf-tmp
+    				$dst.e and next;                                     # skip if already exists (or die)
+    				$src.rename($dst);
+				}
+	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	     	} unless $no-plot.Bool;
 		}
 	 }
