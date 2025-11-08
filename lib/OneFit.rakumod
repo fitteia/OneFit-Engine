@@ -358,6 +358,10 @@ class Engine is export {
 	     } unless $no-plot.Bool;
 
 	   	if @outliers.so {
+			for @pdfs -> $name {
+				"$!path/$name".IO.rename("$!path/{$name}-tmp");
+			}
+	
 			for (1 .. @!blocks.elems).race {
 				my @pruned-data="$!path/data$_.dat".IO.lines;
 				my $removed = 0;
@@ -375,14 +379,11 @@ class Engine is export {
 	     	@!blocks.race.map( { .export(:plot) });
 	     	self.parameters(:read, :from-output, :from-log);
 	     	do {
-				for @pdfs -> $name {
-					"$!path/$name".IO.rename("$!path/{$name}-tmp");
-				}
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}a.out --grbatch=PDF data{$_}a.dat <fit$_.par >plot{$_}a.log 2>&1";
 		 		}
-				say $!path.IO.dir(:test({ .IO.f })).grep(*.basename.lc.contains('.pdf'));
+				say $!path.IO.dir(:test({ .IO.f })).grep(*.basename.lc.contains('.pdf'))>>.Str;
 				my @pdfsa = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
     			for (0 ..^ @pdfsa.elems) -> $i {
 					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
