@@ -384,7 +384,7 @@ class Engine is export {
 		 		}
 				say $!path.IO.dir(:test({ .IO.f })).grep(*.basename.lc.contains('.pdf');
 				my @pdfsa = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
-    			for 0 ..^ @pdfsa.elems -> $i {
+    			for (0 ..^ @pdfsa.elems) -> $i {
 					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
 					"$!path/@pdfs[$i]".IO.rename("$!path/@pdfsa[$i]");
 					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
