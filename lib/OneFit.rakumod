@@ -332,15 +332,15 @@ class Engine is export {
 	 if @outliers.so && @outliers.elems > 1 { @outliers.map({ $f($_) }) }
 	 
 	 if %!engine<FitType> ~~ /Individual/ {
-	     for (1 .. @!blocks.elems).race {
+	    for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-	     }
-		 my @teste="$!path/data1_.dat".IO.lines;
-		 for @outliers -> $i, $n {
-			@teste.splice($i,$n).join("\n").say;
-		 }
-		 say @teste.join("\n");
-	     for (1 .. @!blocks.elems).race {
+			 my @teste="$!path/data$_.dat".IO.lines;
+			 for @outliers -> $i, $n {
+				@teste.splice($i,$n).join("\n").say;
+		 	}
+		 	say @teste.join("\n");
+		}
+     	for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
 	     }
 	     @!blocks.race.map( { .export(:plot) });
