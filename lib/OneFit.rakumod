@@ -362,7 +362,7 @@ class Engine is export {
 				my @pruned-data="$!path/data$_.dat".IO.lines;
 				my $removed = 0;
 				for @outliers {
-					@pruned-data.splice( +.head - $removed, +.tail ).join("\n").say;
+					@pruned-data.splice( +.head - $removed, +.tail ).join("\n");
 					$removed +=  +.tail;
 	 			}
 				#			say @pruned-data.join("\n");
