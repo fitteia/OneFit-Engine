@@ -404,11 +404,11 @@ class Engine is export {
 	 %!engine<fit-residues> = @fit-residues;
 	 say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 
-	 my @pdfs = 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf';
+	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
 	 say @pdfs; 
 
-     shell "cd $!path && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+     shell "cd $!path && pdftk { 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	 self
      }
