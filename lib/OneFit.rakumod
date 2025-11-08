@@ -381,7 +381,7 @@ class Engine is export {
     				$dst.e and next;                                     # skip if already exists (or die)
     				$src.rename($dst);
 				}
-				my @pdfs-tmp = @pdfs>>.IO.extension("").Str  >>~>> 'a.pdf';
+				my @pdfs-tmp = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
 				my @pdfs-all = flat @pdfs Z @pdfs-tmp;
 				say @pdfs-all;
 		 		self.agr;
