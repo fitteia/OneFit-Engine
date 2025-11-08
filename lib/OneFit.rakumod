@@ -331,13 +331,19 @@ class Engine is export {
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
 	 my $f = { 
 		 my @b = $^a.split(/ '..' | '-' | ':' /); 
-		 @b.elems >= 1 
+		 @b.elems > 1 
 		 	?? [+@b.head, +@b.tail - +@b.head +1]  
 			!! [+@b[0], 1] 
 		};
-	say @outliers; 
-	 if @outliers.elems >= 1 { @outliers = @outliers.map({ $f($_) }) }
-	 say @outliers;
+
+	 if @outliers.so {
+	 	if any(@outliers[0].contains(/ '..' | '-' | ':'/), @outliers.elems > 1) { 
+			 @outliers = @outliers.map({ $f($_) }) 
+	 	}
+	 	else {
+			@outliers.head = -@outliers.head.abs;
+		}
+	 }
 	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
 	 if %!engine<FitType> ~~ /Individual/ {
@@ -363,14 +369,27 @@ class Engine is export {
 			}
 	
 			for (1 .. @!blocks.elems).race {
-				my @pruned-data="$!path/data$_.dat".IO.lines;
-				my $removed = 0;
-				for @outliers {
-					@pruned-data.splice( +.head - $removed, +.tail ).join("\n");
-					$removed +=  +.tail;
-	 			}
-				#			say @pruned-data.join("\n");
-				"$!path/data{$_}a.dat".IO.spurt: @pruned-data.join("\n");
+				if @outliers.head.Num < 0 {
+					my @pruned-data="$!path/fit-residues-$_.res".IO.lines.grep(!/^'#'/).sort: *.words.tail.Numeric;
+				 	"$!path/data{$_}a.dat".IO.spurt: 
+						"$!path/data$_.dat".IO.lines.head
+						~ "\n" ~ 
+						@prune-data
+							.head(* + @outliers.head)
+							.map({ .words.head(2).join(' ') })
+							.sort( .words.head.Numeric )
+					;
+				}
+				else {
+					my @pruned-data="$!path/data$_.dat".IO.lines;
+					my $removed = 0;
+					for @outliers {
+						@pruned-data.splice( +.head - $removed, +.tail ).join("\n");
+						$removed +=  +.tail;
+	 				}
+					#			say @pruned-data.join("\n");
+					"$!path/data{$_}a.dat".IO.spurt: @pruned-data.join("\n");
+				}
 	 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}a.out data{$_}a.dat <fit$_.par >fit{$_}a.log 2>&1; cp fit-residues-1.res fit-residues-{$_}a.res-tmp";
 		 	}
      	 	for (1 .. @!blocks.elems).race {
