@@ -330,7 +330,7 @@ class Engine is export {
 	 
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
 	 my $f = { 
-		 my @b = $^a.split(/ '.' '.' | '-' | ':' /); 
+		 my @b = $^a.split(/ '..' | '-' | ':' /); 
 		 @b.elems > 1 
 		 	?? [+@b.head, +@b.tail - +@b.head +1]  
 			!! [+@b[0], 1] 
@@ -420,7 +420,6 @@ class Engine is export {
 	 }
 	 %!engine<fit-residues> = @fit-residues;
 	 say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
-	 say $!path.IO.dir(:test({ .IO.f })).grep(*.basename.lc.contains('.pdf'))>>.Str;
 	 self
      }
 
