@@ -382,6 +382,7 @@ class Engine is export {
 		 		for (1 .. @!blocks.elems).race {
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}a.out --grbatch=PDF data{$_}a.dat <fit$_.par >plot{$_}a.log 2>&1";
 		 		}
+				say $!path.IO.dir(:test(*.f)).grep(.basename ~~ /\.pdf/i);
 				my @pdfsa = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
     			for 0 ..^ @pdfsa.elems -> $i {
 					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
