@@ -354,7 +354,7 @@ class Engine is export {
 		 	}
 	     } unless $no-plot.Bool;
 
-	   	if $outliers.so {
+	   	if @outliers.so {
 			for (1 .. @!blocks.elems).race {
 				my @pruned-data="$!path/data$_.dat".IO.lines;
 				my $removed = 0;
