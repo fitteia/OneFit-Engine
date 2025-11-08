@@ -382,12 +382,13 @@ class Engine is export {
 		 		for (1 .. @!blocks.elems).race {
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}a.out --grbatch=PDF data{$_}a.dat <fit$_.par >plot{$_}a.log 2>&1";
 		 		}
-    			for @pdfs -> $name {
-					"$!path/$name".IO.rename("$!path/{$name.subst('.pdf','')}a.pdf");
-					"$!path/{$name}-tmp".IO.rename("$!path/$name");
+				my @pdfsa = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
+    			for 0 ..^ @pdfsa.elems {
+					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
+					"$!path/@pdfs[$i]".IO.rename("$!path/@pdfsa[$i]");
+					"$!path/{@pfds[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
 				}
-				my @pdfs-tmp = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
-				my @pdfs-all = flat @pdfs Z @pdfs-tmp;
+				my @pdfs-all = flat @pdfs Z @pdfsa;
 	
 	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	     	} unless $no-plot.Bool;
