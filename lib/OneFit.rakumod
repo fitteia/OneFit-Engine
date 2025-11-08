@@ -336,7 +336,7 @@ class Engine is export {
 		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
 			 my @teste="$!path/data$_.dat".IO.lines;
 			 for @outliers -> $i, $n {
-				 say $i, $n;
+				 say "$i $n";
 				 #		@teste.splice($i,$n).join("\n").say;
 		 	}
 			# 	say @teste.join("\n");
