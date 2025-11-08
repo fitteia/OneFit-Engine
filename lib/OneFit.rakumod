@@ -339,8 +339,10 @@ class Engine is export {
 	    for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
 			my @teste="$!path/data$_.dat".IO.lines;
+			my $removed = 0;
 			for @outliers {
-					@teste.splice(+.head,+.tail).join("\n").say;
+					@teste.splice(+.head - $removed,+.tail).join("\n").say;
+					$removed +=  +.tail;
 		 	}
 			say @teste.join("\n");
 		}
