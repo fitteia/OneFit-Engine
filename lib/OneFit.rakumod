@@ -338,6 +338,8 @@ class Engine is export {
 	 
 	 if @outliers.elems > 1 { @outliers = @outliers.map({ $f($_) }) }
 	 
+	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
+
 	 if %!engine<FitType> ~~ /Individual/ {
 		 for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
@@ -352,6 +354,7 @@ class Engine is export {
 		 	for (1 .. @!blocks.elems).race {
 		     	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
+     		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     } unless $no-plot.Bool;
 
 	   	if @outliers.so {
@@ -372,9 +375,19 @@ class Engine is export {
 	     	@!blocks.race.map( { .export(:plot) });
 	     	self.parameters(:read, :from-output, :from-log);
 	     	do {
+				for @pdfs -> $name {
+				    my $src = $!path.IO.add($name);                      # join path safely
+    				my $dst = $src.sibling($src.basename ~ '-tmp');     # e.g., foo.pdf → foo.pdf-tmp
+    				$dst.e and next;                                     # skip if already exists (or die)
+    				$src.rename($dst);
+				}
+				my @pdfs-tmp = @pdfs >>~>> '-tmp';
+				my @pdfs-all = flat @pdfs Z @pdfs-tmp;
+				say @pdfs;
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+     				shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 		 		}
 	     	} unless $no-plot.Bool;
 		}
@@ -387,6 +400,7 @@ class Engine is export {
 	     do {
 		 	self.agr;
 		 	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
+			shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
 	 }
 	 my $TXT = self!results();
@@ -403,10 +417,6 @@ class Engine is export {
 	 }
 	 %!engine<fit-residues> = @fit-residues;
 	 say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
-
-	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
-
-	 say @pdfs; 
 
      shell "cd $!path && pdftk { 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf' } cat output ./All.pdf";
 
