@@ -1003,6 +1003,7 @@ multi MAIN  ('fit',
 	Bool :q(:$quiet) = False,
 	Str  :define-alias(:$dali)="",
 	Str  :AuxCode(:auxcode(:$aux-code)) = "",
+	Str  :ro(:$remove-outliers) = "",
 	*%_
     ){
 	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -1064,6 +1065,7 @@ MSG
 			:autoy($autoy or $autoxy),
 			:logx($loglin or $loglog),
 			:logy($linlog or $loglog),
+			:remove-outliers($remove-outliers),
 			:quiet($quiet)
 		);
 	} 
