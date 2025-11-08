@@ -376,24 +376,20 @@ class Engine is export {
 	     	self.parameters(:read, :from-output, :from-log);
 	     	do {
 				for @pdfs -> $name {
-				    my $src = $!path.IO.add($name);                      # join path safely
-    				my $dst = $src.sibling($src.basename ~ '-tmp');     # e.g., foo.pdf → foo.pdf-tmp
-    				$dst.e and next;                                     # skip if already exists (or die)
-    				$src.rename($dst);
+					"$!path/$name".IO.rename("$!path/{$name}-tmp");
 				}
-				my @pdfs-tmp = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
-				my @pdfs-all = flat @pdfs Z @pdfs-tmp;
-				say @pdfs-all;
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 		}
     			for @pdfs -> $name {
-				    my $src = $!path.IO.add($name);                      # join path safely
-    				my $dst = $src.sibling($src.extension("").Str ~ 'a.pdf');     # e.g., foo.pdf → foo.pdf-tmp
-    				$dst.e and next;                                     # skip if already exists (or die)
-    				$src.rename($dst);
+					"$!path/$name".IO.rename("$!path/{$name.subst('.pdf','')}a.pdf");
+					"$!path/{$name}-tmp".IO.rename("$!path/$name");
 				}
+				my @pdfs-tmp = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
+				my @pdfs-all = flat @pdfs Z @pdfs-tmp;
+				say @pdfs-all;
+	
 	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	     	} unless $no-plot.Bool;
 		}
