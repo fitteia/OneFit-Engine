@@ -470,11 +470,13 @@ EOT
 	 my $TXT = self!results();
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
-		@a.tail(*-1).map({ 
-			my @b = .split(', ');
-			@b[2] -= $npts-removed;
-			@b.join(', ')
-		}).join("\n");
+		$TXT = @a.head 
+			~ "\n" 
+			~ @a.tail(*-1).map({ 
+					my @b = .split(', ');
+					@b[2] -= $npts-removed;
+					@b.join(', ')
+				}).join("\n");
 	 }
 	 %!engine<fit-results> = $TXT;
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
