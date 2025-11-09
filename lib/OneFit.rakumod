@@ -389,8 +389,10 @@ class Engine is export {
 				#;
 
 				$set-data-err($_-1,"data$_.dat");
-say "$!path/data$_.dat".IO.slurp;
-	   		  	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+
+				#say "$!path/data$_.dat".IO.slurp;
+				
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	    } unless $no-plot.Bool;
@@ -418,6 +420,7 @@ say "$!path/data$_.dat".IO.slurp;
 							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
 							.sort( *.words.head.Numeric ).join("\n")
 					;
+					say @pruned-data.join("\n");
 				}
 				else {
 					my @pruned-data="$!path/data$_.dat".IO.lines;
@@ -430,7 +433,7 @@ say "$!path/data$_.dat".IO.slurp;
 					"$!path/data{$_}ro.dat".IO.spurt: @pruned-data.join("\n");
 				}
 
-say "$!path/data$_.dat".IO.slurp;
+				#say "$!path/data{$_}ro.dat".IO.slurp;
 	 		
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}ro.out data{$_}ro.dat <fit$_.par >fit{$_}ro.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
