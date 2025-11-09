@@ -422,6 +422,7 @@ EOT
 				else {
 					say @outliers;
 					my @pruned-data="$!path/data$_.dat".IO.lines;
+					$npts-removed = 0;
 					for @outliers {
 						say +.head;
 						say +.tail;
