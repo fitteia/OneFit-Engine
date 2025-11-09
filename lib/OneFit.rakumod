@@ -364,11 +364,11 @@ class Engine is export {
 				my @data = "$!path/data$_.dat".IO.lines.grep(/\d+/);
 				my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
 				my $outfile = "$!path/data{$_}-tmp.dat".IO;
-				say @!blocks[$_-1].chi2;
-				my $body = @data.tail(*-1).kv
-    							.map(-> $i, $line {
-        								my @a = $line.words.head(2);
-        								@a.push( sqrt( +{@!blocks[$i].chi2} / $ndf ) );
+				my $i = $_-1;
+				my $body = @data.tail(*-1)
+    							.map({
+        								my @a = .words.head(2);
+        								@a.push( sqrt( @!blocks[$i].chi2 / $ndf ) );
         								@a.join(' ')
     								})
     							.join("\n");
