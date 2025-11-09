@@ -482,6 +482,15 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
+	 		say qq:to/EOT/ unless $quiet;
+
+{'-' x 29} fit with {$npts-removed} points removed {'-' x 29}
+$TXT
+{'-' x 80} 
+EOT
+	 }
+	 else { 
+	 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 	 }
 	 %!engine<fit-results> = $TXT;
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
@@ -495,7 +504,6 @@ EOT
 	     @fit-residues.push: "$!path/fit-residues-$_.res".IO.slurp
 	 }
 	 %!engine<fit-residues> = @fit-residues;
-	 say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 	 self
      }
 
