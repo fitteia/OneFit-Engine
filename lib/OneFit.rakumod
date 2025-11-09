@@ -387,7 +387,9 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		%!engine<fit-results-all> = self!results();
+
 		 	say %!engine<fit-results-all>; 	
+
 			for @pdfs -> $name {
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
 			}
