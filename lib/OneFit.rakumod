@@ -475,7 +475,8 @@ EOT
 					my @b = .split(', ');
 					@b[1] -= $npts-removed;
 					@b.join(', ')
-				}).join("\n");
+				}).join("\n")
+			~ "\n";
 	 }
 	 %!engine<fit-results> = $TXT;
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
