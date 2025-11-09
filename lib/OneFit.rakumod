@@ -346,7 +346,7 @@ class Engine is export {
 	 }
 	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
-     my $npts-removed;
+     my $npts-removed=0;
 
 	 if %!engine<FitType> ~~ /Individual/ {
 
