@@ -484,7 +484,7 @@ EOT
 			~ "\n";
 	 		say qq:to/EOT/ unless $quiet;
 
-{'-' x 29} fit with {$npts-removed} points removed {'-' x 29}
+{'-' x 27} fit with {$npts-removed} points removed {'-' x 27}
 $TXT
 {'-' x 80} 
 EOT
