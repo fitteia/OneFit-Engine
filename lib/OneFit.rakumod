@@ -346,6 +346,8 @@ class Engine is export {
 	 }
 	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
+     my $npts-removed;
+
 	 if %!engine<FitType> ~~ /Individual/ {
 
 		@!blocks>>.set-errorbars(:on) if @outliers.so;
@@ -390,9 +392,7 @@ class Engine is export {
 
 	 		say qq:to/EOT/ unless $quiet;
 
-{'-' x 29}
-fit of all the points 
-{'-' x 29}
+{'-' x 29} fit of all the points {'-' x 29}
 %!engine<fit-results-all> 
 {'-' x 80} 
 
@@ -404,6 +404,7 @@ EOT
 	
 			for (1 .. @!blocks.elems).race {
 				if @outliers.head.Num < 0 {
+					$npts-remove = +@outliers.head.Num.abs;
 					my @pruned-data="$!path/fit-residues-$_.res"
 						.IO
 						.lines
@@ -421,10 +422,9 @@ EOT
 				}
 				else {
 					my @pruned-data="$!path/data$_.dat".IO.lines;
-					my $removed = 0;
 					for @outliers {
-						@pruned-data.splice( +.head - $removed, +.tail ).join("\n");
-						$removed +=  +.tail;
+						@pruned-data.splice( +.head - $npts-removed, +.tail ).join("\n");
+						$npts-removed +=  +.tail;
 	 				}
 					#			say @pruned-data.join("\n");
 					"$!path/data{$_}ro.dat".IO.spurt: @pruned-data.join("\n");
@@ -468,6 +468,14 @@ EOT
 	     }  unless $no-plot;
 	 }
 	 my $TXT = self!results();
+	 if $npts-removed > 0 { 
+		my @a = $TXT.lines;
+		@a.tail(*-1).map({ 
+			my @b = .split(', ');
+			@b[2] -= $npts-removed;
+			@b.join(', ')
+		}).join("\n");
+	 }
 	 %!engine<fit-results> = $TXT;
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
 	 my @fit-curves;
