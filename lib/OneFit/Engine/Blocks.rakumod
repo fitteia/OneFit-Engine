@@ -32,7 +32,7 @@ class Block is export {
 		 Bool :q(:$quiet),
 		 :xg(:$xgrid),
 		 :yg(:$ygrid),
-		 :split:eb(:$errorbars),
+		 :eb(:$errorbars),
 		 :ssz(:$symbolsize)
 		){
 	$!Graph = Graph.new.path($!path);
