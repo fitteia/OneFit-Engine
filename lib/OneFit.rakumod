@@ -420,6 +420,7 @@ EOT
 					;
 				}
 				else {
+					say @outliers;
 					my @pruned-data="$!path/data$_.dat".IO.lines;
 					for @outliers {
 						@pruned-data.splice( +.head - $npts-removed, +.tail ).join("\n");
