@@ -376,7 +376,7 @@ class Engine is export {
 						.grep(/^<![#]>/)
 						.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
 						.sort: *.words.tail.Numeric;
-				 	"$!path/data{$_}a.dat".IO.spurt: 
+				 	"$!path/data{$_}ro.dat".IO.spurt: 
 						"$!path/data$_.dat".IO.lines.head
 						~ "\n" ~ 
 						@pruned-data
