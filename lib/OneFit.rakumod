@@ -347,24 +347,28 @@ class Engine is export {
 	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
 	 if %!engine<FitType> ~~ /Individual/ {
-		 for (1 .. @!blocks.elems).race {
-		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-		 }
-     	 for (1 .. @!blocks.elems).race {
-		 	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
-	     }
-	     @!blocks.race.map( { .export(:plot) });
-	     self.parameters(:read, :from-output, :from-log);
-	     do {
-		 	self.agr;
+
+		@!blocks>>.set-errorbars(:on) if $outliers.so;
+
+		for (1 .. @!blocks.elems).race {
+			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+		}
+     	for (1 .. @!blocks.elems).race {
+			shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
+	    }
+	    @!blocks.race.map( { .export(:plot) });
+	    self.parameters(:read, :from-output, :from-log);
+	    do {
+			self.agr;
 		 	for (1 .. @!blocks.elems).race {
 		     	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
-	     } unless $no-plot.Bool;
+	    } unless $no-plot.Bool;
 
+	 	%!engine<fit-results-all> = self!results;
+		
 	   	if @outliers.so {
-			@!blocks>>.set-errorbars(:on);
 			for @pdfs -> $name {
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
 			}
@@ -403,6 +407,7 @@ class Engine is export {
 	     	}
 	     	@!blocks.race.map( { .export(:plot) });
 	     	self.parameters(:read, :from-output, :from-log);
+			say "===> Number of free parameters: {self.parameters.free}";
 	     	do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
