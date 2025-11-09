@@ -423,7 +423,7 @@ class Engine is export {
 				}
 
 	 		
-				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}ro.out data{$_}ro.dat <fit$_.par >fit{$_}ro.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
      	 	for (1 .. @!blocks.elems).race {
 		 		shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
@@ -435,7 +435,7 @@ class Engine is export {
 		 		for (1 .. @!blocks.elems).race {
 					$set-data-err($_-1,"data{$_}ro.dat");
 
-		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}ro.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}ro.log 2>&1";
+		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsro.elems) -> $i {
