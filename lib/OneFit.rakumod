@@ -297,7 +297,7 @@ class Engine is export {
      method agr () {
 	dir($!path, :test(/\.agr\-par/)).race.map({ $_.unlink if $_.IO.f });
 	#	@!blocks.race>>.map({ .write-agr });
-	@!blocks.race>>.write-agr(path => $!path);
+	@!blocks.race>>.write-agr( path => $!path );
 	self
      }
 
@@ -364,6 +364,7 @@ class Engine is export {
 	     } unless $no-plot.Bool;
 
 	   	if @outliers.so {
+			self.set-errorbars(:on);
 			for @pdfs -> $name {
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
 			}
