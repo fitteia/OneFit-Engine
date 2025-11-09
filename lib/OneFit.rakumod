@@ -395,7 +395,6 @@ class Engine is export {
 {'-' x 29} fit of all the points {'-' x 29}
 %!engine<fit-results-all> 
 {'-' x 80} 
-
 EOT
 
 			for @pdfs -> $name {
@@ -474,7 +473,7 @@ EOT
 			~ "\n" 
 			~ @a.tail(*-1).map({ 
 					my @b = .split(', ');
-					@b[2] -= $npts-removed;
+					@b[1] -= $npts-removed;
 					@b.join(', ')
 				}).join("\n");
 	 }
