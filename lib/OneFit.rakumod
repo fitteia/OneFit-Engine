@@ -429,8 +429,8 @@ EOT
 					#			say @pruned-data.join("\n");
 					"$!path/data{$_}ro.dat".IO.spurt: 
 						@pruned-data.head ~ @pruned-data.tail(*-1).map({ 
-												my @a = .words(2);
-												@a.push(1);
+												my @a = .words;
+												@a[2]=1;
 												@a.join(' ') 
 											}).join("\n");
 				}
