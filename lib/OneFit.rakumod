@@ -363,7 +363,7 @@ class Engine is export {
 			my $i = $^a;
 			my $file = $^b;
 			my @data = "$!path/$file".IO.lines.grep(/\d+/);
-			my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
+			my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
 			"$!path/$file".IO.spurt: 
 				@data.head
 				~ "\n" ~ 
