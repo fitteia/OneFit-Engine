@@ -367,7 +367,7 @@ class Engine is export {
 					@data.head
 					~ "\n" ~ 
 					@data.tail(*-1)
-						.map({ my @a = .words.head(2); @a.push(sqrt(@!blocks[$_-1].chi2/$ndf))).join(' ') })
+						.map({ my @a = .words.head(2); @a.push(sqrt(@!blocks[$_-1].chi2/$ndf)).join(' ') })
 						.join("\n")
 				;
 	   		  	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
@@ -425,7 +425,7 @@ class Engine is export {
 						@data.head
 						~ "\n" ~ 
 						@data.tail(*-1)
-							.map({ my @a = .words.head(2); @a.push(sqrt(@!blocks[$_-1].chi2/$ndf))).join(' ') })
+							.map({ my @a = .words.head(2); @a.push(sqrt(@!blocks[$_-1].chi2/$ndf)).join(' ') })
 							.join("\n")
 					;
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}ro.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}ro.log 2>&1";
