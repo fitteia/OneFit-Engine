@@ -428,11 +428,11 @@ EOT
 	 				}
 					#			say @pruned-data.join("\n");
 					"$!path/data{$_}ro.dat".IO.spurt: 
-						@pruned-data.head ~ @pruned-data.tail(*-1).map({ 
-												my @a = .words;
-												@a[2]=1;
-												@a.join(' ') 
-											}).join("\n");
+						@pruned-data.head ~ "\n" ~ @pruned-data.tail(*-1).map({ 
+														my @a = .words;
+														@a[2]=1;
+														@a.join(' ') 
+													}).join("\n");
 				}
 	 		
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
