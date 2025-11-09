@@ -361,7 +361,16 @@ class Engine is export {
 	    do {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
-		     	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+				my @data = "$!path/data$_.dat".IO.lines;
+				my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
+				"$!path/data{$_}.dat".IO.spurt: 
+					@data.head
+					~ "\n" ~ 
+					@data.tail(*-1)
+						.map({ my @a = .words.head(2); @a.push(sqrt(@!blocks[$_-1].chi2/$ndf))).join(' ') })
+						..join("\n")
+				;
+	   		  	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	    } unless $no-plot.Bool;
@@ -407,12 +416,18 @@ class Engine is export {
 	     	}
 	     	@!blocks.race.map( { .export(:plot) });
 	     	self.parameters(:read, :from-output, :from-log);
-			for @!blocks {
-				say "===> Number of free parameters: { .parameters.free }";
-			}
 	     	do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
+					my @data = "$!path/data$_.dat".IO.lines;
+					my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
+					"$!path/data{$_}.dat".IO.spurt: 
+						@data.head
+						~ "\n" ~ 
+						@data.tail(*-1)
+							.map({ my @a = .words.head(2); @a.push(sqrt(@!blocks[$_-1].chi2/$ndf))).join(' ') })
+							..join("\n")
+					;
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}ro.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}ro.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
