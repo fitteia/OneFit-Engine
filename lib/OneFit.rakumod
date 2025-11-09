@@ -407,8 +407,9 @@ class Engine is export {
 	     	}
 	     	@!blocks.race.map( { .export(:plot) });
 	     	self.parameters(:read, :from-output, :from-log);
-			say self.parameters.a;
-			say "===> Number of free parameters: {self.parameters.free}";
+			for @!blocks {
+				say "===> Number of free parameters: { .parameters.free }";
+			}
 	     	do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
