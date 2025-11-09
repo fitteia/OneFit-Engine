@@ -377,29 +377,17 @@ class Engine is export {
 	    do {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
-				#				my @data = "$!path/data$_.dat".IO.lines.grep(/\d+/);
-				#my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
-				#my $i=$_-1;
-				#"$!path/data{$_}.dat".IO.spurt: 
-				#	@data.head
-				#	~ "\n" ~ 
-				#	@data.tail(*-1)
-				#		.map({ my @a = .words.head(2); @a.push( sqrt( @!blocks[$i].chi2 / $ndf )).join(' ') })
-				#		.join("\n")
-				#;
-
 				$set-data-err($_-1,"data$_.dat");
-
-				#say "$!path/data$_.dat".IO.slurp;
 				
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	    } unless $no-plot.Bool;
 
-	 	%!engine<fit-results-all> = self!results;
 		
 	   	if @outliers.so {
+	 		%!engine<fit-results-all> = self!results();
+		 	say %!engine<fit-results-all>; 	
 			for @pdfs -> $name {
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
 			}
@@ -420,7 +408,6 @@ class Engine is export {
 							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
 							.sort( *.words.head.Numeric ).join("\n")
 					;
-					say "$!path/data{$_}ro.dat".IO.slurp; 
 				}
 				else {
 					my @pruned-data="$!path/data$_.dat".IO.lines;
@@ -433,7 +420,6 @@ class Engine is export {
 					"$!path/data{$_}ro.dat".IO.spurt: @pruned-data.join("\n");
 				}
 
-				#say "$!path/data{$_}ro.dat".IO.slurp;
 	 		
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}ro.out data{$_}ro.dat <fit$_.par >fit{$_}ro.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
@@ -445,17 +431,6 @@ class Engine is export {
 	     	do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-					#my @data = "$!path/data$_.dat".IO.lines.grep(/\d+/);
-					#my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
-					#my $i=$_-1;
-					#"$!path/data{$_}ro.dat".IO.spurt: 
-					#	@data.head
-					#	~ "\n" ~ 
-					#	@data.tail(*-1)
-					#		.map({ my @a = .words.head(2); @a.push( sqrt( @!blocks[$i].chi2 / $ndf )).join(' ') })
-					#		.join("\n")
-					#;
-
 					$set-data-err($_-1,"data{$_}ro.dat");
 
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}ro.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}ro.log 2>&1";
