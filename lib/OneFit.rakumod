@@ -407,6 +407,7 @@ class Engine is export {
 	     	}
 	     	@!blocks.race.map( { .export(:plot) });
 	     	self.parameters(:read, :from-output, :from-log);
+			say self.parameters.a;
 			say "===> Number of free parameters: {self.parameters.free}";
 	     	do {
 		 		self.agr;
@@ -429,7 +430,7 @@ class Engine is export {
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
 	     shell  "cd $!path; ./onefit-user -@fitenv.stp -f -pg $datafiles <fit.par >fit.log 2>&1";
 	     @!blocks.race.map( { .export(:plot) });
-	     self.parameters(:read, :from-output, :from-log);
+	     self.p	arameters(:read, :from-output, :from-log);
 	     do {
 		 	self.agr;
 		 	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
