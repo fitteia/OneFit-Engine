@@ -389,7 +389,7 @@ class Engine is export {
 				#;
 
 				$set-data-err($_-1,"data$_.dat");
-
+say "$!path/data$_.dat".IO.slurp;
 	   		  	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
@@ -456,7 +456,6 @@ class Engine is export {
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsro.elems) -> $i {
-					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
 					"$!path/@pdfs[$i]".IO.rename("$!path/@pdfsro[$i]");
 					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
 				}
