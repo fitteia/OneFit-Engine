@@ -429,7 +429,10 @@ say "$!path/data$_.dat".IO.slurp;
 					#			say @pruned-data.join("\n");
 					"$!path/data{$_}ro.dat".IO.spurt: @pruned-data.join("\n");
 				}
-	 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}ro.out data{$_}ro.dat <fit$_.par >fit{$_}ro.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
+
+say "$!path/data$_.dat".IO.slurp;
+	 		
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}ro.out data{$_}ro.dat <fit$_.par >fit{$_}ro.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
      	 	for (1 .. @!blocks.elems).race {
 		 		shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
