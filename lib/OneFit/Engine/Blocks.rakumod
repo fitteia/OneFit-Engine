@@ -32,7 +32,7 @@ class Block is export {
 		 Bool :q(:$quiet),
 		 :xg(:$xgrid),
 		 :yg(:$ygrid),
-		 :eb(:$errorbars),
+		 :split:eb(:$errorbars),
 		 :ssz(:$symbolsize)
 		){
 	$!Graph = Graph.new.path($!path);
@@ -95,6 +95,8 @@ class Block is export {
 	self.XYE;
 	self
     }
+	multi method set-errorbars(Bool :$on) { @!Graph.curves[0]<errorbars> = "on" }
+	multi method set-errorbars(Bool :$off) { @!Graph.curves[0]<errorbars> = "off" }
     multi method No () { $!No }
     multi method No ($no) { $!No=$no; self }
     method Tag () { $!Tag }
