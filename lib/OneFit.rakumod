@@ -388,7 +388,15 @@ class Engine is export {
 	   	if @outliers.so {
 	 		%!engine<fit-results-all> = self!results();
 
-		 	say %!engine<fit-results-all>; 	
+	 		say qq:to/EOT/ unless $quiet;
+
+{'-' x 29}
+fit of all the points 
+{'-' x 29}
+%!engine<fit-results-all> 
+{'-' x 80} 
+
+EOT
 
 			for @pdfs -> $name {
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
