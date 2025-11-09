@@ -361,7 +361,8 @@ class Engine is export {
 	    do {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
-				#				my @data = "$!path/data$_.dat".IO.lines;
+				my @data = "$!path/data$_.dat".IO.lines.grep(/\d+/);
+				sat @data;
 				#my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
 				#"$!path/data{$_}-tmp.dat".IO.spurt: 
 				#	@data.head
