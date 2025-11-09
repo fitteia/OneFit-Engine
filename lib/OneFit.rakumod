@@ -404,7 +404,7 @@ EOT
 	
 			for (1 .. @!blocks.elems).race {
 				if @outliers.head.Num < 0 {
-					$npts-remove = +@outliers.head.Num.abs;
+					$npts-removed = +@outliers.head.Num.abs;
 					my @pruned-data="$!path/fit-residues-$_.res"
 						.IO
 						.lines
