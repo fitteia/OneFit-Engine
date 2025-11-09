@@ -420,19 +420,20 @@ EOT
 					;
 				}
 				else {
-					say @outliers;
 					my @pruned-data="$!path/data$_.dat".IO.lines;
 					$npts-removed = 0;
 					for @outliers {
-						say +.head;
-						say +.tail;
 						@pruned-data.splice( +.head - $npts-removed, +.tail ).join("\n");
 						$npts-removed +=  +.tail;
 	 				}
 					#			say @pruned-data.join("\n");
-					"$!path/data{$_}ro.dat".IO.spurt: @pruned-data.join("\n");
+					"$!path/data{$_}ro.dat".IO.spurt: 
+						@pruned-data.head ~ @pruned-data.map({ 
+												my @a = .words(2);
+												@a.push(1);
+												@a.join(' ') 
+											}).join("\n");
 				}
-
 	 		
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
