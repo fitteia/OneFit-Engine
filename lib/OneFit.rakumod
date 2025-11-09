@@ -363,7 +363,7 @@ class Engine is export {
 		 	for (1 .. @!blocks.elems).race {
 				my @data = "$!path/data$_.dat".IO.lines;
 				my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
-				"$!path/data{$_}.dat".IO.spurt: 
+				"$!path/data{$_}-tmp.dat".IO.spurt: 
 					@data.head
 					~ "\n" ~ 
 					@data.tail(*-1)
@@ -421,7 +421,7 @@ class Engine is export {
 		 		for (1 .. @!blocks.elems).race {
 					my @data = "$!path/data$_.dat".IO.lines;
 					my $ndf = @data.elems - 1 - @!blocks[$_-1].parameters.free; 
-					"$!path/data{$_}.dat".IO.spurt: 
+					"$!path/data{$_}-tmp.dat".IO.spurt: 
 						@data.head
 						~ "\n" ~ 
 						@data.tail(*-1)
