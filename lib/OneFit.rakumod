@@ -376,7 +376,6 @@ class Engine is export {
 						.grep(/^<![#]>/)
 						.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
 						.sort: *.words.tail.Numeric;
-					say @pruned-data.join("\n");
 				 	"$!path/data{$_}a.dat".IO.spurt: 
 						"$!path/data$_.dat".IO.lines.head
 						~ "\n" ~ 
@@ -394,27 +393,27 @@ class Engine is export {
 						$removed +=  +.tail;
 	 				}
 					#			say @pruned-data.join("\n");
-					"$!path/data{$_}a.dat".IO.spurt: @pruned-data.join("\n");
+					"$!path/data{$_}ro.dat".IO.spurt: @pruned-data.join("\n");
 				}
-	 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}a.out data{$_}a.dat <fit$_.par >fit{$_}a.log 2>&1; cp fit-residues-1.res fit-residues-{$_}a.res-tmp";
+	 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}a.out data{$_}a.dat <fit$_.par >fit{$_}a.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
      	 	for (1 .. @!blocks.elems).race {
-		 		shell "cd $!path; mv fit-residues-{$_}a.res-tmp fit-residues-{$_}a.res" ;
+		 		shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
 	     	}
 	     	@!blocks.race.map( { .export(:plot) });
 	     	self.parameters(:read, :from-output, :from-log);
 	     	do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}a.out --grbatch=PDF data{$_}a.dat <fit$_.par >plot{$_}a.log 2>&1";
+		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}ro.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}ro.log 2>&1";
 		 		}
-				my @pdfsa = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'a.pdf';
+				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsa.elems) -> $i {
 					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
-					"$!path/@pdfs[$i]".IO.rename("$!path/@pdfsa[$i]");
+					"$!path/@pdfs[$i]".IO.rename("$!path/@pdfsro[$i]");
 					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
 				}
-				my @pdfs-all = flat @pdfs Z @pdfsa;
+				my @pdfs-all = flat @pdfs Z @pdfsro;
 	
 	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	     	} unless $no-plot.Bool;
