@@ -348,7 +348,7 @@ class Engine is export {
 
 	 if %!engine<FitType> ~~ /Individual/ {
 
-		@!blocks>>.set-errorbars(:on) if $outliers.so;
+		@!blocks>>.set-errorbars(:on) if @outliers.so;
 
 		for (1 .. @!blocks.elems).race {
 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
