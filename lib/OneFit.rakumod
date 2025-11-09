@@ -408,7 +408,7 @@ class Engine is export {
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}ro.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}ro.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
-    			for (0 ..^ @pdfsa.elems) -> $i {
+    			for (0 ..^ @pdfsro.elems) -> $i {
 					say "$!path/@pdfs[$i]" if @pdfs[$i].IO.e;
 					"$!path/@pdfs[$i]".IO.rename("$!path/@pdfsro[$i]");
 					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
