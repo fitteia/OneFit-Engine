@@ -364,7 +364,7 @@ class Engine is export {
 	     } unless $no-plot.Bool;
 
 	   	if @outliers.so {
-			self.set-errorbars(:on);
+			@!blocks>>.set-errorbars(:on);
 			for @pdfs -> $name {
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
 			}
