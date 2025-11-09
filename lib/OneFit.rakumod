@@ -420,7 +420,7 @@ class Engine is export {
 							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
 							.sort( *.words.head.Numeric ).join("\n")
 					;
-					say @pruned-data.join("\n");
+					say "$!path/data{$_}ro.dat".IO.slurp; 
 				}
 				else {
 					my @pruned-data="$!path/data$_.dat".IO.lines;
