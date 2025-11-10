@@ -389,10 +389,11 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		%!engine<fit-results-all> = self!results();
-
+			
+			my $msg = " fit of all the points "; 
 	 		say qq:to/EOT/ unless $quiet;
 
-{'-' x 29} fit of all the points {'-' x 29}
+{'-' x 29} $msg {'-' x 80-29-$msg.chars}
 %!engine<fit-results-all> 
 {'-' x 80} 
 EOT
@@ -482,9 +483,11 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
+
+			my $msg = "fit with {$npts-removed} points removed";
 	 		say qq:to/EOT/ unless $quiet;
 
-{'-' x 27} fit with {$npts-removed} points removed {'-' x 27}
+{'-' x 27}$msg{'-' x 80-27-$msg.chars}
 $TXT
 {'-' x 80} 
 EOT
