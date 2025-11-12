@@ -297,7 +297,7 @@ class Engine is export {
      method agr () {
 	dir($!path, :test(/\.agr\-par/)).race.map({ $_.unlink if $_.IO.f });
 	#	@!blocks.race>>.map({ .write-agr });
-	@!blocks.race>>.write-agr(path => $!path);
+	@!blocks.race>>.write-agr( path => $!path );
 	self
      }
 
@@ -306,6 +306,7 @@ class Engine is export {
 		Bool :$autoy,
 		Bool :$logx,
 		Bool :$logy,
+		Str  :$remove-outliers="",
 		Bool :$quiet=False
 	       ) {
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
@@ -326,21 +327,139 @@ class Engine is export {
 	 self.stp;
 	 $*ERR.say("write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
+	 
+	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
+	 my $f = { 
+		 my @b = $^a.split(/ '..' | '-' | ':' /); 
+		 @b.elems > 1 
+		 	?? [+@b.head, +@b.tail - +@b.head +1]  
+			!! [+@b[0], 1] 
+		};
+
+	 if @outliers.so {
+	 	if any(@outliers[0].contains(/ '..' | '-' | ':'/), @outliers.elems > 1) { 
+			 @outliers = @outliers.map({ $f($_) }) 
+	 	}
+	 	else {
+			@outliers.head = -@outliers.head.abs;
+		}
+	 }
+	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
+
+     my $npts-removed=0;
+
 	 if %!engine<FitType> ~~ /Individual/ {
-	     for (1 .. @!blocks.elems).race {
-		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-	     }
-	     for (1 .. @!blocks.elems).race {
-		 	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
-	     }
-	     @!blocks.race.map( { .export(:plot) });
-	     self.parameters(:read, :from-output, :from-log);
-	     do {
-		 	self.agr;
+
+		@!blocks>>.set-errorbars(:on) if @outliers.so;
+
+		for (1 .. @!blocks.elems).race {
+			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+		}
+     	for (1 .. @!blocks.elems).race {
+			shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
+	    }
+	    @!blocks.race.map( { .export(:plot) });
+	    self.parameters(:read, :from-output, :from-log);
+
+		my $set-data-err = {
+			my $i = $^a;
+			my $file = $^b;
+			my @data = "$!path/$file".IO.lines.grep(/\d+/);
+			my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
+			"$!path/$file".IO.spurt: 
+				@data.head
+				~ "\n" ~ 
+				@data.tail(*-1)
+					.map({ my @a = .words.head(2); @a.push( sqrt( @!blocks[$i].chi2 / $ndf )).join(' ') })
+					.join("\n")
+			;
+		}
+
+
+	    do {
+			self.agr;
 		 	for (1 .. @!blocks.elems).race {
-		     	shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+				$set-data-err($_-1,"data$_.dat");
+				
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
-	     } unless $no-plot.Bool;
+     		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
+	    } unless $no-plot.Bool;
+
+		
+	   	if @outliers.so {
+	 		%!engine<fit-results-all> = self!results();
+			
+			my $msg = "fit of all the points"; 
+	 		say qq:to/EOT/ unless $quiet;
+
+{'-' x 29} $msg {'-' x 80-29-$msg.chars}
+%!engine<fit-results-all> 
+{'-' x 80} 
+EOT
+
+			for @pdfs -> $name {
+				"$!path/$name".IO.rename("$!path/{$name}-tmp");
+			}
+	
+			for (1 .. @!blocks.elems).race {
+				if @outliers.head.Num < 0 {
+					$npts-removed = +@outliers.head.Num.abs;
+					my @pruned-data="$!path/fit-residues-$_.res"
+						.IO
+						.lines
+						.grep(/^<![#]>/)
+						.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
+						.sort: *.words.tail.Numeric;
+				 	"$!path/data{$_}ro.dat".IO.spurt: 
+						"$!path/data$_.dat".IO.lines.head
+						~ "\n" ~ 
+						@pruned-data
+							.head(* + @outliers.head)
+							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
+							.sort( *.words.head.Numeric ).join("\n")
+					;
+				}
+				else {
+					my @pruned-data="$!path/data$_.dat".IO.lines;
+					$npts-removed = 0;
+					for @outliers {
+						@pruned-data.splice( +.head - $npts-removed, +.tail ).join("\n");
+						$npts-removed +=  +.tail;
+	 				}
+					#			say @pruned-data.join("\n");
+					"$!path/data{$_}ro.dat".IO.spurt: 
+						@pruned-data.head ~ "\n" ~ @pruned-data.tail(*-1).map({ 
+														my @a = .words;
+														@a[2]=1;
+														@a.join(' ') 
+													}).join("\n");
+				}
+	 		
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
+		 	}
+     	 	for (1 .. @!blocks.elems).race {
+		 		shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
+	     	}
+	     	@!blocks.race.map( { .export(:plot) });
+	     	self.parameters(:read, :from-output, :from-log);
+	     	do {
+		 		self.agr;
+		 		for (1 .. @!blocks.elems).race {
+					$set-data-err($_-1,"data{$_}ro.dat");
+
+		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
+		 		}
+				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
+    			for (0 ..^ @pdfsro.elems) -> $i {
+					"$!path/@pdfs[$i]".IO.rename("$!path/@pdfsro[$i]");
+					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
+				}
+				my @pdfs-all = flat @pdfs Z @pdfsro;
+	
+	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
+	     	} unless $no-plot.Bool;
+		}
 	 }
 	 else {
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
@@ -350,9 +469,32 @@ class Engine is export {
 	     do {
 		 	self.agr;
 		 	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
+			shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
 	 }
 	 my $TXT = self!results();
+	 if $npts-removed > 0 { 
+		my @a = $TXT.lines;
+		$TXT = @a.head 
+			~ "\n" 
+			~ @a.tail(*-1).map({ 
+					my @b = .split(', ');
+					@b[1] -= $npts-removed;
+					@b.join(', ')
+				}).join("\n")
+			~ "\n";
+
+			my $msg = "fit with {$npts-removed} points removed";
+	 		say qq:to/EOT/ unless $quiet;
+
+{'-' x 27} $msg {'-' x 80-27-$msg.chars}
+$TXT
+{'-' x 80} 
+EOT
+	 }
+	 else { 
+	 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+	 }
 	 %!engine<fit-results> = $TXT;
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
 	 my @fit-curves;
@@ -365,7 +507,6 @@ class Engine is export {
 	     @fit-residues.push: "$!path/fit-residues-$_.res".IO.slurp
 	 }
 	 %!engine<fit-residues> = @fit-residues;
-	 say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 	 self
      }
 
@@ -423,19 +564,21 @@ class Engine is export {
 	 	@fields.push: @a.Slip;
 	 	for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1" ~ "err" ).Slip }
 	 	my $TXT = @fields.join($fmt) ~ "\n";
-	 	if $MIXED {
-	     	my @line-fields;
-	     	@line-fields.push: "global";
-	     	@line-fields.push: @!blocks.map({ .X.elems }).sum;
-	     	@line-fields.push: @!blocks[0].chi2;
-	     	@line-fields.push: @!blocks[0].T.words.join($fmt);
-	     	for @!par-tables[0].a {
-		 		.<err>="-" unless .<err>.defined;
-		 		if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
-		 		else { @line-fields.push: .<value err>.Slip  }
-	     	}
-	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
-	 	}
+		my @global-par-table;
+	   	for @!par-tables[0].a { my %h = $_; @global-par-table.push: %h }
+		#if $MIXED {
+			# 	my @line-fields;
+			#@line-fields.push: "global";
+			#@line-fields.push: @!blocks.map({ .X.elems }).sum;
+			#@line-fields.push: @!blocks[0].chi2;
+			#@line-fields.push: @!blocks[0].T.words.join($fmt);
+			#for @!par-tables[0].a {
+				#	.<err>="-" unless .<err>.defined;
+				#if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
+				#else { @line-fields.push: .<value err>.Slip  }
+			#}
+			#$TXT ~= @line-fields.join($fmt) ~ "\n";
+		#}
 	 	for @!blocks {
 	     	my @line-fields;
 	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED) ?? .No !! 0;
@@ -448,6 +591,12 @@ class Engine is export {
 		 		.parameters.from-log(file => "fit{ .No+1 }.log");
 #		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[.No] = .parameters;
+				for @!par-tables[.No].a.kv -> $i, $v {
+					if $v.<name> !~~ / 'MIXED' | '_' $/ {
+						$v.<err> = @global-par-table[$i]<err>;
+					}
+				}
+		
 				#		say .No;
 				#say @!par-tables[.No].table;
 	     	}

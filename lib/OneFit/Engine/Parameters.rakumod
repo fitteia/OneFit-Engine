@@ -12,7 +12,13 @@ class Parameters {
     has %.output;
 
     method path ($folder) { $!path = $folder; self }
-    
+
+	method free () {
+		my $free=0;
+		for @!p { $free++ if $_<free> }
+		$free
+	}
+
     method from-engine ($engine, Bool :$a) {
 	my %e = $engine.get;
 	my @pnames = %e{'Parameters'}.split(',');

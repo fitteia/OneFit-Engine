@@ -95,6 +95,8 @@ class Block is export {
 	self.XYE;
 	self
     }
+	multi method set-errorbars(Bool :$on) { self.Graph.Curves[0]<errorbars> = "on" }
+	multi method set-errorbars(Bool :$off) { self.Graph.Curves[0]<errorbars> = "off" }
     multi method No () { $!No }
     multi method No ($no) { $!No=$no; self }
     method Tag () { $!Tag }
