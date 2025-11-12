@@ -589,6 +589,12 @@ EOT
 		 		.parameters.from-log(file => "fit{ .No+1 }.log");
 #		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[.No] = .parameters;
+				for @!par-tables[.No].a.kv -> $i, $v {
+					if $v.<name> ~~ / <![_]> $/ {
+						say $v.<err>, " <====> ", @!par-tables[0].a[$i]<name>, " = ", @!par-tables[0].a[$i]<err>;
+					}
+				}
+		
 				#		say .No;
 				#say @!par-tables[.No].table;
 	     	}

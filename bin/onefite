@@ -862,7 +862,7 @@ multi MAIN  ('create',
 		 Str  :$range = "", #= define range when importing data zones form Stelar data
 		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc files
 		 Int  :$gfilt, #= used a Gaussian filter to smooth data
-		 Str  :set-err(:$err)="", #= set err in data files 
+		 Str  :set-err(:$err)="", #= set err in data files doesn't apply to ist-ffc, sef, hdf5 data files 
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
 	     Str  :save-to(:$to), #= write fit settings and results to json or sav file
 	     Str  :$work-folder = '.', #= set a different work folder
