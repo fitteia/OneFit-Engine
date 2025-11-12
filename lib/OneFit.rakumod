@@ -566,19 +566,19 @@ EOT
 	 	my $TXT = @fields.join($fmt) ~ "\n";
 		my @global-par-table;
 	   	for @!par-tables[0].a { my %h = $_; @global-par-table.push: %h }
-	 	if $MIXED {
-	     	my @line-fields;
-	     	@line-fields.push: "global";
-	     	@line-fields.push: @!blocks.map({ .X.elems }).sum;
-	     	@line-fields.push: @!blocks[0].chi2;
-	     	@line-fields.push: @!blocks[0].T.words.join($fmt);
-	     	for @!par-tables[0].a {
-		 		.<err>="-" unless .<err>.defined;
-		 		if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
-		 		else { @line-fields.push: .<value err>.Slip  }
-	     	}
-	     	$TXT ~= @line-fields.join($fmt) ~ "\n";
-	 	}
+		#if $MIXED {
+			# 	my @line-fields;
+			#@line-fields.push: "global";
+			#@line-fields.push: @!blocks.map({ .X.elems }).sum;
+			#@line-fields.push: @!blocks[0].chi2;
+			#@line-fields.push: @!blocks[0].T.words.join($fmt);
+			#for @!par-tables[0].a {
+				#	.<err>="-" unless .<err>.defined;
+				#if so .<err> ~~ /fixed|constant/ { @line-fields.push: (.<value>, "{ .<err> }").Slip }
+				#else { @line-fields.push: .<value err>.Slip  }
+			#}
+			#$TXT ~= @line-fields.join($fmt) ~ "\n";
+		#}
 	 	for @!blocks {
 	     	my @line-fields;
 	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED) ?? .No !! 0;
