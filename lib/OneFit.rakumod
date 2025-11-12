@@ -565,6 +565,7 @@ EOT
 	 	for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1" ~ "err" ).Slip }
 	 	my $TXT = @fields.join($fmt) ~ "\n";
 		my $global-par-table = @!par-tables[0];
+		say $global-par-table.a;
 	 	if $MIXED {
 	     	my @line-fields;
 	     	@line-fields.push: "global";
