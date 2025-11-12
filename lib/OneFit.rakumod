@@ -564,6 +564,7 @@ EOT
 	 	@fields.push: @a.Slip;
 	 	for @!par-tables.head.a { @fields.push: ( .<name>, "\x0B1" ~ "err" ).Slip }
 	 	my $TXT = @fields.join($fmt) ~ "\n";
+		my @global-par-table-arr = @!par-tables[0].a;
 	 	if $MIXED {
 	     	my @line-fields;
 	     	@line-fields.push: "global";
@@ -591,7 +592,7 @@ EOT
 		 		@!par-tables[.No] = .parameters;
 				for @!par-tables[.No].a.kv -> $i, $v {
 					if $v.<name> !~~ / '_' $/ {
-						say $v.<err>, " <====> ", @!par-tables[0].a[$i]<name>, " = ", @!par-tables[0].a[$i]<err>;
+						say $v.<err>, " <====> ", @global-par-table[$i]<name>, " = ", @global-par-table[$i]<err>;
 					}
 				}
 		
