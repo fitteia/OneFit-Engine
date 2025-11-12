@@ -566,7 +566,6 @@ EOT
 	 	my $TXT = @fields.join($fmt) ~ "\n";
 		my @global-par-table;
 	   	for @!par-tables[0].a { my %h = $_; @global-par-table.push: %h }
-		say @global-par-table;
 	 	if $MIXED {
 	     	my @line-fields;
 	     	@line-fields.push: "global";
@@ -593,8 +592,8 @@ EOT
 #		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[.No] = .parameters;
 				for @!par-tables[.No].a.kv -> $i, $v {
-					if $v.<name> !~~ / '_' $/ {
-						say $v.<err>, " <====> ", @global-par-table[$i]<name>, " = ", @global-par-table[$i]<err>;
+					if $v.<name> !~~ / 'MIXED' | '_' $/ {
+						$v.<err> = @global-par-table[$i]<err>;
 					}
 				}
 		
