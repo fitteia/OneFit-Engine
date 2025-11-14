@@ -377,8 +377,10 @@ class Engine is export {
 	    self.parameters(:read, :from-output, :from-log);
 
 		if $reduced-chi2 {
-			$set-data-err($_-1,"$!path/data$_.dat"); 
-			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+			for (1 .. @!blocks.elems).race {
+				$set-data-err($_-1,"$!path/data$_.dat"); 
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+			}
 		    @!blocks.race.map( { .export(:plot) });
    		 	self.parameters(:read, :from-output, :from-log);
 		}
