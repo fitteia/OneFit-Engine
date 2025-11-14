@@ -306,6 +306,7 @@ class Engine is export {
 		Bool :$autoy,
 		Bool :$logx,
 		Bool :$logy,
+		Bool :$reduced-chi2,
 		Str  :$remove-outliers="",
 		Bool :$quiet=False
 	       ) {
@@ -352,15 +353,6 @@ class Engine is export {
 
 		@!blocks>>.set-errorbars(:on) if @outliers.so;
 
-		for (1 .. @!blocks.elems).race {
-			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-		}
-     	for (1 .. @!blocks.elems).race {
-			shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
-	    }
-	    @!blocks.race.map( { .export(:plot) });
-	    self.parameters(:read, :from-output, :from-log);
-
 		my $set-data-err = {
 			my $i = $^a;
 			my $file = $^b;
@@ -375,12 +367,23 @@ class Engine is export {
 			;
 		}
 
+		for (1 .. @!blocks.elems).race {
+			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+			if $reduced-chi2 {
+				$set-data-err($_-1,"$!path/data$_.dat"); 
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+			}
+		}
+     	for (1 .. @!blocks.elems).race {
+			shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
+	    }
+	    @!blocks.race.map( { .export(:plot) });
+	    self.parameters(:read, :from-output, :from-log);
 
 	    do {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
 				$set-data-err($_-1,"$!path/data$_.dat") if @outliers.so;
-				say "$!path/data1.dat".IO.slurp;
 
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}

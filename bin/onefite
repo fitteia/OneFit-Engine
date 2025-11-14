@@ -994,6 +994,7 @@ multi MAIN  ('fit',
 	Str  :$sef-R1-file = "",
  	Str  :$range = "",
 	Bool :$R1 = False,
+	Bool :$reduced-chi2=False, #= redo fits to produced a Chi2 ~ Number of Degrees of Freedom 
 	Int  :$gfilt,
 	Str  :set-err(:$err)="",
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
@@ -1066,6 +1067,7 @@ MSG
 			:logx($loglin or $loglog),
 			:logy($linlog or $loglog),
 			:remove-outliers($remove-outliers),
+			:reduced-chi2($reduced-chi2),
 			:quiet($quiet)
 		);
 	} 
