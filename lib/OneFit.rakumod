@@ -364,9 +364,9 @@ class Engine is export {
 		my $set-data-err = {
 			my $i = $^a;
 			my $file = $^b;
-			my @data = "$!path/$file".IO.lines.grep(/\d+/);
+			my @data = "$file".IO.lines.grep(/\d+/);
 			my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
-			"$!path/$file".IO.spurt: 
+			"$file".IO.spurt: 
 				@data.head
 				~ "\n" ~ 
 				@data.tail(*-1)
@@ -379,8 +379,9 @@ class Engine is export {
 	    do {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
-				$set-data-err($_-1,"data$_.dat");
-				
+				$set-data-err($_-1,"$!path/data$_.dat");
+				say "$!path/data1.dat".IO.slurp;
+
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
@@ -446,7 +447,7 @@ EOT
 	     	do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-					$set-data-err($_-1,"data{$_}ro.dat");
+					$set-data-err($_-1,"$!path/data{$_}ro.dat");
 
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
