@@ -393,7 +393,7 @@ class Engine is export {
 				my @a = $TXT.lines;
 				$TXT = @a.head 
 						~ 	"\n" 
-						~ 	@a.tail(*-1).map -> $i, $v ({ 
+						~ 	@a.tail(*-1).kv.map -> $i, $v ({ 
 								my @b = $v.split(', ');
 								my $ndf = @b[1] - @!blocks[$i].parameters.free; 
 								my $chi2= @b[2];
