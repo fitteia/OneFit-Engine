@@ -545,7 +545,7 @@ EOT
 									.pairs
 									.grep(/ \x[0B1] 'err'/)
 									.map({ .keys.Slip }) 
-								].map({ $_*sqrt($chi2/$ndf) });
+								].map({ say $_; $_*sqrt($chi2/$ndf) });
 							@b.join(', ')
 						}).join("\n")
 					~ 	"\n";
