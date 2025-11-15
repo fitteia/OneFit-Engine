@@ -502,7 +502,26 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-
+			if $reduced-chi2 {
+				my @a = $TXT.lines;
+				$TXT = @a.head 
+						~ 	"\n" 
+						~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+								my @b = $v.split(', ');
+								my $ndf = @b[1] - @!blocks[$i].parameters.free; 
+								my $chi2= @b[2];
+								@b[2] /= $chi2/$ndf;
+								@b[ @a.head
+										.split(', ')
+										.pairs
+										.grep(/ \x[0B1] 'err'/)
+										.map({ .keys.Slip }) 
+									].map({ $_*sqrt($chi2/$ndf) });
+								@b.join(', ')
+							}).join("\n")
+						~ 	"\n";
+			}
+	
 			my $msg = "fit with {$npts-removed} points removed";
 	 		say qq:to/EOT/ unless $quiet;
 
@@ -512,6 +531,25 @@ $TXT
 EOT
 	 }
 	 else { 
+		if $reduced-chi2 {
+			my @a = $TXT.lines;
+			$TXT = @a.head 
+					~ 	"\n" 
+					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+							my @b = $v.split(', ');
+							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
+							my $chi2= @b[2];
+							@b[2] /= $chi2/$ndf;
+							@b[ @a.head
+								.split(', ')
+									.pairs
+									.grep(/ \x[0B1] 'err'/)
+									.map({ .keys.Slip }) 
+								].map({ $_*sqrt($chi2/$ndf) });
+							@b.join(', ')
+						}).join("\n")
+					~ 	"\n";
+		}
 	 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 	 }
 	 %!engine<fit-results> = $TXT;
