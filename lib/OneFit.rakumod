@@ -491,6 +491,24 @@ EOT
 			shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
 	 }
+	 my $reset-parameters-std = {
+			my @a = $^a.lines;
+			my $TXT = @a.head 
+					~ 	"\n" 
+					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+							my @b = $v.split(', ');
+							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
+							my $chi2= @b[2];
+							@b[2] /= $chi2/$ndf;
+							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
+								@b[$_] *= *sqrt($chi2/$ndf);
+							}
+							@b.join(', ')
+						}).join("\n")
+					~ 	"\n";
+			$TXT;
+		}
+	
 	 my $TXT = self!results();
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
@@ -502,28 +520,10 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-			if $reduced-chi2 {
-				my @a = $TXT.lines;
-				$TXT = @a.head 
-						~ 	"\n" 
-						~ 	@a.tail(*-1).kv.map( -> $i, $v { 
-								my @b = $v.split(', ');
-								my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-								my $chi2= @b[2];
-								@b[2] /= $chi2/$ndf;
-								@b[ @a.head
-										.split(', ')
-										.pairs
-										.grep(/ \x[0B1] 'err'/)
-										.map({ .keys.Slip }) 
-									].map({ $_*sqrt($chi2/$ndf) });
-								@b.join(', ')
-							}).join("\n")
-						~ 	"\n";
-			}
-	
-			my $msg = "fit with {$npts-removed} points removed";
-	 		say qq:to/EOT/ unless $quiet;
+		$TXT = $reset-parameters-std($TXT) if $reduced-chi2;
+
+		my $msg = "fit with {$npts-removed} points removed";
+ 		say qq:to/EOT/ unless $quiet;
 
 {'-' x 27} $msg {'-' x 80-27-$msg.chars}
 $TXT
@@ -531,25 +531,7 @@ $TXT
 EOT
 	 }
 	 else { 
-		if $reduced-chi2 {
-			my @a = $TXT.lines;
-			$TXT = @a.head 
-					~ 	"\n" 
-					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
-							my @b = $v.split(', ');
-							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-							my $chi2= @b[2];
-							@b[2] /= $chi2/$ndf;
-							@b[ @a.head
-								.split(', ')
-									.pairs
-									.grep(/ \x[0B1] 'err'/)
-									.map({ .keys.Slip }) 
-								].map({ say $_; $_*sqrt($chi2/$ndf) });
-							@b.join(', ')
-						}).join("\n")
-					~ 	"\n";
-		}
+		$TXT = $reset-parameters-std($TXT) if $reduced-chi2;
 	 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 	 }
 	 %!engine<fit-results> = $TXT;
