@@ -362,7 +362,7 @@ class Engine is export {
 				@data.head
 				~ "\n" ~ 
 				@data.tail(*-1)
-					.map({ my @a = .words.head(2); @a.push( sqrt( @!blocks[$i].chi2 / $ndf )).join(' ') })
+					.map({ my @a = .words.head(3); @a[3] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
 					.join("\n")
 			;
 		}
@@ -375,15 +375,6 @@ class Engine is export {
 	    }
 	    @!blocks.race.map( { .export(:plot) });
 	    self.parameters(:read, :from-output, :from-log);
-
-		if $reduced-chi2 {
-			for (1 .. @!blocks.elems).race {
-				$set-data-err($_-1,"$!path/data$_.dat"); 
-				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-			}
-		    @!blocks.race.map( { .export(:plot) });
-   		 	self.parameters(:read, :from-output, :from-log);
-		}
 	
 	    do {
 			self.agr;
@@ -397,8 +388,27 @@ class Engine is export {
 
 		
 	   	if @outliers.so {
-	 		%!engine<fit-results-all> = self!results();
-			
+	 		my $TXT = self!results();
+			if $reduced-chi2 {
+				my @a = $TXT.lines;
+				$TXT = @a.head 
+						~ 	"\n" 
+						~ 	@a.tail(*-1).map -> $i, $v ({ 
+								my @b = $v.split(', ');
+								my $ndf = @b[1] - @!blocks[$i].parameters.free; 
+								my $chi2= @b[2];
+								@b[2] /= $chi2/$ndf;
+								@b[ @a.head
+										.split(', ')
+										.pairs
+										.grep(/ \x[0B1] 'err'/)
+										.map({ .keys.Slip }) 
+									].map({ $_*sqrt($ch2/$ndf) });
+								@b.join(', ')
+							}).join("\n")
+						~ 	"\n";
+			}
+			%!engine<fit-results-all> = $TXT; 
 			my $msg = "fit of all the points"; 
 	 		say qq:to/EOT/ unless $quiet;
 
@@ -561,7 +571,7 @@ EOT
 		self
     }
 
-    method !results (:$fmt = ', ') {
+    method !results ( :$fmt = ', ' ) {
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
@@ -575,6 +585,7 @@ EOT
 	 	my $TXT = @fields.join($fmt) ~ "\n";
 		my @global-par-table;
 	   	for @!par-tables[0].a { my %h = $_; @global-par-table.push: %h }
+
 		#if $MIXED {
 			# 	my @line-fields;
 			#@line-fields.push: "global";
