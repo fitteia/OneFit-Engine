@@ -379,7 +379,7 @@ class Engine is export {
 	    do {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
-				$set-data-err($_-1,"$!path/data$_.dat") if @outliers.so;
+				$set-data-err($_-1,"$!path/data$_.dat") if @outliers.so // $reduced-chi2;
 
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
