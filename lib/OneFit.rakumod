@@ -520,7 +520,7 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-		$TXT = $reset-parameters-std($TXT) if any($ntps-removed, $reduced-chi2);
+		$TXT = $reset-parameters-std($TXT);
 
 		my $msg = "fit with \x[03C7]\x[00B2] '~' Num. degrees freedom and {$npts-removed} points removed";
  		say qq:to/EOT/ unless $quiet;
