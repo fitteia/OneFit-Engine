@@ -414,7 +414,7 @@ class Engine is export {
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 $TXT
-{'-' x (40-$msg.chars/2.0).floor} {'-' x $msg.chars} {'-' x (40-$msg.chars/2.0).ceiling}
+{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 EOT
 
 			for @pdfs -> $name {
