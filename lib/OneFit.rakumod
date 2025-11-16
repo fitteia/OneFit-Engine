@@ -351,7 +351,7 @@ class Engine is export {
 
 	 if %!engine<FitType> ~~ /Individual/ {
 
-		@!blocks>>.set-errorbars(:on) if @outliers.so;
+		@!blocks>>.set-errorbars(:on) if @outliers.so // $reduced-chi2;
 
 		my $set-data-err = {
 			my $i = $^a;
