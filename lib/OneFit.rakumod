@@ -356,9 +356,9 @@ class Engine is export {
 		my $set-data-err = {
 			my $i = $^a;
 			my $file = $^b;
-			my @data = "$file".IO.lines.grep(/\d+/);
+			my @data = $file.IO.lines.grep(/\d+/);
 			my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
-			"$file".IO.spurt: 
+			$file.IO.spurt: 
 				@data.head
 				~ "\n" ~ 
 				@data.tail(*-1)
