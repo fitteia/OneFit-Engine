@@ -522,7 +522,7 @@ EOT
 			~ "\n";
 		$TXT = $reset-parameters-std($TXT);
 
-		my $msg = "fit with \x[03C7]\x[00B2]~Num. degrees freedom and {$npts-removed} points removed";
+		my $msg = "fit with \x[03C7]\x[00B2]~ndf (ndf: Num. degrees freedom) and {$npts-removed} points removed";
  		say qq:to/EOT/ unless $quiet;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
@@ -533,7 +533,7 @@ EOT
 	 else { 
 		if $reduced-chi2 { 
 			$TXT = $reset-parameters-std($TXT) if $reduced-chi2;
-		 	my $msg = "fit with \x[03C7]\x[00B2]~Num. degrees freedom";
+		 	my $msg = "fit with \x[for a03C7]\x[00B2]~ndf (ndf: Num. degrees freedom)";
  			say qq:to/EOT/ unless $quiet;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
