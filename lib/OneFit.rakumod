@@ -412,9 +412,9 @@ class Engine is export {
 			my $msg = "fit of all the points"; 
 	 		say qq:to/EOT/ unless $quiet;
 
-{'-' x 29} $msg {'-' x 80-29-$msg.chars}
-%!engine<fit-results-all> 
-{'-' x 80} 
+{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+$TXT
+{'-' x (40-$msg.chars/2.0).floor} {'-' x $msg.chars} {'-' x (40-$msg.chars/2.0).ceiling}
 EOT
 
 			for @pdfs -> $name {
@@ -520,19 +520,31 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-		$TXT = $reset-parameters-std($TXT) if $reduced-chi2;
+		$TXT = $reset-parameters-std($TXT) if any($ntps-removed, $reduced-chi2);
 
-		my $msg = "fit with {$npts-removed} points removed";
+		my $msg = "fit with \x[03C7]\x[00B2] '~' Num. degrees freedom and {$npts-removed} points removed";
  		say qq:to/EOT/ unless $quiet;
 
-{'-' x 27} $msg {'-' x 80-27-$msg.chars}
+{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 $TXT
-{'-' x 80} 
+{'-' x (40-$msg.chars/2.0).floor} {'-' x $msg.chars} {'-' x (40-$msg.chars/2.0).ceiling}
 EOT
 	 }
 	 else { 
-		$TXT = $reset-parameters-std($TXT) if $reduced-chi2;
-	 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+		if $reduced-chi2 { 
+			$TXT = $reset-parameters-std($TXT) if $reduced-chi2;
+		 	my $msg = "fit with \x[03C7]\x[00B2] '~' Num. degrees freedom";
+ 			say qq:to/EOT/ unless $quiet;
+
+{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+$TXT
+{'-' x (40-$msg.chars/2.0).floor} {'-' x $msg.chars} {'-' x (40-$msg.chars/2.0).ceiling}
+EOT
+	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+		}
+		else {
+		 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+		}		
 	 }
 	 %!engine<fit-results> = $TXT;
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
