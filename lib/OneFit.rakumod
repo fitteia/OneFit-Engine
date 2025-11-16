@@ -477,6 +477,7 @@ EOT
 				my @pdfs-all = flat @pdfs Z @pdfsro;
 say @pdfs-all.join(' ');	
 say $!path;
+say "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 	     	} unless $no-plot.Bool;
 		}
