@@ -365,7 +365,6 @@ class Engine is export {
 					.map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
 					.join("\n")
 			;
-			say $file.IO.slurp;
 		}
 
 		for (1 .. @!blocks.elems).race {
