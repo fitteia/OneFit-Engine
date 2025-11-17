@@ -475,8 +475,7 @@ EOT
 					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
 				}
 				my @pdfs-all = flat @pdfs Z @pdfsro;
-				my $cmd = "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
-	 			say $cmd;
+				my $cmd = "cd $!path; pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
 				try { shell $cmd; }
 				if $! { say "something went wrong" }
 	     	} unless $no-plot.Bool;
@@ -490,7 +489,7 @@ EOT
 	     do {
 		 	self.agr;
 		 	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
-			shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
+			shell "cd $!path; pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
 	 }
 	 my $reset-parameters-std = {
