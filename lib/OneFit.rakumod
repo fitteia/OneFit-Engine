@@ -476,7 +476,7 @@ EOT
 				}
 				my @pdfs-all = flat @pdfs Z @pdfsro;
 				my $cmd = "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
-				say dir($!path, :test(/.pdf/)>>.Str;
+				say dir($!path, :test(/.pdf/))>>.Str;
 	 			try { shell $cmd; }
 				if $! { say "something went wrong" }
 	     	} unless $no-plot.Bool;
