@@ -1319,7 +1319,6 @@ sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
 }
 
 sub zip-fit ($engine,$work-folder,$name) {
-	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
     my $excluded =  { "$work-folder/$name/" <<~<< <AuxCode.* onefit-user *.h *.c *.o *_ gnu* *.stp> }().join(' ') ;
     "$name.zip".IO(:e).unlink;
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
