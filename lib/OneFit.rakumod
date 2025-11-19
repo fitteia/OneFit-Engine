@@ -502,7 +502,7 @@ EOT
 							my $chi2= @b[2];
 							@b[2] /= $chi2/$ndf;
 							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
-								@b[$_] *= sqrt($chi2/$ndf).Rat;
+								@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! @b[$_]*sqrt($chi2/$ndf).Rat;
 							}
 							@b.join(', ')
 						}).join("\n")
