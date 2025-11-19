@@ -407,7 +407,7 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		my $TXT = self!results();
-			$TXT = $reset-parameters($TXT);
+			$TXT = $reset-parameters-std($TXT);
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 	 		say qq:to/EOT/ unless $quiet;
