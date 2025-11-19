@@ -349,23 +349,41 @@ class Engine is export {
 
      my $npts-removed=0;
 
+	 my $set-data-err = {
+		my $i = $^a;
+		my $file = $^b;
+		my @data = $file.IO.lines.grep(/\d+/);
+		my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
+		$file.IO.spurt: 
+			@data.head
+			~ "\n" ~ 
+			@data.tail(*-1)
+				.map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
+				.join("\n")
+		;
+	 }
+
+	 my $reset-parameters-std = {
+			my @a = $^a.lines;
+			my $TXT = @a.head 
+					~ 	"\n" 
+					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+							my @b = $v.split(', ');
+							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
+							my $chi2= @b[2];
+							@b[2] /= $chi2/$ndf;
+							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
+								@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! @b[$_]*sqrt($chi2/$ndf).Rat;
+							}
+							@b.join(', ')
+						}).join("\n")
+					~ 	"\n";
+			$TXT;
+	 }
+	
 	 if %!engine<FitType> ~~ /Individual/ {
 
 		@!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
-
-		my $set-data-err = {
-			my $i = $^a;
-			my $file = $^b;
-			my @data = $file.IO.lines.grep(/\d+/);
-			my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
-			$file.IO.spurt: 
-				@data.head
-				~ "\n" ~ 
-				@data.tail(*-1)
-					.map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
-					.join("\n")
-			;
-		}
 
 		for (1 .. @!blocks.elems).race {
 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
@@ -389,27 +407,9 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		my $TXT = self!results();
-			if $reduced-chi2 {
-				my @a = $TXT.lines;
-				$TXT = @a.head 
-						~ 	"\n" 
-						~ 	@a.tail(*-1).kv.map( -> $i, $v { 
-								my @b = $v.split(', ');
-								my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-								my $chi2= @b[2];
-								@b[2] /= $chi2/$ndf;
-								@b[ @a.head
-										.split(', ')
-										.pairs
-										.grep(/ \x[0B1] 'err'/)
-										.map({ .keys.Slip }) 
-									].map({ .contains(/'constant' | 'fixed'/) ?? $_ !! $_*sqrt($chi2/$ndf) });
-								@b.join(', ')
-							}).join("\n")
-						~ 	"\n";
-			}
+			$TXT = $reset-parameters($TXT);
 			%!engine<fit-results-all> = $TXT; 
-			my $msg = "fit of all the points"; 
+		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 	 		say qq:to/EOT/ unless $quiet;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
@@ -492,24 +492,7 @@ EOT
 			shell "cd $!path; pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
 	 }
-	 my $reset-parameters-std = {
-			my @a = $^a.lines;
-			my $TXT = @a.head 
-					~ 	"\n" 
-					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
-							my @b = $v.split(', ');
-							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-							my $chi2= @b[2];
-							@b[2] /= $chi2/$ndf;
-							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
-								@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! @b[$_]*sqrt($chi2/$ndf).Rat;
-							}
-							@b.join(', ')
-						}).join("\n")
-					~ 	"\n";
-			$TXT;
-		}
-	
+
 	 my $TXT = self!results();
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
@@ -533,7 +516,7 @@ EOT
 	 }
 	 else { 
 		if $reduced-chi2 { 
-			$TXT = $reset-parameters-std($TXT) if $reduced-chi2;
+			$TXT = $reset-parameters-std($TXT);
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
  			say qq:to/EOT/ unless $quiet;
 
