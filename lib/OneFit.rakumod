@@ -306,6 +306,7 @@ class Engine is export {
 		Bool :$autoy,
 		Bool :$logx,
 		Bool :$logy,
+		Bool :$reduced-chi2,
 		Str  :$remove-outliers="",
 		Bool :$quiet=False
 	       ) {
@@ -348,39 +349,56 @@ class Engine is export {
 
      my $npts-removed=0;
 
+	 my $set-data-err = {
+		my $i = $^a;
+		my $file = $^b;
+		my @data = $file.IO.lines.grep(/\d+/);
+		my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
+		$file.IO.spurt: 
+			@data.head
+			~ "\n" ~ 
+			@data.tail(*-1)
+				.map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
+				.join("\n")
+		;
+	 }
+
+	 my $reset-parameters-std = {
+			my @a = $^a.lines;
+			my $TXT = @a.head 
+					~ 	"\n" 
+					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+							my @b = $v.split(', ');
+							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
+							my $chi2= @b[2];
+							@b[2] /= $chi2/$ndf;
+							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
+								@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! @b[$_]*sqrt($chi2/$ndf).Rat;
+							}
+							@b.join(', ')
+						}).join("\n")
+					~ 	"\n";
+			$TXT;
+	 }
+	
 	 if %!engine<FitType> ~~ /Individual/ {
 
-		@!blocks>>.set-errorbars(:on) if @outliers.so;
+		@!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
 
 		for (1 .. @!blocks.elems).race {
 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-		}
+	}
      	for (1 .. @!blocks.elems).race {
 			shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
 	    }
 	    @!blocks.race.map( { .export(:plot) });
 	    self.parameters(:read, :from-output, :from-log);
-
-		my $set-data-err = {
-			my $i = $^a;
-			my $file = $^b;
-			my @data = "$!path/$file".IO.lines.grep(/\d+/);
-			my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
-			"$!path/$file".IO.spurt: 
-				@data.head
-				~ "\n" ~ 
-				@data.tail(*-1)
-					.map({ my @a = .words.head(2); @a.push( sqrt( @!blocks[$i].chi2 / $ndf )).join(' ') })
-					.join("\n")
-			;
-		}
-
-
+	
 	    do {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
-				$set-data-err($_-1,"data$_.dat");
-				
+				$set-data-err($_-1,"$!path/data{$_}.dat") if (@outliers.so || $reduced-chi2);
+
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
@@ -388,14 +406,15 @@ class Engine is export {
 
 		
 	   	if @outliers.so {
-	 		%!engine<fit-results-all> = self!results();
-			
-			my $msg = "fit of all the points"; 
+	 		my $TXT = self!results();
+			$TXT = $reset-parameters-std($TXT);
+			%!engine<fit-results-all> = $TXT; 
+		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 	 		say qq:to/EOT/ unless $quiet;
 
-{'-' x 29} $msg {'-' x 80-29-$msg.chars}
-%!engine<fit-results-all> 
-{'-' x 80} 
+{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+$TXT
+{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 EOT
 
 			for @pdfs -> $name {
@@ -446,7 +465,7 @@ EOT
 	     	do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-					$set-data-err($_-1,"data{$_}ro.dat");
+					$set-data-err($_-1,"$!path/data{$_}ro.dat");
 
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
@@ -456,8 +475,9 @@ EOT
 					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
 				}
 				my @pdfs-all = flat @pdfs Z @pdfsro;
-	
-	 			shell "cd $!path && pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
+				my $cmd = "cd $!path; pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
+				try { shell $cmd; }
+				if $! { say "something went wrong" }
 	     	} unless $no-plot.Bool;
 		}
 	 }
@@ -469,9 +489,10 @@ EOT
 	     do {
 		 	self.agr;
 		 	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
-			shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
+			shell "cd $!path; pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
 	 }
+
 	 my $TXT = self!results();
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
@@ -483,17 +504,30 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
+		$TXT = $reset-parameters-std($TXT);
 
-			my $msg = "fit with {$npts-removed} points removed";
-	 		say qq:to/EOT/ unless $quiet;
+		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points removed";
+ 		say qq:to/EOT/ unless $quiet;
 
-{'-' x 27} $msg {'-' x 80-27-$msg.chars}
+{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 $TXT
-{'-' x 80} 
+{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 EOT
 	 }
 	 else { 
-	 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+		if $reduced-chi2 { 
+			$TXT = $reset-parameters-std($TXT);
+		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
+ 			say qq:to/EOT/ unless $quiet;
+
+{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+$TXT
+{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+EOT
+		}
+		else {
+		 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+		}		
 	 }
 	 %!engine<fit-results> = $TXT;
 	 %!engine<SimulFitOutput> = self!results(fmt => " ");
@@ -552,7 +586,7 @@ EOT
 		self
     }
 
-    method !results (:$fmt = ', ') {
+    method !results ( :$fmt = ', ' ) {
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
@@ -566,6 +600,7 @@ EOT
 	 	my $TXT = @fields.join($fmt) ~ "\n";
 		my @global-par-table;
 	   	for @!par-tables[0].a { my %h = $_; @global-par-table.push: %h }
+
 		#if $MIXED {
 			# 	my @line-fields;
 			#@line-fields.push: "global";

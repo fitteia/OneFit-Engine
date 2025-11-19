@@ -994,6 +994,7 @@ multi MAIN  ('fit',
 	Str  :$sef-R1-file = "",
  	Str  :$range = "",
 	Bool :$R1 = False,
+	Bool :rchi2(:$reduced-chi2) = False, #= recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom 
 	Int  :$gfilt,
 	Str  :set-err(:$err)="",
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
@@ -1066,6 +1067,7 @@ MSG
 			:logx($loglin or $loglog),
 			:logy($linlog or $loglog),
 			:remove-outliers($remove-outliers),
+			:reduced-chi2($reduced-chi2),
 			:quiet($quiet)
 		);
 	} 
@@ -1117,11 +1119,13 @@ multi MAIN  ('fit',
      Bool :logx(:log-x(:xlog(:$loglin))),
      Bool :logxy(:log-xy(:xy-log(:$loglog))),
      Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
+	 Bool :rchi2(:$reduced-chi2) = False, 
      Str  :$zip-to = $input-file.IO.extension('').Str,
      Str  :$work-folder = '.',
      Int  :Num(:$npts),
 	 Bool :$export = False,
 	 Bool :q(:$quiet) = False,
+	 Str  :ro(:$remove-outliers) = "",
 	 Str  :define-alias(:$dali)="",
 	 *%_
     ){
@@ -1192,6 +1196,8 @@ MSG
 			:autoy($autoy or $autoxy),
 			:logx($loglin or $loglog),
 			:logy($linlog or $loglog),
+			:remove-outliers($remove-outliers),
+			:reduced-chi2($reduced-chi2),
 			:quiet($quiet)
 	    );
     $engine.save($to) if $to.defined;
@@ -1313,10 +1319,9 @@ sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
 }
 
 sub zip-fit ($engine,$work-folder,$name) {
-    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
     my $excluded =  { "$work-folder/$name/" <<~<< <AuxCode.* onefit-user *.h *.c *.o *_ gnu* *.stp> }().join(' ') ;
     "$name.zip".IO(:e).unlink;
-    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
 }
 
