@@ -403,7 +403,7 @@ class Engine is export {
 										.pairs
 										.grep(/ \x[0B1] 'err'/)
 										.map({ .keys.Slip }) 
-									].map({ $_*sqrt($chi2/$ndf) });
+									].map({ .contains(/'constant' | 'fixed') ?? $_ !! $_*sqrt($chi2/$ndf) });
 								@b.join(', ')
 							}).join("\n")
 						~ 	"\n";
