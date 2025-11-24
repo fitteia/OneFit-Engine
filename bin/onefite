@@ -208,13 +208,16 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 
     onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
-
     onefite fit "a: 1exp" file.txt --autox --logx --autoy
     onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0"
+    
+	onefite fit #1exp file.txt --autox --logx --autoy
+    onefite fit #1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
+	
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="standard deviation"
@@ -544,10 +547,11 @@ multi MAIN ('start-web-engine',
 		       <tr><td>autoxy: </td><td><input name="autoxy" type="radio" value="yes">/<input name="autoxy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="logx" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="logy" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>ist-ffc: </td><td><input name="ist-ffc" type="radio" value="yes">/<input name="ist-ffc" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>reduced-chi2: </td><td><input name="reduced-chi2" type="radio" value="yes">/<input name="reduced-chi2" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>R1: </td><td><input name="R1" type="radio" value="yes">/<input name="R1" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>err: </td><td><input name="err" type="text" value="">(number, num%, num%avg, num% avg split xvalue, stdv, stdv split xvalue; ex. 1.0, 10%, 10%avg, 1% avg split at 2e4, stdv, "stdv split at 2e4")</td></tr>
 		       <tr><td>range: </td><td><input name="range" type="text" value="">(window range: i:f)</td></tr>
+		       <tr><td>remove-outliers: </td><td><input name="remove-outlieres" type="text" value="">(ex: 1 or 1,3,6 or 1:3,5)</td></tr>
 		       <tr><td>plot-if: </td><td><input name="plot-if" type="text" value="">(ex: c1>0.5,1)</td></tr>
 		       <tr><td>fit-if: </td><td><input name="fit-if" type="text" value="">(ex: c1<2,10)</td></tr>
 		       <tr><td>gfilt: </td><td><input name="gfilt" type="text" value="">(int number)</td></tr>
@@ -646,6 +650,8 @@ HTML
 		my $plot-if = "";
 		my $gfilt = "";
 		my $range = "";
+		my $remove-outliers="";
+		my $reduced-chi2="";
 		my $sef-R1-file = "";
 		my $num   = "--Num=100";
 		my $ssz   = "--SymbSize=1.0";
@@ -668,10 +674,12 @@ HTML
 		       $autoxy     	      = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
 		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
+		       $reduced-chi2      = "--reduced-chi2  " if $k eq "reduced-chi2" and $v eq any("yes",1);
 		       $R1  		         = "--R1  " if $k eq "R1" and $v eq any("yes",1);
 		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file" and $v.so;
 		       $err                = "--err={$v.Str}  " if $k eq "err" and $v.so;
 		       $range                = "--range={$v.Str}  " if $k eq "range" and $v.so;
+		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq "remove-outliers" and $v.so;
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq "fit-if" and $v.so;
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq "plot-if" and $v.so;
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
@@ -698,7 +706,7 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		 else {
@@ -1029,8 +1037,8 @@ multi MAIN  ('fit',
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
 	%aliases = %aliases.Slip, from-json("{$*CWD}/aliases.json".IO.slurp).Hash.Slip  if "{$*CWD}/aliases.json".IO.e; 
 
-    if $function.contains(/^ <ws> \w* <ws> ':' <ws> /) {
-		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/\s+/,' ') };
+    if $function.contains(/^ <ws> \w* <ws> ':' <ws> | ^ <ws> '#' <ws> /) {
+		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/^\s*'#'\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { 
 			say qq:to/MSG/;
