@@ -3,7 +3,6 @@ unit module OneFit::Engine::Archive;
 use JSON::Fast;
 
 class HistoryLog is export {
-	has $!path = ::('OFE-PATH') ~ "../log/arc";
 	has $.path is rw;
 	has $.file is rw;
 	has %!arch;
