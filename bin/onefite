@@ -1017,7 +1017,7 @@ multi MAIN  ('fit',
     Str  :$save-to, # write fit settings to json or sav file 
     Str  :$work-folder = '.',
     Int  :Num(:$npts) = +100,
-	Bool :$log = False, #= add log entry and archive data
+	Bool :$archive = False, #= add log entry and archive data
 	Bool :q(:$quiet) = False,
 	Str  :define-alias(:$dali)="",
 	Str  :AuxCode(:auxcode(:$aux-code)) = "",
@@ -1122,7 +1122,7 @@ MSG
 	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	define-alias($engine,$dali) if $dali.so;
-	if $log {
+	if $archive {
 		my $log = HistoryLog.new;
 		my $cmd = ($*PROGRAM-NAME, |@*ARGS).join(' ');
 		$log.archive($cmd);
@@ -1149,7 +1149,7 @@ multi MAIN  ('fit',
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :define-alias(:$dali)="",
-	 Bool :$log = False,
+	 Bool :$archive = False,
 	 *%_
     ){
 	do {
@@ -1230,7 +1230,7 @@ MSG
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	define-alias($engine,$dali) if $dali.so;
-	if $log {
+	if $archive {
 		my $log = HistoryLog.new;
 		my $cmd = ($*PROGRAM-NAME, |@*ARGS).join(' ');
 		$log.archive($cmd);
