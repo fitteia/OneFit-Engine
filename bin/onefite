@@ -316,6 +316,7 @@ proto MAIN(|) { * };
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
 ) {
+	say $*PROGRAM-NAME;
 	say $*USAGE;
 	note qq:to/END_USAGE/;
     <input-file>     name of the file to be converted (\.sav or \.json)
