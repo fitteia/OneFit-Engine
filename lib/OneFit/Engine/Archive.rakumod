@@ -20,7 +20,7 @@ class HistoryLog is export {
 			when /\d+/ { $selected = @keys[$s.Int] }
 		   	default { $selected }
 		}	
-		try { shell("unzip -o $!path/{$selected}.zip; %!arch{$selected}.subst('#','\#')") }
+		try { shell("unzip -o $!path/{$selected}.zip; %!arch{$selected}.subst('#','\#').subst('--archive','')") }
 		if $! { say "couldn't execute $selected" }
 	}
 
