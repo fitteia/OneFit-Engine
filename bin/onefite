@@ -343,7 +343,7 @@ multi MAIN (
 	$txt
 }
 
-#| Get archived log
+#| <str>: a* or log  
 multi MAIN( $str where { $str ~~ /:i ^a | 'log'/ },
 	Str :f(:$fit)="" #= fit log entry: ex: onefite log -f last or onefite log --fit 10
 ) {
