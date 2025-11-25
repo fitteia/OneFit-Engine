@@ -8,7 +8,7 @@ class HistoryLog is export {
 	has %!arch;
 
 	submethod BUILD (:$!path = ::('OFE-PATH') ~ "../log/arc", :$!file = "HistoryLog.json") {
-		$!path.IO.mdir unless $!path.IO.d;
+		$!path.IO.mkdir unless $!path.IO.d;
 		%!arch = from-json( "$!path/$!file".IO.slurp ).Hash.Slip if "$!path/$!file".IO.e;
 	}
 
