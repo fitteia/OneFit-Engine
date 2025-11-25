@@ -298,6 +298,7 @@ use OneFit::Engine::Parameters;
 use OneFit::Engine::Parfiles;
 use OneFit::Engine::Stpfiles;
 use OneFit::Engine::Import;
+use OneFit::Engine::Archive;
 use Pod::To::Text;
 use Pod::To::Man;
 use Test;
@@ -345,6 +346,13 @@ multi MAIN (
 #| Get onefite man page
 multi MAIN( 'man', Bool :m(:$man) ) { MAIN( :man($man) ) }
 
+multi MAIN('log',
+	Str :f(:$fit)="" #= fit log entry: ex: onefite log -f last or onefite log --fit 10
+) {
+	my $log = HistoryLog.new;
+	if $fit.defined and $fit.chars { $log.fit($fit) }
+	else { $log.print() }
+}
 
 #| Get onefite library models and aliases lists
 multi MAIN ('list',
@@ -1009,6 +1017,7 @@ multi MAIN  ('fit',
     Str  :$save-to, # write fit settings to json or sav file 
     Str  :$work-folder = '.',
     Int  :Num(:$npts) = +100,
+	Bool :$log = False, #= add log entry and archive data
 	Bool :q(:$quiet) = False,
 	Str  :define-alias(:$dali)="",
 	Str  :AuxCode(:auxcode(:$aux-code)) = "",
@@ -1113,6 +1122,11 @@ MSG
 	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	define-alias($engine,$dali) if $dali.so;
+	if $log {
+		my $log = HistoryLog.new;
+		my $cmd = ($*PROGRAM-NAME, |@*ARGS).join(' ');
+		$log.archive($cmd);
+	}
     exit;
 }
 
@@ -1135,6 +1149,7 @@ multi MAIN  ('fit',
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :define-alias(:$dali)="",
+	 Bool :$log = False,
 	 *%_
     ){
 	do {
@@ -1215,6 +1230,11 @@ MSG
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	define-alias($engine,$dali) if $dali.so;
+	if $log {
+		my $log = HistoryLog.new;
+		my $cmd = ($*PROGRAM-NAME, |@*ARGS).join(' ');
+		$log.archive($cmd);
+	}
     exit;
 }
 
