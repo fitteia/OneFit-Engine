@@ -1124,7 +1124,7 @@ MSG
 	define-alias($engine,$dali) if $dali.so;
 	if $archive {
 		my $log = HistoryLog.new;
-		my $cmd = ($*PROGRAM-NAME, |@*ARGS).join(' ');
+		my $cmd = ("onefite", |@*ARGS).join(' ');
 		$log.archive($cmd);
 	}
     exit;
@@ -1232,7 +1232,7 @@ MSG
 	define-alias($engine,$dali) if $dali.so;
 	if $archive {
 		my $log = HistoryLog.new;
-		my $cmd = ($*PROGRAM-NAME, |@*ARGS).join(' ');
+		my $cmd = ("onefite", |@*ARGS).join(' ');
 		$log.archive($cmd);
 	}
     exit;
