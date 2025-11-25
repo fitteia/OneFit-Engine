@@ -25,7 +25,7 @@
     "OneFit::Engine::Stpfiles": "lib/OneFit/Engine/Stpfiles.rakumod",
     "OneFit::Engine::Import": "lib/OneFit/Engine/Import.rakumod",
     "OneFit::Engine::Titles": "lib/OneFit/Engine/Titles.rakumod",
-    "OneFit::Engine::Titles": "lib/OneFit/Engine/Archive.rakumod"
+    "OneFit::Engine::Archive": "lib/OneFit/Engine/Archive.rakumod"
   },
   "repo-type": "git",
   "resources": [
