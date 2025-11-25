@@ -343,16 +343,17 @@ multi MAIN (
 	$txt
 }
 
-#| Get onefite man page
-multi MAIN( 'man', Bool :m(:$man) ) { MAIN( :man($man) ) }
-
-multi MAIN('log',
+#| Get archived log
+multi MAIN( $str where { $str !~ /'fit'|'list'|'man'|'plot'/ },
 	Str :f(:$fit)="" #= fit log entry: ex: onefite log -f last or onefite log --fit 10
 ) {
 	my $log = HistoryLog.new;
 	if $fit.defined and $fit.chars { $log.fit($fit) }
 	else { $log.print() }
 }
+
+#| Get onefite man page
+multi MAIN( 'man', Bool :m(:$man) ) { MAIN( :man($man) ) }
 
 #| Get onefite library models and aliases lists
 multi MAIN ('list',
