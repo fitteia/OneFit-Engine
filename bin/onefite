@@ -1018,7 +1018,7 @@ multi MAIN  ('fit',
     Str  :$save-to, # write fit settings to json or sav file 
     Str  :$work-folder = '.',
     Int  :Num(:$npts) = +100,
-	Bool :$archive = False, #= add log entry and archive data
+	Bool :arc(:$archive) = False, #= add log entry and archive data
 	Bool :q(:$quiet) = False,
 	Str  :define-alias(:$dali)="",
 	Str  :AuxCode(:auxcode(:$aux-code)) = "",
@@ -1150,7 +1150,7 @@ multi MAIN  ('fit',
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :define-alias(:$dali)="",
-	 Bool :$archive = False,
+	 Bool :arc(:$archive) = False,
 	 *%_
     ){
 	do {
