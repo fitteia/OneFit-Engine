@@ -344,7 +344,7 @@ multi MAIN (
 }
 
 #| Get archived log
-multi MAIN( $str where { $str !~ /'fit'|'list'|'man'|'plot'/ },
+multi MAIN( $str where { $str !~~ /'fit'|'list'|'man'|'plot'/ },
 	Str :f(:$fit)="" #= fit log entry: ex: onefite log -f last or onefite log --fit 10
 ) {
 	my $log = HistoryLog.new;
