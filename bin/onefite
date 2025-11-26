@@ -343,7 +343,7 @@ multi MAIN (
 	$txt
 }
 #| Show archive log  
-multi MAIN( 'archive' ) {
+multi MAIN( 'archive',  
 	Str :f(:$fit)="" #= fit log entry: ex: onefite log -f last or onefite log --fit 10
 ) {
 	my $log = HistoryLog.new;
@@ -352,7 +352,7 @@ multi MAIN( 'archive' ) {
 }
 
 #| Show archive log  
-multi MAIN( 'log' ) },
+multi MAIN( 'log',
 	Str :f(:$fit)="" #= fit log entry: ex: onefite log -f last or onefite log --fit 10
 ) {
 	MAIN( 'archive' , :fit($fit) );
