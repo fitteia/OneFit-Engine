@@ -1136,8 +1136,8 @@ MSG
 		my $log = HistoryLog.new;
 		my @args = @*ARGS;
 		@args[1]=qq{"@args[1]"} if @args[1].contains(/^ 'a' 'l'? 'li'? 'lia'? 'lias'? ':'/);
-		my $cmd = ("onefite", |@args).join(' ');
-		$log.archive($cmd);
+		my $xxcmd = ("onefite", |@args).join(' ');
+		$log.archive($xxcmd);
 	}
     exit;
 }
