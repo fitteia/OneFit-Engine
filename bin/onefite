@@ -215,10 +215,8 @@ onefite archive [-f||--fit=<Str>]
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
-    
 	onefite fit "#1exp" file.txt --autox --logx --autoy
-    onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
-	
+    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
 	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std"
@@ -227,12 +225,10 @@ onefite archive [-f||--fit=<Str>]
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% avg"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% average"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5"
-
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1
-    onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --reduced-chi2
-    onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
+    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --reduced-chi2
+    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
-
 	onefite archive --fit last
 	onefite archive -f last-1
 	onefite log -f 2
