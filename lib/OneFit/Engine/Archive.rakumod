@@ -38,10 +38,10 @@ class HistoryLog is export {
 		for %!arch.pairs.sort(*.keys)  -> $p {
 			say $i.fmt("\%{$width}d") 
 			~ ": " 
-			~ "[{$p.key}] " 
 			~ DateTime.new($p.key.parse-base(36)) 
-			~ " " ~ "$.path/{$p.key}.zip".IO.s ~ "B "
-			~ " ==> " 
+			~ "[{$p.key}] " 
+			~ " " ~ "$.path/{$p.key}.zip".IO.s ~ " B "
+			~ " <== " 
 			~ $p.value;
 			$i++;	
 		}
