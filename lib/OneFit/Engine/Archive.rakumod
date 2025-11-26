@@ -40,6 +40,7 @@ class HistoryLog is export {
 			~ ": " 
 			~ "[{$p.key}] " 
 			~ DateTime.new($p.key.parse-base(36)) 
+			~ "(" ~ "$.path/{$p.key}.zip".IO.s ~ "bytes)"
 			~ " ==> " 
 			~ $p.value;
 			$i++;	
