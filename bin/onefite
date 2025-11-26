@@ -422,10 +422,11 @@ multi MAIN ('path',
       Bool :b(:$bin) = False, #= path to bin
       Bool :l(:$lib) = False, #= path to lib
       Bool :c(:$C) = False, #= path to C code
+      Bool :ar(:$archive) = False, #= path to archive
       Bool :$log = False, #= path to log
 	  Bool :a(:$aliases) = False # path to aliases
       ){
-      if none($src,$t,$bin,$lib,$C,$examples,$aliases) {
+      if none($src,$t,$bin,$lib,$C,$examples,$aliases,$archive) {
       	 say ::('OFE-PATH');
 		 say ::('OFE-PATH') ~ "/t";
 		 say ::('OFE-PATH') ~ "/examples";
@@ -435,6 +436,7 @@ multi MAIN ('path',
 		 say ::('OFE-PATH') ~ "/../log";
 	 	 say ::('OFE-PATH') ~ "/C";
 	 	 say ::('OFE-PATH') ~ "/../etc";
+	 	 say ::('OFE-PATH') ~ "/../log/arc";
       }
       else {
       	 say ::('OFE-PATH') if $src;
@@ -445,6 +447,7 @@ multi MAIN ('path',
 		 say ::('OFE-PATH') ~ "/../log" if $log;
 		 say ::('OFE-PATH') ~ "/C" if $C;
 		 say ::('OFE-PATH') ~ "/../etc" if $aliases;
+		 say ::('OFE-PATH') ~ "/../log/arc" if $archive;
       }
 }
 
