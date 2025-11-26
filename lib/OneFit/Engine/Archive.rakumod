@@ -36,7 +36,7 @@ class HistoryLog is export {
 		my $width = %!arch.keys.elems.chars;
 		my $i=0;
 		for %!arch.pairs.sort(*.keys)  -> $p {
-			my $size = ("$.path/{$p.key}.zip".IO.s.Int / 1000).fmt("%.1f"); 
+			my $size = ("$.path/{$p.key}.zip".IO.s.Int / 1000).fmt("%.0f"); 
 			say $i.fmt("\%{$width}d") 
 			~ ": " 
 			~ DateTime.new($p.key.parse-base(36)) 
