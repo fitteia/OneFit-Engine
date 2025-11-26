@@ -16,7 +16,9 @@ class HistoryLog is export {
 		my @keys =  %!arch.keys.sort;
 		my $selected = @keys.tail;
 		given $s {
-			when /:i last <ws> '-' <ws> \d+ / { $selected =@keys[@keys.elems - $s.split('-')[1].trim.Int] }
+			when /:i last <ws> '-' <ws> \d+ / { 
+				say @keys.elems - $s.split('-')[1].trim.Int;
+				$selected =@keys[@keys.elems - $s.split('-')[1].trim.Int] }
 			when /\d+/ { $selected = @keys[$s.Int] }
 		   	default { $selected }
 		}	
