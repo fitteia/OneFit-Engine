@@ -35,7 +35,7 @@ class HistoryLog is export {
 	multi method print() {
 		my $width = %!arch.keys.elems.chars;
 		my $i=0;
-		for %!arch.pairs.sort(*.keys)  -> $p {i
+		for %!arch.pairs.sort(*.keys)  -> $p {
 			my $size = ("$.path/{$p.key}.zip".IO.s.Int / 1000).fmt("%.1f"); 
 			say $i.fmt("\%{$width}d") 
 			~ ": " 
