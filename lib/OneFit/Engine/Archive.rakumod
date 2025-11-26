@@ -39,8 +39,8 @@ class HistoryLog is export {
 			say $i.fmt("\%{$width}d") 
 			~ ": " 
 			~ DateTime.new($p.key.parse-base(36)) 
-			~ "[{$p.key}] " 
-			~ " " ~ "$.path/{$p.key}.zip".IO.s ~ " B "
+			~ " {$p.key}.zip " 
+			~ " [" ~ "$.path/{$p.key}.zip".IO.s ~ "B] "
 			~ " <== " 
 			~ $p.value;
 			$i++;	
