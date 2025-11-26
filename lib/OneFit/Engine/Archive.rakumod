@@ -38,10 +38,10 @@ class HistoryLog is export {
 		for %!arch.pairs.sort(*.keys)  -> $p {
 			my $size ="$.path/{$p.key}.zip".IO.s.Int;
 		  	given $size {
-				when * < 1024 	 { $size =  ($size).fmt("%.0f B") } 
-				when * < 1024**2 { $size =  ($size / 1e3).fmt("%.0f kB") } 
-				when * < 1024**3 { $size =  ($size / 1e6).fmt("%.0f MB") } 
-				default			 { $size =  ($size / 1e9).fmt("%.0f GB") } 
+				when * < 1024 	 { $size =  ($size).fmt("%.0fB") } 
+				when * < 1024**2 { $size =  ($size / 1e3).fmt("%.0fkB") } 
+				when * < 1024**3 { $size =  ($size / 1e6).fmt("%.0fMB") } 
+				default			 { $size =  ($size / 1e9).fmt("%.0fGB") } 
 			}
 			say $i.fmt("\%{$width}d") 
 			~ ": " 
