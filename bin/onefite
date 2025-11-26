@@ -298,6 +298,7 @@ use OneFit::Engine::Parameters;
 use OneFit::Engine::Parfiles;
 use OneFit::Engine::Stpfiles;
 use OneFit::Engine::Import;
+use OneFit::Engine::Archive;
 use Pod::To::Text;
 use Pod::To::Man;
 use Test;
@@ -315,7 +316,7 @@ proto MAIN(|) { * };
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
 ) {
-	say $*USAGE;
+	say $*USAGE.subst($*PROGRAM-NAME,'onefite',:g);
 	note qq:to/END_USAGE/;
     <input-file>     name of the file to be converted (\.sav or \.json)
     <output-file>    name of the converted file (\.sav or \.json)
@@ -341,10 +342,24 @@ multi MAIN (
 	say $txt;
 	$txt
 }
+#| Show archive log  
+multi MAIN( 'archive',  
+	Str :f(:$fit)="" #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
+) {
+	my $log = HistoryLog.new;
+	if $fit.defined and $fit.chars { $log.fit($fit) }
+	else { $log.print() }
+}
+
+#| Show archive log  
+multi MAIN( 'log',
+	Str :f(:$fit)="" 
+) {
+	MAIN( 'archive' , :fit($fit) );
+}
 
 #| Get onefite man page
 multi MAIN( 'man', Bool :m(:$man) ) { MAIN( :man($man) ) }
-
 
 #| Get onefite library models and aliases lists
 multi MAIN ('list',
@@ -407,10 +422,11 @@ multi MAIN ('path',
       Bool :b(:$bin) = False, #= path to bin
       Bool :l(:$lib) = False, #= path to lib
       Bool :c(:$C) = False, #= path to C code
+      Bool :ar(:$archive) = False, #= path to archive
       Bool :$log = False, #= path to log
 	  Bool :a(:$aliases) = False # path to aliases
       ){
-      if none($src,$t,$bin,$lib,$C,$examples,$aliases) {
+      if none($src,$t,$bin,$lib,$C,$examples,$aliases,$archive) {
       	 say ::('OFE-PATH');
 		 say ::('OFE-PATH') ~ "/t";
 		 say ::('OFE-PATH') ~ "/examples";
@@ -420,6 +436,7 @@ multi MAIN ('path',
 		 say ::('OFE-PATH') ~ "/../log";
 	 	 say ::('OFE-PATH') ~ "/C";
 	 	 say ::('OFE-PATH') ~ "/../etc";
+	 	 say ::('OFE-PATH') ~ "/../log/arc";
       }
       else {
       	 say ::('OFE-PATH') if $src;
@@ -430,6 +447,7 @@ multi MAIN ('path',
 		 say ::('OFE-PATH') ~ "/../log" if $log;
 		 say ::('OFE-PATH') ~ "/C" if $C;
 		 say ::('OFE-PATH') ~ "/../etc" if $aliases;
+		 say ::('OFE-PATH') ~ "/../log/arc" if $archive;
       }
 }
 
@@ -1009,6 +1027,7 @@ multi MAIN  ('fit',
     Str  :$save-to, # write fit settings to json or sav file 
     Str  :$work-folder = '.',
     Int  :Num(:$npts) = +100,
+	Bool :ar(:$archive) = False, #= add log entry and archive data
 	Bool :q(:$quiet) = False,
 	Str  :define-alias(:$dali)="",
 	Str  :AuxCode(:auxcode(:$aux-code)) = "",
@@ -1113,6 +1132,11 @@ MSG
 	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	define-alias($engine,$dali) if $dali.so;
+	if $archive {
+		my $log = HistoryLog.new;
+		my $cmd = ("onefite", |@*ARGS).join(' ');
+		$log.archive($cmd);
+	}
     exit;
 }
 
@@ -1135,6 +1159,7 @@ multi MAIN  ('fit',
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :define-alias(:$dali)="",
+	 Bool :ar(:$archive) = False,
 	 *%_
     ){
 	do {
@@ -1215,6 +1240,11 @@ MSG
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
 	define-alias($engine,$dali) if $dali.so;
+	if $archive {
+		my $log = HistoryLog.new;
+		my $cmd = ("onefite", |@*ARGS).join(' ');
+		$log.archive($cmd);
+	}
     exit;
 }
 
