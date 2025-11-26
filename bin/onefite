@@ -1135,7 +1135,7 @@ MSG
 	if $archive {
 		my $log = HistoryLog.new;
 		my @args = @*ARGS;
-		@args[1]="\"@args[1]\"" if @args[1].contains(':');
+		@args[1]=qq{"@args[1]"} if @args[1].contains(/^ 'a' 'l'? 'li'? 'lia'? 'lias'? ':'/);
 		my $cmd = ("onefite", |@args).join(' ');
 		$log.archive($cmd);
 	}
@@ -1244,9 +1244,7 @@ MSG
 	define-alias($engine,$dali) if $dali.so;
 	if $archive {
 		my $log = HistoryLog.new;
-		my @args = @*ARGS;
-		@args[1]="\"@args[1]\"" if @args[1].contains(':');
-		my $cmd = ("onefite", |@args.join(' ');
+		my $cmd = ("onefite", |@*ARGS.join(' ');
 		$log.archive($cmd);
 	}
     exit;
