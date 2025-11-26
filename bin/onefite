@@ -342,14 +342,20 @@ multi MAIN (
 	say $txt;
 	$txt
 }
-
-#| <str>: a* or log  
-multi MAIN( $str where { $str ~~ /:i ^a | 'log'/ },
+#| Show archive log  
+multi MAIN( 'archive' ) },
 	Str :f(:$fit)="" #= fit log entry: ex: onefite log -f last or onefite log --fit 10
 ) {
 	my $log = HistoryLog.new;
 	if $fit.defined and $fit.chars { $log.fit($fit) }
 	else { $log.print() }
+}
+
+#| Show archive log  
+multi MAIN( 'log' ) },
+	Str :f(:$fit)="" #= fit log entry: ex: onefite log -f last or onefite log --fit 10
+) {
+	MAIN( 'archive' , :fit($fit) );
 }
 
 #| Get onefite man page
@@ -1018,7 +1024,7 @@ multi MAIN  ('fit',
     Str  :$save-to, # write fit settings to json or sav file 
     Str  :$work-folder = '.',
     Int  :Num(:$npts) = +100,
-	Bool :arc(:$archive) = False, #= add log entry and archive data
+	Bool :ar(:$archive) = False, #= add log entry and archive data
 	Bool :q(:$quiet) = False,
 	Str  :define-alias(:$dali)="",
 	Str  :AuxCode(:auxcode(:$aux-code)) = "",
@@ -1150,7 +1156,7 @@ multi MAIN  ('fit',
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :define-alias(:$dali)="",
-	 Bool :arc(:$archive) = False,
+	 Bool :ar(:$archive) = False,
 	 *%_
     ){
 	do {
