@@ -207,7 +207,6 @@ onefite archive [-f||--fit=<Str>]
 
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
-
     onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.txt --autox --logx --autoy
