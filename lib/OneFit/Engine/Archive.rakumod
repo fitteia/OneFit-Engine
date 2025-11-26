@@ -21,8 +21,8 @@ class HistoryLog is export {
 		   	default { $selected }
 		}	
 		try { 
-			say "trying to execute" ~ %!arch{$selected};
 			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,'');
+			note "trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
 			shell("unzip -o $!path/{$selected}.zip; $cmd");
 	   	}
 		if $! { say "couldn't execute" ~ %!arch{$selected} }
