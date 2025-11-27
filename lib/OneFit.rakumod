@@ -671,7 +671,7 @@ EOT
 		my $ndf = $npts - $nfp;
 		say "chi2 = $chi2";
 		say "npts = $npts";
-		say "nfgp = $nfp";
+		say "ngfp = $ngfp";
 		say "ndf = $ndf";
 		say "nifp= " ~ @blocks[1].parameters.free;
 		my @a = $txt.lines;
