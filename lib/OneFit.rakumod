@@ -53,12 +53,15 @@ class Engine is export {
 
 	    		my $sav = CGI.new( $file.IO.open );
 	    		for $sav.param { %!engine{$_} = $sav.param($_) }	 
+				
+				$out.say;
+				$err.say;
 
 				CATCH { default { $err-exception = $_ }}
 			}
 		}
-		note "===> " ~ $out.print if $out.buf.chars;
-		note "===> " ~ $err.print if $err.buf.chars;
+		note "===> " ~ $out.buf if $out.buf.chars;
+		note "===> " ~ $err.buf if $err.buf.chars;
 		note "===> " ~ $err-exception if $err-exception.chars;
 	}
 	%!engine<FitType> = "Global" unless %!engine<FitType>;
