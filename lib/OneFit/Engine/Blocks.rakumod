@@ -170,7 +170,7 @@ class Block is export {
 		});
 		say @data;
 		
-		my %body = @data.join("\n");
+		my $body = @data.join("\n");
 		say $body;
 		#	$file.IO.spurt: 
 		say 
