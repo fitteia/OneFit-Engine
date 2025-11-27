@@ -168,7 +168,8 @@ class Block is export {
 			@a.join(' '); 
 		}).join("\n");
 	
-		$file.IO.spurt: 
+		#	$file.IO.spurt: 
+		say 
 			($!T.words.elems>1) ?? $!No+1 !! $!T.words[0] 
 			~ "\n" ~ 
 			$data;	
