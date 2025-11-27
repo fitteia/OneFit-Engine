@@ -529,7 +529,7 @@ EOT
 	 }
 	 else { 
 		if $reduced-chi2 { 
-			$TXT = $reset-parameters-std($TXT);
+			$TXT = self!reset-parameters-std($TXT);
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
  			say qq:to/EOT/ unless $quiet;
 
