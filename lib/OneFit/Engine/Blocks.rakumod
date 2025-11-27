@@ -170,13 +170,13 @@ class Block is export {
 		});
 		say @data;
 		
-		say @data.join("\n");
-	
+		my %body = @data.join("\n");
+		say $body;
 		#	$file.IO.spurt: 
 		say 
 			($!T.words.elems>1) ?? $!No+1 !! $!T.words[0] 
 			~ "\n" ~ 
-			$data;	
+			$body;	
 		self;
 	}
 
