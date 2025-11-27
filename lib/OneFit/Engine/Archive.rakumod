@@ -27,7 +27,7 @@ class HistoryLog is export {
 			my @out = $p.out.lines;
 			my @err = $p.err.lines if $p.err.defined;
 			note "===>  " ~ @out.join("\n     ");
-			if @err.so { note "===>  " ~ @err.join("\n     ");
+			if @err.so { note "===>  " ~ @err.join("\n     ") }
 	   	}
 		if $! { say "couldn't execute" ~ %!arch{$selected} }
 	}
