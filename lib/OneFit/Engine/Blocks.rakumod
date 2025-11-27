@@ -129,14 +129,13 @@ class Block is export {
 				.grep(/^<![#]>/)
 				.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
 				.sort: *.words.tail.Numeric;
-#						"$!path/data{$!No+1}.dat".IO.lines.head
+#			my $head = "$!path/data{$!No+1}.dat".IO.lines.head;
 			my $head = 	($!T.words.elems>1) ?? ($!No+1).Str !! $!T.words[0]; 
 			my $body = 	@pruned-data
 							.head(* + @remove.head)
 							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
 							.sort( *.words.head.Numeric ).join("\n");
 			"$!path/data{$!No+1}ro.dat".IO.spurt: $head ~ "\n" ~ $body;
-		   	say $body;	
 		}
 		else {
 			my @pruned-data="$!path/data{$!No+1}.dat".IO.lines;
@@ -152,8 +151,6 @@ class Block is export {
 				@a[2]=1;
 				@a.join(' ') 
 			}).join("\n");
-			say $body;
-
 			"$!path/data{$!No+1}ro.dat".IO.spurt: $head ~ "\n" ~ $body; 		
 		}
 		$npts-removed;	
