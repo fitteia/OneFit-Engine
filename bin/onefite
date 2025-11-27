@@ -914,7 +914,7 @@ multi MAIN  ('create',
 		 Str  :AuxCode(:auxcode(:$aux-code)) = "", #= additional auxiliar code
 		 *%_
 	    ){
-	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
     my $name = "ofe-tmp";
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
@@ -1051,7 +1051,7 @@ multi MAIN  ('fit',
 	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
 	*%_
     ){
-	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -1087,7 +1087,7 @@ MSG
 		}
     }
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
-		note "you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
+		note "===> you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
 		$global = True;
 	}
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
@@ -1185,7 +1185,7 @@ multi MAIN  ('fit',
 		say "{'-' x 80}\nfile $input-file dosen't exist\n{'-' x 80}";
 		exit(1);
 	} unless $input-file.IO.e;
-	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	try {

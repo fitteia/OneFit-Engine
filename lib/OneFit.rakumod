@@ -146,11 +146,11 @@ class Engine is export {
 		
 			if all(!$autox,$logx,.Graph.Xaxis.h<min> <= 0.Num) {	
 				.Graph.Xaxis.scale( min => .X.min, max => .X.max, nt => 5 , auto => True); 
-	 			note  "Attention: you have --logx with Xaxis<min> {.Graph.Xaxis.h<min>}. Setting Xaxis<min>= { .X.min }";
+	 			note  "===> Attention: you have --logx with Xaxis<min> {.Graph.Xaxis.h<min>}. Setting Xaxis<min>= { .X.min }";
 			}
 			if all(!$autoy,$logy,.Graph.Yaxis.h<min> <= 0.Num) {	
 				.Graph.Yaxis.scale( :min(.Y.min), :max(.Y.max), :nt(5), auto => True);
-	 			note  "Attention: you have --logx with Yaxis<min> {.Graph.Yaxis.h<min>}. Setting Yaxis<min>= { .Y.min }";
+	 			note  "===> Attention: you have --logx with Yaxis<min> {.Graph.Yaxis.h<min>}. Setting Yaxis<min>= { .Y.min }";
 			}	
 
 	    }
@@ -352,7 +352,7 @@ class Engine is export {
 	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
      my $npts-removed=0;
-
+#`[
 	 my $set-data-err = {
 		my $i = $^a;
 		my $file = $^b;
@@ -384,10 +384,10 @@ class Engine is export {
 					~ 	"\n";
 			$TXT;
 	 }
-
+]
 	 if $MIXED || %!engine<FitType> ~~ /Global/ {
 		@outliers=False;
-		note "-remove outliers is not yet implemented for mixed and global fits";
+		note "===> remove outliers is not yet implemented for mixed and global fits";
 	 }	
 
 	 @!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
@@ -684,7 +684,7 @@ EOT
 							$ndf = @b[1] - @!blocks[$i].parameters.free; 
 							$chi2= @b[2];
 						}
-						@b[2] /= $chi2/$ndf;
+						@b[2] = (@b[2]/($chi2/$ndf)).Rat;
 						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
 							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
 						}
