@@ -54,8 +54,8 @@ class Engine is export {
 	    		my $sav = CGI.new( $file.IO.open );
 	    		for $sav.param { %!engine{$_} = $sav.param($_) }	 
 				
-				$out.say;
-				$err.say;
+				$out.print;
+				$err.print;
 
 				CATCH { default { $err-exception = $_ }}
 			}
