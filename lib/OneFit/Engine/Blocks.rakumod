@@ -162,19 +162,15 @@ class Block is export {
 		:$ndf = @!Export-data.elems - 1 - self.parameters.free,
 		:$file = "$!path/data{$!No+1}.dat"
 	) {
-		say @!Export-data;
 		my @data = @!Export-data.map({ 
 			my @a = .words.head(3); 
 			@a[2] *= sqrt( $chi2 / $ndf ); 
 			@a.join(' '); 
 		});
-		say @data;
 		
 		my $body = @data.join("\n");
-		say $body;
-		#	$file.IO.spurt: 
 		my $head = ($!T.words.elems>1) ?? ($!No+1).Str !! $!T.words[0];
-	   	say $head ~ "\n" ~ $body;	
+		$file.IO.spurt: $head ~ "\n" ~ $body;	
 		self;
 	}
 
