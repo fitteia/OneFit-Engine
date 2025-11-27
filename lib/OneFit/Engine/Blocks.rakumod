@@ -162,6 +162,7 @@ class Block is export {
 		:$ndf = @!Export-data.elems - 1 - self.parameters.free,
 		:$file = "$!path/data{$!No+1}.dat"
 	) {
+		say @!Export-data;
 		my $data = @!Export-data.map({ 
 			my @a = .words.head(3); 
 			@a[2] *= sqrt( $chi2 / $ndf ); 
