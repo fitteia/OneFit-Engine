@@ -9,15 +9,10 @@ use OneFit::Engine::CodeC;
 use OneFit::Engine::Stpfiles;
 
 class Capture-Handle {
-    has Str $.buf is rw = '';
+    has @!lines; 
 
-    method print(*@chunks) {
-        $!buf ~= @chunks.join;
-    }
-
-    method say(*@chunks) {
-        self.print(|@chunks, "\n");
-    }
+    method print(\s) { @!lines.append(s) }
+    method say() { @!lines.join }
 }
 
 class Engine is export {
@@ -53,15 +48,14 @@ class Engine is export {
 
 	    		my $sav = CGI.new( $file.IO.open );
 	    		for $sav.param { %!engine{$_} = $sav.param($_) }	 
-				
-				$out.print;
-				$err.print;
 
 				CATCH { default { $err-exception = $_ }}
+
+				$out.say - $err.say;
 			}
 		}
-		note "===> " ~ $out.buf if $out.buf.chars;
-		note "===> " ~ $err.buf if $err.buf.chars;
+		note "===> " ~ $out.say if $out.buf.chars;
+		note "===> " ~ $err.say if $err.buf.chars;
 		note "===> " ~ $err-exception if $err-exception.chars;
 	}
 	%!engine<FitType> = "Global" unless %!engine<FitType>;
