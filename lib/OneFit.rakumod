@@ -398,7 +398,9 @@ class Engine is export {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
 				$set-data-err($_-1,"$!path/data{$_}.dat") if (@outliers.so || $reduced-chi2);
-
+				say "$!path/data{$_}.dat".IO.slurp:
+				@!blocks[$_-1].set-data-err();
+				say "$!path/data{$_}.dat".IO.slurp:
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
@@ -422,49 +424,20 @@ EOT
 			}
 	
 			for (1 .. @!blocks.elems).race {
-								if @outliers.head.Num < 0 {
-										$npts-removed = +@outliers.head.Num.abs;
-										my @pruned-data="$!path/fit-residues-$_.res"
-											.IO
-						.lines
-						.grep(/^<![#]>/)
-						.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
-						.sort: *.words.tail.Numeric;
-					"$!path/data{$_}ro.dat".IO.spurt: 
-						"$!path/data$_.dat".IO.lines.head
-						~ "\n" ~ 
-						@pruned-data
-							.head(* + @outliers.head)
-							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
-							.sort( *.words.head.Numeric ).join("\n")
-					;
-				}
-				else {
-					my @pruned-data="$!path/data$_.dat".IO.lines;
-					$npts-removed = 0;
-					for @outliers {
-						@pruned-data.splice( +.head - $npts-removed, +.tail ).join("\n");
-						$npts-removed +=  +.tail;
-					}
-					#			say @pruned-data.join("\n");
-					"$!path/data{$_}ro.dat".IO.spurt: 
-						@pruned-data.head ~ "\n" ~ @pruned-data.tail(*-1).map({ 
-														my @a = .words;
-													@a[2]=1;
-													@a.join(' ') 
-												}).join("\n");
-				}
-	 	
-				#$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
+				$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
 
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
-     	 	for (1 .. @!blocks.elems).race {
+     	 	
+			for (1 .. @!blocks.elems).race {
 		 		shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
 	     	}
-	     	@!blocks.race.map( { .export(:plot) });
-	     	self.parameters(:read, :from-output, :from-log);
-	     	do {
+	     	
+			@!blocks.race.map( { .export(:plot) });
+	     	
+			self.parameters(:read, :from-output, :from-log);
+	     	
+			do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
 					$set-data-err($_-1,"$!path/data{$_}ro.dat");

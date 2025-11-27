@@ -118,8 +118,8 @@ class Block is export {
 #	{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: $!No+1 ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
 		self
     }
-    
-	multi method prune( :@remove ) {
+   	
+	method prune( :@remove ) {
 		my $npts-removed=0;
 		if @remove.head.Num < 0 {
 			$npts-removed = +@remove.head.Num.abs;
@@ -155,6 +155,21 @@ class Block is export {
 			}).join("\n");
 		}
 		$npts-removed;	
+	}
+
+	method set-data-err (
+		:$chi2 = $.chi2, 
+		:$ndf = @!Data.elems - 1 - self.parameters.free,
+		:$file = "$!path/data{$!No+1}.dat"
+	) {
+		$file.IO.spurt: 
+			($!T.words.elems>1) ?? $!No+1 !! $!T.words[0] 
+			~ "\n" ~ 
+			@!Data
+				.map({ my @a = .words.head(3); @a[2] *= sqrt( $chi2 / $ndf ); @a.join(' ') })
+				.join("\n")
+			;
+		self;
 	}
 
 	method Graph () { $!Graph }
