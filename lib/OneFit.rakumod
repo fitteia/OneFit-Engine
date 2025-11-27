@@ -686,7 +686,7 @@ EOT
 				~ 	"\n" 
 				~ 	@a.tail(*-1).kv.map( -> $i, $v { 
 						my @b = $v.split(', ');
-						if %!engine<FitType> ~~ /Individual {
+						if %!engine<FitType> ~~ /Individual/ {
 							$ndf = @b[1] - @!blocks[$i].parameters.free; 
 							$chi2= @b[2];
 						}
