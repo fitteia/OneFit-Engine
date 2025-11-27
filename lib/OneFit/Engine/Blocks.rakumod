@@ -120,6 +120,7 @@ class Block is export {
     }
     
 	multi method prune( :@remove ) {
+		my $npts-removed=0;
 		if @remove.head.Num < 0 {
 			$npts-removed = +@remove.head.Num.abs;
 			my @pruned-data="$!path/fit-residues-$_.res"
@@ -152,7 +153,7 @@ class Block is export {
 				@a.join(' ') 
 			}).join("\n");
 		}
-		self;	
+		$npts-removed;	
 	}
 
 	method Graph () { $!Graph }
