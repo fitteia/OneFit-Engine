@@ -20,16 +20,12 @@ class HistoryLog is export {
 			when /\d+/ { $selected = @keys[$s.Int] }
 		   	default { $selected }
 		}
-		my $p;
 		try { 
 			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,'');
 			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
-			$p = shell("unzip -o $!path/{$selected}.zip; $cmd",:out,:err);
+			shell("unzip -o $!path/{$selected}.zip; $cmd");
 	   	}
 		if $! { note "     couldn't execute" ~ %!arch{$selected} }
-		note "===>  " ~ $p.out.lines.join("\n     ");
-		if $p.err.so { note "===>  " ~ $p.err.lines.join("\n     ") }
-	
 	}
 
 	multi method list() {
