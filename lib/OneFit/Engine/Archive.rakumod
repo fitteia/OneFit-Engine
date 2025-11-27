@@ -25,7 +25,7 @@ class HistoryLog is export {
 			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
 			my $p = shell("unzip -o $!path/{$selected}.zip; $cmd",:out,:err);
 			my @out = $p.out.lines;
-			my @err = $p.err.lines;
+			my @err = $p.err.lines if $p.err.defined;
 			note "===>  " ~ @out.head ~ "\n     " ~ { @out.join("\n     ") if @out.elems > 1 };
 			if @err.so { note "===>  " ~ @err.head ~ "\n     " ~ { @err.join("\n     ") if @err.elems > 1 } }
 	   	}
