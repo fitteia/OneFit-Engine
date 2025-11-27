@@ -408,7 +408,7 @@ class Engine is export {
 					my $ngfp = @!blocks[0].parameters.free;
 					my $ndf = $npts - $ngfp;
 					my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
-					$ndf = $npts - $nifp*@!blocks.elems - $ngfp  
+					$ndf = $npts - $nifp*@!blocks.elems - $ngfp;  
 					@!blocks[$_-1].set-data-err (chi2 => $chi2, ndf => $ndf) if (@outliers.so || $reduced-chi2);
 				}
 				else {	
