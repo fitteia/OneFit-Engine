@@ -165,10 +165,11 @@ class Block is export {
 		$file.IO.spurt: 
 			($!T.words.elems>1) ?? $!No+1 !! $!T.words[0] 
 			~ "\n" ~ 
-			@!Data
-				.map({ my @a = .words.head(3); @a[2] *= sqrt( $chi2 / $ndf ); @a.join(' ') })
-				.join("\n")
-			;
+			@!Data.map({ 
+				my @a = .words.head(3); 
+				@a[2] *= sqrt( $chi2 / $ndf ); 
+				@a.join(' ') 
+			}).join("\n");
 		self;
 	}
 
