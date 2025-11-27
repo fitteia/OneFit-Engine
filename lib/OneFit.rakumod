@@ -666,11 +666,9 @@ EOT
 
 	method !reset-parameters-std ($txt) {
 		my $chi2 =	(@!blocks>>.chi2).sum;
-		my $npts = (@!blocks>>.Data.elems).sum;
+		my $npts = ((@!blocks>>.Data)>>.elems).sum;
 		my $nfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $nfp;
-		say (@!blocks>>.Data)>>.elems;
-		say (@!blocks>>.Data.elems).sum;
 		say "chi2 = $chi2";
 		say "npts = $npts";
 		say "nfp = $nfp";
