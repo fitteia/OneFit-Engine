@@ -455,7 +455,7 @@ EOT
 							#					}).join("\n");
 				#}
 	 	
-				$npts-removed = @!blocks[$_].prune( remove => @outliers );
+				$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
 
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
