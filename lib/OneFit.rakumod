@@ -320,13 +320,13 @@ class Engine is export {
 		     :logy($logy),
 		     :quiet($quiet)
 		    );
-	 $*ERR.say("read pars") unless $quiet;
+	 $*ERR.say("===> read pars") unless $quiet;
 	 self.parameters(:read);
-	 $*ERR.say("read functions") unless $quiet;
+	 $*ERR.say("===> read functions") unless $quiet;
 	 self.functions(:read);
-	 $*ERR.say("write stp") unless $quiet;
+	 $*ERR.say("===> write stp") unless $quiet;
 	 self.stp;
-	 $*ERR.say("write code") unless $quiet;
+	 $*ERR.say("===> write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
 	
 	 my Bool $MIXED=False;
