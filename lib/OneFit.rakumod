@@ -673,7 +673,7 @@ EOT
 		say "npts = $npts";
 		say "ngfp = $ngfp";
 		say "ndf = $ndf";
-		say "nifp= " ~ @blocks[1].parameters.free;
+		say "nifp= " ~ @!blocks[1].parameters.free;
 		my @a = $txt.lines;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
