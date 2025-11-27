@@ -80,7 +80,7 @@ class Block is export {
 	    else {
 			if $line {
 		    	if $line ~~ /^'#'/ or $line.words.elems < 2 {
-					note "===> onefite warning: ignoring non-conform line: $line" unless $quiet
+					note "     onefite warning: ignoring non-conform line: $line" unless $quiet
 		    	}
 		    	else { 
 					@!Data.push: $line 

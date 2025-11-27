@@ -311,7 +311,7 @@ class Engine is export {
 		Bool :$quiet=False
 	       ) {
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
-	 $*ERR.say("read blocks") unless $quiet;
+	 $*ERR.say("===> read blocks") unless $quiet;
 	 self.blocks(:read,
 		     :fit,:export,
 		     :autox($autox.Bool),
