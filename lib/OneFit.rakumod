@@ -381,10 +381,9 @@ class Engine is export {
 			$TXT;
 	 }
 	
+	 @!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
+
 	 if %!engine<FitType> ~~ /Individual/ {
-
-		@!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
-
 		for (1 .. @!blocks.elems).race {
 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
 	}
@@ -412,7 +411,7 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		my $TXT = self!results();
-			$TXT = $reset-parameters-std($TXT);
+			$TXT = reset-parameters-std($TXT);
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 	 		say qq:to/EOT/ unless $quiet;
@@ -476,10 +475,11 @@ EOT
 			do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat" );
 #					$set-data-err($_-1,"$!path/data{$_}ro.dat");
-					say "$!path/data{$_}ro.dat".IO.slurp;
-		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
+#					say "$!path/data{$_}ro.dat".IO.slurp;
+
+					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat" );
+					shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsro.elems) -> $i {
@@ -516,7 +516,8 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-		$TXT = $reset-parameters-std($TXT);
+#		$TXT = $reset-parameters-std($TXT);
+		$TXT = reset-parameters-std($TXT);
 
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points removed";
  		say qq:to/EOT/ unless $quiet;
@@ -662,5 +663,24 @@ EOT
 		# say %!engine<par-tables>;
 	 	return $TXT;
     }
+
+	sub reset-parameters-std ($txt) {
+			my @a = $txt.lines;
+			my $TXT = @a.head 
+					~ 	"\n" 
+					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+							my @b = $v.split(', ');
+							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
+							my $chi2= @b[2];
+							@b[2] /= $chi2/$ndf;
+							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
+								@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! @b[$_]*sqrt($chi2/$ndf).Rat;
+							}
+							@b.join(', ')
+						}).join("\n")
+					~ 	"\n";
+			$TXT;
+	 }
+
 }
 
