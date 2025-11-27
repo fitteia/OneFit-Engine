@@ -170,7 +170,8 @@ class Block is export {
 				my @a = .words.head(3); 
 				@a[2] *= sqrt( $chi2 / $ndf ); 
 				@a = @a.join(' '); 
-				say @a
+				say @a;
+				@a
 			}).join("\n");
 		self;
 	}
