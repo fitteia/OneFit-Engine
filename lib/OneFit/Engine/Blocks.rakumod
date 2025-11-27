@@ -163,11 +163,14 @@ class Block is export {
 		:$file = "$!path/data{$!No+1}.dat"
 	) {
 		say @!Export-data;
-		my $data = @!Export-data.map({ 
+		my @data = @!Export-data.map({ 
 			my @a = .words.head(3); 
 			@a[2] *= sqrt( $chi2 / $ndf ); 
 			@a.join(' '); 
-		}).join("\n");
+		});
+		say @data;
+		
+		say @data.join("\n");
 	
 		#	$file.IO.spurt: 
 		say 
