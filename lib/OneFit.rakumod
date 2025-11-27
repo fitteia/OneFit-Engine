@@ -673,7 +673,7 @@ EOT
 		say "npts = $npts";
 		say "ngfp = $ngfp";
 		say "ndf = $ndf";
-		say "nifp= " ~ @!blocks[1].parameters.free;
+		say "nifp= " ~ (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
 		my @a = $txt.lines;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
