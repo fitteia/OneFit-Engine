@@ -123,14 +123,14 @@ class Block is export {
 		my $npts-removed=0;
 		if @remove.head.Num < 0 {
 			$npts-removed = +@remove.head.Num.abs;
-			my @pruned-data="$!path/fit-residues-$_.res"
+			my @pruned-data="$!path/fit-residues-{$!No+1}.res"
 				.IO
 				.lines
 				.grep(/^<![#]>/)
 				.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
 				.sort: *.words.tail.Numeric;
-			 	"$!path/data{$_}ro.dat".IO.spurt: 
-						"$!path/data$_.dat".IO.lines.head
+			 	"$!path/data{$i!No+1}ro.dat".IO.spurt: 
+						"$!path/data{$!No+1}.dat".IO.lines.head
 						~ "\n" ~ 
 						@pruned-data
 							.head(* + @remove.head)
@@ -139,14 +139,14 @@ class Block is export {
 					;
 		}
 		else {
-			my @pruned-data="$!path/data$_.dat".IO.lines;
+			my @pruned-data="$!path/data{$!No+1}.dat".IO.lines;
 			$npts-removed = 0;
 			for @remove {
 				@pruned-data.splice( +.head - $npts-removed, +.tail ).join("\n");
 				$npts-removed +=  +.tail;
 	 		}
 			#			say @pruned-data.join("\n");
-			"$!path/data{$_}ro.dat".IO.spurt: 
+			"$!path/data{$!No+1}ro.dat".IO.spurt: 
 			@pruned-data.head ~ "\n" ~ @pruned-data.tail(*-1).map({ 
 				my @a = .words;
 				@a[2]=1;
