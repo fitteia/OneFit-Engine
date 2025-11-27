@@ -411,7 +411,7 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		my $TXT = self!results();
-			$TXT = reset-parameters-std($TXT);
+			$TXT = self!reset-parameters-std($TXT);
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 	 		say qq:to/EOT/ unless $quiet;
@@ -517,7 +517,7 @@ EOT
 				}).join("\n")
 			~ "\n";
 #		$TXT = $reset-parameters-std($TXT);
-		$TXT = reset-parameters-std($TXT);
+		$TXT = self!reset-parameters-std($TXT);
 
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points removed";
  		say qq:to/EOT/ unless $quiet;
@@ -664,7 +664,7 @@ EOT
 	 	return $TXT;
     }
 
-	sub reset-parameters-std ($txt) {
+	method !reset-parameters-std ($txt) {
 			my @a = $txt.lines;
 			my $TXT = @a.head 
 					~ 	"\n" 
