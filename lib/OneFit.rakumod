@@ -12,7 +12,7 @@ class Capture-Handle {
     has @!lines; 
 
     method print(\s) { @!lines.append(s) }
-    method say() { @!lines.join }
+    method captured() { @!lines.join }
 }
 
 class Engine is export {
@@ -39,10 +39,11 @@ class Engine is export {
 	    use CGI:from<Perl5>;
 
 		my $err-exception='';
-    	my $out   = Capture-Handle.new;
-    	my $err   = Capture-Handle.new;
-		{
+		my $output = do {
 			try {
+		    	my $out   = Capture-Handle.new;
+    			my $err   = Capture-Handle.new;
+				
 				my $*OUT = $out;
 				my $*ERR = $err;
 
@@ -51,11 +52,10 @@ class Engine is export {
 
 				CATCH { default { $err-exception = $_ }}
 
-				$out.say - $err.say;
+				$out.cpatured - $err.captured;
 			}
 		}
-		note "===> " ~ $out.say if $out.buf.chars;
-		note "===> " ~ $err.say if $err.buf.chars;
+		note "===> " ~ $output if $output.chars;
 		note "===> " ~ $err-exception if $err-exception.chars;
 	}
 	%!engine<FitType> = "Global" unless %!engine<FitType>;
