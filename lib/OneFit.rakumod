@@ -501,7 +501,14 @@ EOT
 	     @!blocks.race.map( { .export(:plot) });
 	     self.parameters(:read, :from-output, :from-log);
 	     do {
-		 	self.agr;
+		 	if $reduced-chi2 {
+				my $chi2 =	(@!blocks>>.chi2).sum;
+				my $npts = ((@!blocks>>.Data)>>.elems).sum;
+				my $ngfp = @!blocks[0].parameters.free;
+				my $ndf = $npts - $ngfp;
+				@!blocks>>.set-data-err( chi2 => $chi2, ndf => $ndf );
+			}
+			self.agr;
 		 	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
 			shell "cd $!path; pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
