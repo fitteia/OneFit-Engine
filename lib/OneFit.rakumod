@@ -439,7 +439,7 @@ class Engine is export {
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 	 		say qq:to/EOT/ unless $quiet;
 {'#' x (40-$msg.chars/2.0).floor} $msg {'#' x (40-$msg.chars/2.0).ceiling}
-$TXT
+{$TXT.subst(/\n$/,'')}
 {'#' x (41-$msg.chars/2.0).floor}{'#' x $msg.chars}{'#' x (41-$msg.chars/2.0).ceiling}
 EOT
 
@@ -530,7 +530,7 @@ EOT
  			say qq:to/EOT/ unless $quiet;
 
 {'#' x (40-$msg.chars/2.0).floor} $msg {'#' x (40-$msg.chars/2.0).ceiling}
-$TXT
+{$TXT.subst(/\n$/,'')
 {'#' x (41-$msg.chars/2.0).floor}{'#' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 EOT
 		}
