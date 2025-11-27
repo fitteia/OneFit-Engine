@@ -396,7 +396,7 @@ class Engine is export {
 	
 	    do {
 			self.agr;
-		 	for (1 .. @!blocks.elems).race {
+		 	for (1 .. @!blocks.elems) {
 				$set-data-err($_-1,"$!path/data{$_}.dat") if (@outliers.so || $reduced-chi2);
 				say "a  :\n","$!path/data{$_}.dat".IO.slurp;
 				@!blocks[$_-1].set-data-err();
