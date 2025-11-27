@@ -96,21 +96,66 @@ class Block is export {
 	self
     }
 	multi method set-errorbars(Bool :$on) { self.Graph.Curves[0]<errorbars> = "on" }
+	
 	multi method set-errorbars(Bool :$off) { self.Graph.Curves[0]<errorbars> = "off" }
-    multi method No () { $!No }
-    multi method No ($no) { $!No=$no; self }
-    method Tag () { $!Tag }
-    method Data () { @!Data }
-    method Export-data () { @!Export-data }
-    method T () { $!T }
-    method export (:$path, Bool :$fit, Bool :$plot) {
-	$!path = $path if $path.defined;
-	self.select(:fit($fit), :plot($plot));
-	{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: {($!T.words.elems>1) ?? $!No+1 !! $!T.words[0]}() ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
+    
+	multi method No () { $!No }
+    
+	multi method No ($no) { $!No=$no; self }
+    
+	method Tag () { $!Tag }
+    
+	method Data () { @!Data }
+    
+	method Export-data () { @!Export-data }
+    
+	method T () { $!T }
+    
+	method export (:$path, Bool :$fit, Bool :$plot) {
+		$!path = $path if $path.defined;
+		self.select(:fit($fit), :plot($plot));
+		{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: {($!T.words.elems>1) ?? $!No+1 !! $!T.words[0]}() ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
 #	{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: $!No+1 ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
-	self
+		self
     }
-    method Graph () { $!Graph }
+    
+	multi method prune( :@remove ) {
+		if @remove.head.Num < 0 {
+			$npts-removed = +@remove.head.Num.abs;
+			my @pruned-data="$!path/fit-residues-$_.res"
+				.IO
+				.lines
+				.grep(/^<![#]>/)
+				.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
+				.sort: *.words.tail.Numeric;
+			 	"$!path/data{$_}ro.dat".IO.spurt: 
+						"$!path/data$_.dat".IO.lines.head
+						~ "\n" ~ 
+						@pruned-data
+							.head(* + @remove.head)
+							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
+							.sort( *.words.head.Numeric ).join("\n")
+					;
+		}
+		else {
+			my @pruned-data="$!path/data$_.dat".IO.lines;
+			$npts-removed = 0;
+			for @remove {
+				@pruned-data.splice( +.head - $npts-removed, +.tail ).join("\n");
+				$npts-removed +=  +.tail;
+	 		}
+			#			say @pruned-data.join("\n");
+			"$!path/data{$_}ro.dat".IO.spurt: 
+			@pruned-data.head ~ "\n" ~ @pruned-data.tail(*-1).map({ 
+				my @a = .words;
+				@a[2]=1;
+				@a.join(' ') 
+			}).join("\n");
+		}
+		self;	
+	}
+
+	method Graph () { $!Graph }
 
     method select (Bool :$fit, Bool :$plot) {
 	use Inline::Perl5;
