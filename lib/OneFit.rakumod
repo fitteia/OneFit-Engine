@@ -441,7 +441,7 @@ EOT
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
 					$set-data-err($_-1,"$!path/data{$_}ro.dat");
-
+					say "$!path/data{$_}ro.dat".IO.slurp;
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
