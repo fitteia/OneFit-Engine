@@ -169,7 +169,8 @@ class Block is export {
 			@!Export-data.map({ 
 				my @a = .words.head(3); 
 				@a[2] *= sqrt( $chi2 / $ndf ); 
-				@a.join(' ') 
+				@a = @a.join(' '); 
+				say @a
 			}).join("\n");
 		self;
 	}
