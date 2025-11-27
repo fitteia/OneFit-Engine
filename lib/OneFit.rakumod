@@ -8,13 +8,6 @@ use OneFit::Engine::Functions;
 use OneFit::Engine::CodeC;
 use OneFit::Engine::Stpfiles;
 
-class Capture-Handle {
-    has @!lines; 
-
-    method print(\s) { @!lines.append(s) }
-    method captured() { @!lines.join }
-}
-
 class Engine is export {
     has %!engine;
     has @!blocks;
@@ -38,25 +31,12 @@ class Engine is export {
 		use Inline::Perl5;
 	    use CGI:from<Perl5>;
 
-		my $err-exception='';
-		my $output = do {
-			try {
-		    	my $out   = Capture-Handle.new;
-    			my $err   = Capture-Handle.new;
-				
-				my $*OUT = $out;
-				my $*ERR = $err;
+		try {
+    		my $sav = CGI.new( $file.IO.open );
+    		for $sav.param { %!engine{$_} = $sav.param($_) }	 
 
-	    		my $sav = CGI.new( $file.IO.open );
-	    		for $sav.param { %!engine{$_} = $sav.param($_) }	 
-
-				CATCH { default { $err-exception = $_ }}
-
-				$out.captured - $err.captured;
-			}
+			CATCH { default { note "===> $_" } }
 		}
-		note "===> " ~ $output if $output.chars;
-		note "===> " ~ $err-exception if $err-exception.chars;
 	}
 	%!engine<FitType> = "Global" unless %!engine<FitType>;
 	($h.Bool) ?? %!engine !! self;
