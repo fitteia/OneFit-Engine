@@ -670,6 +670,7 @@ EOT
 		my $nfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $nfp;
 
+		say (@!blocks>>.Data.elems);
 		say "chi2 = $chi2";
 		say "npts = $npts";
 		say "nfp = $nfp";
