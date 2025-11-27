@@ -426,7 +426,7 @@ EOT
 			}
 	
 			for (1 .. @!blocks.elems).race {
-                if @outliers.head.Num < 0 {
+#`(                if @outliers.head.Num < 0 {
                    $npts-removed = +@outliers.head.Num.abs;
                    my @pruned-data="$!path/fit-residues-$_.res"
                        .IO
@@ -459,6 +459,8 @@ EOT
                     }).join("\n");
                     "$!path/data{$_}ro.dat".IO.spurt: $head ~ "\n" ~ $body 
 				}
+)
+
 				$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
 
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
@@ -670,11 +672,13 @@ EOT
 		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $ngfp;
 		my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
-		say "chi2 = $chi2";
+
+#`(		say "chi2 = $chi2";
 		say "npts = $npts";
 		say "ngfp = $ngfp";
 		say "ndf = $ndf";
-		say "nifp= $nifp"; 
+		say "nifp= $nifp";
+)	
 		my @a = $txt.lines;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
