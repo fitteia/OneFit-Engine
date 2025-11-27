@@ -235,13 +235,13 @@ END
 	if !$proc.exitcode {
 	   	note "===> C code extracted compiled OK (gcc exitcode: { $proc.exitcode })!" unless $quiet;
 		if @warnings.so {
-	    	note "===> compilation warnings:\n{ @warnings.join("\n") }" unless $quiet;
+	    	note "===> compilation warnings:\n     { @warnings.join("\n     ") }" unless $quiet;
 		}
 	}
 	else {
 	   	note "===> C code extracted compiled with errors (gcc exitcode: { $proc.exitcode })!" unless $quiet;
 		if any(@errors.so, @warnings.so) {
-	    	note "===> compilation warnings and errors:\n{ @warnings.join("\n") if @warnings.so } { @errors.join("\n") if @errors.so}" unless $quiet;
+	    	note "===> compilation warnings and errors:\n     { @warnings.join("\n     ") if @warnings.so } { @errors.join("\n     ") if @errors.so}" unless $quiet;
 		}
 	}
 	$proc = shell "cd $!path; make ROOT=$path -f $path/etc/OFE/default/makefile clean", :out, :err;
