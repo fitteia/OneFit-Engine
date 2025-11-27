@@ -43,18 +43,19 @@ class Engine is export {
 		use Inline::Perl5;
 	    use CGI:from<Perl5>;
 
-		my $err-exception;
+		my $err-exception='';
     	my $out   = Capture-Handle.new;
     	my $err   = Capture-Handle.new;
+		{
+			try {
+				my $*OUT = $out;
+				my $*ERR = $err;
 
-		try {
-			my $*OUT = $out;
-			my $*ERR = $err;
+	    		my $sav = CGI.new( $file.IO.open );
+	    		for $sav.param { %!engine{$_} = $sav.param($_) }	 
 
-	    	my $sav = CGI.new( $file.IO.open );
-	    	for $sav.param { %!engine{$_} = $sav.param($_) }	 
-
-			CATCH { default { $err-exception = $_ }}
+				CATCH { default { $err-exception = $_ }}
+			}
 		}
 		note "===> " ~ $out.print if $out.buf.chars;
 		note "===> " ~ $err.print if $err.buf.chars;
