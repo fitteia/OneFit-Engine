@@ -52,7 +52,7 @@ class Engine is export {
 
 				CATCH { default { $err-exception = $_ }}
 
-				$out.cpatured - $err.captured;
+				$out.captured - $err.captured;
 			}
 		}
 		note "===> " ~ $output if $output.chars;
