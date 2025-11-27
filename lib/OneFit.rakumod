@@ -552,7 +552,7 @@ EOT
 
 {'#' x (40-$msg.chars/2.0).floor} $msg {'#' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{'#' x (41-$msg.chars/2.0).floor}{'#' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{'#' x (41-$msg.chars/2.0).floor}{'#' x $msg.chars}{'#' x (41-$msg.chars/2.0).ceiling}
 EOT
 		}
 		else {
