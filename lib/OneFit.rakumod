@@ -399,9 +399,11 @@ class Engine is export {
 		 	for (1 .. @!blocks.elems).race {
 				#				$set-data-err($_-1,"$!path/data{$_}.dat") if (@outliers.so || $reduced-chi2);
 				#say "a  :\n","$!path/data{$_}.dat".IO.slurp;
+				
 				@!blocks[$_-1].set-data-err() if (@outliers.so || $reduced-chi2);
-say "ola";
+				
 				#say "b :\n","$!path/data{$_}.dat".IO.slurp;
+
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
@@ -450,13 +452,15 @@ EOT
                        $npts-removed +=  +.tail;
                     }
                     #                       say @pruned-data.join("\n");
-                    "$!path/data{$_}ro.dat".IO.spurt: 
-                        @pruned-data.head ~ "\n" ~ @pruned-data.tail(*-1).map({ 
-                                                      my @a = .words;
-                                                      @a[2]=1;
-                                                      @a.join(' ') 
-                                                    }).join("\n");
-                 }
+                    my $head = @pruned-data.head;
+				   	my $body = 	 @pruned-data.tail(*-1).map({ 
+                       my @a = .words;
+                       @a[2]=1;
+                       @a.join(' ') 
+                    }).join("\n");
+					say "ola", $body;
+                    "$!path/data{$_}ro.dat".IO.spurt: $head ~ "\n" ~ $body 
+				}
 				$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
 
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
