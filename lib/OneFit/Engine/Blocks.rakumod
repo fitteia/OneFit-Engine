@@ -153,6 +153,7 @@ class Block is export {
 				@a[2]=1;
 				@a.join(' ') 
 			}).join("\n");
+			say $body;
 
 			"$!path/data{$!No+1}ro.dat".IO.spurt: $head ~ "\n" ~ $body; 		
 		}
