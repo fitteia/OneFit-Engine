@@ -400,7 +400,7 @@ class Engine is export {
 				#				$set-data-err($_-1,"$!path/data{$_}.dat") if (@outliers.so || $reduced-chi2);
 				#say "a  :\n","$!path/data{$_}.dat".IO.slurp;
 				@!blocks[$_-1].set-data-err();
-				say "b :\n","$!path/data{$_}.dat".IO.slurp:
+				say "b :\n","$!path/data{$_}.dat".IO.slurp;
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
