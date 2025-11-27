@@ -328,7 +328,11 @@ class Engine is export {
 	 self.stp;
 	 $*ERR.say("write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
-	 
+	
+	 my Bool $MIXED=False;
+	 my %last = @!par-tables[0].a.tail;
+	 $MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
+ 
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
 	 my $f = { 
 		 my @b = $^a.split(/ '..' | '-' | ':' /); 
@@ -380,7 +384,9 @@ class Engine is export {
 					~ 	"\n";
 			$TXT;
 	 }
-	
+
+	 @outliers=False if $MIXED;
+
 	 @!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
 
 	 if %!engine<FitType> ~~ /Individual/ {
@@ -398,10 +404,6 @@ class Engine is export {
 		 	for (1 .. @!blocks.elems).race {
 				#				$set-data-err($_-1,"$!path/data{$_}.dat") if (@outliers.so || $reduced-chi2);
 				#say "a  :\n","$!path/data{$_}.dat".IO.slurp;
-				my Bool $MIXED=False;
-				my %last = @!par-tables[0].a.tail;
-				$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
-
 				if $MIXED {
 					my $chi2 =	(@!blocks>>.chi2).sum;
 					my $npts = ((@!blocks>>.Data)>>.elems).sum;
