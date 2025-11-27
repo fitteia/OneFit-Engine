@@ -385,7 +385,10 @@ class Engine is export {
 			$TXT;
 	 }
 
-	 @outliers=False if $MIXED;
+	 if $MIXED || %!engine<FitType> ~~ /Global/ {
+		@outliers=False;
+		note "-remove outliers is not yet implemented for mixed and global fits";
+	 }	
 
 	 @!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
 
