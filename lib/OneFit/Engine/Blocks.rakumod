@@ -147,12 +147,14 @@ class Block is export {
 				$npts-removed +=  +.tail;
 	 		}
 			#			say @pruned-data.join("\n");
-			"$!path/data{$!No+1}ro.dat".IO.spurt: 
-			@pruned-data.head ~ "\n" ~ @pruned-data.tail(*-1).map({ 
+			my $head = @pruned-data.head; 
+			my $body = @pruned-data.tail(*-1).map({ 
 				my @a = .words;
 				@a[2]=1;
 				@a.join(' ') 
 			}).join("\n");
+
+			"$!path/data{$!No+1}ro.dat".IO.spurt: $head ~ "\n" ~ $body; 		
 		}
 		$npts-removed;	
 	}
