@@ -159,13 +159,14 @@ class Block is export {
 
 	method set-data-err (
 		:$chi2 = $.chi2, 
-		:$ndf = @!Data.elems - 1 - self.parameters.free,
+		:$ndf = @!Export-data.elems - 1 - self.parameters.free,
 		:$file = "$!path/data{$!No+1}.dat"
 	) {
+		say @!Export-data.join("\n");
 		$file.IO.spurt: 
 			($!T.words.elems>1) ?? $!No+1 !! $!T.words[0] 
 			~ "\n" ~ 
-			@!Data.map({ 
+			@!Export-data.map({ 
 				my @a = .words.head(3); 
 				@a[2] *= sqrt( $chi2 / $ndf ); 
 				@a.join(' ') 
