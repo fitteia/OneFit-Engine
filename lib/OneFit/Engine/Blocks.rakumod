@@ -120,7 +120,6 @@ class Block is export {
     }
    	
 	method prune( :@remove ) {
-say @remove;
 		my $npts-removed=0;
 		if @remove.head.Num < 0 {
 			$npts-removed = +@remove.head.Num.abs;
@@ -130,9 +129,9 @@ say @remove;
 				.grep(/^<![#]>/)
 				.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
 				.sort: *.words.tail.Numeric;
+#						"$!path/data{$!No+1}.dat".IO.lines.head
 			 	"$!path/data{$!No+1}ro.dat".IO.spurt:
 						($!T.words.elems>1) ?? $!No+1 !! $!T.words[0] 
-#						"$!path/data{$!No+1}.dat".IO.lines.head
 						~ "\n" ~ 
 						@pruned-data
 							.head(* + @remove.head)
