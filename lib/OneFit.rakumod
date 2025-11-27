@@ -8,6 +8,18 @@ use OneFit::Engine::Functions;
 use OneFit::Engine::CodeC;
 use OneFit::Engine::Stpfiles;
 
+class Capture-Handle {
+    has Str $.buf is rw = '';
+
+    method print(*@chunks) {
+        $!buf ~= @chunks.join;
+    }
+
+    method say(*@chunks) {
+        self.print(|@chunks, "\n");
+    }
+}
+
 class Engine is export {
     has %!engine;
     has @!blocks;
@@ -28,16 +40,25 @@ class Engine is export {
 	    %!engine = from-json($file.IO.slurp) ;
 	}
 	else {
+		use Inline::Perl5;
+	    use CGI:from<Perl5>;
+
+		my $err-exception;
+    	my $out   = Capture-Handle.new;
+    	my $err   = Capture-Handle.new;
+
 		try {
-			use Inline::Perl5;
-		    use CGI:from<Perl5>;
+			my $*OUT = $out;
+			my $*ERR = $err;
 
 	    	my $sav = CGI.new( $file.IO.open );
 	    	for $sav.param { %!engine{$_} = $sav.param($_) }	 
 
-			CATCH { default { note "===> $_" }}
+			CATCH { default { $err-exception = $_ }}
 		}
-
+		note "===> " ~ $out.print if $out.buf.chars;
+		note "===> " ~ $err.print if $err.buf.chars;
+		note "===> " ~ $err-exception if $err-exception.chars;
 	}
 	%!engine<FitType> = "Global" unless %!engine<FitType>;
 	($h.Bool) ?? %!engine !! self;
