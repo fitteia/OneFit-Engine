@@ -427,7 +427,6 @@ EOT
 			}
 	
 			for (1 .. @!blocks.elems).race {
-				say "main",@outliers;
                 if @outliers.head.Num < 0 {
                    $npts-removed = +@outliers.head.Num.abs;
                    my @pruned-data="$!path/fit-residues-$_.res"
@@ -477,7 +476,8 @@ EOT
 			do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-					$set-data-err($_-1,"$!path/data{$_}ro.dat");
+					@!blocks[$_-1].$set-data-err( file => "$!path/data{$_}ro.dat" );
+#					$set-data-err($_-1,"$!path/data{$_}ro.dat");
 					say "$!path/data{$_}ro.dat".IO.slurp;
 		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
