@@ -667,13 +667,13 @@ EOT
 	method !reset-parameters-std ($txt) {
 		my $chi2 =	(@!blocks>>.chi2).sum;
 		my $npts = ((@!blocks>>.Data)>>.elems).sum;
-		my $nfp = @!blocks[0].parameters.free;
+		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $nfp;
 		say "chi2 = $chi2";
 		say "npts = $npts";
-		say "nfp = $nfp";
+		say "nfgp = $nfp";
 		say "ndf = $ndf";
-
+		say "nifp= " ~ @blocks[1].parameters.free;
 		my @a = $txt.lines;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
