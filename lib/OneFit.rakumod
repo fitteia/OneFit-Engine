@@ -427,6 +427,7 @@ EOT
 			}
 	
 			for (1 .. @!blocks.elems).race {
+				say "main",@outliers;
                 if @outliers.head.Num < 0 {
                    $npts-removed = +@outliers.head.Num.abs;
                    my @pruned-data="$!path/fit-residues-$_.res"
@@ -458,7 +459,6 @@ EOT
                        @a[2]=1;
                        @a.join(' ') 
                     }).join("\n");
-					say "ola", $body;
                     "$!path/data{$_}ro.dat".IO.spurt: $head ~ "\n" ~ $body 
 				}
 				$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
