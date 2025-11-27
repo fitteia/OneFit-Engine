@@ -35,7 +35,7 @@ class Import is export {
 		my @files=();
 		for @input-files -> $file {
 			given self.is-type($file) {
-				note "\nFile $file is type: ", $_ unless $quiet;
+				note "===> File $file is type: ", $_ unless $quiet;
 				when 'sav' {
 					use Inline::Perl5;
 	    			use CGI:from<Perl5>;
@@ -102,7 +102,7 @@ class Import is export {
 			$file-name = $file unless @blocks.elems > 2;
 			@files.push: $file-name; 
 			"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
-			LAST { note "processed blocks: { @blocks.elems - 1 }" }
+			LAST { note "===> processed blocks: { @blocks.elems - 1 }" }
 		}
 		return @files;	
 	}
