@@ -120,6 +120,7 @@ class Block is export {
     }
    	
 	method prune( :@remove ) {
+say @remove;
 		my $npts-removed=0;
 		if @remove.head.Num < 0 {
 			$npts-removed = +@remove.head.Num.abs;
