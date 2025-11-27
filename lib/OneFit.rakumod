@@ -28,11 +28,16 @@ class Engine is export {
 	    %!engine = from-json($file.IO.slurp) ;
 	}
 	else {
-	    use Inline::Perl5;
-	    use CGI:from<Perl5>;
+		try {
+			use Inline::Perl5;
+		    use CGI:from<Perl5>;
 
-	    my $sav = CGI.new( $file.IO.open );
-	    for $sav.param { %!engine{$_} = $sav.param($_) }	 
+	    	my $sav = CGI.new( $file.IO.open );
+	    	for $sav.param { %!engine{$_} = $sav.param($_) }	 
+
+			CATCH { default { note "===> $_" }}
+		}
+
 	}
 	%!engine<FitType> = "Global" unless %!engine<FitType>;
 	($h.Bool) ?? %!engine !! self;
@@ -433,9 +438,9 @@ class Engine is export {
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 	 		say qq:to/EOT/ unless $quiet;
-#{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+{'#' x (40-$msg.chars/2.0).floor} $msg {'#' x (40-$msg.chars/2.0).ceiling}
 $TXT
-#{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{'#' x (41-$msg.chars/2.0).floor}{'#' x $msg.chars}{'#' x (41-$msg.chars/2.0).ceiling}
 EOT
 
 			for @pdfs -> $name {
@@ -524,13 +529,13 @@ EOT
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
  			say qq:to/EOT/ unless $quiet;
 
-#{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+{'#' x (40-$msg.chars/2.0).floor} $msg {'#' x (40-$msg.chars/2.0).ceiling}
 $TXT
-#{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{'#' x (41-$msg.chars/2.0).floor}{'#' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 EOT
 		}
 		else {
-		 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+		 	say "\n{'#' x 80}\n" ~ $TXT ~ "{'#' x 80}" unless $quiet;
 		}		
 	 }
 	 %!engine<fit-results> = $TXT;

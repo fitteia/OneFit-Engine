@@ -303,9 +303,9 @@ onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install
 =end pod
 
 my $time = BEGIN { now }
-END { note "Total execution time (s): " , now - INIT now }
+END { note "===> Total execution time (s): " , now - INIT now }
 
-note "Compile time: ", now - $time;
+note "===> Compile time: ", now - $time;
 
 our constant OFE-PATH="%OFE-PATH%";
 
