@@ -668,7 +668,7 @@ EOT
 		my $chi2 =	(@!blocks>>.chi2).sum;
 		my $npts = ((@!blocks>>.Data)>>.elems).sum;
 		my $ngfp = @!blocks[0].parameters.free;
-		my $ndf = $npts - $nfp;
+		my $ndf = $npts - $ngfp;
 		say "chi2 = $chi2";
 		say "npts = $npts";
 		say "ngfp = $ngfp";
