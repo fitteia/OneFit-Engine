@@ -332,7 +332,8 @@ class Engine is export {
 	 self.stp;
 	 $*ERR.say("===> write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
-	
+	 note "===> fit" unless $quiet;
+
 	 my Bool $MIXED=False;
 	 my %last = @!par-tables[0].a.tail;
 	 $MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
