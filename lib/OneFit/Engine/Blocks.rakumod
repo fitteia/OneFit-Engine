@@ -129,7 +129,7 @@ class Block is export {
 				.grep(/^<![#]>/)
 				.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
 				.sort: *.words.tail.Numeric;
-			 	"$!path/data{$i!No+1}ro.dat".IO.spurt: 
+			 	"$!path/data{$!No+1}ro.dat".IO.spurt: 
 						"$!path/data{$!No+1}.dat".IO.lines.head
 						~ "\n" ~ 
 						@pruned-data
