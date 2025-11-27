@@ -20,7 +20,7 @@ class HistoryLog is export {
 			when /\d+/ { $selected = @keys[$s.Int] }
 		   	default { $selected }
 		}
-		my $p
+		my $p;
 		try { 
 			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,'');
 			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
