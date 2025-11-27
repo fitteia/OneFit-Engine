@@ -672,7 +672,7 @@ EOT
 					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
 							my @b = $v.split(', ');
 							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-							say @!blocks[$i].chi2, $b[2];
+							say @!blocks[$i].chi2, @b[2];
 							my $chi2= @b[2];
 							@b[2] /= $chi2/$ndf;
 							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
