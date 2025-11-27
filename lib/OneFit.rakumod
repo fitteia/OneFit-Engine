@@ -665,23 +665,35 @@ EOT
     }
 
 	method !reset-parameters-std ($txt) {
-			my @a = $txt.lines;
-			say (@!blocks>>.chi2).sum;
-			my $TXT = @a.head 
-					~ 	"\n" 
-					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
-							my @b = $v.split(', ');
-							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-							say @!blocks[$i].chi2, @b[2];
-							my $chi2= @b[2];
-							@b[2] /= $chi2/$ndf;
-							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
-								@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
-							}
-							@b.join(', ')
-						}).join("\n")
-					~ 	"\n";
-			$TXT;
+		my $chi2 =	(@!blocks>>.chi2).sum;
+		my $pts = (@!blocks>>.Data.elems).sum;
+		my $nfp = @!blocks[0].parameters.free;
+		my $ndf = $npts - $nfp;
+
+		say "chi2 = $chi2";
+		say "npts = $npts";
+		say "nfp = $nfp";
+		say "ndf = $ndf";
+
+		my @a = $txt.lines;
+		my Bool $MIXED=False;
+		my %last = @!par-tables[0].a.tail;
+		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
+	
+		my $TXT = @a.head 
+				~ 	"\n" 
+				~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+						my @b = $v.split(', ');
+						my $ndf = @b[1] - @!blocks[$i].parameters.free; 
+						my $chi2= @b[2];
+						@b[2] /= $chi2/$ndf;
+						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
+							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
+						}
+						@b.join(', ')
+					}).join("\n")
+				~ 	"\n";
+		$TXT;
 	 }
 
 }
