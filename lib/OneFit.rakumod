@@ -669,22 +669,27 @@ EOT
 		my $npts = ((@!blocks>>.Data)>>.elems).sum;
 		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $ngfp;
+		my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
 		say "chi2 = $chi2";
 		say "npts = $npts";
 		say "ngfp = $ngfp";
 		say "ndf = $ndf";
-		say "nifp= " ~ (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
+		say "nifp= $nifp"; 
 		my @a = $txt.lines;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
 	
+		$ndf = $npts - $nifp*@!blocks.elems - $ngfp if $MIXED; 
+
 		my $TXT = @a.head 
 				~ 	"\n" 
 				~ 	@a.tail(*-1).kv.map( -> $i, $v { 
 						my @b = $v.split(', ');
-						my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-						my $chi2= @b[2];
+						if %!engine<FitType> ~~ /Individual {
+							$ndf = @b[1] - @!blocks[$i].parameters.free; 
+							$chi2= @b[2];
+						}
 						@b[2] /= $chi2/$ndf;
 						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
 							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
