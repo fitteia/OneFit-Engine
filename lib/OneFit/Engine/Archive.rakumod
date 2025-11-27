@@ -23,8 +23,11 @@ class HistoryLog is export {
 		try { 
 			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,'');
 			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
-			my @out = shell("unzip -o $!path/{$selected}.zip; $cmd",:out).out.lines;
+			my @p = shell("unzip -o $!path/{$selected}.zip; $cmd",:out,:err);
+			my @out = $p.out.lines;
+			my @err = $p.err.lines;
 			note "===>  " ~ @out.head ~ "\n     " ~ { @out.join("\n     ") if @out.elems > 1 };
+			if @err.so { note "===>  " ~ @err.head ~ "\n     " ~ { @err.join("\n     ") if @err.elems > 1 } }
 	   	}
 		if $! { say "couldn't execute" ~ %!arch{$selected} }
 	}
