@@ -1528,20 +1528,22 @@ sub awk($engine,$s is copy) {
 	my $p = run "awk", "-F', '", "!/#/ && NF>0 \{print $s\}",:in,:out;
 	$p.in.say($fit-results);
 	$p.in.close;
+	my $txt = $p.out.slurp: :close;
 	my $msg ="cat fit-results | awk";
 	say qq:to/EOT/;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
-{say $p.out.slurp: :close}
+$txt
 {'-' x (40).floor}{'-' x (40).ceiling}
 EOT
 	if $fit-results-all.so {
 		$p = run "awk", "-F', '", "!/#/ && NF>0 \{print $s\}",:in,:out;
 		$p.in.say($fit-results-all);
 		$p.in.close;
+		my $txt = $p.out.slurp: :close;
 		my $msg ="cat fit-results-all | awk";
 		say qq:to/EOT/;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
-{say $p.out.slurp: :close}
+$txt
 {'-' x (40).floor}{'-' x (40).ceiling}
 EOT
 	}
