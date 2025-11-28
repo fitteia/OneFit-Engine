@@ -1523,7 +1523,7 @@ sub define-alias($engine,$dali) {
 
 sub awk($engine,$s is copy) {
 	my $fit-results = $engine.h<fit-results>;
-	say $fit-results;
+	say $fit-results.subst(', ',' ',:g);
 	my $fit-results-all = $engine.h<fit-results-all>;
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
 	my $p = run "awk", "\{print $s\}",:in,:out;
