@@ -21,8 +21,6 @@
 
 =head2 Basic commands
 
-=begin itemized
-
 =item onefite
 
 =begin code :lang<bash>
@@ -93,11 +91,9 @@ onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--lo
 
     cd $(onefite path -s)
     vi $(onefite path -a)/aliases.json
-=end itemized
 
 =head2 Files conversion
 
-=begin itemized
 
 =item sav <--> json files conversion
 
@@ -114,11 +110,9 @@ onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
     Examples
 
     onefite convert some-fitteia-fit.sav ofe-version.json
-=end itemized
 
 =head2 OFE service commands
 
-=begin itemized
 
 =item Systemd service
 
@@ -152,7 +146,6 @@ onefite stop-web-engine
 =end code
 
     User command line to start/stop OFE web service
-=end itemized
 
 =head2 Create command
 
@@ -306,20 +299,16 @@ onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install
 
 =head2 File parameters
 
-=begin itemized
 =item input-file - name of the file to be converted (file extensions: .sav or .json)
 
 =item output-file - name of the converted file (file extensions: .sav or .json)
 
 =item data files - one or more files including plain text ASCII (.dat, .txt). Zip files are accepted.
       Special cases: Stelar S.R.l files (.sdf, .hdf5, .sef).
-=end itemized
 
 =head2 Fit methods
 
-=begin itemized
 =item fit-methods - simp scan min minos
-=end itemized
 =end pod
 
 my $time = BEGIN { now }
