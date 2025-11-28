@@ -698,7 +698,7 @@ EOT
 		$TXT;
 	 }
 	 
-	 method chi2-ntps-ndf (:$mixed = False, :$removed-outliers=0) {
+	 method chi2-npts-ndf (:$mixed = False, :$removed-outliers=0) {
 		my $chi2 =	(@!blocks>>.chi2).sum;
 		my $npts = ((@!blocks>>.Data)>>.elems).sum - $removed-outliers;
 		my $ngfp = @!blocks[0].parameters.free;
