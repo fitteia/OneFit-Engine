@@ -377,7 +377,7 @@ multi MAIN( 'archive',
 	Str :f(:$fit) is copy="", #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
 	*%_
 ) {
-	for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } if $fit.so;
+	for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" }; if $fit.so;
 	my $log = HistoryLog.new;
 	if $fit.defined and $fit.chars { $log.fit($fit) }
 	else { $log.print() }
@@ -388,7 +388,7 @@ multi MAIN( 'ar',
 	Str :f(:$fit) is copy ="", 
 	*%_
 ) {
-	for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } if $fit.so;
+	for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" }; if $fit.so;
 	MAIN( 'archive' , :fit($fit) );
 }
 
@@ -397,7 +397,7 @@ multi MAIN( 'log',
 	Str :f(:$fit) is copy ="",
 	*%_
 ) {
-	for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } if $fit.so;
+	for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" }; if $fit.so;
 	MAIN( 'archive' , :fit($fit) );
 }
 
