@@ -504,6 +504,9 @@ class Import is export {
 		elsif $err.contains("%") and !$err.contains(/ 'avg' | 'average'/) {
 			$err = '$2*' ~ $err.subst("%","").Num /100 ;
 		}
+		elsif $err.contains(/:i ^ <ws> 'x' | 'x' <ws> $/) {
+			$err = '$3*' ~ $err.subst(/:i 'x'/,'').Num ;
+		}
 		else { $err = $err }
 
 		$filename.IO.spurt: shell("awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' $tmp", :out).out.slurp;
