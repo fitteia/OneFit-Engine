@@ -374,7 +374,7 @@ multi MAIN (
 }
 #| Show archive log  
 multi MAIN( 'archive',  
-	Str :f(:$fit) is rw = "", #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
+	Str :f(:$fit) is rw ="", #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
 	*%_
 ) {
 	my $fit = $fit.so ?? "$fit {|%_}" !! ''; 
@@ -385,7 +385,7 @@ multi MAIN( 'archive',
 
 #| Show archive log  
 multi MAIN( 'ar',
-	Str :f(:$fit)="", 
+	Str :f(:$fit) is rw ="", 
 	*%_
 ) {
 	my $fit = $fit.so ?? "$fit {|%_}" !! ''; 
@@ -394,7 +394,7 @@ multi MAIN( 'ar',
 
 #| Show archive log  
 multi MAIN( 'log',
-	Str :f(:$fit)="",
+	Str :f(:$fit) is rw ="",
 	*%_
 ) {
 	my $fit = $fit.so ?? "$fit {|%_}" !! ''; 
