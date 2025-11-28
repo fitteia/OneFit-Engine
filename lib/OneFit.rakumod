@@ -516,24 +516,31 @@ EOT
 #		$TXT = $reset-parameters-std($TXT);
 		$TXT = self!reset-parameters-std($TXT);
 
+		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points removed";
  		say qq:to/EOT/ unless $quiet;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
 EOT
+
+#{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+
 	 }
 	 else { 
 		if $reduced-chi2 { 
 			$TXT = self!reset-parameters-std($TXT);
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
  			say qq:to/EOT/ unless $quiet;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
 EOT
+
+# {'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 		}
 		else {
 		 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
