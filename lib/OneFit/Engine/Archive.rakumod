@@ -12,9 +12,10 @@ class HistoryLog is export {
 		%!arch = from-json( "$!path/$!file".IO.slurp ).Hash.Slip if "$!path/$!file".IO.e;
 	}
 
-	multi method fit($s) {
+	multi method fit($s, *@_) {
 		my @keys =  %!arch.keys.sort;
 		my $selected = @keys.tail;
+		my @add-options=@_.so ?? @_ !! False;
 		given $s {
 			when /:i last <ws> '-' <ws> \d+ / { $selected =@keys[@keys.elems - 1 - $s.split('-')[1].trim.Int] }
 			when /\d+/ { $selected = @keys[$s.Int] }
@@ -23,7 +24,7 @@ class HistoryLog is export {
 		try { 
 			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,'');
 			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
-			shell("unzip -o $!path/{$selected}.zip; $cmd");
+			shell("unzip -o $!path/{$selected}.zip; $cmd {|@add-options}");
 	   	}
 		if $! { note "     couldn't execute" ~ %!arch{$selected} }
 	}

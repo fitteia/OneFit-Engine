@@ -374,25 +374,28 @@ multi MAIN (
 }
 #| Show archive log  
 multi MAIN( 'archive',  
-	Str :f(:$fit)="" #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
+	Str :f(:$fit)="", #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
+	*@_
 ) {
 	my $log = HistoryLog.new;
-	if $fit.defined and $fit.chars { $log.fit($fit) }
+	if $fit.defined and $fit.chars { $log.fit($fit,@_) }
 	else { $log.print() }
 }
 
 #| Show archive log  
 multi MAIN( 'ar',
-	Str :f(:$fit)="" 
+	Str :f(:$fit)=""9, 
+	*@_
 ) {
-	MAIN( 'archive' , :fit($fit) );
+	MAIN( 'archive' , :fit($fit, @_) );
 }
 
 #| Show archive log  
 multi MAIN( 'log',
-	Str :f(:$fit)="" 
+	Str :f(:$fit)="",
+	*@_
 ) {
-	MAIN( 'archive' , :fit($fit) );
+	MAIN( 'archive' , :fit($fit,@_) );
 }
 
 #| Get onefite man page
