@@ -247,13 +247,18 @@ onefite archive [-f||--fit=<Str>]
 =end code
 
 =head2 Built-in archiving
+=item add to achive
+=begin code
     onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
-	
+=end code
+=item Show archive log
+=begin code
 	onefite archive || onefite ar || onefite log
 	onefite archive -f last
 	onefite log -f 2
 	onefite ar --fit last-3
+=end code
 
 =head2 Version upgrade
 
