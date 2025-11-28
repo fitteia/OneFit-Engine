@@ -1522,11 +1522,12 @@ sub define-alias($engine,$dali) {
 }
 
 sub awk($engine,$s is copy) {
-	my $fit-results = $engine.h<fit-results>;
-	my $fit-results-all = $engine.h<fit-results-all>;
+	my $fit-results = $engine.h<fit-results>.lines.grep(/<![#]>/).subst(', ',' ',:g));
+	say $fit-results;
+	my $fit-results-all = $engine.h<fit-results-all>.lines.grep(/<![#]>/).subst(', ',' ',:g));
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
 	my $p = run "awk", "\{print $s\}",:in,:out;
-	$p.in.say($fit-results.lines.grep(/<![#]>/).subst(', ',' ',:g));
+	$p.in.say($fit-result);s
 	$p.in.close;
 	my $txt = $p.out.slurp: :close;
 	my $msg ="cat fit-results | awk";
@@ -1537,7 +1538,7 @@ $txt
 EOT
 	if $fit-results-all.so {
 		$p = run "awk", "\{print $s\}",:in,:out;
-		$p.in.say($fit-results-all.lines.grep(/<![#]>/).join("\n").subst(', ',' ',:g));
+		$p.in.say($fit-results-all);
 		$p.in.close;
 		my $txt = $p.out.slurp: :close;
 		my $msg ="cat fit-results-all | awk";
