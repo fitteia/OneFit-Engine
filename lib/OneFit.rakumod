@@ -713,7 +713,7 @@ EOT
 		my $ndf = $npts - $ngfp;
 		my $nifps = $mixed ?? (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum !! +0;
 		my $nfps = $nifps*@!blocks.elems - $ngfp;
-		$ndf = $npts - $nfps;  
+		$ndf = $npts + $nfps;  
 		return "chi2t = $chi2, tnpts = $npts, nfps= $nfps"
 	}
 }
