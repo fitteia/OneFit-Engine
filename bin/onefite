@@ -1177,7 +1177,7 @@ MSG
 		$log.archive($cmd);
 	}
 	if $awk.so {
-		awk(%!engine,"4 5");
+		awk($engine,"4 5");
 	}
     exit;
 }
