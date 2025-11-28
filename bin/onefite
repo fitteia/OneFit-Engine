@@ -1525,8 +1525,9 @@ sub awk($engine,$s is copy) {
 	my $fit-results = $engine.h<fit-results>.Str;
 	$fit-results .= subst(', ',' ',:g);
 	my $fit-results-all = $engine.h<fit-results-all>.Str;
-	$fit-results-all .= subst(', ',' ',:g);
+	$fit-results-all .= subst(', ',' ',:g) if $fit-results-all.so;
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
+	say $s;
 	my $p = run "awk", "\{print $s\}",:in,:out;
 	$p.in.say($fit-results);
 	$p.in.close;
