@@ -1525,11 +1525,9 @@ sub awk($engine,$s is copy) {
 	my $fit-results = $engine.h<fit-results>;
 	my $fit-results-all = $engine.h<fit-results-all>;
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
-	my $p = shell(<<awk '\{print $s\}'>>,:in,:out,:err);
-	spurt($p,$fit-results,:close);
-	say $p.out.slurp(:close);
-	$p = shell(<<awk '\{print $s\}'>>,:in,:out,:err);
-	spurt($p,$fit-results-all,:close);
-	say $p.out.slurp(:close);
+	$p = run "awk","'\{print $s\}'",:in,:out;
+	$p.in.say($fit-results);
+	$p.in.close;
+	say $p.out.slurp: :close;
 }
 
