@@ -1526,10 +1526,10 @@ sub awk($engine,$s is copy) {
 	my $fit-results-all = $engine.h<fit-results-all>;
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
 	my $p = shell(<<awk '\{print $s\}'>>,:in,:out,:err);
-	$p.in.spurt($fit-results,:close);
+	spurt($p,$fit-results,:close);
 	say $p.out.slurp(:close);
 	$p = shell(<<awk '\{print $s\}'>>,:in,:out,:err);
-	$p.in.spurt($fit-results-all,:close);
+	spurt($p,$fit-results-all,:close);
 	say $p.out.slurp(:close);
 }
 
