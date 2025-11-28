@@ -217,6 +217,8 @@ onefite archive [-f||--fit=<Str>]
 	onefite fit "#1exp" file.txt --autox --logx --autoy
     onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
 	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0"
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="x10/100"
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10x"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="standard deviation"
@@ -366,6 +368,13 @@ multi MAIN( 'archive',
 	my $log = HistoryLog.new;
 	if $fit.defined and $fit.chars { $log.fit($fit) }
 	else { $log.print() }
+}
+
+#| Show archive log  
+multi MAIN( 'ar',
+	Str :f(:$fit)="" 
+) {
+	MAIN( 'archive' , :fit($fit) );
 }
 
 #| Show archive log  
