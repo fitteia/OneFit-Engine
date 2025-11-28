@@ -703,7 +703,7 @@ EOT
 		my $npts = ((@!blocks>>.Data)>>.elems).sumi - $removed-outliers;
 		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $ngfp;
-		my $nifp = $mixed ?? (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum || +0;
+		my $nifp = $mixed ?? (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum !! +0;
 		$ndf = $npts - $nifp*@!blocks.elems - $ngfp;  
 		return "chi2t = $chi2, tnpts = $ntps, ndf = $ndf"
 	}
