@@ -19,13 +19,13 @@ class HistoryLog is export {
 			when /:i last <ws> '-' <ws> \d+ / { $selected =@keys[@keys.elems - 1 - $s.split('-')[1].trim.Int] }
 			when /\d+/ { $selected = @keys[$s.Int] }
 		   	default { $selected }
-		}	
+		}
 		try { 
 			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,'');
-			note "trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
+			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
 			shell("unzip -o $!path/{$selected}.zip; $cmd");
 	   	}
-		if $! { say "couldn't execute" ~ %!arch{$selected} }
+		if $! { note "     couldn't execute" ~ %!arch{$selected} }
 	}
 
 	multi method list() {
