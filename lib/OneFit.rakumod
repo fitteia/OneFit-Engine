@@ -440,7 +440,7 @@ class Engine is export {
 	 		say qq:to/EOT/ unless $quiet;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{'-' x (41-self.chi2-ntps-ndf.chars/2.0).floor}{self.chi2-npts-ndf}{'-' x (41-self.chi2-npts-ndf.chars/2.0).ceiling}
 EOT
 
 			for @pdfs -> $name {
@@ -697,6 +697,15 @@ EOT
 				~ 	"\n";
 		$TXT;
 	 }
-
+	 
+	 method chi2-ntps-ndf(:$mixed = False, :$removed-outliers=0) {
+		my $chi2 =	(@!blocks>>.chi2).sum;
+		my $npts = ((@!blocks>>.Data)>>.elems).sumi - $removed-outliers;
+		my $ngfp = @!blocks[0].parameters.free;
+		my $ndf = $npts - $ngfp;
+		my $nifp = $mixed ?? (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum || +0;
+		$ndf = $npts - $nifp*@!blocks.elems - $ngfp;  
+		return "chi2t = $chi2, tnpts = $ntps, ndf = $ndf"
+	}
 }
 
