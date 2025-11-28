@@ -389,7 +389,7 @@ multi MAIN( 'ar',
 	*%_
 ) {
 	my $fit1 = $fit;
-	for %_.kv -> $k, $v { $fit1 ~= $v.^name ~~ Bool ?? " --$k" !! " --$k='$v'" }
+	for %_.kv -> $k, $v { $fit1 ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" }
 	MAIN( 'archive' , :fit($fit1) );
 }
 
