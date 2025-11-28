@@ -437,10 +437,11 @@ class Engine is export {
 			$TXT = self!reset-parameters-std($TXT);
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $removed-outliers );
 	 		say qq:to/EOT/ unless $quiet;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{ '-' x (41-self.chi2-npts-ndf(:mixed($MIXED)).chars/2.0).floor }{ self.chi2-npts-ndf(:mixed($MIXED)) }{ '-' x (41-self.chi2-npts-ndf(:mixed($MIXED)).chars/2.0).ceiling }
+{ '-' x (40-$foot.chars/2.0).floor } $foot { '-' x (40-$foot.chars/2.0).ceiling }
 EOT
 
 			for @pdfs -> $name {
