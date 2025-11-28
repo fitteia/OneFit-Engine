@@ -438,7 +438,7 @@ class Engine is export {
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
-	 		say qq:to/EOT/ unless $quiet;
+	 		say qq:to/EOT/;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
 { '-' x (40-$foot.chars/2.0).floor } $foot { '-' x (40-$foot.chars/2.0).ceiling }
@@ -518,7 +518,7 @@ EOT
 
 		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed*@!blocks.elems );
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points/block removed";
- 		say qq:to/EOT/ unless $quiet;
+ 		say qq:to/EOT/;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
@@ -533,7 +533,7 @@ EOT
 			$TXT = self!reset-parameters-std($TXT);
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
- 			say qq:to/EOT/ unless $quiet;
+ 			say qq:to/EOT/;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
@@ -545,7 +545,7 @@ EOT
 		else {
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit results";
- 			say qq:to/EOT/ unless $quiet;
+ 			say qq:to/EOT/;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}

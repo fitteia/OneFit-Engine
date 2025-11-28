@@ -235,6 +235,23 @@ onefite archive [-f||--fit=<Str>]
 	onefite log -f 2
 	onefite log --fit=5
 
+=head2 Using awk to clean std output
+=begin itemize
+
+=item
+	onefite fit .... | awk '!/^-/ {print}'
+
+=item combine with --quiet
+	onefite .... --quiet | awk '!/^-/ {print}'
+
+=item combine with "2>/dev/null"
+	onefite .... 2>/dev/null | awk '!/^-/ {print}'
+
+=item combine with tee
+	onefite .... | tee filename; awk '!/^-/ {print}'i filename
+
+=end itemize
+
 =head2 Built-in archiving
     onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
