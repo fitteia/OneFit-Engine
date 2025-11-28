@@ -1526,7 +1526,7 @@ sub awk($engine,$s is copy) {
 	my $fit-results-all = $engine.h<fit-results-all>;
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
 	my $p = run "awk", "\{print $s\}",:in,:out;
-	$p.in.say($fit-results.lines.grep(/<![#]>/).join("\n"));
+	$p.in.say($fit-results.lines.grep(/<![#]>/).subst(', ','',:g));
 	$p.in.close;
 	my $txt = $p.out.slurp: :close;
 	my $msg ="cat fit-results | awk";
@@ -1537,7 +1537,7 @@ $txt
 EOT
 	if $fit-results-all.so {
 		$p = run "awk", "\{print $s\}",:in,:out;
-		$p.in.say($fit-results-all.lines.grep(/<![#]>/).join("\n"));
+		$p.in.say($fit-results-all.lines.grep(/<![#]>/).join("\n").subst(', ','',:g));
 		$p.in.close;
 		my $txt = $p.out.slurp: :close;
 		my $msg ="cat fit-results-all | awk";
