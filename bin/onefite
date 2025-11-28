@@ -1527,7 +1527,7 @@ sub awk($engine,$s is copy) {
 	my $fit-results-all = $engine.h<fit-results-all>.lines.grep(/<![#]>/).subst(', ',' ',:g);
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
 	my $p = run "awk", "\{print $s\}",:in,:out;
-	$p.in.say($fit-result);s
+	$p.in.say($fit-result);
 	$p.in.close;
 	my $txt = $p.out.slurp: :close;
 	my $msg ="cat fit-results | awk";
