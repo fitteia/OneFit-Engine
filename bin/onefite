@@ -391,15 +391,8 @@ multi MAIN( 'man', Bool :m(:$man) ) { MAIN( :man($man) ) }
 multi MAIN ('list',
       	   Bool :q(:$quiet) = False #= reduces output log info, false by default
 	   ){
-#    my @list = dir(::('OFE-PATH') ~ "/C/local");
-#    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
-#    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-#    my $txt = "OneFit Engine Models Library:\n";
-#    $txt ~= @list.join("\n");
      my $txt = MAIN('list', 'models', quiet => True);
-     #my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
     $txt ~= MAIN('list', 'aliases', quiet => True); 
-    #$txt ~=  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     say $txt unless $quiet;
     $txt;
 }
