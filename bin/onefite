@@ -377,7 +377,7 @@ multi MAIN( 'archive',
 	Str :f(:$fit) is copy="", #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
 	*%_
 ) {
-	if $fit.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
+	if $fit.so && %_.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
 	my $log = HistoryLog.new;
 	if $fit.defined and $fit.chars { $log.fit($fit) }
 	else { $log.print() }
@@ -388,7 +388,7 @@ multi MAIN( 'ar',
 	Str :f(:$fit) is copy ="", 
 	*%_
 ) {
-	if $fit.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
+	if $fit.so && %_.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
 	MAIN( 'archive' , :fit($fit) );
 }
 
@@ -397,7 +397,7 @@ multi MAIN( 'log',
 	Str :f(:$fit) is copy ="",
 	*%_
 ) {
-	if $fit.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
+	if $fit.so && %_.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
 	MAIN( 'archive' , :fit($fit) );
 }
 
@@ -1522,8 +1522,8 @@ sub define-alias($engine,$dali) {
 }
 
 sub awk($engine,$s is copy) {
-	my $fit-results = $engine<fit-results>;
-	my $fit-results-all = $engine<fit-results-all>;
+	my $fit-results = $engine.h<fit-results>;
+	my $fit-results-all = $engine.h<fit-results-all>;
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
 	my $p = shell(<<awk '\{print $s\}'>>,:in,:out,:err);
 	$p.in.spurt($fit-results,:close);
