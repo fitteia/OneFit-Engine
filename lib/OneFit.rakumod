@@ -357,39 +357,7 @@ class Engine is export {
 	 my @pdfs = 'fit-curves-' <<~<< (1 ... @!blocks.elems) >>~>> '.pdf';
 
      my $npts-removed=0;
-#`[
-	 my $set-data-err = {
-		my $i = $^a;
-		my $file = $^b;
-		my @data = $file.IO.lines.grep(/\d+/);
-		my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
-		$file.IO.spurt: 
-			@data.head
-			~ "\n" ~ 
-			@data.tail(*-1)
-				.map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
-				.join("\n")
-		;
-	 }
 
-	 my $reset-parameters-std = {
-			my @a = $^a.lines;
-			my $TXT = @a.head 
-					~ 	"\n" 
-					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
-							my @b = $v.split(', ');
-							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-							my $chi2= @b[2];
-							@b[2] /= $chi2/$ndf;
-							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
-								@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
-							}
-							@b.join(', ')
-						}).join("\n")
-					~ 	"\n";
-			$TXT;
-	 }
-]
 	 if $MIXED || %!engine<FitType> ~~ /Global/ {
 		@outliers=False;
 		note "===> remove outliers is not yet implemented for mixed and global fits";
