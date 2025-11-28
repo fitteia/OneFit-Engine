@@ -543,7 +543,16 @@ EOT
 # {'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 		}
 		else {
-		 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
+		 	my $msg = "fit results";
+ 			say qq:to/EOT/ unless $quiet;
+
+{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+{$TXT.subst(/\n$/,'')}
+{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
+EOT
+
+#	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 		}		
 	 }
 	 %!engine<fit-results> = $TXT;
