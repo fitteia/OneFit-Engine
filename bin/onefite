@@ -236,20 +236,25 @@ onefite archive [-f||--fit=<Str>]
 	onefite log --fit=5
 
 =head2 Using awk to clean std output
+
 =begin itemize
 
-=item
+=item just awk
+=begin code
 	onefite fit .... | awk '!/^-/ {print}'
-
+=end code
 =item combine with --quiet
+=begin code
 	onefite .... --quiet | awk '!/^-/ {print}'
-
+=end code
 =item combine with "2>/dev/null"
+=begin code
 	onefite .... 2>/dev/null | awk '!/^-/ {print}'
-
+=end code
 =item combine with tee
+=begin code
 	onefite .... | tee filename; awk '!/^-/ {print}'i filename
-
+=end code
 =end itemize
 
 =head2 Built-in archiving
