@@ -700,7 +700,7 @@ EOT
 	 
 	 method chi2-ntps-ndf(:$mixed = False, :$removed-outliers=0) {
 		my $chi2 =	(@!blocks>>.chi2).sum;
-		my $npts = ((@!blocks>>.Data)>>.elems).sumi - $removed-outliers;
+		my $npts = ((@!blocks>>.Data)>>.elems).sum - $removed-outliers;
 		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $ngfp;
 		my $nifp = $mixed ?? (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum !! +0;
