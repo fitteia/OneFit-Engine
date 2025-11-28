@@ -384,7 +384,7 @@ multi MAIN( 'archive',
 
 #| Show archive log  
 multi MAIN( 'ar',
-	Str :f(:$fit)=""9, 
+	Str :f(:$fit)="", 
 	*@_
 ) {
 	MAIN( 'archive' , :fit($fit, @_) );
