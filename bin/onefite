@@ -388,9 +388,8 @@ multi MAIN( 'ar',
 	Str :f(:$fit)="", 
 	*%_
 ) {
-	say %_;
-	for %_.kv -> $k, $v { $v.^name }
-	my $fit1 = $fit.so ?? "$fit {|%_}" !! ''; 
+	my $fit1 = $fit
+	for %_.kv -> $k, $v { $fit1 ~= $v.^name ~~ Bool ?? "--$k" !! "--$k='$v'" }
 	MAIN( 'archive' , :fit($fit1) );
 }
 
