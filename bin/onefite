@@ -1522,9 +1522,9 @@ sub define-alias($engine,$dali) {
 }
 
 sub awk($engine,$s is copy) {
-	my $fit-results = $engine.h<fit-results>.lines.grep(/<![#]>/).subst(', ',' ',:g));
+	my $fit-results = $engine.h<fit-results>.lines.grep(/<![#]>/).subst(', ',' ',:g);
 	say $fit-results;
-	my $fit-results-all = $engine.h<fit-results-all>.lines.grep(/<![#]>/).subst(', ',' ',:g));
+	my $fit-results-all = $engine.h<fit-results-all>.lines.grep(/<![#]>/).subst(', ',' ',:g);
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
 	my $p = run "awk", "\{print $s\}",:in,:out;
 	$p.in.say($fit-result);s
