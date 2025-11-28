@@ -15,7 +15,7 @@ class HistoryLog is export {
 	multi method fit($s) {
 		my @keys =  %!arch.keys.sort;
 		my $selected = @keys.tail;
-		given $s.words.head {
+		given $s.words.head.Num {
 			when /:i last <ws> '-' <ws> \d+ / { $selected =@keys[@keys.elems - 1 - $s.split('-')[1].trim.Int] }
 			when /\d+/ { $selected = @keys[$s.Int] }
 		   	default { $selected }
