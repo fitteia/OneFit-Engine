@@ -1528,7 +1528,7 @@ sub awk($engine,$s is copy) {
 	my $p = shell(<<awk '\{print $s\}'>>,:in,:out,:err);
 	$p.in.spurt($fit-results,:close);
 	say $p.out.slurp(:close);
-	my $p = shell(<<awk '\{print $s\}'>>,:in,:out,:err);
+	$p = shell(<<awk '\{print $s\}'>>,:in,:out,:err);
 	$p.in.spurt($fit-results-all,:close);
 	say $p.out.slurp(:close);
 }
