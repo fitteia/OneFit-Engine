@@ -377,7 +377,8 @@ multi MAIN( 'archive',
 	Str :f(:$fit)="", #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
 	*%_
 ) {
-	my $fit1 = $fit.so ?? "$fit {|%_}" !! ''; 
+	my $fit1 = $fit;
+	for %_.kv -> $k, $v { $fit1 ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" }
 	my $log = HistoryLog.new;
 	if $fit.defined and $fit.chars { $log.fit($fit1) }
 	else { $log.print() }
@@ -398,7 +399,8 @@ multi MAIN( 'log',
 	Str :f(:$fit)="",
 	*%_
 ) {
-	my $fit1 = $fit.so ?? "$fit {|%_}" !! ''; 
+	my $fit1 = $fit;
+	for %_.kv -> $k, $v { $fit1 ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" }
 	MAIN( 'archive' , :fit($fit1) );
 }
 
