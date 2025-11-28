@@ -502,7 +502,7 @@ class Import is export {
 			$err = @Y.sum/$N*$err.split("%").head.Num/100;
 		}
 		elsif $err.contains("%") and !$err.contains(/ 'avg' | 'average'/) {
-			$err = '$2*' ~ $err.subst(/<[%average]>\+/,"").Num /100 ;
+			$err = '$2*' ~ $err.subst(/<[%averg]>\+/,"").Num /100 ;
 		}
 		elsif $err.contains(/:i 'x'/) {
 			$err = '$3*' ~ $err.subst(/:i 'x'/,'').Num ;
