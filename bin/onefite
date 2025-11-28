@@ -389,6 +389,7 @@ multi MAIN( 'ar',
 	*%_
 ) {
 	say %_;
+	for %_.kv -> $k, $v { $v.^name }
 	my $fit1 = $fit.so ?? "$fit {|%_}" !! ''; 
 	MAIN( 'archive' , :fit($fit1) );
 }
