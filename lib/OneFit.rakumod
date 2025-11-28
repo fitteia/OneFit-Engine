@@ -28,11 +28,15 @@ class Engine is export {
 	    %!engine = from-json($file.IO.slurp) ;
 	}
 	else {
-	    use Inline::Perl5;
+		use Inline::Perl5;
 	    use CGI:from<Perl5>;
 
-	    my $sav = CGI.new( $file.IO.open );
-	    for $sav.param { %!engine{$_} = $sav.param($_) }	 
+		try {
+    		my $sav = CGI.new( $file.IO.open );
+    		for $sav.param { %!engine{$_} = $sav.param($_) }	 
+
+			CATCH { default { note "===> $_" } }
+		}
 	}
 	%!engine<FitType> = "Global" unless %!engine<FitType>;
 	($h.Bool) ?? %!engine !! self;
@@ -146,11 +150,11 @@ class Engine is export {
 		
 			if all(!$autox,$logx,.Graph.Xaxis.h<min> <= 0.Num) {	
 				.Graph.Xaxis.scale( min => .X.min, max => .X.max, nt => 5 , auto => True); 
-	 			note  "Attention: you have --logx with Xaxis<min> {.Graph.Xaxis.h<min>}. Setting Xaxis<min>= { .X.min }";
+	 			note  "===> Attention: you have --logx with Xaxis<min> {.Graph.Xaxis.h<min>}. Setting Xaxis<min>= { .X.min }";
 			}
 			if all(!$autoy,$logy,.Graph.Yaxis.h<min> <= 0.Num) {	
 				.Graph.Yaxis.scale( :min(.Y.min), :max(.Y.max), :nt(5), auto => True);
-	 			note  "Attention: you have --logx with Yaxis<min> {.Graph.Yaxis.h<min>}. Setting Yaxis<min>= { .Y.min }";
+	 			note  "===> Attention: you have --logx with Yaxis<min> {.Graph.Yaxis.h<min>}. Setting Yaxis<min>= { .Y.min }";
 			}	
 
 	    }
@@ -311,7 +315,7 @@ class Engine is export {
 		Bool :$quiet=False
 	       ) {
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
-	 $*ERR.say("read blocks") unless $quiet;
+	 $*ERR.say("===> read blocks") unless $quiet;
 	 self.blocks(:read,
 		     :fit,:export,
 		     :autox($autox.Bool),
@@ -320,15 +324,20 @@ class Engine is export {
 		     :logy($logy),
 		     :quiet($quiet)
 		    );
-	 $*ERR.say("read pars") unless $quiet;
+	 $*ERR.say("===> read pars") unless $quiet;
 	 self.parameters(:read);
-	 $*ERR.say("read functions") unless $quiet;
+	 $*ERR.say("===> read functions") unless $quiet;
 	 self.functions(:read);
-	 $*ERR.say("write stp") unless $quiet;
+	 $*ERR.say("===> write stp") unless $quiet;
 	 self.stp;
-	 $*ERR.say("write code") unless $quiet;
+	 $*ERR.say("===> write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
-	 
+	 note "===> fit" unless $quiet;
+
+	 my Bool $MIXED=False;
+	 my %last = @!par-tables[0].a.tail;
+	 $MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
+ 
 	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
 	 my $f = { 
 		 my @b = $^a.split(/ '..' | '-' | ':' /); 
@@ -349,42 +358,14 @@ class Engine is export {
 
      my $npts-removed=0;
 
-	 my $set-data-err = {
-		my $i = $^a;
-		my $file = $^b;
-		my @data = $file.IO.lines.grep(/\d+/);
-		my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
-		$file.IO.spurt: 
-			@data.head
-			~ "\n" ~ 
-			@data.tail(*-1)
-				.map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
-				.join("\n")
-		;
-	 }
+	 if $MIXED || %!engine<FitType> ~~ /Global/ {
+		@outliers=False;
+		note "===> remove outliers is not yet implemented for mixed and global fits";
+	 }	
 
-	 my $reset-parameters-std = {
-			my @a = $^a.lines;
-			my $TXT = @a.head 
-					~ 	"\n" 
-					~ 	@a.tail(*-1).kv.map( -> $i, $v { 
-							my @b = $v.split(', ');
-							my $ndf = @b[1] - @!blocks[$i].parameters.free; 
-							my $chi2= @b[2];
-							@b[2] /= $chi2/$ndf;
-							for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
-								@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! @b[$_]*sqrt($chi2/$ndf).Rat;
-							}
-							@b.join(', ')
-						}).join("\n")
-					~ 	"\n";
-			$TXT;
-	 }
-	
+	 @!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
+
 	 if %!engine<FitType> ~~ /Individual/ {
-
-		@!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
-
 		for (1 .. @!blocks.elems).race {
 			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
 	}
@@ -397,7 +378,21 @@ class Engine is export {
 	    do {
 			self.agr;
 		 	for (1 .. @!blocks.elems).race {
-				$set-data-err($_-1,"$!path/data{$_}.dat") if (@outliers.so || $reduced-chi2);
+				#				$set-data-err($_-1,"$!path/data{$_}.dat") if (@outliers.so || $reduced-chi2);
+				#say "a  :\n","$!path/data{$_}.dat".IO.slurp;
+				if $MIXED {
+					my $chi2 =	(@!blocks>>.chi2).sum;
+					my $npts = ((@!blocks>>.Data)>>.elems).sum;
+					my $ngfp = @!blocks[0].parameters.free;
+					my $ndf = $npts - $ngfp;
+					my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
+					$ndf = $npts - $nifp*@!blocks.elems - $ngfp;  
+					@!blocks[$_-1].set-data-err(chi2 => $chi2, ndf => $ndf) if (@outliers.so || $reduced-chi2);
+				}
+				else {	
+					@!blocks[$_-1].set-data-err() if (@outliers.so || $reduced-chi2);
+				}
+				#say "b :\n","$!path/data{$_}.dat".IO.slurp;
 
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
@@ -407,14 +402,14 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		my $TXT = self!results();
-			$TXT = $reset-parameters-std($TXT);
+			$TXT = self!reset-parameters-std($TXT);
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
-	 		say qq:to/EOT/ unless $quiet;
-
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
+	 		say qq:to/EOT/;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
-$TXT
-{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{$TXT.subst(/\n$/,'')}
+{ '-' x (40-$foot.chars/2.0).floor } $foot { '-' x (40-$foot.chars/2.0).ceiling }
 EOT
 
 			for @pdfs -> $name {
@@ -422,52 +417,27 @@ EOT
 			}
 	
 			for (1 .. @!blocks.elems).race {
-				if @outliers.head.Num < 0 {
-					$npts-removed = +@outliers.head.Num.abs;
-					my @pruned-data="$!path/fit-residues-$_.res"
-						.IO
-						.lines
-						.grep(/^<![#]>/)
-						.map({ my @a = .words; @a.tail = @a.tail.abs; @a.join(' ')  })
-						.sort: *.words.tail.Numeric;
-				 	"$!path/data{$_}ro.dat".IO.spurt: 
-						"$!path/data$_.dat".IO.lines.head
-						~ "\n" ~ 
-						@pruned-data
-							.head(* + @outliers.head)
-							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
-							.sort( *.words.head.Numeric ).join("\n")
-					;
-				}
-				else {
-					my @pruned-data="$!path/data$_.dat".IO.lines;
-					$npts-removed = 0;
-					for @outliers {
-						@pruned-data.splice( +.head - $npts-removed, +.tail ).join("\n");
-						$npts-removed +=  +.tail;
-	 				}
-					#			say @pruned-data.join("\n");
-					"$!path/data{$_}ro.dat".IO.spurt: 
-						@pruned-data.head ~ "\n" ~ @pruned-data.tail(*-1).map({ 
-														my @a = .words;
-														@a[2]=1;
-														@a.join(' ') 
-													}).join("\n");
-				}
-	 		
+				$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
+
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
-     	 	for (1 .. @!blocks.elems).race {
+     	 	
+			for (1 .. @!blocks.elems).race {
 		 		shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
 	     	}
-	     	@!blocks.race.map( { .export(:plot) });
-	     	self.parameters(:read, :from-output, :from-log);
-	     	do {
+	     	
+			@!blocks.race.map( { .export(:plot) });
+	     	
+			self.parameters(:read, :from-output, :from-log);
+	     	
+			do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-					$set-data-err($_-1,"$!path/data{$_}ro.dat");
+#					$set-data-err($_-1,"$!path/data{$_}ro.dat");
+#					say "$!path/data{$_}ro.dat".IO.slurp;
 
-		     		shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
+					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat" );
+					shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsro.elems) -> $i {
@@ -487,7 +457,14 @@ EOT
 	     @!blocks.race.map( { .export(:plot) });
 	     self.parameters(:read, :from-output, :from-log);
 	     do {
-		 	self.agr;
+		 	if $reduced-chi2 {
+				my $chi2 =	(@!blocks>>.chi2).sum;
+				my $npts = ((@!blocks>>.Data)>>.elems).sum;
+				my $ngfp = @!blocks[0].parameters.free;
+				my $ndf = $npts - $ngfp;
+				@!blocks>>.set-data-err( chi2 => $chi2, ndf => $ndf );
+			}
+			self.agr;
 		 	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
 			shell "cd $!path; pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
@@ -504,29 +481,46 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-		$TXT = $reset-parameters-std($TXT);
+#		$TXT = $reset-parameters-std($TXT);
+		$TXT = self!reset-parameters-std($TXT);
 
-		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points removed";
- 		say qq:to/EOT/ unless $quiet;
+		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed*@!blocks.elems );
+		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points/block removed";
+ 		say qq:to/EOT/;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
-$TXT
-{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{$TXT.subst(/\n$/,'')}
+{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
 EOT
+
+#{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+
 	 }
 	 else { 
 		if $reduced-chi2 { 
-			$TXT = $reset-parameters-std($TXT);
+			$TXT = self!reset-parameters-std($TXT);
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
- 			say qq:to/EOT/ unless $quiet;
+ 			say qq:to/EOT/;
 
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
-$TXT
-{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
+{$TXT.subst(/\n$/,'')}
+{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
 EOT
+
+# {'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 		}
 		else {
-		 	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
+		 	my $msg = "fit results";
+ 			say qq:to/EOT/;
+
+{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+{$TXT.subst(/\n$/,'')}
+{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
+EOT
+
+#	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 		}		
 	 }
 	 %!engine<fit-results> = $TXT;
@@ -650,5 +644,54 @@ EOT
 		# say %!engine<par-tables>;
 	 	return $TXT;
     }
+
+	method !reset-parameters-std ($txt) {
+		my $chi2 =	(@!blocks>>.chi2).sum;
+		my $npts = ((@!blocks>>.Data)>>.elems).sum;
+		my $ngfp = @!blocks[0].parameters.free;
+		my $ndf = $npts - $ngfp;
+		my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
+
+#`(		say "chi2 = $chi2";
+		say "npts = $npts";
+		say "ngfp = $ngfp";
+		say "ndf = $ndf";
+		say "nifp= $nifp";
+)	
+		my @a = $txt.lines;
+		my Bool $MIXED=False;
+		my %last = @!par-tables[0].a.tail;
+		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
+	
+		$ndf = $npts - $nifp*@!blocks.elems - $ngfp if $MIXED; 
+
+		my $TXT = @a.head 
+				~ 	"\n" 
+				~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+						my @b = $v.split(', ');
+						if %!engine<FitType> ~~ /Individual/ {
+							$ndf = @b[1] - @!blocks[$i].parameters.free; 
+							$chi2= @b[2];
+						}
+						@b[2] = (@b[2]/($chi2/$ndf)).Rat;
+						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
+							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
+						}
+						@b.join(', ')
+					}).join("\n")
+				~ 	"\n";
+		$TXT;
+	 }
+	 
+	 method chi2-npts-ndf (:$mixed = False, :$removed-outliers=0) {
+		my $chi2 =	(@!blocks>>.chi2).sum.Rat;
+		my $npts = ((@!blocks>>.Data)>>.elems).sum - $removed-outliers;
+		my $ngfp = @!blocks[0].parameters.free;
+		my $ndf = $npts - $ngfp;
+		my $nifps = $mixed ?? (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum !! +0;
+		my $nfps = $nifps*@!blocks.elems + $ngfp;
+		$ndf = $npts - $nfps;  
+		return "tchi2 = $chi2, tnpts = $npts, nfps = $nfps"
+	}
 }
 

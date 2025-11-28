@@ -35,7 +35,7 @@ class Import is export {
 		my @files=();
 		for @input-files -> $file {
 			given self.is-type($file) {
-				note "\nFile $file is type: ", $_ unless $quiet;
+				note "===> File $file is type: ", $_ unless $quiet;
 				when 'sav' {
 					use Inline::Perl5;
 	    			use CGI:from<Perl5>;
@@ -102,7 +102,7 @@ class Import is export {
 			$file-name = $file unless @blocks.elems > 2;
 			@files.push: $file-name; 
 			"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
-			LAST { note "processed blocks: { @blocks.elems - 1 }" }
+			LAST { note "===> processed blocks: { @blocks.elems - 1 }" }
 		}
 		return @files;	
 	}
@@ -148,7 +148,7 @@ class Import is export {
 
 	    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
 	    	@data-files.push: $datafile;
-			LAST { note "processed zones: { @zones.elems }" }
+			LAST { note "===> processed zones: { @zones.elems }" }
 		}
 		"$path/$stelar-hdf5".IO.unlink;
 		return @data-files.sort.reverse;
@@ -247,7 +247,7 @@ class Import is export {
 
 		    	"$path/$datafile".IO.spurt:  "$header\n" ~ (@x Z @y Z @err).join("\n") ~ "\n\n";
 		    	@data-files.push: $datafile;
-				LAST { note "processed zones: { @zones.elems }" }
+				LAST { note "===> processed zones: { @zones.elems }" }
 			}
 		}
 		"$path/$stelar-sdf".IO.unlink;
@@ -285,7 +285,7 @@ class Import is export {
 			@zones[$_] = (@tau Z @Mz.map({ $_/$max}))>>.join(" ").join("\n");
 			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = { $datafile.IO.extension('').Str }\n" ~ @zones[$_].join("\n");
 			@files.push: $datafile;
-			LAST { note "processed zones: { @zones.elems }" }
+			LAST { note "===> processed zones: { @zones.elems }" }
 		}
 		if %!options<sef-R1-file> { @files = merge(self.path,%!options<sef-R1-file>,@files) }
 		return  @files;
@@ -330,7 +330,7 @@ class Import is export {
 			"$path/$datafile".IO.spurt: "$header\n" ~ @zone.join("\n") ~ "\n\n";
 			@files.push: $datafile;
 			last if @lines.elems <= 0;
-			LAST { note "processed zones: $proc/{ @ntaus.elems }, $empty empty" }
+			LAST { note "===> processed zones: $proc/{ @ntaus.elems }, $empty empty" }
 		}
 		return @files.sort.reverse
 	}
@@ -476,7 +476,7 @@ class Import is export {
 		my $tmp = "/tmp/{$*PID}-lixo.txt";	
 		$filename.IO.copy($tmp);
 		if $err.contains(/'std' | 'standard' <ws> 'deviation'/) {
-			note "using the standard deviation of your dependent variable to calculate its uncertainty";
+			note "===> using the standard deviation of your dependent variable to calculate its uncertainty";
 			my @Y;
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
@@ -490,7 +490,7 @@ class Import is export {
 			$err = sqrt(abs($Y2 - $N*$mean**2)/($N-1));
 		}
 		elsif $err.contains(/'avg' | 'average'/) {
-			note "using the average of the absolute value of your dependent variable to calculate its uncertainty";
+			note "===> using the average of the absolute value of your dependent variable to calculate its uncertainty";
 			my @Y;
 			for $filename.IO.lines(:close) {
 				my @xy = $_.words;
@@ -501,13 +501,17 @@ class Import is export {
 			my $N=@Y.elems;
 			$err = @Y.sum/$N*$err.split("%").head.Num/100;
 		}
-		elsif $err.contains("%") and !$err.contains(/ 'avg' | 'average'/) {
-			$err = '$2*' ~ $err.subst("%","").Num /100 ;
-		}
+		elsif $err.contains("%") and 
+			none($err.contains(/ 'avg' | 'average'/), $err.contains(/'std' | 'standard' <ws> 'deviation'/)) 
+			{ $err = '$2*' ~ $err.subst(/<[%averg]>+/,"").Num /100  }
+
+		elsif $err.contains(/:i 'x'/) { $err = '$3*' ~ $err.subst(/:i 'x'/,'').Num  }
+
 		else { $err = $err }
 
-		$filename.IO.spurt: shell("awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' $tmp", :out).out.slurp;
-	   unlink $tmp;	
+		my $cmd = "awk '\{ if (!/#/ && NF>=2) \{ \$3=$err; print \} else \{ print \}\}' $tmp";
+		$filename.IO.spurt: shell($cmd, :out).out.slurp;
+	   	unlink $tmp;	
 	}
 
 	sub set-errors($path,@files,$err) {

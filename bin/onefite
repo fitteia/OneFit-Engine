@@ -21,8 +21,6 @@
 
 =head2 Basic commands
 
-=begin itemize
-
 =item onefite
 
 =begin code :lang<bash>
@@ -93,11 +91,9 @@ onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--lo
 
     cd $(onefite path -s)
     vi $(onefite path -a)/aliases.json
-=end itemize
 
 =head2 Files conversion
 
-=begin itemize
 
 =item sav <--> json files conversion
 
@@ -114,11 +110,9 @@ onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
     Examples
 
     onefite convert some-fitteia-fit.sav ofe-version.json
-=end itemize
 
 =head2 OFE service commands
 
-=begin itemize
 
 =item Systemd service
 
@@ -152,7 +146,6 @@ onefite stop-web-engine
 =end code
 
     User command line to start/stop OFE web service
-=end itemize
 
 =head2 Create command
 
@@ -188,11 +181,13 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
+
+onefite archive [-f||--fit=<Str>]
 =end code
 
     Options
@@ -205,7 +200,6 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
 
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
-
     onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.txt --autox --logx --autoy
@@ -213,11 +207,11 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
-    
-	onefite fit #1exp file.txt --autox --logx --autoy
-    onefite fit #1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
-	
+	onefite fit "#1exp" file.txt --autox --logx --autoy
+    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
 	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0"
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="x10/100"
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10x"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="standard deviation"
@@ -225,6 +219,46 @@ onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--lo
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% avg"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% average"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1
+    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --reduced-chi2
+    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
+	onefite archive --fit last
+	onefite archive -f last-1
+	onefite log -f 2
+	onefite log --fit=5
+
+=head2 Using awk to clean std output
+=item just awk
+=begin code
+	onefite fit .... | awk '!/^-/ {print}'
+=end code
+=item combine with --quiet
+=begin code
+	onefite .... --quiet | awk '!/^-/ {print}'
+=end code
+=item combine with "2>/dev/null"
+=begin code
+	onefite .... 2>/dev/null | awk '!/^-/ {print}'
+=end code
+=item combine with tee
+=begin code
+	onefite .... | tee filename; awk '!/^-/ {print}' filename
+=end code
+
+=head2 Built-in archiving
+=item add to achive
+=begin code
+    onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
+=end code
+=item Show archive log
+=begin code
+	onefite archive || onefite ar || onefite log
+	onefite archive -f last
+	onefite log -f 2
+	onefite ar --fit last-3
+=end code
 
 =head2 Version upgrade
 
@@ -269,26 +303,22 @@ onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install
 
 =head2 File parameters
 
-=begin itemize
 =item input-file - name of the file to be converted (file extensions: .sav or .json)
 
 =item output-file - name of the converted file (file extensions: .sav or .json)
 
 =item data files - one or more files including plain text ASCII (.dat, .txt). Zip files are accepted.
       Special cases: Stelar S.R.l files (.sdf, .hdf5, .sef).
-=end itemize
 
 =head2 Fit methods
 
-=begin itemize
 =item fit-methods - simp scan min minos
-=end itemize
 =end pod
 
 my $time = BEGIN { now }
-END { note "Total execution time (s): " , now - INIT now }
+END { note "===> Total execution time (s): " , now - INIT now }
 
-note "Compile time: ", now - $time;
+note "===> Compile time: ", now - $time;
 
 our constant OFE-PATH="%OFE-PATH%";
 
@@ -352,6 +382,13 @@ multi MAIN( 'archive',
 }
 
 #| Show archive log  
+multi MAIN( 'ar',
+	Str :f(:$fit)="" 
+) {
+	MAIN( 'archive' , :fit($fit) );
+}
+
+#| Show archive log  
 multi MAIN( 'log',
 	Str :f(:$fit)="" 
 ) {
@@ -365,15 +402,8 @@ multi MAIN( 'man', Bool :m(:$man) ) { MAIN( :man($man) ) }
 multi MAIN ('list',
       	   Bool :q(:$quiet) = False #= reduces output log info, false by default
 	   ){
-#    my @list = dir(::('OFE-PATH') ~ "/C/local");
-#    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
-#    @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-#    my $txt = "OneFit Engine Models Library:\n";
-#    $txt ~= @list.join("\n");
      my $txt = MAIN('list', 'models', quiet => True);
-     #my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
     $txt ~= MAIN('list', 'aliases', quiet => True); 
-    #$txt ~=  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp  if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
     say $txt unless $quiet;
     $txt;
 }
@@ -897,7 +927,7 @@ multi MAIN  ('create',
 		 Str  :AuxCode(:auxcode(:$aux-code)) = "", #= additional auxiliar code
 		 *%_
 	    ){
-	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
     my $name = "ofe-tmp";
     shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
@@ -1034,7 +1064,7 @@ multi MAIN  ('fit',
 	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
 	*%_
     ){
-	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -1070,7 +1100,7 @@ MSG
 		}
     }
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
-		note "you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
+		note "===> you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
 		$global = True;
 	}
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
@@ -1168,7 +1198,7 @@ multi MAIN  ('fit',
 		say "{'-' x 80}\nfile $input-file dosen't exist\n{'-' x 80}";
 		exit(1);
 	} unless $input-file.IO.e;
-	note "onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
 	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	try {
