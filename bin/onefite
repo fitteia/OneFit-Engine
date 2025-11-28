@@ -250,11 +250,10 @@ onefite archive [-f||--fit=<Str>]
     onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
 	
-	onefite archive
-	onefite log
+	onefite archive || onefite ar || onefite log
 	onefite archive -f last
 	onefite log -f 2
-	onefite archive --fit last-3
+	onefite ar --fit last-3
 
 =head2 Version upgrade
 
