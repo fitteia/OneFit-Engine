@@ -509,7 +509,7 @@ class Import is export {
 		}
 		else { $err = $err }
 
-		my $cmd = "awk '\{ if (!/#/ && NF>2) \{ \$3=$err; print \} else \{ print \}\}' $tmp";
+		my $cmd = "awk '\{ if (!/#/ && NF>=2) \{ \$3=$err; print \} else \{ print \}\}' $tmp";
 		say $cmd;
 		$filename.IO.spurt: shell($cmd, :out).out.slurp;
 		say $filename.IO.slurp;
