@@ -1533,7 +1533,7 @@ sub awk($engine,$s is copy) {
 	say qq:to/EOT/;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 $txt
-{'-' x (40).floor}{'-' x (40).ceiling}
+{'-' x (41).floor}{'-' x (41).ceiling}
 EOT
 	if $fit-results-all.so {
 		$p = run "awk", "-F', '", "!/#/ && NF>0 \{print $s\}",:in,:out;
@@ -1544,7 +1544,7 @@ EOT
 		say qq:to/EOT/;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 $txt
-{'-' x (40).floor}{'-' x (40).ceiling}
+{'-' x (41).floor}{'-' x (41).ceiling}
 EOT
 	}
 }
