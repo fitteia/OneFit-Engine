@@ -1177,7 +1177,7 @@ MSG
 		$log.archive($cmd);
 	}
 	if $awk.so {
-		awk($engine,"4 5");
+		awk($engine,$awk);
 	}
     exit;
 }
@@ -1522,12 +1522,11 @@ sub define-alias($engine,$dali) {
 }
 
 sub awk($engine,$s is copy) {
-	my $fit-results = $engine.h<fit-results>.Str;
+	my $fit-results = $engine.h<fit-results>;
 	$fit-results .= subst(', ',' ',:g);
-	my $fit-results-all = $engine.h<fit-results-all>.Str;
+	my $fit-results-all = $engine.h<fit-results-all>;
 	$fit-results-all .= subst(', ',' ',:g) if $fit-results-all.so;
 	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
-	say $s;
 	my $p = run "awk", "\{print $s\}",:in,:out;
 	$p.in.say($fit-results);
 	$p.in.close;
