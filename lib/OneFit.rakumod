@@ -516,7 +516,7 @@ EOT
 #		$TXT = $reset-parameters-std($TXT);
 		$TXT = self!reset-parameters-std($TXT);
 
-		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
+		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed*@!blocks.elems );
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points removed";
  		say qq:to/EOT/ unless $quiet;
 
