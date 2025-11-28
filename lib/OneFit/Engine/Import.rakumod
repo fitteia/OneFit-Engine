@@ -501,12 +501,12 @@ class Import is export {
 			my $N=@Y.elems;
 			$err = @Y.sum/$N*$err.split("%").head.Num/100;
 		}
-		elsif $err.contains("%") and !$err.contains(/ 'avg' | 'average'/) {
-			$err = '$2*' ~ $err.subst(/<[%averg]>+/,"").Num /100 ;
-		}
-		elsif $err.contains(/:i 'x'/) {
-			$err = '$3*' ~ $err.subst(/:i 'x'/,'').Num ;
-		}
+		elsif $err.contains("%") and 
+			none($err.contains(/ 'avg' | 'average'/), $err.contains(/'std' | 'standard' <ws> 'deviation'/)) 
+			{ $err = '$2*' ~ $err.subst(/<[%averg]>+/,"").Num /100  }
+
+		elsif $err.contains(/:i 'x'/) { $err = '$3*' ~ $err.subst(/:i 'x'/,'').Num  }
+
 		else { $err = $err }
 
 		my $cmd = "awk '\{ if (!/#/ && NF>=2) \{ \$3=$err; print \} else \{ print \}\}' $tmp";
