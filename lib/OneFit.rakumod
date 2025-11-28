@@ -440,7 +440,7 @@ class Engine is export {
 	 		say qq:to/EOT/ unless $quiet;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{'-' x (41-self.chi2-ntps-ndf(:mixed($MIXED)).chars/2.0).floor}{self.chi2-npts-ndf(:mixed($MIXED)}{'-' x (41-self.chi2-npts-ndf(:mixed($MIXED)).chars/2.0).ceiling}
+{ '-' x (41-self.chi2-ntps-ndf(:mixed($MIXED)).chars/2.0).floor }{ self.chi2-npts-ndf(:mixed($MIXED)) }{ '-' x (41-self.chi2-npts-ndf(:mixed($MIXED)).chars/2.0).ceiling }
 EOT
 
 			for @pdfs -> $name {
