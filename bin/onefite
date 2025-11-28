@@ -378,7 +378,7 @@ multi MAIN( 'archive',
 	*@_
 ) {
 	my $log = HistoryLog.new;
-	if $fit.defined and $fit.chars { $log.fit($fit,@_) }
+	if $fit.defined and $fit.chars { $log.fit($fit ~ |@_) }
 	else { $log.print() }
 }
 
@@ -387,7 +387,7 @@ multi MAIN( 'ar',
 	Str :f(:$fit)="", 
 	*@_
 ) {
-	MAIN( 'archive' , :fit($fit, @_) );
+	MAIN( 'archive' , :fit($fit ~ |@_) );
 }
 
 #| Show archive log  
@@ -395,7 +395,7 @@ multi MAIN( 'log',
 	Str :f(:$fit)="",
 	*@_
 ) {
-	MAIN( 'archive' , :fit($fit,@_) );
+	MAIN( 'archive' , :fit($fit ~ |@_) );
 }
 
 #| Get onefite man page
