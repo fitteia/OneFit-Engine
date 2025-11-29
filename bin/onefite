@@ -1551,8 +1551,8 @@ sub print-cols($fit-results is copy,$s) {
 	my $txt = "# " ~ @a[@cols].join(', ');
 	say $txt;
 	my @txt;
-	@txt.push: $txt
-	for (1..@fit-results-lines.elems) { @txt.push: @fit-results-lines[$_].split(',')[@cols].join(' ') }
+	@txt.push: $txt;
+	for @fit-results-lines[1..*] { @txt.push: .split(',')[@cols].join(' ') }
 	$txt ~= @txt.join("\n");
 	my $msg ="fit-results selected columns";
 	say qq:to/EOT/;
