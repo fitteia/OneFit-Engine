@@ -1542,7 +1542,7 @@ sub print-cols($fit-results is copy,$s) {
 				@cols.push: $i - @two.tail.Int +1;
 			}
 			when /:i <[a..z]>+/ { @cols.push: @a>>.trim.grep($col, :k).head.Int +1; }
-			default { say "default"; @cols.push: $col.Int}
+			default { @cols.push: $col.Int }
 		};
 	}
 	@cols .= map({ .Int -1 });
