@@ -1540,8 +1540,8 @@ sub print-cols($fit-results is copy,$s) {
 				my $i = @a.grep(@two.head, :k).head.Int;
 				@cols.push: $i - @two.tail.Int;
 			}
-			when /:i <[a..z]>+/ { @cols.push: @a.grep($col, :k).head.Int }
-			default { @cols.push: $col.Int}
+			when /:i <[a..z]>+/ { say "string"; @cols.push: @a.grep($col, :k).head.Int }
+			default { say "default"; @cols.push: $col.Int}
 		};
 	}
 	@cols.map({ .Int -1 });
