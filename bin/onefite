@@ -1068,7 +1068,7 @@ multi MAIN  ('fit',
 	Str  :define-alias(:$dali)="",
 	Str  :AuxCode(:auxcode(:$aux-code)) = "",
 	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
-	Str	 :$awk="",
+	Str	 :cols(:$print-cols)="",
 	*%_
     ){
 		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -1176,8 +1176,8 @@ MSG
 		my $cmd = ("onefite", |@args).join(' ');
 		$log.archive($cmd);
 	}
-	if $awk.so {
-		awk($engine,$awk);
+	if $print-cols.so {
+		print-cols($engine,$awk);
 	}
     exit;
 }
@@ -1521,16 +1521,32 @@ sub define-alias($engine,$dali) {
 		}
 }
 
-sub awk($engine,$s is copy) {
+sub print-cols($engine,$s) {
 	my $fit-results = $engine.h<fit-results>;
-	#	$fit-results .= subst(', ',' ',:g);
+	$fit-results .= subst(/\n$/'') if $fit-rfesults.so;
 	my $fit-results-all = $engine.h<fit-results-all>;
 	$fit-results-all .= subst(', ',' ',:g) if $fit-results-all.so;
-	$s = $s.words.map({ '$' ~ .subst('$','')}).join(', ');
-	my $p = run "awk", "-F', '", "!/#/ \&\& NF>0 \{print $s\}",:in,:out;
-	$p.in.say($fit-results);
-	$p.in.close;
-	my $txt = $p.out.slurp: :close;
+	my @a=$fit-results.lines.head.split(',')>>.trim;
+	my @cols;
+	for $s.split(',').kv -> $k, $v {
+		my $col = $v.trim
+		given $col {
+		   	when /<[+]>/ { 
+				my @two = $v.split(/<ws> '+' <ws>/)>>.trim;
+				my $i = @a.grep(@two.head, :k);
+				@cols.push: $i;  
+				@cols.push: $i + @two.tail.Int 
+			}
+			when /<[-]>/ { 
+				my @two = $v.split(/<ws> '+' <ws>/)>>.trim;
+				my $i = @a.grep(@two.head, :k);
+				@cols.push: $i - @two.tail.Int 
+				@cols.push: $i;  
+			}
+			default { @cols.push: $v.Int}
+		};
+	}
+	my $txt = "# ",@a[@cols];
 	my $msg ="cat fit-results | awk";
 	say qq:to/EOT/;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
@@ -1538,9 +1554,6 @@ sub awk($engine,$s is copy) {
 {'-' x (41).floor}{'-' x (41).ceiling}
 EOT
 	if $fit-results-all.so {
-		$p = run "awk", "\{print $s\}",:in,:out;
-		$p.in.say($fit-results-all);
-		$p.in.close;
 		my $txt = $p.out.slurp: :close;
 		my $msg ="cat fit-results-all | awk";
 		say qq:to/EOT/;
