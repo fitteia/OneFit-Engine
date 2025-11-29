@@ -1551,13 +1551,12 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 	@lines.push: $txt;
 	for @fit-results-lines[1..*] { @lines.push: .split(',')[@cols].join(' ') }
 	$txt = @lines.join("\n");
-	say @lines>>.chars.max;
 	my $size = @lines>>.chars.max;
    	$size = 40 if $size < 40;
 	$size =  $size %% 2 ?? $size/2  !! ($size+1)/2;  
 	my $msg ="$label selected columns";
 	say qq:to/EOT/;
-{'-' x ($size-$msg.chars/2.0).floor} $msg {'-' x ($size/2-$msg.chars/2.0).ceiling}
+{'-' x ($size-$msg.chars/2.0).floor} $msg {'-' x ($size-$msg.chars/2.0).ceiling}
 $txt
 {'-' x ($size).floor}{'-' x ($size).ceiling}
 EOT
