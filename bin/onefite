@@ -1544,6 +1544,7 @@ sub print-cols($engine,$s) {
 				@cols.push: $i - @two.tail.Int;
 				@cols.push: $i;  
 			}
+			when /:i <[a..z]>+/ { @cols.push: @a.grep($col, :k) }
 			default { @cols.push: $col.Int}
 		};
 	}
