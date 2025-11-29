@@ -1535,12 +1535,12 @@ sub print-cols($engine,$s) {
 				my @two = $v.split(/<ws> '+' <ws>/)>>.trim;
 				my $i = @a.grep(@two.head, :k);
 				@cols.push: $i;  
-				@cols.push: $i + @two.tail.Int 
+				@cols.push: $i + @two.tail.Int; 
 			}
 			when /<[-]>/ { 
 				my @two = $v.split(/<ws> '+' <ws>/)>>.trim;
 				my $i = @a.grep(@two.head, :k);
-				@cols.push: $i - @two.tail.Int 
+				@cols.push: $i - @two.tail.Int;
 				@cols.push: $i;  
 			}
 			default { @cols.push: $v.Int}
