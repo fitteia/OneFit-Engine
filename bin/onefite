@@ -1534,13 +1534,13 @@ sub print-cols($fit-results is copy,$s) {
 		   	when /<[+]>/ { 
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
 				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
-				@cols.push: $i + @two.tail.Int;
+				@cols.push: $i + @two.tail.Int +1;
 			   say @two,@cols;	
 			}
 			when /<[-]>/ { 
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
 				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
-				@cols.push: $i - @two.tail.Int;
+				@cols.push: $i - @two.tail.Int +1;
 			}
 			when /:i <[a..z]>+/ { @cols.push: @a>>.trim.grep($col, :k).head.Int; say @cols }
 			default { say "default"; @cols.push: $col.Int}
