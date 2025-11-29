@@ -1177,7 +1177,8 @@ MSG
 		$log.archive($cmd);
 	}
 	if $cols.so {
-		print-cols($engine,$cols);
+		print-cols($engine.h<fit-results>,$cols) if $engine.h<fit-results>.so;
+		print-cols($engine.h<fit-results-all>,$cols) if $engine.h<fit-results-all>.so;
 	}
     exit;
 }
@@ -1521,12 +1522,9 @@ sub define-alias($engine,$dali) {
 		}
 }
 
-sub print-cols($engine,$s) {
-	my $fit-results = $engine.h<fit-results>;
-	$fit-results .= subst(/\n$/,'') if $fit-results.so;
-	my $fit-results-all = $engine.h<fit-results-all>;
-	$fit-results-all .= subst(/\n$/,'') if $fit-results-all.so;
-	my @a=$fit-results.lines.head.split(',')>>.trim;
+sub print-cols($fit-results is copy ,$s) {
+	$fit-results = $fit-results.subst(/^'#'|\n$/,'') if $fit-results.so;
+	my @a=$fit-results.lines.head.split(',');
 	my @cols;
 	for $s.split(',').kv -> $k, $v {
 		my $col = $v.trim;
@@ -1535,34 +1533,24 @@ sub print-cols($engine,$s) {
 		   	when /<[+]>/ { 
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
 				my $i = @a.grep(@two.head, :k).head.Int;
-				@cols.push: $i;  
 				@cols.push: $i + @two.tail.Int; 
 			}
 			when /<[-]>/ { 
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
 				my $i = @a.grep(@two.head, :k).head.Int;
 				@cols.push: $i - @two.tail.Int;
-				@cols.push: $i;  
 			}
 			when /:i <[a..z]>+/ { @cols.push: @a.grep($col, :k).head.Int }
 			default { @cols.push: $col.Int}
 		};
 	}
-	@cols.map({ $_ -1 });
+	@cols.map({ .Int -1 });
 	say @cols,@a ;
 	my $txt = "# ",@a[@cols].join(', ');
-	my $msg ="cat fit-results | awk";
+	my $msg ="fit-results selected columns";
 	say qq:to/EOT/;
 {'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
-{$txt.subst(', ', ' ',:g)}
-{'-' x (41).floor}{'-' x (41).ceiling}
-EOT
-	if $fit-results-all.so {
-		my $txt = "# ",@a[@cols];
-		my $msg ="cat fit-results-all | awk";
-		say qq:to/EOT/;
-{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
-{$txt.subst(', ',' ',:g)}
+$txt
 {'-' x (41).floor}{'-' x (41).ceiling}
 EOT
 	}
