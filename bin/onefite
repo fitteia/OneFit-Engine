@@ -1524,7 +1524,8 @@ sub define-alias($engine,$dali) {
 
 sub print-cols($fit-results is copy,$s) {
 	$fit-results = $fit-results.subst(/^'#'|\n$/,'');
-	my @a=$fit-results.lines.head.split(',');
+	my @fit-results-lines = $fit-results.lines;
+	my @a=@fit-results-lines.head.split(',');
 	my @cols;
 	for $s.split(',').kv -> $k, $v {
 		my $col = $v.trim;
@@ -1551,7 +1552,7 @@ sub print-cols($fit-results is copy,$s) {
 	say $txt;
 	my @txt;
 	@txt.push: $txt
-	for $fit-results.lines[1..*] { @txt.push: $_.split(',')[@cols].join(' ') }
+	for (1..@fit-results-lines.elems) { @txt.push: @fit-results-lines[$_].split(',')[@cols].join(' ') }
 	$txt ~= @txt.join("\n");
 	my $msg ="fit-results selected columns";
 	say qq:to/EOT/;
