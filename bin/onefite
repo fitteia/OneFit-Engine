@@ -1540,7 +1540,7 @@ sub print-cols($fit-results is copy,$s) {
 				my $i = @a.grep(@two.head, :k).head.Int;
 				@cols.push: $i - @two.tail.Int;
 			}
-			when /:i <[a..z]>+/ { say "string"; @cols.push: @a>>.trim..grep($col, :k).head.Int }
+			when /:i <[a..z]>+/ { @cols.push: @a>>.trim..grep($col, :k).head.Int; say @cols }
 			default { say "default"; @cols.push: $col.Int}
 		};
 	}
