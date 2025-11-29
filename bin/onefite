@@ -1534,17 +1534,17 @@ sub print-cols($engine,$s) {
 		given $col {
 		   	when /<[+]>/ { 
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
-				my $i = @a.grep(@two.head, :k);
+				my $i = @a.grep(@two.head, :k).flat;
 				@cols.push: $i;  
 				@cols.push: $i + @two.tail.Int; 
 			}
 			when /<[-]>/ { 
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
-				my $i = @a.grep(@two.head, :k);
+				my $i = @a.grep(@two.head, :k).flat;
 				@cols.push: $i - @two.tail.Int;
 				@cols.push: $i;  
 			}
-			when /:i <[a..z]>+/ { @cols.push: @a.grep($col, :k) }
+			when /:i <[a..z]>+/ { @cols.push: @a.grep($col, :k).flat }
 			default { @cols.push: $col.Int}
 		};
 	}
