@@ -1533,18 +1533,18 @@ sub print-cols($engine,$s) {
 		say $k,':',$v,':',$col;
 		given $col {
 		   	when /<[+]>/ { 
-				my @two = $v.split(/<ws> '+' <ws>/)>>.trim;
+				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
 				my $i = @a.grep(@two.head, :k);
 				@cols.push: $i;  
 				@cols.push: $i + @two.tail.Int; 
 			}
 			when /<[-]>/ { 
-				my @two = $v.split(/<ws> '+' <ws>/)>>.trim;
+				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
 				my $i = @a.grep(@two.head, :k);
 				@cols.push: $i - @two.tail.Int;
 				@cols.push: $i;  
 			}
-			default { @cols.push: $v.Int}
+			default { @cols.push: $col.Int}
 		};
 	}
 	my $txt = "# ",@a[@cols];
