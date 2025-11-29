@@ -228,6 +228,18 @@ onefite archive [-f||--fit=<Str>]
 	onefite log -f 2 --ro 1
 	onefite log --fit=5 --save-to=trash.json
 
+=head2 Trim fit-results to slected columns
+=item by order
+=begin code
+	onefite fit ... --print-cols="2,3,5"
+=end code
+	from fit-results it printis columns 2, 3 and 5
+=item by name
+=begine code
+	onefite fit "y(x,a,b) = a \+ b*x" .. --print-cols="2,a,a+1"
+=end code
+	from fit-results it prints column 2 and those of parameter a and its error
+
 =head2 Using awk to clean std output
 =item just awk
 =begin code
