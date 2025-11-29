@@ -1522,8 +1522,8 @@ sub define-alias($engine,$dali) {
 		}
 }
 
-sub print-cols($fit-results is copy ,$s) {
-	$fit-results = $fit-results.subst(/^'#'|\n$/,'') if $fit-results.so;
+sub print-cols($fit-results is copy,$s) {
+	$fit-results = $fit-results.subst(/^'#'|\n$/,'');
 	my @a=$fit-results.lines.head.split(',');
 	my @cols;
 	for $s.split(',').kv -> $k, $v {
@@ -1553,6 +1553,5 @@ sub print-cols($fit-results is copy ,$s) {
 $txt
 {'-' x (41).floor}{'-' x (41).ceiling}
 EOT
-	}
 }
 
