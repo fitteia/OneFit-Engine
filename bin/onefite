@@ -1532,12 +1532,12 @@ sub print-cols($fit-results is copy,$s) {
 		given $col {
 		   	when /<[+]>/ { 
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
-				my $i = @a.grep(@two.head, :k).head.Int;
+				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
 				@cols.push: $i + @two.tail.Int; 
 			}
 			when /<[-]>/ { 
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
-				my $i = @a.grep(@two.head, :k).head.Int;
+				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
 				@cols.push: $i - @two.tail.Int;
 			}
 			when /:i <[a..z]>+/ { @cols.push: @a>>.trim.grep($col, :k).head.Int; say @cols }
@@ -1545,7 +1545,7 @@ sub print-cols($fit-results is copy,$s) {
 		};
 	}
 	@cols .= map({ .Int -1 });
-	say @cols,@a ;
+	say @cols,@a[@cols] ;
 	my $txt = "# ",@a[@cols].join(', ');
 	my $msg ="fit-results selected columns";
 	say qq:to/EOT/;
