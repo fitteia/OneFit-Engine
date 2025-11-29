@@ -1523,9 +1523,9 @@ sub define-alias($engine,$dali) {
 
 sub print-cols($engine,$s) {
 	my $fit-results = $engine.h<fit-results>;
-	$fit-results .= subst(/\n$/'') if $fit-rfesults.so;
+	$fit-results .= subst(/\n$/,'') if $fit-rfesults.so;
 	my $fit-results-all = $engine.h<fit-results-all>;
-	$fit-results-all .= subst(', ',' ',:g) if $fit-results-all.so;
+	$fit-results-all .= subst(/\n$/,'') if $fit-results-all.so;
 	my @a=$fit-results.lines.head.split(',')>>.trim;
 	my @cols;
 	for $s.split(',').kv -> $k, $v {
