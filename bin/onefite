@@ -1530,7 +1530,7 @@ sub print-cols($engine,$s) {
 	my @cols;
 	for $s.split(',').kv -> $k, $v {
 		my $col = $v.trim;
-		say "$s, $k, $v, $col";
+		say "$k,':',$v,':',$col;
 		given $col {
 		   	when /<[+]>/ { 
 				my @two = $v.split(/<ws> '+' <ws>/)>>.trim;
