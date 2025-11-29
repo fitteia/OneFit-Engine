@@ -1544,7 +1544,7 @@ sub print-cols($fit-results is copy,$s) {
 			default { say "default"; @cols.push: $col.Int}
 		};
 	}
-	@cols.map({ .Int -1 });
+	@cols .= map({ .Int -1 });
 	say @cols,@a ;
 	my $txt = "# ",@a[@cols].join(', ');
 	my $msg ="fit-results selected columns";
