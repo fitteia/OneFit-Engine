@@ -235,7 +235,7 @@ onefite archive [-f||--fit=<Str>]
 =end code
 	from fit-results it printis columns 2, 3 and 5
 =item by name
-=begine code
+=begin code
 	onefite fit "y(x,a,b) = a \+ b*x" .. --print-cols="2,a,a+1"
 =end code
 	from fit-results it prints column 2 and those of parameter a and its error
