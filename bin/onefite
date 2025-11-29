@@ -1548,6 +1548,8 @@ sub print-cols($engine,$s) {
 			default { @cols.push: $col.Int}
 		};
 	}
+	@cols.map({ $_ -1 });
+	say @cols;
 	my $txt = "# ",@a[@cols];
 	my $msg ="cat fit-results | awk";
 	say qq:to/EOT/;
