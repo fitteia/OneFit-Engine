@@ -239,6 +239,11 @@ onefite archive [-f||--fit=<Str>]
 	onefite fit "y(x,a,b) = a \+ b*x" .. --print-cols="2,a,a+1"
 =end code
 	from fit-results it prints column 2 and those of parameter a and its error
+=begin code
+	onefite fit "y(x,a,b) = a \+ b*x" .. --print-cols="2,a,b-1"
+=end code
+	from fit-results it prints column 2 and those of parameter a and its error
+
 
 =head2 Using awk to clean std output
 =item just awk
