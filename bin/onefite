@@ -18,12 +18,20 @@
 	AFter installation, at any point users can creates shell command to help when a monotenous repetative use.
 
 =begin code 
+
 	which ofe
+	unset -f ofe
 	ofe() { onefite "$@"; }
+
 =end code
 
 =begin code 
-	iofe() { cd } 
+
+	which iofe
+	unsef iofe
+	onefiteSrcPath = $(onefite path --src 2>/dev/null}
+	iofe() { cd "$onefiteSrcPath" && ./INSTALL --/test && cd -; } 
+
 =end code
 
 =USAGE
@@ -525,7 +533,7 @@ multi MAIN ('upgrade',
 	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
 	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
-      Int  :p(:$port) = 8142, #= onefite service port
+      Int  :p(:$port) = 8142, #= onefite web service port
       Bool :$test = False, #= perform tests
 	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with locl branch
@@ -948,7 +956,7 @@ multi MAIN  ('create',
 		 Str  :pi(:$plot-if) = "", #= include plot if tag condition when plotting data and fitting curves
 		 Str  :sf(:$sef-R1-file) = "", #= use file to get freqs when importing data from Stelar sef files
 		 Str  :r(:$range) = "", #= define range when importing data zones form Stelar data
-		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc files
+		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc and Stelar sdf files
 		 Int  :$gfilt, #= used a Gaussian filter to smooth data
 		 Str  :se(:set-err(:$err))="", #= set err in data files doesn't apply to ist-ffc, sef, hdf5 data files 
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
