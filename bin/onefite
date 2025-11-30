@@ -890,9 +890,9 @@ multi MAIN ('help',
  
 #!(onefite non-web engine service)
 multi MAIN ('start-engine',
-	    Bool :$no-plot, #= no plot
+	    Bool :np:($no-plot), #= no plot
 	    Bool :q(:$quiet)=False, #= Don't show log messages
-	    Str :$work-folder = '.', #= onefite engine work folder
+	    Str  :wf(:$work-folder) = '.', #= onefite engine work folder
 	   ){
     my $supplier = Supplier.new;
     $supplier.Supply.tap: -> $f {
