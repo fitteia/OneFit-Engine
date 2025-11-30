@@ -14,25 +14,33 @@
 =NOTE
     This man page is expected to help you take full advantage of onefite on both the server and client sides.
 
-=DESCRIPTION
 	AFter installation, at any point users can creates shell command to help when a monotenous repetative use.
 
 =begin code 
-
-	which ofe
-	unset -f ofe
-	ofe() { onefite "$@"; }
+	
+	which ofe 2>/dev/null
+	unset -f ofe 2>/dev/null || true
+	ofe() { command onefite "$@"; }
 
 =end code
+
 
 =begin code 
 
-	which iofe
-	unsef iofe
-	onefiteSrcPath = $(onefite path --src 2>/dev/null}
-	iofe() { cd "$onefiteSrcPath" && ./INSTALL --/test && cd -; } 
+	which iofe 2>/dev/null
+	unset -f iofe 2>/dev/null || true
+	onefiteSrcPath="$(onefite path --src 2>/dev/null)"
+	iofe() {
+    	cd "$onefiteSrcPath" || return
+    	./INSTALL --no-test
+    	cd - >/dev/null || return
+	}
 
 =end code
+
+
+=DESCRIPTION
+	Not yet!
 
 =USAGE
 
