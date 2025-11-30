@@ -14,8 +14,33 @@
 =NOTE
     This man page is expected to help you take full advantage of onefite on both the server and client sides.
 
+	After installation, users can create shell commands at any time to help with monotonous, repetitive use.
+
+=begin code 
+	
+	which ofe 2>/dev/null
+	unset -f ofe 2>/dev/null || true
+	ofe() { command onefite "$@"; }
+
+=end code
+
+
+=begin code 
+
+	which iofe 2>/dev/null
+	unset -f iofe 2>/dev/null || true
+	onefiteSrcPath="$(onefite path --src 2>/dev/null)"
+	iofe() {
+    	cd "$onefiteSrcPath" || return
+    	./INSTALL --no-test
+    	cd - >/dev/null || return
+	}
+
+=end code
+
+
 =DESCRIPTION
-    this is it
+	Not yet!
 
 =USAGE
 
@@ -181,9 +206,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols=<Str>]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols=<Str>]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -218,15 +243,32 @@ onefite archive [-f||--fit=<Str>]
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std split at 5"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% avg"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% average"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5"
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --cols="a,b,b+1"
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1
     onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --reduced-chi2
     onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
 	onefite archive --fit last
-	onefite archive -f last-1
-	onefite log -f 2
-	onefite log --fit=5
+	onefite archive -f last-1 --rchi2
+	onefite log -f 2 --ro 1
+	onefite log --fit=5 --save-to=trash.json
+
+=head2 Trim fit-results to slected columns
+=item by order
+=begin code
+	onefite fit ... --print-cols="2,3,5"
+=end code
+	from fit-results it printis columns 2, 3 and 5
+=item by name
+=begin code
+	onefite fit "y(x,a,b) = a \+ b*x" .. --print-cols="2,a,a+1"
+=end code
+	from fit-results it prints column 2 and those of parameter a and its error
+=begin code
+	onefite fit "y(x,a,b) = a \+ b*x" .. --print-cols="2,a,b-1"
+=end code
+	from fit-results it prints column 2 and those of parameter a and its error
+
 
 =head2 Using awk to clean std output
 =item just awk
@@ -365,7 +407,7 @@ END_USAGE
 
 #| Get onefite man page
 multi MAIN (
-	Bool :$man = False, 
+	Bool :$man = False, #= generate man page standar output 
 ) {
 	my $txt = $man ?? Pod::To::Man.pod2man($=pod) !! pod2text $=pod;
 	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
@@ -374,8 +416,10 @@ multi MAIN (
 }
 #| Show archive log  
 multi MAIN( 'archive',  
-	Str :f(:$fit)="" #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
+	Str :f(:$fit) is copy="", #= fit archive log entry: ex: onefite archive -f last or onefite log --fit 10
+	*%_
 ) {
+	if $fit.so && %_.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
 	my $log = HistoryLog.new;
 	if $fit.defined and $fit.chars { $log.fit($fit) }
 	else { $log.print() }
@@ -383,15 +427,19 @@ multi MAIN( 'archive',
 
 #| Show archive log  
 multi MAIN( 'ar',
-	Str :f(:$fit)="" 
+	Str :f(:$fit) is copy ="", 
+	*%_
 ) {
+	if $fit.so && %_.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
 	MAIN( 'archive' , :fit($fit) );
 }
 
 #| Show archive log  
 multi MAIN( 'log',
-	Str :f(:$fit)="" 
+	Str :f(:$fit) is copy ="",
+	*%_
 ) {
+	if $fit.so && %_.so { for %_.kv -> $k, $v { $fit ~= $v.isa(Bool) ?? " --$k" !! " --$k='$v'" } }
 	MAIN( 'archive' , :fit($fit) );
 }
 
@@ -436,12 +484,12 @@ multi MAIN ('list','aliases',
 
 #| onefite convert sav <-> json files 
 multi MAIN ('convert',
-	    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (sav or json)
-	    Str $output-file, #= name of the converted file (sav or json)
-            Str :$work-folder = "." #= work folder for onefite convert
-	   ) {
-    my $eng = Engine.new.path($work-folder).read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
-    return 0;
+    Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, #= name of the file to be converted (sav or json)
+    Str $output-file, #= name of the converted file (sav or json)
+    Str :$work-folder = "." #= work folder for onefite convert
+   ) {
+   		my $eng = Engine.new.path($work-folder).read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
+    	return 0;
 }
 
 #|( Get onefite paths to src, etc)
@@ -493,7 +541,7 @@ multi MAIN ('upgrade',
 	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
 	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
-      Int  :p(:$port) = 8142, #= onefite service port
+      Int  :p(:$port) = 8142, #= onefite web service port
       Bool :$test = False, #= perform tests
 	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with locl branch
@@ -850,9 +898,9 @@ multi MAIN ('help',
  
 #!(onefite non-web engine service)
 multi MAIN ('start-engine',
-	    Bool :$no-plot, #= no plot
+	    Bool :np(:$no-plot), #= no plot
 	    Bool :q(:$quiet)=False, #= Don't show log messages
-	    Str :$work-folder = '.', #= onefite engine work folder
+	    Str  :wf(:$work-folder) = '.', #= onefite engine work folder
 	   ){
     my $supplier = Supplier.new;
     $supplier.Supply.tap: -> $f {
@@ -901,30 +949,30 @@ multi MAIN ('start-engine',
 multi MAIN  ('create',
 	     Str  $function is copy, #= fitting function
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) }, 
-	     Str  :data-label(:$data-labels), #= data labels and values
-         Str  :$fit-methods = "simp scan min minos", #= minuit fit methods
-	     Str  :$tags, #= Data blocks TAGS
-	     Bool :$autox, #= auto scale x
-	     Bool :$autoy, #= auto scale y
-	     Bool :$autoxy, #= auto scale both x and y
-	     Bool :logy(:$linlog), #= logarithmic y scale
-	     Bool :logx(:$loglin), #= logaroithmic x scale
-	     Bool :logxy(:$loglog), # log log scale
-	     Bool :$global = False, #= global/individual 
+	     Str  :dl(:data-label(:$data-labels)), #= data labels and values
+         Str  :fm(:$fit-methods) = "simp scan min minos", #= minuit fit methods
+	     Str  :t(:$tags), #= Data blocks TAGS
+		 Bool :ax(:auto-x(:$autox)),#= auto scale x
+   		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
+   		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
+	     Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
+   		 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
+	     Bool :g(:$global) = False, #= global/individual 
 	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False, #= import Mz data from ist-ffc 
-		 Str  :$fit-if = "", #= include fit if condition when fitting data
-		 Str  :$plot-if = "", #= include plot if tag condition when plotting data and fitting curves
-		 Str  :$sef-R1-file = "", #= use file to get freqs when importing data from Stelar sef files
-		 Str  :$range = "", #= define range when importing data zones form Stelar data
-		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc files
+		 Str  :fi(:$fit-if) = "", #= include fit if condition when fitting data
+		 Str  :pi(:$plot-if) = "", #= include plot if tag condition when plotting data and fitting curves
+		 Str  :sf(:$sef-R1-file) = "", #= use file to get freqs when importing data from Stelar sef files
+		 Str  :r(:$range) = "", #= define range when importing data zones form Stelar data
+		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc and Stelar sdf files
 		 Int  :$gfilt, #= used a Gaussian filter to smooth data
-		 Str  :set-err(:$err)="", #= set err in data files doesn't apply to ist-ffc, sef, hdf5 data files 
+		 Str  :se(:set-err(:$err))="", #= set err in data files doesn't apply to ist-ffc, sef, hdf5 data files 
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
-	     Str  :save-to(:$to), #= write fit settings and results to json or sav file
-	     Str  :$work-folder = '.', #= set a different work folder
-         Int  :Num(:$npts) = +100, #= number of points in the theoretical curves
+	     Str  :st(:save-to(:$to)), #= write fit settings and results to json or sav file
+	     Str  :wf(:$work-folder) = '.', #= set a different work folder
+         Int  :n(:Num(:$npts)) = +100, #= number of points in the theoretical curves
 		 Bool :q(:$quiet) = False, #= reduce log output
-		 Str  :AuxCode(:auxcode(:$aux-code)) = "", #= additional auxiliar code
+		 Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "", #= additional auxiliar code
 		 *%_
 	    ){
 	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -982,20 +1030,20 @@ multi MAIN  ('create',
 multi MAIN  ('random',
 	     Str  $function, 
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Str  :data-label(:$data-labels),
-	     Str  :$tags,
-	     Str  :$zip-to,
-	     Bool :$no-plot,
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
-	     Bool :$global,
-	     Str  :$save-to, # write fit settings to json or sav file 
-	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts) = +100,
+	     Str  :dl(:data-label(:$data-labels)),
+	     Str  :t(:$tags),
+	     Str  :zt(:$zip-to), #= zip work-folder to zipfile
+	     Bool :inp(:$no-plot), #= no plot in onefit random ...
+		 Bool :ax(:auto-x(:$autox)),#= auto scale x
+   		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
+   		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
+	     Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
+   		 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
+	     Bool :g(:$global),
+	     Str  :st(:to(:$save-to)), # write fit settings to json or sav file 
+	     Str  :wf(:$work-folder) = '.',
+	     Int  :n(:Num(:$npts)) = +100,
 		 Bool :q(:$quiet) = False,
 	    ){
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
@@ -1034,34 +1082,35 @@ multi MAIN  ('fit',
 	Str  $function is copy, 
    	*@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
    	Str  :data-label(:$data-labels),
-   	Str  :$fit-methods = "simp scan min minos",
-   	Str  :$tags,
-   	Str  :$zip-to,
-   	Bool :$no-plot,
-   	Bool :auto-x(:$autox),
-   	Bool :auto-y(:$autoy),
-   	Bool :auto-xy(:$autoxy),
-   	Bool :logy(:log-y(:ylog(:$linlog))),
-   	Bool :logx(:log-x(:xlog(:$loglin))),
-   	Bool :logxy(:log-xy(:$loglog)),
-   	Bool :$global is copy,
-	Str  :$fit-if = "",
-	Str  :$plot-if = "",
-	Str  :$sef-R1-file = "",
- 	Str  :$range = "",
+   	Str  :fm(:$fit-methods) = "simp scan min minos",
+   	Str  :t(:$tags),
+   	Str  :zt(:$zip-to),
+   	Bool :np(:$no-plot),
+   	Bool :ax(:auto-x(:$autox)),
+   	Bool :ay(:auto-y(:$autoy)),
+   	Bool :axy(:auto-xy(:$autoxy)),
+   	Bool :lx(:logy(:log-y(:ylog(:$linlog)))),
+   	Bool :ly(:logx(:log-x(:xlog(:$loglin)))),
+   	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
+   	Bool :g(:$global) is copy,
+	Str  :fi(:$fit-if) = "",
+	Str  :pi(:$plot-if) = "",
+	Str  :sf(:$sef-R1-file) = "",
+ 	Str  :r(:$range) = "",
 	Bool :$R1 = False,
-	Bool :rchi2(:$reduced-chi2) = False, #= recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom 
+	Bool :rc(:rchi2(:$reduced-chi2)) = False, #= recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom 
 	Int  :$gfilt,
-	Str  :set-err(:$err)="",
+	Str  :se(:set-err(:$err)) ="",
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
-    Str  :$save-to, # write fit settings to json or sav file 
-    Str  :$work-folder = '.',
-    Int  :Num(:$npts) = +100,
+    Str  :st(:$save-to), # write fit settings to json or sav file 
+    Str  :wf(:$work-folder) = '.',
+    Int  :n(:N(:Num(:$npts))) = +100,
 	Bool :ar(:$archive) = False, #= add log entry and archive data
 	Bool :q(:$quiet) = False,
-	Str  :define-alias(:$dali)="",
-	Str  :AuxCode(:auxcode(:$aux-code)) = "",
+	Str  :da(:define-alias(:$dali))="",
+	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
 	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
+	Str	 :pc(:print-cols(:$cols)) ="", #= select fit-results columns by number or name or name+1 or name-1
 	*%_
     ){
 		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -1169,29 +1218,34 @@ MSG
 		my $cmd = ("onefite", |@args).join(' ');
 		$log.archive($cmd);
 	}
+	if $cols.so {
+		print-cols( $engine.h<fit-results-all>,$cols, :label("fit-results-all") ) if $engine.h<fit-results-all>.so;
+		print-cols( $engine.h<fit-results>,$cols ) if $engine.h<fit-results>.so;
+	}
     exit;
 }
 
 multi MAIN  ('fit',
      Str  $input-file, # name of the (sav or json) to compile
-     Str  :$fit-methods = "simp scan min minos",
-     Bool :$no-plot,
-     Bool :auto-x(:$autox),
-     Bool :auto-y(:$autoy),
-     Bool :auto-xy(:$autoxy),
-     Bool :logy(:log-y(:ylog(:$linlog))),
-     Bool :logx(:log-x(:xlog(:$loglin))),
-     Bool :logxy(:log-xy(:xy-log(:$loglog))),
-     Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
-	 Bool :rchi2(:$reduced-chi2) = False, 
-     Str  :$zip-to = $input-file.IO.extension('').Str,
-     Str  :$work-folder = '.',
-     Int  :Num(:$npts),
-	 Bool :$export = False,
+     Str  :fm(:$fit-methods) = "simp scan min minos",
+     Bool :np(:$no-plot),
+   	 Bool :ax(:auto-x(:$autox)),#= auto scale x
+   	 Bool :ay(:auto-y(:$autoy)),#= auto scale y
+   	 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
+     Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
+	 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+  	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
+	 Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
+	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
+     Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
+     Str  :wf(:$work-folder) = '.',
+     Int  :n(:N(:Num(:$npts))),
+	 Bool :e(:$export) = False,
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
-	 Str  :define-alias(:$dali)="",
+	 Str  :da(:define-alias(:$dali)) ="",
 	 Bool :ar(:$archive) = False,
+	 Str  :pc(:print-cols(:$cols)) ="", 
 	 *%_
     ){
 	do {
@@ -1276,6 +1330,9 @@ MSG
 		my $log = HistoryLog.new;
 		my $cmd = ("onefite", |@*ARGS).join(' ');
 		$log.archive($cmd);
+	}	
+	if $cols.so {
+		print-cols( $engine.h<fit-results>,$cols ) if $engine.h<fit-results>.so;
 	}
     exit;
 }
@@ -1283,14 +1340,14 @@ MSG
 
 multi MAIN  ('plot',
 	     Str $input-file where { $input-file.IO.e or die "$input-file dosen't exist!" }, # name of the (sav or json) to compile
-	     Bool :$autox,
-	     Bool :$autoy,
-	     Bool :$autoxy,
-	     Bool :logy(:$linlog),
-	     Bool :logx(:$loglin),
-	     Bool :logxy(:$loglog),
-	     Str  :$work-folder = '.',
-	     Int  :Num(:$npts)
+	   	 Bool :ax(:auto-x(:$autox)),#= auto scale x
+   		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
+   		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
+    	 Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
+		 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+  		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
+	     Str  :wf(:$work-folder) = '.',
+	     Int  :n(:N(:Num(:$npts)))
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
@@ -1319,8 +1376,8 @@ multi MAIN ('test','list') {
 
 multi MAIN ('test',
 	    *@arr,
-		Bool :d(:$systemd-daemon) = True,
-		Bool :p(:$post-install) = True,
+		Bool :d(:$systemd-daemon) = True, #= test debian systemd daemon
+		Bool :p(:$post-install) = True, #= post-install 
 	    Bool :verbose(:$v) = False
 	   ){
     my $test-path=OFE-PATH ~ "/t";
@@ -1511,4 +1568,45 @@ sub define-alias($engine,$dali) {
 		}
 }
 
+sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
+	$fit-results = $fit-results.subst(/^'#'|\n$/,'');
+	my @fit-results-lines = $fit-results.lines;
+	my @a=@fit-results-lines.head.split(',');
+	my @cols;
+	for $s.split(',').kv -> $k, $v {
+		my $col = $v.trim;
+		#		say $k,':',$v,':',$col;
+		given $col {
+		   	when /<[+]>/ { 
+				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
+				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
+				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
+				@cols.push: $i + 1 + @two.tail.Int ;
+			}
+			when /<[-]>/ { 
+				my @two = $col.split(/<ws> '-' <ws>/)>>.trim;
+				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
+				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
+				@cols.push: $i + 1 - @two.tail.Int ;
+			}
+			when /:i <[a..z]>+/ { @cols.push: @a>>.trim.grep($col, :k).head.Int +1; }
+			default { @cols.push: $col.Int }
+		};
+	}
+	@cols .= map({ .Int -1 });
+	my $txt = "# " ~ @a[@cols].join(', ');
+	my @lines;
+	@lines.push: $txt;
+	for @fit-results-lines[1..*] { @lines.push: .split(',')[@cols].join(' ') }
+	$txt = @lines.join("\n");
+	my $size = @lines>>.chars.max;
+   	$size = 40 if $size < 40;
+	$size =  $size %% 2 ?? $size/2  !! ($size+1)/2;  
+	my $msg ="$label selected columns";
+	say qq:to/EOT/;
+{'-' x ($size-$msg.chars/2.0).floor} $msg {'-' x ($size-$msg.chars/2.0).ceiling}
+$txt
+{'-' x ($size-$msg.chars/2.0).floor}{ '-' x $msg.chars+2 }{'-' x ($size-$msg.chars/2.0).ceiling}
+EOT
+}
 
