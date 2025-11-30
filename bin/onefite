@@ -1073,7 +1073,7 @@ multi MAIN  ('fit',
 	Str  :sf(:$sef-R1-file) = "",
  	Str  :r(:$range) = "",
 	Bool :$R1 = False,
-	Bool :rchi2(:$reduced-chi2) = False, #= recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom 
+	Bool :rc(:rchi2(:$reduced-chi2)) = False, #= recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom 
 	Int  :$gfilt,
 	Str  :se(:set-err(:$err)) ="",
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
@@ -1211,7 +1211,7 @@ multi MAIN  ('fit',
 	 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
   	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	 Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
-	 Bool :rchi2(:$reduced-chi2) = False, 
+	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
      Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
      Str  :wf(:$work-folder) = '.',
      Int  :n(:N(:Num(:$npts))),
