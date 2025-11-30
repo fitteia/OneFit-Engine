@@ -1017,7 +1017,7 @@ multi MAIN  ('random',
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Bool :g(:$global),
 	     Str  :st(:to(:$save-to)), # write fit settings to json or sav file 
-	     Str  :wf(:$work-folder)) = '.',
+	     Str  :wf(:$work-folder) = '.',
 	     Int  :n(:Num(:$npts)) = +100,
 		 Bool :q(:$quiet) = False,
 	    ){
