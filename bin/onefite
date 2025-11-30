@@ -890,7 +890,7 @@ multi MAIN ('help',
  
 #!(onefite non-web engine service)
 multi MAIN ('start-engine',
-	    Bool :np:($no-plot), #= no plot
+	    Bool :np(:$no-plot), #= no plot
 	    Bool :q(:$quiet)=False, #= Don't show log messages
 	    Str  :wf(:$work-folder) = '.', #= onefite engine work folder
 	   ){
