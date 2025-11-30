@@ -23,8 +23,6 @@
 	ofe() { command onefite "$@"; }
 
 =end code
-
-
 =begin code 
 
 	which iofe 2>/dev/null
@@ -37,6 +35,14 @@
 	}
 
 =end code
+=begin code 
+
+	which ofeh 2>/dev/null
+	unset -f ofeh 2>/dev/null || true
+	ofeh() { history 0 | grep -E 'onefite|ofe' || return }
+
+=end code
+
 
 
 =DESCRIPTION
