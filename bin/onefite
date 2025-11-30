@@ -927,12 +927,12 @@ multi MAIN  ('create',
 	     Str  :data-label(:$data-labels), #= data labels and values
          Str  :$fit-methods = "simp scan min minos", #= minuit fit methods
 	     Str  :$tags, #= Data blocks TAGS
-	     Bool :$autox, #= auto scale x
-	     Bool :$autoy, #= auto scale y
-	     Bool :$autoxy, #= auto scale both x and y
-	     Bool :logy(:$linlog), #= logarithmic y scale
-	     Bool :logx(:$loglin), #= logaroithmic x scale
-	     Bool :logxy(:$loglog), # log log scale
+		 Bool :ax(:auto-x(:$autox)),#= auto scale x
+   		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
+   		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
+	     Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
+   		 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Bool :$global = False, #= global/individual 
 	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False, #= import Mz data from ist-ffc 
 		 Str  :$fit-if = "", #= include fit if condition when fitting data
@@ -1061,12 +1061,12 @@ multi MAIN  ('fit',
    	Str  :$tags,
    	Str  :$zip-to,
    	Bool :$no-plot,
-   	Bool :auto-x(:$autox),
-   	Bool :auto-y(:$autoy),
-   	Bool :auto-xy(:$autoxy),
-   	Bool :logy(:log-y(:ylog(:$linlog))),
-   	Bool :logx(:log-x(:xlog(:$loglin))),
-   	Bool :logxy(:log-xy(:$loglog)),
+   	Bool :ax(:auto-x(:$autox)),
+   	Bool :ay(:auto-y(:$autoy)),
+   	Bool :axy(:auto-xy(:$autoxy)),
+   	Bool :lx(:logy(:log-y(:ylog(:$linlog)))),
+   	Bool :ly(:logx(:log-x(:xlog(:$loglin)))),
+   	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
    	Bool :$global is copy,
 	Str  :$fit-if = "",
 	Str  :$plot-if = "",
@@ -1204,13 +1204,13 @@ multi MAIN  ('fit',
      Str  $input-file, # name of the (sav or json) to compile
      Str  :$fit-methods = "simp scan min minos",
      Bool :$no-plot,
-     Bool :auto-x(:$autox),
-     Bool :auto-y(:$autoy),
-     Bool :auto-xy(:$autoxy),
-     Bool :logy(:log-y(:ylog(:$linlog))),
-     Bool :logx(:log-x(:xlog(:$loglin))),
-     Bool :logxy(:log-xy(:xy-log(:$loglog))),
-     Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
+   	 Bool :ax(:auto-x(:$autox)),#= auto scale x
+   	 Bool :ay(:auto-y(:$autoy)),#= auto scale y
+   	 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
+     Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
+	 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+  	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
+	 Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
 	 Bool :rchi2(:$reduced-chi2) = False, 
      Str  :$zip-to = $input-file.IO.extension('').Str,
      Str  :$work-folder = '.',
