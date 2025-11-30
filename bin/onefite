@@ -15,7 +15,16 @@
     This man page is expected to help you take full advantage of onefite on both the server and client sides.
 
 =DESCRIPTION
-    this is it
+	AFter installation, at any point users can creates shell command to help when a monotenous repetative use.
+
+=begin code 
+	which ofe
+	ofe() { onefite "$@"; }
+=end code
+
+=begin code 
+	iofe() { cd } 
+=end code
 
 =USAGE
 
