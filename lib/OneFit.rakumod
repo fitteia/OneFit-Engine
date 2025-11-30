@@ -406,10 +406,11 @@ class Engine is export {
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
+			my $size = max-line-length($TXT);
 	 		say qq:to/EOT/;
-{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+{'-' x ($size-$msg.chars/2.0).floor} $msg {'-' x ($size-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{ '-' x (40-$foot.chars/2.0).floor } $foot { '-' x (40-$foot.chars/2.0).ceiling }
+{ '-' x ($size-$foot.chars/2.0).floor } $foot { '-' x ($size-$foot.chars/2.0).ceiling }
 EOT
 
 			for @pdfs -> $name {
@@ -486,26 +487,25 @@ EOT
 
 		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed*@!blocks.elems );
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points/block removed";
+		my $size = max-line-length($TXT);
  		say qq:to/EOT/;
 
-{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+{'-' x ($size-$msg.chars/2.0).floor} $msg {'-' x ($size-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
+{'-' x ($size-$foot.chars/2.0).floor} $foot {'-' x ($size-$foot.chars/2.0).ceiling}
 EOT
-
-#{'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
-
 	 }
 	 else { 
 		if $reduced-chi2 { 
 			$TXT = self!reset-parameters-std($TXT);
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
+			my $size = max-line-length($TXT);
  			say qq:to/EOT/;
 
-{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+{'-' x ($size-$msg.chars/2.0).floor} $msg {'-' x ($size-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
+{'-' x ($size-$foot.chars/2.0).floor} $foot {'-' x ($size-$foot.chars/2.0).ceiling}
 EOT
 
 # {'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
@@ -513,14 +513,13 @@ EOT
 		else {
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit results";
+			my $size = max-line-length($TXT);
  			say qq:to/EOT/;
 
-{'-' x (40-$msg.chars/2.0).floor} $msg {'-' x (40-$msg.chars/2.0).ceiling}
+{'-' x ($size-$msg.chars/2.0).floor} $msg {'-' x ($size-$msg.chars/2.0).ceiling}
 {$TXT.subst(/\n$/,'')}
-{'-' x (40-$foot.chars/2.0).floor} $foot {'-' x (40-$foot.chars/2.0).ceiling}
+{'-' x ($size-$foot.chars/2.0).floor} $foot {'-' x ($size-$foot.chars/2.0).ceiling}
 EOT
-
-#	say "\n{'-' x 80}\n" ~ $TXT ~ "{'-' x 80}" unless $quiet;
 		}		
 	 }
 	 %!engine<fit-results> = $TXT;
@@ -692,6 +691,12 @@ EOT
 		my $nfps = $nifps*@!blocks.elems + $ngfp;
 		$ndf = $npts - $nfps;  
 		return "tchi2 = $chi2, tnpts = $npts, nfps = $nfps"
+	}
+
+	sub max-line-length ($TXT) {
+		my $size = $TXT.lines>>.chars.max;
+   		$size = 40 if $size < 40;
+		$size =  $size %% 2 ?? $size/2  !! ($size+1)/2;  
 	}
 }
 

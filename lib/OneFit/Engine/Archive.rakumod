@@ -15,17 +15,19 @@ class HistoryLog is export {
 	multi method fit($s) {
 		my @keys =  %!arch.keys.sort;
 		my $selected = @keys.tail;
-		given $s {
+		my @a = $s.words;	
+		my $add-options = @a.elems>1 ?? @a[1..*].flat !! False;
+		given @a[0] {
 			when /:i last <ws> '-' <ws> \d+ / { $selected =@keys[@keys.elems - 1 - $s.split('-')[1].trim.Int] }
-			when /\d+/ { $selected = @keys[$s.Int] }
+			when /^\d+/ { $selected = @keys[@a[0].Int] }
 		   	default { $selected }
 		}
 		try { 
 			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,'');
-			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd";
-			shell("unzip -o $!path/{$selected}.zip; $cmd");
+			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd $add-options";
+			shell("unzip -o $!path/{$selected}.zip; $cmd  $add-options");
 	   	}
-		if $! { note "     couldn't execute" ~ %!arch{$selected} }
+		if $! { note "     couldn't execute" ~ %!arch{$selected} ~ $add-options }
 	}
 
 	multi method list() {
@@ -38,10 +40,10 @@ class HistoryLog is export {
 		for %!arch.pairs.sort(*.keys)  -> $p {
 			my $size ="$.path/{$p.key}.zip".IO.s.Int;
 		  	given $size {
-				when * < 1024 	 { $size =  ($size).fmt("%.0fB") } 
-				when * < 1024**2 { $size =  ($size / 1e3).fmt("%.0fkB") } 
-				when * < 1024**3 { $size =  ($size / 1e6).fmt("%.0fMB") } 
-				default			 { $size =  ($size / 1e9).fmt("%.0fGB") } 
+				when * < 1024 	 { $size =  ($size).fmt("%.0f B") } 
+				when * < 1024**2 { $size =  ($size / 1e3).fmt("%.0f kB") } 
+				when * < 1024**3 { $size =  ($size / 1e6).fmt("%.0f MB") } 
+				default			 { $size =  ($size / 1e9).fmt("%.0f GB") } 
 			}
 			say $i.fmt("\%{$width}d") 
 			~ ": " 
