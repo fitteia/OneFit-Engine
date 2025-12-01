@@ -363,10 +363,8 @@ class Engine is export {
 		@outliers=();
 		note "===> remove outliers is not yet implemented for mixed and global fits";
 	 }	
-	say "ola",$errorbars;
-	 if ($errorbars || @outliers.so || $reduced-chi2) {
-	 	@!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
-	 }
+	 
+	 if ($errorbars || @outliers.so || $reduced-chi2) { @!blocks>>.set-errorbars(:on) }
 
 	 if %!engine<FitType> ~~ /Individual/ {
 		for (1 .. @!blocks.elems).race {
