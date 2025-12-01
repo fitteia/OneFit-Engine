@@ -432,24 +432,21 @@ EOT
 			@!blocks.race.map( { .export(:plot) });
 	     	
 			self.parameters(:read, :from-output, :from-log);
-            my $set-data-err = {
-    	        my $i = $^a;
-               my $file = $^b;
-               my @data = $file.IO.lines.grep(/\d+/);
-               my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
-               $file.IO.spurt: 
-                  @data.head
-                  ~ "\n" ~ 
-                  @data.tail(*-1)
-                     .map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
-                     .join("\n")
-               	;
-	        }
 	
 			do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-					$set-data-err($_-1,"$!path/data{$_}ro.dat");
+	    	        my $i = $_-1;
+               		my $file = "$!path/data{$_}ro.dat";
+               		my @data = $file.IO.lines.grep(/\d+/);
+               		my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
+               		$file.IO.spurt: 
+                  		@data.head
+                  		~ "\n" ~ 
+                  		@data.tail(*-1)
+                     		.map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
+                     		.join("\n");
+#					$set-data-err($_-1,"$!path/data{$_}ro.dat");
 #					say "$!path/data{$_}ro.dat".IO.slurp;
 
 #					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat" );
