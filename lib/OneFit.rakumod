@@ -69,7 +69,7 @@ class Engine is export {
     multi method set (%e) { %!engine=%e; self }
     multi method Num ($npts) { %!engine<Num>=$npts }
 	
-	method add-to-hash (*%h) { %!engine( %h.keys ) = %h.values } 
+	method add-to-hash (*%h) { %!engine{ %h.keys } = %h.values } 
 
     multi method fit-methods () { $!fit-methods }
     multi method fit-methods (Str $fit-methods) { $!fit-methods = $fit-methods; %!engine<FitMethods> = $fit-methods } 
