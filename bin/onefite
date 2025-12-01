@@ -18,20 +18,20 @@
 
 =begin code 
 	
-	which ofe 2>/dev/null
-	unset -f ofe 2>/dev/null || true
+	which ofe 
+	unset -f ofe 
 	ofe() { command onefite "$@"; }
 
 =end code
 =begin code 
 
-	which iofe 2>/dev/null
-	unset -f iofe 2>/dev/null || true
+	which iofe 
+	unset -f iofe 
 	onefiteSrcPath="$(onefite path --src 2>/dev/null)"
 	iofe() {
-    	cd "$onefiteSrcPath" || return
+    	cd "$onefiteSrcPath" 
     	./INSTALL --no-test
-    	cd - >/dev/null || return
+    	cd - 
 	}
 
 =end code
@@ -1583,18 +1583,20 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 		my $col = $v.trim;
 		#		say $k,':',$v,':',$col;
 		given $col {
-		   	when /<[+]>/ { 
+		   	when /<[+-]>/ {
+			    my $sign = $col.contains('-') ?? -1 !! +1;	
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
 				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
 				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
-				@cols.push: $i + 1 + @two.tail.Int ;
+				@cols.push: $i + 1 + $sign * @two.tail.Int ;
 			}
-			when /<[-]>/ { 
+	#`[			when /<[-]>/ { 
 				my @two = $col.split(/<ws> '-' <ws>/)>>.trim;
 				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
 				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
 				@cols.push: $i + 1 - @two.tail.Int ;
 			}
+	]
 			when /:i <[a..z]>+/ { @cols.push: @a>>.trim.grep($col, :k).head.Int +1; }
 			default { @cols.push: $col.Int }
 		};
