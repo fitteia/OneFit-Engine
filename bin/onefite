@@ -1213,12 +1213,9 @@ $msg
 MSG
 		exit(1);
 	}
-    $engine.save($save-to) if $save-to.defined;
-    zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
-
-	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
-
+	
 	define-alias($engine,$dali) if $dali.so;
+	
 	if $archive {
 		my $log = HistoryLog.new;
 		my @args = @*ARGS;
@@ -1226,11 +1223,18 @@ MSG
 		my $cmd = ("onefite", |@args).join(' ');
 		$log.archive($cmd);
 	}
+	
 	if $cols.so {
 		print-cols( $engine.h<fit-results-all>,$cols, :label("fit-results-all") ) if $engine.h<fit-results-all>.so;
 		print-cols( $engine.h<fit-results>,$cols ) if $engine.h<fit-results>.so;
 	}
-    exit;
+    
+	$engine.save($save-to) if $save-to.defined;
+    zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
+
+	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+
+ 	exit;
 }
 
 multi MAIN  ('fit',
@@ -1327,23 +1331,27 @@ MSG
 			:reduced-chi2($reduced-chi2),
 			:errorbars($errorbars),
 			:quiet($quiet)
-	    );
-    $engine.save($to) if $to.defined;
-    zip-fit($engine,$work-folder,$name);
-    shell "mv $name.zip $zip-to" unless $name eq $zip-to;
+	);
 	
-	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
-
 	define-alias($engine,$dali) if $dali.so;
+	
 	if $archive {
 		my $log = HistoryLog.new;
 		my $cmd = ("onefite", |@*ARGS).join(' ');
 		$log.archive($cmd);
 	}	
+	
 	if $cols.so {
 		print-cols( $engine.h<fit-results>,$cols ) if $engine.h<fit-results>.so;
 	}
-    exit;
+    
+	$engine.save($to) if $to.defined;
+    zip-fit($engine,$work-folder,$name);
+    shell "mv $name.zip $zip-to" unless $name eq $zip-to;
+	
+	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+
+ 	exit;
 }
 
 
