@@ -95,6 +95,7 @@ class Import is export {
 	multi method import ('ist-ffc-R1', :$file) { self!ist-ffc-R1( file => $file ) }
 
 	method !fitteia-blocks ($file) {
+		my %options = %!options;
 		my @files;
 		my @blocks = $file.IO.slurp.split(/'#' <ws> DATA <ws>/);
 		for (1 ..^ @blocks.elems) -> $i {
