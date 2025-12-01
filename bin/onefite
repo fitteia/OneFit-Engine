@@ -1314,8 +1314,8 @@ and to export AuxCode to: Auxcode-$basename.c
 {'-' x 80}
 MSG
 	}
-say "ola",$errorbars;
-    $engine.Num($npts) if $npts.Bool;
+    
+	$engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
     $engine.fit(
 			:no-plot($no-plot),
