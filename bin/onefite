@@ -18,25 +18,31 @@
 
 =begin code 
 	
-	which ofe 2>/dev/null
-	unset -f ofe 2>/dev/null || true
+	which ofe 
+	unset -f ofe 
 	ofe() { command onefite "$@"; }
 
 =end code
-
-
 =begin code 
 
-	which iofe 2>/dev/null
-	unset -f iofe 2>/dev/null || true
+	which iofe 
+	unset -f iofe 
 	onefiteSrcPath="$(onefite path --src 2>/dev/null)"
 	iofe() {
-    	cd "$onefiteSrcPath" || return
+    	cd "$onefiteSrcPath" 
     	./INSTALL --no-test
-    	cd - >/dev/null || return
+    	cd - 
 	}
 
 =end code
+=begin code 
+
+	which ofeh 2>/dev/null
+	unset -f ofeh 2>/dev/null || true
+	ofeh() { history 0 | grep -E 'onefite|ofe' || return }
+
+=end code
+
 
 
 =DESCRIPTION
@@ -206,9 +212,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols=<Str>]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols=<Str>] [--eb|--errorbars]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols=<Str>]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols=<Str>]i [--eb|--errorbars]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -1106,6 +1112,7 @@ multi MAIN  ('fit',
     Str  :wf(:$work-folder) = '.',
     Int  :n(:N(:Num(:$npts))) = +100,
 	Bool :ar(:$archive) = False, #= add log entry and archive data
+	Bool :eb(:$errorbars) = False, #= set errorbars
 	Bool :q(:$quiet) = False,
 	Str  :da(:define-alias(:$dali))="",
 	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
@@ -1174,6 +1181,7 @@ MSG
 			:logy($linlog or $loglog),
 			:remove-outliers($remove-outliers),
 			:reduced-chi2($reduced-chi2),
+			:errorbars($errorbars),
 			:quiet($quiet)
 		);
 	} 
@@ -1241,6 +1249,7 @@ multi MAIN  ('fit',
      Str  :wf(:$work-folder) = '.',
      Int  :n(:N(:Num(:$npts))),
 	 Bool :e(:$export) = False,
+	 Bool :eb(:$errorbars) = False,
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :da(:define-alias(:$dali)) ="",
@@ -1285,7 +1294,6 @@ MSG
 	}
 	$input-file.IO.copy("$work-folder/$name/$input-file");
 	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
-#	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
 	if $export {
 		my $basename = $input-file.IO.extension("").Str; 
 		"data-$basename.txt".IO.spurt: $engine.h<Dados>;
@@ -1306,8 +1314,8 @@ and to export AuxCode to: Auxcode-$basename.c
 {'-' x 80}
 MSG
 	}
-
-    $engine.Num($npts) if $npts.Bool;
+    
+	$engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
     $engine.fit(
 			:no-plot($no-plot),
@@ -1317,6 +1325,7 @@ MSG
 			:logy($linlog or $loglog),
 			:remove-outliers($remove-outliers),
 			:reduced-chi2($reduced-chi2),
+			:errorbars($errorbars),
 			:quiet($quiet)
 	    );
     $engine.save($to) if $to.defined;
@@ -1577,17 +1586,12 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 		my $col = $v.trim;
 		#		say $k,':',$v,':',$col;
 		given $col {
-		   	when /<[+]>/ { 
-				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
+		   	when /<[+-]>/ {
+			    my $sign = $col.contains('-') ?? -1 !! +1;	
+				my @two = $col.split(/<ws> '+'|'-' <ws>/)>>.trim;
 				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
 				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
-				@cols.push: $i + 1 + @two.tail.Int ;
-			}
-			when /<[-]>/ { 
-				my @two = $col.split(/<ws> '-' <ws>/)>>.trim;
-				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
-				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
-				@cols.push: $i + 1 - @two.tail.Int ;
+				@cols.push: $i + 1 + $sign * @two.tail.Int ;
 			}
 			when /:i <[a..z]>+/ { @cols.push: @a>>.trim.grep($col, :k).head.Int +1; }
 			default { @cols.push: $col.Int }

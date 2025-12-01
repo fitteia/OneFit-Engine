@@ -311,6 +311,7 @@ class Engine is export {
 		Bool :$logx,
 		Bool :$logy,
 		Bool :$reduced-chi2,
+		Bool :$errorbars,
 		Str  :$remove-outliers="",
 		Bool :$quiet=False
 	       ) {
@@ -338,7 +339,7 @@ class Engine is export {
 	 my %last = @!par-tables[0].a.tail;
 	 $MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
  
-	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
+	 my @outliers = $remove-outliers.so && $remove-outliers.chars ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! (); 
 	 my $f = { 
 		 my @b = $^a.split(/ '..' | '-' | ':' /); 
 		 @b.elems > 1 
@@ -358,12 +359,12 @@ class Engine is export {
 
      my $npts-removed=0;
 
-	 if $MIXED || %!engine<FitType> ~~ /Global/ {
-		@outliers=False;
+	 if $remove-outliers.so && any($MIXED, %!engine<FitType> ~~ /Global/) {
+		@outliers=();
 		note "===> remove outliers is not yet implemented for mixed and global fits";
 	 }	
-
-	 @!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
+	 
+	 if ($errorbars || @outliers.so || $reduced-chi2) { @!blocks>>.set-errorbars(:on) }
 
 	 if %!engine<FitType> ~~ /Individual/ {
 		for (1 .. @!blocks.elems).race {
