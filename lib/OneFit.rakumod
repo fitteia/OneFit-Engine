@@ -360,8 +360,8 @@ class Engine is export {
 
      my $npts-removed=0;
 
-	 if $MIXED || %!engine<FitType> ~~ /Global/ {
-		@outliers=False;
+	 if $remove-outliers.so && any($MIXED, %!engine<FitType> ~~ /Global/) {
+		@outliers=();
 		note "===> remove outliers is not yet implemented for mixed and global fits";
 	 }	
 	 if (@outliers.so || $reduced-chi2) {
