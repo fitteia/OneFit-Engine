@@ -311,6 +311,7 @@ class Engine is export {
 		Bool :$logx,
 		Bool :$logy,
 		Bool :$reduced-chi2,
+		Bool :$errorbars,
 		Str  :$remove-outliers="",
 		Bool :$quiet=False
 	       ) {
@@ -322,6 +323,7 @@ class Engine is export {
 		     :autoy($autoy.Bool),
 		     :logx($logx),
 		     :logy($logy),
+			 :errorbars($errorbars),
 		     :quiet($quiet)
 		    );
 	 $*ERR.say("===> read pars") unless $quiet;
@@ -362,10 +364,10 @@ class Engine is export {
 		@outliers=False;
 		note "===> remove outliers is not yet implemented for mixed and global fits";
 	 }	
-	
-	 @!blocks>>.set-errorbars(:off);
-	 @!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
-
+	 if (@outliers.so || $reduced-chi2) {
+	 	@!blocks>>.set-errorbars(:on) if (@outliers.so || $reduced-chi2);
+		say "errorbars reseted";
+	}
 
 	 if %!engine<FitType> ~~ /Individual/ {
 		for (1 .. @!blocks.elems).race {
