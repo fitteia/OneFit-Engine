@@ -1584,6 +1584,7 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 		#		say $k,':',$v,':',$col;
 		given $col {
 		   	when /<[+-]>/ {
+				say $col;
 			    my $sign = $col.contains('-') ?? -1 !! +1;	
 				my @two = $col.split(/<ws> '+' <ws>/)>>.trim;
 				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
