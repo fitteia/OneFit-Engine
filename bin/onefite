@@ -1590,13 +1590,6 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
 				@cols.push: $i + 1 + $sign * @two.tail.Int ;
 			}
-	#`[			when /<[-]>/ { 
-				my @two = $col.split(/<ws> '-' <ws>/)>>.trim;
-				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
-				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
-				@cols.push: $i + 1 - @two.tail.Int ;
-			}
-	]
 			when /:i <[a..z]>+/ { @cols.push: @a>>.trim.grep($col, :k).head.Int +1; }
 			default { @cols.push: $col.Int }
 		};
