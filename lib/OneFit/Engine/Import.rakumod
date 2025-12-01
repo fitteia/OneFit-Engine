@@ -105,7 +105,7 @@ class Import is export {
 			my @header;
 		    my @data;
 			for "# DATA { @blocks[$i] }".lines {
-				if .contains(/^<-[#]>/) { @header.push: $_ }
+				if .contains(/^ <ws> '#'/) { @header.push: $_ }
 				else { @data.push: $_ }
 			}
 			@header.push: "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
