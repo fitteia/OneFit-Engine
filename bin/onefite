@@ -1112,6 +1112,7 @@ multi MAIN  ('fit',
     Str  :wf(:$work-folder) = '.',
     Int  :n(:N(:Num(:$npts))) = +100,
 	Bool :ar(:$archive) = False, #= add log entry and archive data
+	Bool :eb(:$errorbars) = False, #= set errorbars
 	Bool :q(:$quiet) = False,
 	Str  :da(:define-alias(:$dali))="",
 	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
@@ -1180,6 +1181,7 @@ MSG
 			:logy($linlog or $loglog),
 			:remove-outliers($remove-outliers),
 			:reduced-chi2($reduced-chi2),
+			:errorbars($errorbars),
 			:quiet($quiet)
 		);
 	} 
@@ -1247,6 +1249,7 @@ multi MAIN  ('fit',
      Str  :wf(:$work-folder) = '.',
      Int  :n(:N(:Num(:$npts))),
 	 Bool :e(:$export) = False,
+	 Bool :eb(:$errorbars) = False,
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :da(:define-alias(:$dali)) ="",
@@ -1291,7 +1294,6 @@ MSG
 	}
 	$input-file.IO.copy("$work-folder/$name/$input-file");
 	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
-#	my $engine = OFE::Engine.new.path("$work-folder").read($input-file);
 	if $export {
 		my $basename = $input-file.IO.extension("").Str; 
 		"data-$basename.txt".IO.spurt: $engine.h<Dados>;
@@ -1323,6 +1325,7 @@ MSG
 			:logy($linlog or $loglog),
 			:remove-outliers($remove-outliers),
 			:reduced-chi2($reduced-chi2),
+			:errorbars($errorbars),
 			:quiet($quiet)
 	    );
     $engine.save($to) if $to.defined;
