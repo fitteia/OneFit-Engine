@@ -105,8 +105,8 @@ class Import is export {
 			my @header;
 		    my @data;
 			for "# DATA { @blocks[$i] }".lines {
-				if .contains(/^<-[#]>/) { @header.push: $_;
-				else { @data.push: $_
+				if .contains(/^<-[#]>/) { @header.push: $_ }
+				else { @data.push: $_ }
 			}
 			@header.push: "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
 			@header.push: "# plot if " ~ %options<plot-if> ~ "\n" if %options<plot-if>.so;
