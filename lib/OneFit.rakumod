@@ -422,8 +422,6 @@ EOT
 	
 			for (1 .. @!blocks.elems).race {
 				$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
-say "$!path/data{$_}.dat".IO.slurp;
-say "$!path/data{$_}ro.dat".IO.slurp;
 				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
      	 	
@@ -434,14 +432,27 @@ say "$!path/data{$_}ro.dat".IO.slurp;
 			@!blocks.race.map( { .export(:plot) });
 	     	
 			self.parameters(:read, :from-output, :from-log);
-	     	
+            my $set-data-err = {
+    	        my $i = $^a;
+               my $file = $^b;
+               my @data = $file.IO.lines.grep(/\d+/);
+               my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
+               $file.IO.spurt: 
+                  @data.head
+                  ~ "\n" ~ 
+                  @data.tail(*-1)
+                     .map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
+                     .join("\n")
+               	;
+	        }
+	
 			do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-#					$set-data-err($_-1,"$!path/data{$_}ro.dat");
+					$set-data-err($_-1,"$!path/data{$_}ro.dat");
 #					say "$!path/data{$_}ro.dat".IO.slurp;
 
-					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat" );
+#					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat" );
 					shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
