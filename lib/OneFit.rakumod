@@ -340,7 +340,7 @@ class Engine is export {
 	 my %last = @!par-tables[0].a.tail;
 	 $MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
  
-	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! []; 
+	 my @outliers = $remove-outliers.so ?? $remove-outliers.subst(/\s+/,'',:g).split(',') !! False; 
 	 my $f = { 
 		 my @b = $^a.split(/ '..' | '-' | ':' /); 
 		 @b.elems > 1 
