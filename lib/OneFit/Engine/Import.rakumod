@@ -101,8 +101,18 @@ class Import is export {
 			my $file-name="{$file.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
 			$file-name = $file unless @blocks.elems > 2;
 			@files.push: $file-name; 
-			"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
-			LAST { note "===> processed blocks: { @blocks.elems - 1 }" }
+			my @header;
+		    my @data;
+			for "# DATA { @blocks[$i] }".lines {
+				if .contains(/^<-[#]>/) { @header.push: $_;
+				else { @data.push: $_
+			}
+			@header.push: "# fit if " ~ %options<fit-if> ~ "\n" if %options<fit-if>.so;
+			@header.push: "# plot if " ~ %options<plot-if> ~ "\n" if %options<plot-if>.so;
+
+			#"{self.path}/$file-name".IO.spurt: "# DATA { @blocks[$i] }";
+			#		LAST { note "===> processed blocks: { @blocks.elems - 1 }" }
+			"{self.path}/$file-name".IO.spurt: @header.join("\n") ~ "\n" ~ @data.join("\n");
 		}
 		return @files;	
 	}
