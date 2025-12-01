@@ -16,14 +16,14 @@ class HistoryLog is export {
 		my @keys =  %!arch.keys.sort;
 		my $selected = @keys.tail;
 		my @a = $s.words;	
-		my $add-options = @a.elems>1 ?? @a[1..*].flat !! False;
+		my $add-options = @a.elems>1 ?? @a[1..*].join(' ') !! ();
 		given @a[0] {
 			when /:i last <ws> '-' <ws> \d+ / { $selected =@keys[@keys.elems - 1 - $s.split('-')[1].trim.Int] }
 			when /^\d+/ { $selected = @keys[@a[0].Int] }
 		   	default { $selected }
 		}
 		try { 
-			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,'');
+			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,' ');
 			note "===> trying to execute: unzip -o $!path/{$selected}.zip; $cmd $add-options";
 			shell("unzip -o $!path/{$selected}.zip; $cmd  $add-options");
 	   	}
