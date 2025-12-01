@@ -961,8 +961,8 @@ multi MAIN  ('create',
 		 Bool :ax(:auto-x(:$autox)),#= auto scale x
    		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
-	     Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
-   		 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+   		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Bool :g(:$global) = False, #= global/individual 
 	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False, #= import Mz data from ist-ffc 
@@ -1043,8 +1043,8 @@ multi MAIN  ('random',
 		 Bool :ax(:auto-x(:$autox)),#= auto scale x
    		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
-	     Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
-   		 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+   		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Bool :g(:$global),
 	     Str  :st(:to(:$save-to)), # write fit settings to json or sav file 
@@ -1095,8 +1095,8 @@ multi MAIN  ('fit',
    	Bool :ax(:auto-x(:$autox)),
    	Bool :ay(:auto-y(:$autoy)),
    	Bool :axy(:auto-xy(:$autoxy)),
-   	Bool :lx(:logy(:log-y(:ylog(:$linlog)))),
-   	Bool :ly(:logx(:log-x(:xlog(:$loglin)))),
+   	Bool :lx(:logx(:log-x(:xlog(:$loglin)))),
+   	Bool :ly(:logy(:log-y(:ylog(:$linlog)))),
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
    	Bool :g(:$global) is copy,
 	Str  :fi(:$fit-if) = "",
@@ -1250,8 +1250,8 @@ multi MAIN  ('fit',
    	 Bool :ax(:auto-x(:$autox)),#= auto scale x
    	 Bool :ay(:auto-y(:$autoy)),#= auto scale y
    	 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
-     Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
-	 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+	 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	 Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
@@ -1369,8 +1369,8 @@ multi MAIN  ('plot',
 	   	 Bool :ax(:auto-x(:$autox)),#= auto scale x
    		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
-    	 Bool :lx(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
-		 Bool :ly(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+    	 Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Str  :wf(:$work-folder) = '.',
 	     Int  :n(:N(:Num(:$npts)))
