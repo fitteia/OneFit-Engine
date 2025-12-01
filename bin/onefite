@@ -1117,7 +1117,7 @@ multi MAIN  ('fit',
 	Str  :da(:define-alias(:$dali))="",
 	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
 	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
-	Str	 :pc(:print-cols(:$cols)) ="", #= select fit-results columns by number or name or name+1 or name-1
+	Str	 :pc(:print-cols(:print-columns(:$cols))) ="", #= select fit-results columns by number or name or name+1 or name-1
 	*%_
     ){
 		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -1225,8 +1225,14 @@ MSG
 	}
 	
 	if $cols.so {
-		print-cols( $engine.h<fit-results-all>,$cols, :label("fit-results-all") ) if $engine.h<fit-results-all>.so;
-		print-cols( $engine.h<fit-results>,$cols ) if $engine.h<fit-results>.so;
+		 if $engine.h<fit-results-all>.so {
+			my $txt = print-cols( $engine.h<fit-results-all>,$cols, :label("fit-results-all") );
+			$engine.add-to-hash( fit-results-all-selected-cols => $txt );
+		}
+		 if $engine.h<fit-results>.so {
+			my $txt = print-cols( $engine.h<fit-results>,$cols );
+			$engine.add-to-hash( fit-results-selected-cols => $txt );
+		}
 	}
     
 	$engine.save($save-to) if $save-to.defined;
@@ -1258,7 +1264,7 @@ multi MAIN  ('fit',
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :da(:define-alias(:$dali)) ="",
 	 Bool :ar(:$archive) = False,
-	 Str  :pc(:print-cols(:$cols)) ="", 
+	 Str  :pc(:print-cols(:print-columns(:$cols))) ="", 
 	 *%_
     ){
 	do {
@@ -1342,7 +1348,10 @@ MSG
 	}	
 	
 	if $cols.so {
-		print-cols( $engine.h<fit-results>,$cols ) if $engine.h<fit-results>.so;
+		 if $engine.h<fit-results>.so {
+			my $txt = print-cols( $engine.h<fit-results>,$cols );
+			$engine.add-to-hash( fit-results-iselected-cols => $txt );
+		}
 	}
     
 	$engine.save($to) if $to.defined;
@@ -1620,5 +1629,6 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 $txt
 {'-' x ($size-$msg.chars/2.0).floor}{ '-' x $msg.chars+2 }{'-' x ($size-$msg.chars/2.0).ceiling}
 EOT
+	$txt
 }
 
