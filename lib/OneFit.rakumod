@@ -436,7 +436,7 @@ EOT
 			do {
 		 		self.agr;
 		 		for (1 .. @!blocks.elems).race {
-	    	        my $i = $_-1;
+#`[	    	        my $i = $_-1;
                		my $file = "$!path/data{$_}ro.dat";
                		my @data = $file.IO.lines.grep(/\d+/);
                		my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
@@ -448,8 +448,8 @@ EOT
                      		.join("\n");
 #					$set-data-err($_-1,"$!path/data{$_}ro.dat");
 #					say "$!path/data{$_}ro.dat".IO.slurp;
-
-#					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat" );
+]
+					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat", :removed-outliers );
 					shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';

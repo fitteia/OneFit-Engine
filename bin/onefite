@@ -1598,6 +1598,8 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 	$fit-results = $fit-results.subst(/^'#'|\n$/,'');
 	my @fit-results-lines = $fit-results.lines;
 	my @a=@fit-results-lines.head.split(',');
+	my @names = @a;
+	for @names.kv -> $k, $v { @names[$k] = $v.subst(/'#'/,'').trim ~ ':' ~ $k+1 } 
 	my @cols;
 	for $s.split(',').kv -> $k, $v {
 		my $col = $v.trim;
@@ -1610,7 +1612,15 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
 				@cols.push: $i + 1 + $sign * @two.tail.Int ;
 			}
-			when /:i <[a..z]>+/ { @cols.push: @a>>.trim.grep($col, :k).head.Int +1; }
+			when /:i <[a..z]>+/ { 
+				my $pos = @a>>.trim.grep($col, :k).head;
+				if $pos.defined && $pos.Int {
+					@cols.push: $pos.Int +1; 
+				}
+				else {
+					note "===> I couldn't find your $col. Your --print-columns parameters names can be { @names.join(' ')}\n"; 
+				}
+			}
 			default { @cols.push: $col.Int }
 		};
 	}

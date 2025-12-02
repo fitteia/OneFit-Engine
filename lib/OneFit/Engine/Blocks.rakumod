@@ -13,6 +13,7 @@ class Block is export {
     has @!Data;
     has $!Graph;
     has @!Export-data;
+    has @!Export-data-removed-outliers;
     has $.parameters is rw;
     has @!X;
     has @!Y;
@@ -108,10 +109,12 @@ class Block is export {
 	method Data () { @!Data }
     
 	method Export-data () { @!Export-data }
+	
+	method Export-data-removed-outliers () { @!Export-data-removed-outliers }
     
 	method T () { $!T }
     
-	method export (:$path, Bool :$fit, Bool :$plot) {
+	method export ( :$path, Bool :$fit, Bool :$plot ) {
 		$!path = $path if $path.defined;
 		self.select(:fit($fit), :plot($plot));
 		{ "$!path/data" ~ $!No+1 ~ ".dat" }().IO.spurt: {($!T.words.elems>1) ?? $!No+1 !! $!T.words[0]}() ~ "\n" ~ @!Export-data.join("\n") ~ "\n";
@@ -121,6 +124,7 @@ class Block is export {
    	
 	method prune( :@remove ) {
 		my $npts-removed=0;
+		my @dataro;
 		if @remove.head.Num < 0 {
 			$npts-removed = +@remove.head.Num.abs;
 			my @pruned-data="$!path/fit-residues-{$!No+1}.res"
@@ -136,6 +140,7 @@ class Block is export {
 							.map({ my @a = .words.head(2); @a.push(1).join(' ') })
 							.sort( *.words.head.Numeric ).join("\n");
 			"$!path/data{$!No+1}ro.dat".IO.spurt: $head ~ "\n" ~ $body;
+			@dataro = $body.lines;
 		}
 		else {
 			my @pruned-data="$!path/data{$!No+1}.dat".IO.lines;
@@ -152,16 +157,20 @@ class Block is export {
 				@a.join(' ') 
 			}).join("\n");
 			"$!path/data{$!No+1}ro.dat".IO.spurt: $head ~ "\n" ~ $body; 		
+			@dataro = $body.lines;
 		}
+		@!Export-data-removed-outliers = @dataro;
 		$npts-removed;	
 	}
 
 	method set-data-err (
-		:$chi2 = $.chi2, 
-		:$ndf = @!Export-data.elems - 1 - self.parameters.free,
-		:$file = "$!path/data{$!No+1}.dat"
+			:$chi2 = $.chi2, 
+			:$ndf = @!Export-data.elems - 1 - self.parameters.free,
+			:$file = "$!path/data{$!No+1}.dat",
+		Bool :ro(:$removed-outliers) = False 
 	) {
-		my @data = @!Export-data.map({ 
+		my @data = $removed-outliers ?? @!Export-data-removed-outliers !! @!Export-data;
+		@data = @data.map({ 
 			my @a = .words.head(3); 
 			@a[2] *= sqrt( $chi2 / $ndf ); 
 			@a.join(' '); 
