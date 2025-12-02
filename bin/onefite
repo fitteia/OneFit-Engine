@@ -1613,10 +1613,13 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 				@cols.push: $i + 1 + $sign * @two.tail.Int ;
 			}
 			when /:i <[a..z]>+/ { 
-				try {
-					@cols.push: @a>>.trim.grep($col, :k).head.Int +1; 
+				my $pos = @a>>.trim.grep($col, :k).head;
+				if $pos.defined && $pos.Int {
+					@cols.push: $pos.Int +1; 
 				}
-				if $! { note "===> I couldn't find your $col. Your --print-columns parameters names can be { @names.join(' ')}"; }
+				else {
+					note "===> I couldn't find your $col. Your --print-columns parameters names can be { @names.join(' ')}"; 
+				}
 			}
 			default { @cols.push: $col.Int }
 		};
