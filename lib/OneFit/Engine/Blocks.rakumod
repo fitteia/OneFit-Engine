@@ -170,7 +170,7 @@ class Block is export {
 		Bool :ro(:$removed-outliers) = False 
 	) {
 		my @data = $removed-outliers ?? @!Export-data-removed-outliers !! @!Export-data;
-		my @data = @data.map({ 
+		@data = @data.map({ 
 			my @a = .words.head(3); 
 			@a[2] *= sqrt( $chi2 / $ndf ); 
 			@a.join(' '); 
