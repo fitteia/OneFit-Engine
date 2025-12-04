@@ -1,6 +1,6 @@
 OS=LINUX
 CC=gcc
-F77= gfortran -O2 -fPIC
+F77= gfortran -O3 -fPIC
 ARCH=x86_64
 ROOT=/home/fitteia
 PERLVERSION=5.36
