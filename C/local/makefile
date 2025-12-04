@@ -12,25 +12,32 @@ CCFLAGS= -D$(OS) -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-stri
 LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
-lib: *.c
-	$(CC) $(CCFLAGS) -c *.c
+%.o: %.c
+	$(CC) $(CCFLAGS) -c $<
+
+%.o: %.f
+	gfortran -O3 -c $<
+
+
+lib: *.o
+#	$(CC) $(CCFLAGS) -c *.c
 	ar -rvs libuserlib.a *.o
+	rm *.o
 
 module: *.c  $(INTERFACE).i
 	swig -perl $(INTERFACE).i
 	$(CC) -c $(CCFLAGS) *.c 
 	$(CC)  $(LDFLAGS)  *.o -o $(INTERFACE).so $(LIBS)
 	rm $(INTERFACE)_wrap.o $(INTERFACE)_wrap.c
-	rm *.o
 
 module-test:
 	perl -e 'use lib "./"; use UserLib; print UserLib::BPP(1,1,1)."\n";'
 	perl -e 'use lib "./"; use UserLib; print UserLib::EllipticF(1.5,0.5,10.0)."\n";'
 	perl -e 'use lib "./"; use UserLib; print UserLib::iT1inISpara(1e6,300,1e-12,1e-12,1e-10,19)."\n";'
 
-install: lib module
+install: lib 
 	install -d $(ROOT)$(PREFIX)/lib $(ROOT)$(PREFIX)/include
-	install -m 0644 *.dat *.a *.so *.pm *.h $(ROOT)$(PREFIX)/lib
+	install -m 0644 *.dat *.a *.h $(ROOT)$(PREFIX)/lib
 	install -m 0644 *.h $(ROOT)$(PREFIX)/include
 
 clean:
