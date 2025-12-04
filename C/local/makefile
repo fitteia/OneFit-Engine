@@ -17,7 +17,7 @@ lib: *.c
 	ar -rvs libuserlib.a *.o
 	rm *.o
 
-module: *.c *.f $(INTERFACE).i
+module: *.c  $(INTERFACE).i
 	swig -perl $(INTERFACE).i
 	$(CC) -c $(CCFLAGS) *.c 
 	$(F77) -c *.f
