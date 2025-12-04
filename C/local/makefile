@@ -15,13 +15,13 @@ LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util
 lib: *.c
 	$(CC) $(CCFLAGS) -c *.c
 	ar -rvs libuserlib.a *.o
-	rm *.o
 
 module: *.c  $(INTERFACE).i
 	swig -perl $(INTERFACE).i
 	$(CC) -c $(CCFLAGS) *.c 
 	$(CC)  $(LDFLAGS)  *.o -o $(INTERFACE).so $(LIBS)
 	rm $(INTERFACE)_wrap.o $(INTERFACE)_wrap.c
+	rm *.o
 
 module-test:
 	perl -e 'use lib "./"; use UserLib; print UserLib::BPP(1,1,1)."\n";'
