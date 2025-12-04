@@ -12,11 +12,11 @@ CCFLAGS= -D$(OS) -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-stri
 LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
-cobj : $(patsubst %.c,%.o,$(wildcard *.c))
-	$(CC) $(CCFLAGS) $(cobj)
+cobj : $(wildcard *.c)
+	$(CC) $(CCFLAGS) -c $(cobj)
 
-fobj : $(patsibst %.f,%.o,$(wildcard *.f)))
-	gfortran -O3 $(fobj)
+fobj : $(wildcard *.f)
+	gfortran -O3 -c $(fobj)
 
 
 lib: cobj fobj
