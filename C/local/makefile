@@ -12,15 +12,22 @@ CCFLAGS= -D$(OS) -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-stri
 LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
-COBJ: $(wildcard *.c)
+# discover sources
+CSRCS := $(wildcard *.c)
+FSRCS := $(wildcard *.f)
+
+# turn them into object names
+OBJS  := $(CSRCS:.c=.o) $(FSRCS:.f=.o)
+
+# C rule
+%.o: %.c
 	$(CC) $(CCFLAGS) -c $< -o $@
 
-FOBJ: $(wildcard *.f)
-	gfortran -O3  -c $< -o $@
+# Fortran rule
+%.o: %.f
+	gfortran -O3 -c $< -o $@
 
-lib: COBJ FOBJ 
-	$(CC) $(CCFLAGS) -c $(wildcard *.c)
-	gfortran -O3 -c $(wildcard *.f)
+lib: $(OBJS) 
 #	$(CC) $(CCFLAGS) -c *.c
 	ar -rvs libuserlib.a *.o
 	rm *.o
