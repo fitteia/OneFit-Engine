@@ -18,7 +18,7 @@ COBJ: $(wildcard *.c)
 FOBJ: $(wildcard *.f)
 	gfortran -O3  -c $< -o $@
 
-lib: 
+lib: COBJ FOBJ 
 	$(CC) $(CCFLAGS) -c $(wildcard *.c)
 	gfortran -O3 -c $(wildcard *.f)
 #	$(CC) $(CCFLAGS) -c *.c
