@@ -13,7 +13,7 @@ LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
 cobj : $(patsubst %.c,%.o,$(wildcard *.c))
-	$(CC) $(cobj)
+	$(CC) $(CCFLAGS) $(cobj)
 
 fobj : $(patsibst %.f,%.o,$(wildcard *.f)))
 	gfortran -O3 $(fobj)
