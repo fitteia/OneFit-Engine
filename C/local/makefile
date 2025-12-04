@@ -1,5 +1,6 @@
 OS=LINUX
 CC=gcc
+F77= gfortran -O2 -fPIC
 ARCH=x86_64
 ROOT=/home/fitteia
 PERLVERSION=5.36
@@ -12,7 +13,8 @@ LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
 lib: *.c *.f
-	$(CC) $(CCFLAGS) -c *.c *.f
+	$(CC) $(CCFLAGS) -c *.c 
+	$(F77) -c *.f
 	ar -rvs libuserlib.a *.o
 	rm *.o
 
