@@ -20,7 +20,7 @@ lib: *.c
 module: *.c  $(INTERFACE).i
 	swig -perl $(INTERFACE).i
 	$(CC) -c $(CCFLAGS) *.c 
-	$(CC)  $.(LDFLAGS)  *.o -o $(INTERFACE).so $(LIBS)
+	$(CC)  $(LDFLAGS)  *.o -o $(INTERFACE).so $(LIBS)
 	rm $(INTERFACE)_wrap.o $(INTERFACE)_wrap.c
 
 module-test:
