@@ -36,7 +36,7 @@ OBJS  := $(CSRCS:.c=.o) $(FSRCS:.f=.o)
 	$(CC) $(CCFLAGS) -c $< -o $@
 
 %.o: %.f
-	gfortran -c $< -o $@
+	gfortran -O3 -c $< -o $@
 
 lib: $(OBJS) 
 #	$(CC) $(CCFLAGS) -c *.c
