@@ -34,6 +34,7 @@ Lib: $(OBJ)
 install-lib: Lib
 	install -d $(LIBDIR)
 	install -m 0644 $(LIBNAME) $(LIBDIR)
+	install -m 0644 *.h $(ROOT)$(PREFIX)/include
 
 tar: $(SRC)
 	tar zcvf modelos.tar $(SRC) 

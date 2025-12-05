@@ -12,25 +12,21 @@ CCFLAGS= -D$(OS) -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-stri
 LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
-# discover sources
 CSRCS := $(wildcard *.c)
 FSRCS := $(wildcard *.f)
 
 # turn them into object names
 OBJS  := $(CSRCS:.c=.o) $(FSRCS:.f=.o)
 
-# C rule
 %.o: %.c
 	$(CC) $(CCFLAGS) -c $< -o $@
 
-# Fortran rule
 %.o: %.f
 	gfortran -O3 -c $< -o $@
 
 lib: $(OBJS) 
 #	$(CC) $(CCFLAGS) -c *.c
 	ar -rvs libuserlib.a *.o
-	rm *.o
 
 module: *.c  $(INTERFACE).i
 	swig -perl $(INTERFACE).i
@@ -43,7 +39,7 @@ module-test:
 	perl -e 'use lib "./"; use UserLib; print UserLib::EllipticF(1.5,0.5,10.0)."\n";'
 	perl -e 'use lib "./"; use UserLib; print UserLib::iT1inISpara(1e6,300,1e-12,1e-12,1e-10,19)."\n";'
 
-install: lib 
+install: lib module
 	install -d $(ROOT)$(PREFIX)/lib $(ROOT)$(PREFIX)/include
 	install -m 0644 *.dat *.a *.h $(ROOT)$(PREFIX)/lib
 	install -m 0644 *.h $(ROOT)$(PREFIX)/include
