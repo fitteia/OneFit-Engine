@@ -51,9 +51,11 @@ multi MAIN (
    	if $git {
 		shell "git stash";
 		shell "git pull";
-		shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
    	}
-   
+   	if $merge-site.so {
+		shell 'git merge -m "$merge-site" $merge-site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains($merge-site).Bool;
+	}
+
   	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail( $macos ?? 1 !! 2  ).head.Str } unless so $cpu;
 	
    	my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
