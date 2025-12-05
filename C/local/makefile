@@ -17,11 +17,10 @@ else
 	LIBGFORTRAN=
 endif
 
-CCFLAGS= -D$(OS) -pipe -I$(ROOT)$(PREFIX)/include -O3 -g -fPIC -I$(PERLCORE) -I$(ROOT)$(PREFIX)/include 
+#CCFLAGS= -D$(OS) -pipe -I$(ROOT)$(PREFIX)/include -O3 -g -fPIC -I$(PERLCORE) -I$(ROOT)$(PREFIX)/include 
 
-#CCFLAGS= -D$(OS) -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I$(ROOT)$(PREFIX)/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE) -I$(ROOT)$(PREFIX)/include 
-
-#-I$(ROOT)/C/core/onefit-3.1 -I$(ROOT)/C/core/onefit-3.1/modelos
+CCFLAGS= -D$(OS) -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I$(ROOT)$(PREFIX)/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE) -I$(ROOT)$(PREFIX)/include 
+-I$(ROOT)/C/core/onefit-3.1 -I$(ROOT)/C/core/onefit-3.1/modelos
 
 LDFLAGS= $(LIBGFORTRAN) -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O3 -g -lgfortran
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
