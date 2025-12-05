@@ -51,6 +51,7 @@
   extern double Bcirc(double x, double z, double miu, double N, double R, double I, double NP, double axis);
   extern double Bcoil(double x, double z, double miu, double nz, double nr, double dz, double R, double I, double NP, double flag);
   extern double R1LipSzab(double f, double q, double C, double ms, double rho, double S, double tm, double tR, double tv, double r, double Delta2, double Aoh, double SLS, double tl);
+  extern double florence( double FREQ, double SI, double GAMMAI, double SPIN, double IREL, double DELTA2, double TAURM, double TAUVM, double TAUMM, double DPARAM, double EPARAM, double S4M, double GXM, double GYM, double GZM, double AXM, double AYM, double AZM, double DM, double DDM, double CONCM, double ACQ, double AMOLFRAM, double RKM, double ACONTM, double THETAM, double PHIM);
 %}
 
 extern double BPP(double f,double a,double tauc);
@@ -103,3 +104,5 @@ extern double SDFreedHF(double x1, double x2,double d,double n,  double tauD, do
 extern double Bcirc(double x, double z, double miu, double N, double R, double I, double NP, double axis);
 extern double Bcoil(double x, double z, double miu, double nz, double nr, double dz, double R, double I, double NP, double flag);
 extern double R1LipSzab(double f, double q, double C, double ms, double rho, double S, double tm, double tR, double tv, double r, double Delta2, double Aoh, double SLS, double tl);
+
+extern double florence( double FREQ, double SI, double GAMMAI, double SPIN, double IREL, double DELTA2, double TAURM, double TAUVM, double TAUMM, double DPARAM, double EPARAM, double S4M, double GXM, double GYM, double GZM, double AXM, double AYM, double AZM, double DM, double DDM, double CONCM, double ACQ, double AMOLFRAM, double RKM, double ACONTM, double THETAM, double PHIM);

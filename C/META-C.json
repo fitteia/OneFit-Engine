@@ -186,5 +186,8 @@
     },
     "mnpR1Hszn": {
 	"function": "mnpR1Hszn(f,T,gH,gS,C,S,d,D,T1e,NP)"
-    }
+    },
+	"florence": {
+	"function": "florence(FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)"
+	}
 }
