@@ -1,8 +1,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "florence_f.h"
-#include "florence_c.h"
+#include "Florence_f.h"
+#include "Florence_c.h"
 
 /**
       SI      = 0.5
