@@ -8,8 +8,17 @@ PERLCORE=/usr/lib/$(ARCH)-linux-gnu/perl/$(PERLVERSION)/CORE
 PREFIX=
 LIBNUMBER=4.0.4
 INTERFACE=UserLib
+
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+	GCCPATH := $(shell brew --prefix gcc)
+	LIBGFORTRAN = -L$(GCCPATH)/lib/gcc/current
+else
+	LIBGFORTRAN=
+endif
+
 CCFLAGS= -D$(OS) -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I$(ROOT)$(PREFIX)/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O2 -g -fPIC -I$(PERLCORE) -I$(ROOT)$(PREFIX)/include -I$(ROOT)/C/core/onefit-3.1 -I$(ROOT)/C/core/onefit-3.1/modelos 
-LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
+LDFLAGS= $(LIBGFORTRAN) -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g -lgfortran
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
 CSRCS := $(wildcard *.c)
