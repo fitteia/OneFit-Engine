@@ -703,7 +703,7 @@ C	  CLOSE(4)
 250      CONTINUE
 
 C   CALCULATION OF THE CURVE
-       OPEN (44, FILE='lixo.log')
+       OPEN (44, FILE='lixoooo.log')
       WRITE(44,'(2X,27(E10.4,2X))') SI, GAMMAI,SPIN,REAL(IREL), 
      &  TAUS0M(1,1),TAURM(1,1),TAUVM(1,1),TAUMM(1,1),
      &  TAUDELTA,EPARAM(1),S4M(1),GXM(1),
