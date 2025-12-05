@@ -34,7 +34,7 @@
       PHIM(J)    = 0
 **/
 
-double florence(
+double Florence(
       double FREQ,
       double SI,
       double GAMMAI,

@@ -23,7 +23,7 @@ CCFLAGS= -D$(OS) -pipe -I$(ROOT)$(PREFIX)/include -O3 -g -fPIC -I$(PERLCORE) -I$
 
 #-I$(ROOT)/C/core/onefit-3.1 -I$(ROOT)/C/core/onefit-3.1/modelos
 
-LDFLAGS= $(LIBGFORTRAN) -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g -lgfortran
+LDFLAGS= $(LIBGFORTRAN) -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O3 -g -lgfortran
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
 
 CSRCS := $(wildcard *.c)
