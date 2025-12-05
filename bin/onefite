@@ -1311,7 +1311,7 @@ MSG
 		note qq:to/MSG/;
 {'-' x 80}
 data exported to: data-$basename.txt
-AuxCode exported to: Auxcode-$basename.c
+AuxCode exported to: AuxCode-$basename.c
 {'-' x 80}
 MSG
 	}
