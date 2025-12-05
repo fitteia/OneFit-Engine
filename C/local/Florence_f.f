@@ -733,6 +733,7 @@ C   CALCULATION OF THE CURVE
 C	CLOSE(44)
 C        STOP
       R1(1)=TPUNO(1)
+      R1(1)=999.999
       R1(2)=RUNO(2)
       R1(3)=RUNO(3)
       R1(4)=RUNO(4)
