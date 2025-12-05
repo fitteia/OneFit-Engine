@@ -34,7 +34,7 @@ LIB=  -L$(DESTDIR)/lib -lonefit-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -lonefit
 SRC= functions.c tabfunc.c
 OBJ= functions.o tabfunc.o
 
-FLAGS= -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I./ -Wall
+FLAGS= -D$(OS) -O3 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I./ -Wall
 
 #CC = $(CC) $(FLAGS) 
 
