@@ -97,7 +97,7 @@ double Florence(
       PINP[25] = THETAM;
       PINP[26] = PHIM;
 
-	florence_(PINP,&FREQ,R1);
+	florencef_(PINP,&FREQ,R1);
       aux=R1[1]+R1[2]+R1[3];
       aux=1./(1./aux+TAUMM)*( (AMOLFRAM == 0.0) ? 1.0 : AMOLFRAM*1e-3/111);
 
