@@ -1,8 +1,10 @@
-      SUBROUTINE FLORENCEF(PINP,FREQ,R1)
+      SUBROUTINE FLORENCEF77(PINP,FREQ,R1)
       IMPLICIT REAL*8(A-H,O-Z)
       DOUBLE PRECISION PINP(27),FREQ,R1(10)
       COMMON /RET/ RUNO(10)
 
+c	This Fortran version requitres gfortran -O3 compilations for a reproducible results
+c	Pedro Sebastião, Anakara, December 2025	  
 
 C      PROGRAM PARANMRD 
 

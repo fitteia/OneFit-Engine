@@ -244,5 +244,5 @@ double Florence( double FREQ, double SI, double GAMMAI, double SPIN, double IREL
 
 /** florence_f.h **/
 
-void florence_(double PINP[27], double *FREQ, double R1[10]);
+void florence77_(double PINP[27], double *FREQ, double R1[10]);
 

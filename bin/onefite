@@ -1012,9 +1012,15 @@ multi MAIN  ('create',
     %e<SymbSize>=$ssz.Rat;
 
 	if $aux-code.so {	
-		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		my @func = $aux-code.split(/<[()]>/I;
+		my @aux = @func.tail.split(/ <ws> ',' <ws>/);
+		my $args = "())";
+		if @aux.so {
+ 			@aux .= map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) });
+			$args = "(double " ~ @args.join(", double") ~ ")";  
+		}
 		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
-		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
+		%e<AuxDeclar> = "double " ~ @func.head ~ $args;
 	}
     my $engine = Engine.new.path("$work-folder").set(%e);
     $engine.blocks(
