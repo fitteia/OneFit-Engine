@@ -183,7 +183,7 @@ double Florence4(
 	// printf("%lg %lg\n",FREQ,R1[0]);
  		count = 0;
 	}
-	switch ( int(index) ) {
+	switch ( (int) index ) {
 		default:
 			aux = R1[0];
 			break;
