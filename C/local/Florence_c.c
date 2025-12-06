@@ -102,7 +102,7 @@ double Florence(
       aux=1./(1./aux+TAUMM)*( (AMOLFRAM == 0.0) ? 1.0 : AMOLFRAM*1e-3/111);
 
       aux=aux/CONCM*0.001 + R1[4];
-    //printf("%lg %lg %lg %lg %lg %lg aux=%lg\n",pow(10,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],aux);
-	printf("%lg %lg\n",FREQ,R1[0]);
+    // printf("%lg %lg %lg %lg %lg %lg aux=%lg\n",pow(10,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],aux);
+	// printf("%lg %lg\n",FREQ,R1[0]);
  	return R1[0];	
 }
