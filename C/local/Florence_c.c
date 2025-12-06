@@ -181,7 +181,7 @@ double Florence4(
    		aux=aux/CONCM*0.001 + R1[4];
     // printf("%lg %lg %lg %lg %lg %lg aux=%lg\n",pow(10,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],aux);
  		count = 0;
-		printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
+	//	printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
 	}
 	switch ( (int) index ) {
 		default:
@@ -204,8 +204,7 @@ double Florence4(
 			aux = R1[4];
 			break;
 	}
-	printf("index: %d\n", (int) index);
+//	printf("index: %d\n", (int) index);
 	return aux;
 }
-
 
