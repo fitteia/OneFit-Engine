@@ -1012,16 +1012,11 @@ multi MAIN  ('create',
     %e<SymbSize>=$ssz.Rat;
 
 	if $aux-code.so {	
-		my @func = $aux-code.split(/<[()]>/);
-		my @aux = @func.tail.split(/ <ws> ',' <ws>/);
-		my $args = "())";
-		if @aux.so {
- 			@aux .= map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) });
-			$args = "(double " ~ @args.join(", double") ~ ")";  
-		}
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
 		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
-		%e<AuxDeclar> = "double " ~ @func.head ~ $args;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
 	}
+
     my $engine = Engine.new.path("$work-folder").set(%e);
     $engine.blocks(
 	:read,
@@ -1170,6 +1165,42 @@ MSG
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
+
+	if $aux-code.so {	
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
+	}
+
+	if $aux-code.so {	
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
+	}
+
+	if $aux-code.so {	
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
+	}
+
+	if $aux-code.so {	
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
+	}
+
+	if $aux-code.so {	
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
+	}
+
+	if $aux-code.so {	
+		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
+		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
+		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
+	}
 
 	if $aux-code.so {	
 		my @aux = $aux-code.split(/ <ws> ',' <ws>/);
