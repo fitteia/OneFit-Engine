@@ -1012,7 +1012,7 @@ multi MAIN  ('create',
     %e<SymbSize>=$ssz.Rat;
 
 	if $aux-code.so {	
-		my @func = $aux-code.split(/<[()]>/I;
+		my @func = $aux-code.split(/<[()]>/);
 		my @aux = @func.tail.split(/ <ws> ',' <ws>/);
 		my $args = "())";
 		if @aux.so {
