@@ -1290,7 +1290,7 @@ multi MAIN  ('fit',
 	 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
      Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	 Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
+	 Str  :st(:save-to(:$to)), # write fit settings to .json or .sav file 	     
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
      Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
      Str  :wf(:$work-folder) = '.',
