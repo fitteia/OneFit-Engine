@@ -103,7 +103,7 @@ double FlorenceN(
       	PINP[26] = PHIM;
 
 		florencef77_(PINP,&FREQ,R1);
-  		aux=R1[1]+R1[2]+R1[3];
+		printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
  		count = 0;
 	}
 	switch ( (int) index ) {
@@ -127,6 +127,7 @@ double FlorenceN(
 			aux = R1[4];
 			break;
 	}
+	printf("index: %d\n", (int) index);
 	return aux;
 }
 
@@ -278,6 +279,7 @@ double Florence4(
     // printf("%lg %lg %lg %lg %lg %lg aux=%lg\n",pow(10,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],aux);
  		count = 0;
 	//	printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
+//	printf("index: %d\n", (int) index);
 	}
 	switch ( (int) index ) {
 		default:
