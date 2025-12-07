@@ -705,14 +705,14 @@ C	  CLOSE(4)
 250      CONTINUE
 
 C   CALCULATION OF THE CURVE
-c      OPEN(UNIT=44,FILE='lixo.log')
-c      WRITE(44,'(2X,26(E10.4,2X))') SI, GAMMAI,SPIN,REAL(IREL), 
-c     &  TAUS0M(1,1),TAURM(1,1),TAUVM(1,1),TAUMM(1,1),
-c     &  TAUDELTA,EPARAM(1),S4M(1),GXM(1),
-c     &  GYM(1),GZM(1),AXM(1),AYM(1),
-c     &  AZM(1),DM(1),DDM(1),CONCM(1),
-c     &  ACQ,AMOLFRAM(1),RKM(1),ACONTM(1),
-c     &  THETAM(1),PHIM(1)
+      OPEN(UNIT=44,FILE='lixo.log')
+      WRITE(44,'(2X,26(E10.4,2X))') SI, GAMMAI,SPIN,REAL(IREL), 
+     &  TAUS0M(1,1),TAURM(1,1),TAUVM(1,1),TAUMM(1,1),
+     &  TAUDELTA,EPARAM(1),S4M(1),GXM(1),
+     &  GYM(1),GZM(1),AXM(1),AYM(1),
+     &  AZM(1),DM(1),DDM(1),CONCM(1),
+     &  ACQ,AMOLFRAM(1),RKM(1),ACONTM(1),
+     &  THETAM(1),PHIM(1)
 
 	DO K=1,INT(SET)
 	NPT(K)=NUMPUN
@@ -731,7 +731,7 @@ c     &  THETAM(1),PHIM(1)
 	END DO
 	NVEST=30+OO
       CALL FUNCZFS(P1,FUNC,NMX,NV)
-c	CLOSE(44)
+	CLOSE(44)
 C        STOP
       R1(1)=TPUNO(1)
       R1(2)=RUNO(2)
