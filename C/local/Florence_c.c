@@ -302,7 +302,7 @@ double Florence4(
 			aux = R1[4];
 			break;
 	}
-	printf("index: %d\n", (int) index);
+	printf("index: %d %lg\n", (int) index, aux);
 	return aux;
 }
 
