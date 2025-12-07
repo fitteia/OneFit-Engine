@@ -936,7 +936,7 @@ C PARAMETERS**************************************************************
 	 IF(INDEXSTAMPA.EQ.0.OR.NVEST.EQ.40)THEN
 !	 TAUM=TAUMM(J,1)
 	 AMOLFRA=AMOLFRAM(J)
-	 RK=RKM(J)
+	 RK=KKM(J)
 	 ACONT=ACONTM(J)
 	 ENDIF
 
