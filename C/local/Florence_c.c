@@ -236,9 +236,11 @@ double Florence4(
 )
 {
 	static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+	double aR1[10];
    	static int count = 0;	
 	double PINP[27];
     double aux;
+	int i;
 
 	if (count < 1 || count > 3 ) {
 		FREQ = log10(FREQ);
@@ -271,7 +273,8 @@ double Florence4(
       	PINP[25] = THETAM;
       	PINP[26] = PHIM;
 
-		florencef77_(PINP,&FREQ,R1);
+		florencef77_(PINP,&FREQ,aR1);
+		for (i=0; i<10; i++) { R1[i] = aR1[i]; }	
   		aux=R1[1]+R1[2]+R1[3];
    		aux=1./(1./aux+TAUMM)*( (AMOLFRAM == 0.0) ? 1.0 : AMOLFRAM*1e-3/111);
 
