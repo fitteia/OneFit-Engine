@@ -34,6 +34,8 @@
       PHIM(J)    = 0
 **/
 
+static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+
 double FlorenceN(
 	  double index,
 	  double n,
@@ -66,7 +68,6 @@ double FlorenceN(
       double PHIM
 )
 {
-	static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
    	static int count = 0;	
 	double PINP[27];
     double aux;
@@ -235,7 +236,6 @@ double Florence4(
       double PHIM
 )
 {
-	static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 	double aR1[10];
    	static int count = 0;	
 	double PINP[27];
@@ -273,13 +273,8 @@ double Florence4(
       	PINP[25] = THETAM;
       	PINP[26] = PHIM;
 
-		florencef77_(PINP,&FREQ,aR1);
-		for (i=0; i<10; i++) { R1[i] = aR1[i]; }	
-  		aux=R1[1]+R1[2]+R1[3];
-   		aux=1./(1./aux+TAUMM)*( (AMOLFRAM == 0.0) ? 1.0 : AMOLFRAM*1e-3/111);
-
-   		aux=aux/CONCM*0.001 + R1[4];
-    // printf("%lg %lg %lg %lg %lg %lg aux=%lg\n",pow(10,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],aux);
+		florencef77_(PINP,&FREQ,R1);
+		// for (i=0; i<10; i++) { R1[i] = aR1[i]; }	
  		count = 0;
 		printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
 //	printf("index: %d\n", (int) index);
