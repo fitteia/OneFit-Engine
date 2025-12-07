@@ -162,7 +162,7 @@ double Florence(
       double PHIM
 )
 {
-	double PINP[27],R1[10];
+	double PINP[27];
       double aux;
 
 	FREQ = log10(FREQ);
