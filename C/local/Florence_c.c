@@ -272,7 +272,7 @@ double Florence4(
       	PINP[25] = THETAM;
       	PINP[26] = PHIM;
 
-		printf("before: %lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
+		printf("before: %lg %lg %lg %lg %lg %lg %lg\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
 		florencef77_(PINP,&FREQ,R1);
 		// for (i=0; i<10; i++) { R1[i] = aR1[i]; }	
  		count = 0;
