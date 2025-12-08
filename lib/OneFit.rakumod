@@ -405,7 +405,7 @@ class Engine is export {
 
 		
 	   	if @outliers.so {
-	 		my $TXT = self!results( R2 => $R2 );
+	 		my $TXT = self!results( :R2($R2) );
 			$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
@@ -484,7 +484,7 @@ EOT
 	     }  unless $no-plot;
 	 }
 
-	 my $TXT = self!results( R2 => $R2 );
+	 my $TXT = self!results( :R2($R2) );
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
 		$TXT = @a.head 
@@ -495,7 +495,7 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-		$TXT = self!reset-parameters-std( $TXT, R2 => $R2 );
+		$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
 
 		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed*@!blocks.elems );
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points/block removed";
@@ -536,7 +536,7 @@ EOT
 		}		
 	 }
 	 %!engine<fit-results> = $TXT;
-	 %!engine<SimulFitOutput> = self!results( fmt => " ", R2 => $R2 );
+	 %!engine<SimulFitOutput> = self!results( fmt => " ", :R2($R2) );
 	 my @fit-curves;
 	 for (1 .. @!blocks.elems) {
 	     @fit-curves.push: "$!path/fit-curves-$_".IO.slurp
