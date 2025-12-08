@@ -509,7 +509,7 @@ EOT
 	 }
 	 else { 
 		if $reduced-chi2 {
-		   say "ola";	
+		   say "ola $R2";	
 			$TXT = self!reset-parameters-std( $TXT, R2 => $R2 );
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
