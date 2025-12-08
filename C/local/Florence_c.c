@@ -34,9 +34,6 @@
       PHIM(J)    = 0
 **/
 
-static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-static int count = 0;	
-
 double FlorenceN(
 	  double index,
 	  double n,
@@ -69,6 +66,9 @@ double FlorenceN(
       double PHIM
 )
 {
+	static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+	static int count = 0;	
+
 	double PINP[27];
     double aux;
 
@@ -241,7 +241,9 @@ double Florence4(
       double PHIM
 )
 {
-	double aR1[10];
+	static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+	static int count = 0;	
+
 	double PINP[27];
     double aux;
 	int i;
