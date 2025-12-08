@@ -310,38 +310,68 @@ class Block is export {
 #	@!Data>>.say;
 	self;
     }
-    method write-agr (:$path) {
-	$!path = $path if $path.defined;
-	my $agr = OneFit::Engine::Agrs::template.new;
-	$!Graph.rminf.autoposxy($agr);
-	my $TXT = $agr.head(
-	    $!Graph.Title.h<title>,
-	    $!Graph.Title.h<posx>,
-	    $!Graph.Title.h<posy>,
-	    $!Tag,
-	    $!Graph.Curves[0]<symbolsize>
-	);
+    
+	
+	method write-agr (:$path) {
+		$!path = $path if $path.defined;
+		my $agr = OneFit::Engine::Agrs::template.new;
+		$!Graph.rminf.autoposxy($agr);
+		my $TXT = $agr.head(
+	    	$!Graph.Title.h<title>,
+	    	$!Graph.Title.h<posx>,
+	    	$!Graph.Title.h<posy>,
+	    	$!Tag,
+	    	$!Graph.Curves[0]<symbolsize>
+		);
 
-	for $!Graph.Curves -> %label {
-	    $TXT ~= $agr.string(%label<label>,%label<color>,%label<posx>,%label<posy>);
-	}
-	$TXT ~= $agr.setgraph($!Graph.Xaxis,$!Graph.Yaxis);
-	$TXT ~= $agr.dataset(0,
+		for $!Graph.Curves -> %label {
+	    	$TXT ~= $agr.string(%label<label>,%label<color>,%label<posx>,%label<posy>);
+		}
+		$TXT ~= $agr.setgraph($!Graph.Xaxis,$!Graph.Yaxis);
+		$TXT ~= $agr.dataset(0,
 			     :type<xydy>,
 			     :symbol,
 			     symbolsize => $!Graph.Curves[0]<symbolsize>,
 			     errorbars => $!Graph.Curves[0]<errorbars>
 			    );
-	for (1 ..^ $!Graph.Curves.elems)  {
+		for (1 ..^ $!Graph.Curves.elems)  {
 		    $TXT ~= $agr.dataset($_,
 					 :l,
 					 lt => $!Graph.Curves[$_]<linetype>,
 					 c  => $!Graph.Curves[$_]<color>
 					);
-	}
-	$TXT ~= $agr.dataset($!Graph.Curves.elems,:l);
+		}
+		$TXT ~= $agr.dataset($!Graph.Curves.elems,:l);
 	    
-	{ "$!path/fit" ~ $!No+1 ~ ".agr-par" }().IO.spurt: $TXT;
-	self
+		{ "$!path/fit" ~ $!No+1 ~ ".agr-par" }().IO.spurt: $TXT;
+		self
     }
+
+	method correlation-coefficient () {
+		my @lines = "$!path/fit-residues-{$!No+1}.res".IO.lines(:close);
+		my @ye;
+		my @yt;
+		my $yea;
+		my @yes;
+		my $yta;
+		my @yts;
+		my $d
+		for @lines[1..*] { 
+			my @words = .words;
+			@ye.push: @words[1];
+			@yt.push: @words[2];
+		}
+		my $yea = @ye.sum/@ye.elems;
+		my $yta = @yt.sum/@ye.elems;
+
+		for (0 ..^ @lines[1..*]) -> $i { 
+			@yes.push:  @ye[$i]-$yea;
+			@yts.push:  @yt[$i]-$yta;
+		}
+		my $r = (@yes Z* @yts).sum / sqrt( @yes.map({ $_** 2 }).sum * @yts.map({ $_ ** 2 }).sum );
+		# this is the Pearson correlation
+		my $R2 = $r ** 2
+		# this is the quality coefficient
+	}
+
 }
