@@ -659,7 +659,7 @@ EOT
 	 	return $TXT;
     }
 
-	method !reset-parameters-std ( $txt, $R2 = False ) {
+	method !reset-parameters-std ( $txt, :$R2 = False ) {
 		my $chi2 =	(@!blocks>>.chi2).sum;
 		my $npts = ((@!blocks>>.Data)>>.elems).sum;
 		my $ngfp = @!blocks[0].parameters.free;
