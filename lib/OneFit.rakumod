@@ -664,7 +664,7 @@ EOT
 		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $ngfp;
 		my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
-		my $off-set = $R2 ?? 1 !! 0; # positions change because option R2 is set
+		my $off-set = $R2 ?? 2 !! 0; # positions change because option R2 is set
 
 #`(		say "chi2 = $chi2";
 		say "npts = $npts";
