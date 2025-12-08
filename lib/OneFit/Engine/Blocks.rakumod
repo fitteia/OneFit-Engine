@@ -362,9 +362,9 @@ class Block is export {
 			@yt.push: @words[2];
 		}
 		my $yea = @ye.sum/@ye.elems;
-		my $yta = @yt.sum/@ye.elems;
+		my $yta = @yt.sum/@yt.elems;
 
-		for (0 ..^ @lines[1..*]) -> $i { 
+		for (0 ..^ @ye.elems) -> $i { 
 			@yes.push:  @ye[$i]-$yea;
 			@yts.push:  @yt[$i]-$yta;
 		}
