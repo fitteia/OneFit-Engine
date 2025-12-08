@@ -356,7 +356,7 @@ class Block is export {
 		my $yta;
 		my @yts;
 		my $d
-		for @lines[1..*] { 
+		for (@lines[1..*]) { 
 			my @words = .words;
 			@ye.push: @words[1];
 			@yt.push: @words[2];
