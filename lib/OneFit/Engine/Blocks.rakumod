@@ -351,9 +351,7 @@ class Block is export {
 		my @lines = "$!path/fit-residues-{$!No+1}.res".IO.lines(:close);
 		my @ye;
 		my @yt;
-		my $yea;
 		my @yes;
-		my $yta;
 		my @yts;
 		for @lines[1..*] { 
 			my @words = .words;
