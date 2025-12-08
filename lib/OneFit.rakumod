@@ -406,7 +406,7 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		my $TXT = self!results( R2 => $R2 );
-			$TXT = self!reset-parameters-std($TXT);
+			$TXT = self!reset-parameters-std( $TXT, R2 => $R2 );
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
@@ -495,8 +495,7 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-#		$TXT = $reset-parameters-std($TXT);
-		$TXT = self!reset-parameters-std($TXT);
+		$TXT = self!reset-parameters-std( $TXT, R2 => $R2 );
 
 		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed*@!blocks.elems );
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points/block removed";
@@ -510,7 +509,7 @@ EOT
 	 }
 	 else { 
 		if $reduced-chi2 { 
-			$TXT = self!reset-parameters-std($TXT);
+			$TXT = self!reset-parameters-std( $TXT, R2 => $R2 );
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $size = max-line-length($TXT);
@@ -659,12 +658,13 @@ EOT
 	 	return $TXT;
     }
 
-	method !reset-parameters-std ($txt) {
+	method !reset-parameters-std ( $txt, $R2 = False ) {
 		my $chi2 =	(@!blocks>>.chi2).sum;
 		my $npts = ((@!blocks>>.Data)>>.elems).sum;
 		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $ngfp;
 		my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
+		my $off-set = $R2 ?? 1 !! 0; # positions change because option R2 is set
 
 #`(		say "chi2 = $chi2";
 		say "npts = $npts";
@@ -684,10 +684,10 @@ EOT
 				~ 	@a.tail(*-1).kv.map( -> $i, $v { 
 						my @b = $v.split(', ');
 						if %!engine<FitType> ~~ /Individual/ {
-							$ndf = @b[1] - @!blocks[$i].parameters.free; 
-							$chi2= @b[2];
+							$ndf = @b[1+$off-set] - @!blocks[$i].parameters.free; 
+							$chi2= @b[2+$off-set];
 						}
-						@b[2] = (@b[2]/($chi2/$ndf)).Rat;
+						@b[2+$off-set] = (@b[2+$off-set]/($chi2/$ndf)).Rat;
 						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
 							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
 						}
