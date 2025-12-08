@@ -626,7 +626,7 @@ EOT
 	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED) ?? .No !! 0;
 	     	@line-fields.push: .Tag;
 	     	@line-fields.push: .X.elems;
-			@line-fields.push: .correlation-coefficient if $R2;
+			@line-fields.push: .correlation-coefficient.fmt('%.4f') if $R2;
 	     	@line-fields.push: .chi2;
 	     	@line-fields.push: .T.words.join($fmt);
 	     	if "$!path/fit{.No+1}.log".IO.e and $MIXED {
