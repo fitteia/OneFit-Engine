@@ -592,7 +592,7 @@ EOT
 		self
     }
 
-    method !results ( :$fmt = ', '  :$R2 = False ) {
+    method !results ( :$fmt = ', ',  :$R2 = False ) {
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
