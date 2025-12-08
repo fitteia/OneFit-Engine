@@ -315,6 +315,7 @@ class Engine is export {
 		Bool :$reduced-chi2,
 		Bool :$errorbars,
 		Str  :$remove-outliers="",
+		Bool :$R2 = False,
 		Bool :$quiet=False
 	       ) {
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
@@ -404,7 +405,7 @@ class Engine is export {
 
 		
 	   	if @outliers.so {
-	 		my $TXT = self!results();
+	 		my $TXT = self!results( R2 => $R2 );
 			$TXT = self!reset-parameters-std($TXT);
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
@@ -483,7 +484,7 @@ EOT
 	     }  unless $no-plot;
 	 }
 
-	 my $TXT = self!results();
+	 my $TXT = self!results( R2 => $R2 );
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
 		$TXT = @a.head 
@@ -535,7 +536,7 @@ EOT
 		}		
 	 }
 	 %!engine<fit-results> = $TXT;
-	 %!engine<SimulFitOutput> = self!results(fmt => " ");
+	 %!engine<SimulFitOutput> = self!results( fmt => " ", R2 => $R2 );
 	 my @fit-curves;
 	 for (1 .. @!blocks.elems) {
 	     @fit-curves.push: "$!path/fit-curves-$_".IO.slurp
@@ -591,13 +592,14 @@ EOT
 		self
     }
 
-    method !results ( :$fmt = ', ' ) {
+    method !results ( :$fmt = ', '  :$R2 = False ) {
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
 		#		say %last<name value>;
 	 	my @fields = ("# TAG");
 	 	@fields.push: "Npts";
+		@fields.push: "R\x[B2]" if $R2;
 	 	@fields.push: "chi2";
 	 	my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	 	@fields.push: @a.Slip;
@@ -624,6 +626,7 @@ EOT
 	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED) ?? .No !! 0;
 	     	@line-fields.push: .Tag;
 	     	@line-fields.push: .X.elems;
+			@line-fields.push: .correlation-coefficient if $R2;
 	     	@line-fields.push: .chi2;
 	     	@line-fields.push: .T.words.join($fmt);
 	     	if "$!path/fit{.No+1}.log".IO.e and $MIXED {
