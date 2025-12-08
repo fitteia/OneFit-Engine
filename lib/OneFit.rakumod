@@ -682,6 +682,7 @@ EOT
 		my $TXT = @a.head 
 				~ 	"\n" 
 				~ 	@a.tail(*-1).kv.map( -> $i, $v { 
+					say $v;
 						my @b = $v.split(', ');
 						if %!engine<FitType> ~~ /Individual/ {
 							$ndf = @b[1+$off-set] - @!blocks[$i].parameters.free; 
