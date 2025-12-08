@@ -367,6 +367,7 @@ class Block is export {
 		}
 		my $r = (@yes Z* @yts).sum / sqrt( @yes.map({ $_** 2 }).sum * @yts.map({ $_ ** 2 }).sum );
 		# this is the Pearson correlation
+		say $r ** 2;
 		my $R2 = $r ** 2
 		# this is the quality coefficient
 	}
