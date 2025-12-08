@@ -406,7 +406,7 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		my $TXT = self!results( R2 => $R2 );
-			$TXT = self!reset-parameters-std( $TXT, R2 => $R2 );
+			$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
@@ -510,7 +510,7 @@ EOT
 	 else { 
 		if $reduced-chi2 {
 		   say "ola $R2";	
-			$TXT = self!reset-parameters-std( $TXT, R2 => $R2 );
+			$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $size = max-line-length($TXT);
