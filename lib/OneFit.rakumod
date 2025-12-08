@@ -683,7 +683,6 @@ EOT
 		my $TXT = @a.head 
 				~ 	"\n" 
 				~ 	@a.tail(*-1).kv.map( -> $i, $v { 
-					say $v;
 						my @b = $v.split(', ');
 						if %!engine<FitType> ~~ /Individual/ {
 							$ndf = @b[1] - @!blocks[$i].parameters.free; 
@@ -693,7 +692,6 @@ EOT
 						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
 							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
 						}
-						say @b;
 						@b.join(', ')
 					}).join("\n")
 				~ 	"\n";
