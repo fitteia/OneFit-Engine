@@ -337,7 +337,7 @@ class Engine is export {
 	 $*ERR.say("===> write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
 	 note "===> fit" unless $quiet;
-say $R2;
+	 
 	 my Bool $MIXED=False;
 	 my %last = @!par-tables[0].a.tail;
 	 $MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
@@ -508,7 +508,8 @@ EOT
 EOT
 	 }
 	 else { 
-		if $reduced-chi2 { 
+		if $reduced-chi2 {
+		   say "ola";	
 			$TXT = self!reset-parameters-std( $TXT, R2 => $R2 );
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
