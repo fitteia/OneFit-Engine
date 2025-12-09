@@ -312,7 +312,7 @@ onefite archive [-f||--fit=<Str>]
 
 =begin code
 
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg] [--git]
 
 =end code
 
@@ -542,6 +542,7 @@ multi MAIN ('upgrade',
       Bool :d(:$systemd-daemon) = False, #= create a sysmtemd-daemon service
       Bool :$cernlib = False, #= install cern lib instead of just minuit.a from src
       Bool :$shell = False, #= install shellinabox
+	  Bool :$git = True, #= By default it runs git to pull the package for remote repository
       Int  :$shell-port = 8100, #= shellinabox port
       Str  :$ip = '*', #= set IP
 	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
@@ -555,7 +556,7 @@ multi MAIN ('upgrade',
 	  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
       shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-      shell "cd { ::('OFE-PATH') }  && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg}";
+      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg}";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
@@ -880,8 +881,11 @@ multi MAIN ('help',
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
-    my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str };
-    my $txt = "$model => " ~ to-json(%info, :sorted-keys);
+	#my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str // $model };
+    my %info;
+   	try {	%info = %meta-c{ $model }; }
+	if $! { %info<error> = "===> $model not found in the liraries list"; }
+	my $txt = "$model => " ~ to-json(%info, :sorted-keys);
     say $txt unless $quiet;
     $txt
 }
@@ -896,8 +900,12 @@ multi MAIN ('help',
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
-    my %info = %meta-c{ @list.grep(/$model/).Str };
+    my %info;
+   	try {	%info = %meta-c{ $model }; }
+	if $! { %info<error> = "===> $model not found in the library's' list"; }
+	#my %info = %meta-c{ @list.grep(/$model/).Str };
     my $txt = %info{ $key };
+	if $txt.^name ~~ <Any> { $txt = "===> error: $key key not found in library's model: $model" }
     say $txt unless $quiet;
     $txt
 }
