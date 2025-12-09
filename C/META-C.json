@@ -179,15 +179,21 @@
 	"function": "jhf(w,re,im)"
     },
     "mnpR1HSc": {
-	"function": "mnpR1HSc(f,T,gH,gS,C,S,d,D,NP)"
-    },
+		"function": "mnpR1HSc(f,T,gH,gS,C,S,d,D,NP)"
+    	},
     "mnpR1Hsze": {
-	"function": "mnpR1Hsze(f,T,gH,gS,C,S,d,D,T2e,NP)"
-    },
+		"function": "mnpR1Hsze(f,T,gH,gS,C,S,d,D,T2e,NP)"
+    	},
     "mnpR1Hszn": {
-	"function": "mnpR1Hszn(f,T,gH,gS,C,S,d,D,T1e,NP)"
-    },
+		"function": "mnpR1Hszn(f,T,gH,gS,C,S,d,D,T1e,NP)"
+    	},
 	"florence": {
-	"function": "Florence(FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)"
-	}
+		"function": "Florence(FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)"
+		},
+	"florenceN": {
+		"function": "FlorenceN(index,n,FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)"
+		},
+	"florence4": {
+		"function": "Florence(index,FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)"
+		}
 }
