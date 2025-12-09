@@ -66,7 +66,8 @@ class HistoryLog is export {
 		%!arch{$short} = @words.join(' ');
 		"$.path/$.file".IO.spurt: to-json(%!arch, :sorted-keys);
 		my @files;
-		for $cmd.words[2..*].grep(/^ <-[-]> <-[,]>* /) {
+		my @aux = gather for $cmd.words[2..*] { take $_ unless /^'-'/ || /','/ };
+		for @aux {
 			@files.push: /'*'/ ?? shell("ls $_",:out).out.slurp.words.Slip !! $_ 	
 		}
 		@files .= grep( *.IO.f );
