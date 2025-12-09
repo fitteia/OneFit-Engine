@@ -105,9 +105,7 @@ double FlorenceN(
 
 		//printf("before: %lg %lg %lg %lg %lg %lg %lg RkM=%lg\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23]);
 		florencef77_(PINP,&FREQ,R1);
-		// for (i=0; i<10; i++) { R1[i] = aR1[i]; }	
  
-		florencef77_(PINP,&FREQ,R1);
 		//printf("after: %lg %lg %lg %lg %lg %lg %lg RKM=%lg\nreset count: %d\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23], count);
 	//	printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
  		count = 0;
@@ -201,11 +199,6 @@ double Florence(
       PINP[26] = PHIM;
 
 	florencef77_(PINP,&FREQ,R1);
-      aux=R1[1]+R1[2]+R1[3];
-      aux=1./(1./aux+TAUMM)*( (AMOLFRAM == 0.0) ? 1.0 : AMOLFRAM*1e-3/111);
-
-      aux=aux/CONCM*0.001 + R1[4];
-    // printf("%lg %lg %lg %lg %lg %lg aux=%lg\n",pow(10,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],aux);
 	// printf("%lg %lg\n",FREQ,R1[0]);
  	return R1[0];	
 }
