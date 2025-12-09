@@ -51,7 +51,7 @@ module-test:
 	perl -e 'use lib "./"; use UserLib; print UserLib::EllipticF(1.5,0.5,10.0)."\n";'
 	perl -e 'use lib "./"; use UserLib; print UserLib::iT1inISpara(1e6,300,1e-12,1e-12,1e-10,19)."\n";'
 
-install: lib module
+install: lib 
 	install -d $(ROOT)$(PREFIX)/lib $(ROOT)$(PREFIX)/include
 	install -m 0644 *.dat *.a *.h $(ROOT)$(PREFIX)/lib
 	install -m 0644 *.h $(ROOT)$(PREFIX)/include
