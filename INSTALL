@@ -278,7 +278,7 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git) {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
-   		shell "cd $*CWD/../minuit && git pull && make install && make clean";
+		shell "cd $*CWD/../minuit && git pull";
 	}
    	shell "cd $*CWD/../minuit && make install && make clean";
    	say "install source in $*CWD and binaries with perl version: $pv";
