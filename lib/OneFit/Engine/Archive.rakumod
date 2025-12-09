@@ -61,7 +61,10 @@ class HistoryLog is export {
 		my $dt = DateTime.now;
 		my $epoch = $dt.posix.Int;
 		my $short = $epoch.base(36);
-		%!arch{$short}=$cmd.words.map({ qq["$_"] }).join(' ');
+		my @words = $cmd.words;
+		@words[1] = qq{"@words[1]"};
+		$cmd = @words.join(' ');
+		%!arch{$short}=$cmd;
 		"$.path/$.file".IO.spurt: to-json(%!arch, :sorted-keys);
 		my @files;
 		for $cmd.words[2..*].grep(/^<![-]>/) {
