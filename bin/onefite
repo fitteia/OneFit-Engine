@@ -1663,7 +1663,7 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 			}
 			when /:i <[a..z]>+/ { 
 				say $col;
-				say @a>>.trim.join(":");
+				say @a>>.trim.grep(/$col/, :k);
 				my $pos = @a>>.trim.grep($col, :k).head;
 				if $pos.defined && $pos.Int {
 					@cols.push: $pos.Int +1; 
