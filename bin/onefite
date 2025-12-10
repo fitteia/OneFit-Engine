@@ -1653,6 +1653,7 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 	for $s.split(',').kv -> $k, $v {
 		my $col = $v.trim;
 		#		say $k,':',$v,':',$col;
+		$col = "R\x[B2]" if $col ~~ /'R2' | 'r2' /;
 		given $col {
 		   	when /<[+-]>/ {
 			    my $sign = $col.contains('-') ?? -1 !! +1;	
