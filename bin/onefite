@@ -1665,7 +1665,7 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 				say $col;
 				say @a>>.trim.grep(/$col/, :k);
 				my $pos = @a>>.trim.grep(/$col/, :k).head;
-				if $pos.defined && $pos.Int {
+				if $pos.defined && $pos.Int >= 0 {
 					@cols.push: $pos.Int +1; 
 				}
 				else {
