@@ -1662,8 +1662,6 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 				@cols.push: $i + 1 + $sign * @two.tail.Int ;
 			}
 			when /:i <[a..z]>+/ { 
-				say $col;
-				say @a>>.trim.grep(/$col/, :k);
 				my $pos = @a>>.trim.grep(/$col/, :k).head;
 				if $pos.defined && $pos.Int >= 0 {
 					@cols.push: $pos.Int +1; 
