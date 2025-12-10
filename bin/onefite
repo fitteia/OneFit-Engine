@@ -651,6 +651,7 @@ multi MAIN ('start-web-engine',
 		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="logx" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="logy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>reduced-chi2: </td><td><input name="reduced-chi2" type="radio" value="yes">/<input name="reduced-chi2" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td><Pearson Correlation: </td><td><input name="R2" type="radio" value="yes">/<input name="R2" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>R1: </td><td><input name="R1" type="radio" value="yes">/<input name="R1" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>err: </td><td><input name="err" type="text" value="">(number, num%, num%avg, num% avg split xvalue, stdv, stdv split xvalue; ex. 1.0, 10%, 10%avg, 1% avg split at 2e4, stdv, "stdv split at 2e4")</td></tr>
 		       <tr><td>range: </td><td><input name="range" type="text" value="">(window range: i:f)</td></tr>
@@ -748,6 +749,7 @@ HTML
 		my $logy= "";
 		my $global="";
 		my $R1 = "";
+		my $R2= "";
 		my $err = "";
 		my $fit-if = "";
 		my $plot-if = "";
@@ -778,7 +780,8 @@ HTML
 		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
 		       $reduced-chi2      = "--reduced-chi2  " if $k eq "reduced-chi2" and $v eq any("yes",1);
-		       $R1  		         = "--R1  " if $k eq "R1" and $v eq any("yes",1);
+		       $R1  		         = "--R1 " if $k eq "R1" and $v eq any("yes",1);
+		       $R2  		         = "--R2 " if $k eq "R2" and $v eq any("yes",1);
 		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file" and $v.so;
 		       $err                = "--err={$v.Str}  " if $k eq "err" and $v.so;
 		       $range                = "--range={$v.Str}  " if $k eq "range" and $v.so;
@@ -786,9 +789,6 @@ HTML
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq "fit-if" and $v.so;
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq "plot-if" and $v.so;
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
-			
-
-
 
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
@@ -809,11 +809,11 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		 else {
-		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		    $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
