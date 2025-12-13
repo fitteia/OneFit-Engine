@@ -3,7 +3,6 @@
       DOUBLE PRECISION PINP(27),FREQIN,FREQ,R1(10)
       COMMON /RET/ RUNO(10)
 
-      FREQ=FREQIN
 c	This Fortran version requitres gfortran -O3 compilations for a reproducible results
 c	Pedro Sebastião, Anakara, December 2025	  
 
@@ -78,6 +77,7 @@ C  RESPECT TO THE LAB FRAME
        COMMON/TEMPERATURE/ TEMP(10)
        COMMON /TMSTART/ TM11(10),TM21(10)
 
+       FREQ=FREQIN
 C   DIMENSION=MAX NUMBER OF PARAMETERS (21)
        DIMENSION P(21) 
        DIMENSION P1(21) 
