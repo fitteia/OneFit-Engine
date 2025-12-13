@@ -107,7 +107,7 @@ double FlorenceN(
 		florencef77_(PINP,&FREQ,R1);
  
 		//printf("after: %lg %lg %lg %lg %lg %lg %lg RKM=%lg\nreset count: %d\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23], count);
-	//	printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
+		printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
  		count = 0;
 	}
 	switch ( (int) index ) {
