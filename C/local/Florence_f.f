@@ -1,6 +1,6 @@
-      SUBROUTINE FLORENCEF77(PINP,FREQ,R1)
+      SUBROUTINE FLORENCEF77(PINP,FREQIN,R1)
       IMPLICIT REAL*8(A-H,O-Z)
-      DOUBLE PRECISION PINP(27),FREQ,R1(10)
+      DOUBLE PRECISION PINP(27),FREQIN,R1(10)
       COMMON /RET/ RUNO(10)
 
 c	This Fortran version requitres gfortran -O3 compilations for a reproducible results
@@ -83,6 +83,7 @@ C   DIMENSION=MAX NUMBER OF PARAMETERS (21)
        COMMON /PPAR/ P2(21) 
        DIMENSION XI(21,21)   
 
+       FREQ=FREQIN
        INDEX=1
        INDEXSTAMPA=0
 
