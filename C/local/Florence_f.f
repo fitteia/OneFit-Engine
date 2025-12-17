@@ -3,12 +3,11 @@
       DOUBLE PRECISION PINP(27),FREQIN,R1(10)
       COMMON /RET/ RUNO(10)
 
-c	This Fortran version requitres gfortran -O3 compilations for a reproducible results
-c	Pedro Sebastião, Anakara, December 2025	  
+c     PROGRAM PARANMRD 
 
-C      PROGRAM PARANMRD 
+! versione risc IBM
 
-C! PROGRAMMA FINALE 
+! PROGRAMMA FINALE 
 
 C PARAMAGNETIC ENHANCEMENT IN NMRD PROFILE
 C
@@ -45,6 +44,7 @@ C  BETA AND GAMMA ARE THE EULER ANGLES DEFINING THE MOLECULAR FRAME WITH
 C  RESPECT TO THE LAB FRAME
 
 
+C      IMPLICIT REAL*8(A-H,O-Z)
       PARAMETER(PI2 = 6.2831853, VL = 2.9979D+10)
       COMMON /SET/SET
       COMMON /RK10/ SPIN, SI
@@ -87,31 +87,27 @@ C   DIMENSION=MAX NUMBER OF PARAMETERS (21)
        INDEX=1
        INDEXSTAMPA=0
 
-
-      J=1
-C     MODEL PARAMETERS
-
-      B1(J)  = 0
-      B2(J)  = 0
-      B3(J)  = 0
-      B4(J)  = 0
-      B5(J)  = 0
-      B6(J)  = 0
-      B7(J)  = 0
-      B8(J)  = 0
-      B9(J)  = 0
-      B10(J) = 0
-      B11(J) = 0
-      B12(J) = 0
-      B13(J) = 0
-      B14(J) = 0
-      B15(J) = 0
-      B16(J) = 0
-      B17(J) = 0
-      B18(J) = 0
-      B19(J) = 0
-      B20(J) = 0
-      B21(J) = 0
+      B1(1)  = 0.0
+      B2(1)  = 0.0
+      B3(1)  = 0.0
+      B4(1)  = 0.0
+      B5(1)  = 0.0
+      B6(1)  = 0.0
+      B7(1)  = 0.0
+      B8(1)  = 0.0
+      B9(1)  = 0.0
+      B10(1) = 0.0
+      B11(1) = 0.0
+      B12(1) = 0.0
+      B13(1) = 0.0
+      B14(1) = 0.0
+      B15(1) = 0.0
+      B16(1) = 0.0
+      B17(1) = 0.0
+      B18(1) = 0.0
+      B19(1) = 0.0
+      B20(1) = 0.0
+      B21(1) = 0.0
 
       
       NPT(1) = 0
@@ -128,9 +124,6 @@ C     MODEL PARAMETERS
       X1 = FREQ
       X2 = X1
       X3 = 1.
-
-
-
 
 C      SI      = 0.5
 C      GAMMAI  = 2.675222D+8
@@ -164,54 +157,47 @@ C      PHIM(J)    = 0
       GAMMAI=PINP(2)
       SPIN=PINP(3)
       IREL=INT(PINP(4))
-      TAUS0M(J,1)=PINP(5)
-      TAURM(J,1)=PINP(6)
-      TAUVM(J,1)=PINP(7)
-      TAUMM(J,1)=PINP(8)
+      TAUS0M(1,1)=PINP(5)
+      TAURM(1,1)=PINP(6)
+      TAUVM(1,1)=PINP(7)
+      TAUMM(1,1)=PINP(8)
       TAUDELTA=PINP(9)
-      DPARAM(J)=PINP(10)
-      EPARAM(J)=PINP(11)
-      S4M(J)=PINP(12)
-      GXM(J)=PINP(13)
-      GYM(J)=PINP(14)
-      GZM(J)=PINP(15)
-      AXM(J)=PINP(16)
-      AYM(J)=PINP(17)
-      AZM(J)=PINP(18)
-      DM(J)=PINP(19)
-      DDM(J)=PINP(20)
-      CONCM(J)=PINP(21)
+      DPARAM(1)=PINP(10)
+      EPARAM(1)=PINP(11)
+      S4M(1)=PINP(12)
+      GXM(1)=PINP(13)
+      GYM(1)=PINP(14)
+      GZM(1)=PINP(15)
+      AXM(1)=PINP(16)
+      AYM(1)=PINP(17)
+      AZM(1)=PINP(18)
+      DM(1)=PINP(19)
+      DDM(1)=PINP(20)
+      CONCM(1)=PINP(21)
       ACQ=PINP(22)
-      AMOLFRAM(J)=PINP(23)
-      RKM(J)=PINP(24)
-      ACONTM(J)=PINP(25)
-      THETAM(J)=PINP(26)
-      PHIM(J)=PINP(27)
+      AMOLFRAM(1)=PINP(23)
+      RKM(1)=PINP(24)
+      ACONTM(1)=PINP(25)
+      THETAM(1)=PINP(26)
+      PHIM(1)=PINP(27)
 
 
 
 C   CONSTANTS READ IN FILE PAR.DAT
-C      OPEN (1, STATUS = 'OLD', FILE = 'TEST.DAT')
-C      OPEN (4, FILE="PAR.OUT")
+!      OPEN (1, STATUS = 'OLD', FILE = 'PARC.DAT')
+!      OPEN (4, FILE="PAR.OUT")
 C   OUTPUT FILE
-      
-C     READ(1,'(A)')FILENAME
-
+!      READ(1,'(A)')FILENAME
 C   NUCLEAR MOLECULAR SPIN
-
-C      READ(1,*)SI
-
+!      READ(1,*)SI
 C   GAMMA OF THE INVESTIGATED PARTICLE
-       
-C     READ(1,*)GAMMAI
-
+!      READ(1,*)GAMMAI
 C   ELECTRON SPIN
-      
-C     READ(1,*)SPIN
+!      READ(1,*)SPIN
 C   T1 OR T2 CALCULATION
-C      READ(1,*)IREL
-
-C      READ(1,*)X1,X2,X3
+!      READ(1,*)IREL
+C   LIMITS OF THE FIELD
+!      READ(1,*)X1,X2,X3
       IF(X3.EQ.1)THEN
       XMIN=X1
       XMAX=X2
@@ -219,17 +205,14 @@ C      READ(1,*)X1,X2,X3
       XMIN=LOG10(GAMMAI*X1/6.283)
       XMAX=LOG10(GAMMAI*X2/6.283)
       ENDIF
-
-
 C   NUMBER OF POINTS TO BE CALCULATED
-
-C      READ(1,*)NUMPUN
+!      READ(1,*)NUMPUN
       IF(XMIN.EQ.XMAX)NUMPUN=1
 C   NUMBER OF SETS OF DATA FOR FITTING
-C      READ(1,*)SET
+!      READ(1,*)SET
       IF(SET.EQ.0) SET=1
 C   TEMPERATURE
-C      READ(1,*)(TEMP(K),K=1,INT(SET))
+!      READ(1,*)(TEMP(K),K=1,SET)
 
       J=1
       IND=1
@@ -240,12 +223,11 @@ C      READ(1,*)(TEMP(K),K=1,INT(SET))
       NPLUS=0
       NPLUS2=0
 C    CORRELATION TIMES
-
-C         READ(1,*)B1(J), (TAUS0M(J,K),K=1,2),TAUDELTA
+!         READ(1,*)B1(J), (TAUS0M(J,K),K=1,2),TAUDELTA
 	  IF(B1(J).GE.2)THEN
 	  TS1=TAUS0M(J,1)
 	  TS2=TAUS0M(J,2)
-	   DO K=1,INT(SET)
+	   DO K=1,SET
 	   TAUS0M(J,K)=TS1*EXP(TS2/TEMP(K))
 	   END DO
 	  IF(B1(J).EQ.3)NPLUS=NPLUS+1
@@ -253,7 +235,7 @@ C         READ(1,*)B1(J), (TAUS0M(J,K),K=1,2),TAUDELTA
 	 IF(B1(J).EQ.1)THEN
 	   P(IND)=TAUS0M(J,1)
 	   P1(IND1)=TAUS0M(J,1)
-c      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	   IND=IND+1
 	   IND1=IND1+1
 	 ENDIF
@@ -262,17 +244,16 @@ c      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	   P1(IND1)=TS1
 	   P(IND+1)=TS2
 	   P1(IND1+1)=TS2
-c      WRITE(4,'(2X,4(E10.4,2X))') TS1,TS2
+!      WRITE(4,'(2X,4(E10.4,2X))') TS1,TS2
 	   IND=IND+2
 	   IND1=IND1+2
 	 ENDIF
 
-C         READ(1,*)B2(J), (TAURM(J,K),K=1,2)
-
+!         READ(1,*)B2(J), (TAURM(J,K),K=1,2)
 	  IF(B2(J).GE.2)THEN
 	  TR1=TAURM(J,1)
 	  TR2=TAURM(J,2)
-	   DO K=1,INT(SET)
+	   DO K=1,SET
 	   TAURM(J,K)=TR1*EXP(TR2/TEMP(K))  !Stokes
 	   END DO
 	 IF(B2(J).EQ.3) NPLUS=NPLUS+1
@@ -280,7 +261,7 @@ C         READ(1,*)B2(J), (TAURM(J,K),K=1,2)
 	 IF(B2(J).EQ.1)THEN 
 	   P(IND)=TAURM(J,1)
 	   P1(IND1)=TAURM(J,1)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
@@ -289,17 +270,16 @@ C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	   P1(IND1)=TR1
 	   P(IND+1)=TR2
 	   P1(IND1+1)=TR2
-C      WRITE(4,'(2X,4(E10.4,2X))') TR1,TR2
+!      WRITE(4,'(2X,4(E10.4,2X))') TR1,TR2
 	   IND=IND+2
 	   IND1=IND1+2
 	 ENDIF
 
-C         READ(1,*)B3(J), (TAUVM(J,K),K=1,2)
-
+!         READ(1,*)B3(J), (TAUVM(J,K),K=1,2)
 	  IF(B3(J).GE.2)THEN
 	  TV1=TAUVM(J,1)
 	  TV2=TAUVM(J,2)
-	   DO K=1,INT(SET)
+	   DO K=1,SET
 	   TAUVM(J,K)=TV1*EXP(TV2/TEMP(K))
 	   END DO
 	 IF(B3(J).EQ.3) NPLUS=NPLUS+1
@@ -307,7 +287,7 @@ C         READ(1,*)B3(J), (TAUVM(J,K),K=1,2)
 	 IF(B3(J).EQ.1)THEN 
 	   P(IND)=TAUVM(J,1)
 	   P1(IND1)=TAUVM(J,1)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
@@ -316,7 +296,7 @@ C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	   P1(IND1)=TV1
 	   P(IND+1)=TV2
 	   P1(IND1+1)=TV2
-C      WRITE(4,'(2X,4(E10.4,2X))') TV1,TV2
+!      WRITE(4,'(2X,4(E10.4,2X))') TV1,TV2
 	   IND=IND+2
 	   IND1=IND1+2
 	 ENDIF
@@ -326,149 +306,134 @@ C      WRITE(4,'(2X,4(E10.4,2X))') TV1,TV2
 	 IF(B1(J).EQ.1) P1(IND1-1)=TAUS0M(J,K)
 	 ENDIF
 C    PARAMETERS OF ZERO FIELD SPLITTING
-C         READ(1,*)B11(J), DPARAM(J)
-
+!         READ(1,*)B11(J), DPARAM(J) 
        DPARAM(J) = PI2*VL*DPARAM(J)
 	 IF(B11(J).EQ.1)THEN 
 	 P(IND)=DPARAM(J)
 	 P1(IND1)=DPARAM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
 	 INDDPARA(J)=IND
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
-
-C         READ(1,*)B12(J), EPARAM(J)
-
+!         READ(1,*)B12(J), EPARAM(J)
        EPARAM(J) = PI2*VL*EPARAM(J)
 	 IF(B12(J).EQ.1)THEN 
 	 P(IND)=EPARAM(J)
 	 P1(IND1)=EPARAM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
 	 INDEPARA(J)=IND
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
-C         READ(1,*)B19(J), S4M(J)
-
+!         READ(1,*)B19(J), S4M(J)
          S4M(J) = PI2*VL*S4M(J)
 	 IF(B19(J).EQ.1)THEN 
 	 P(IND)=S4M(J)
 	 P1(IND1)=S4M(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
 	 INDS4(J)=IND
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
 C    PARAMETER OF G-TENSOR
-C         READ(1,*)B17(J), GSER
-
-C	 GXM(J)=GSER/2.003 
+!         READ(1,*)B17(J), GSER
+!	 GXM(J)=GSER/2.003
 	 IF(B17(J).EQ.1)THEN 
 	 P(IND)=GXM(J)
 	 P1(IND1)=GXM(J)
-C     WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
-C         READ(1,*)B18(J), GSER
-
-C	 GYM(J)=GSER/2.003
+!         READ(1,*)B18(J), GSER
+!	 GYM(J)=GSER/2.003
 	 IF(B18(J).EQ.1)THEN 
 	 P(IND)=GYM(J)
 	 P1(IND1)=GYM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
-C         READ(1,*)B20(J), GSER
-
-C	 GZM(J)=GSER/2.003
+!         READ(1,*)B20(J), GSER
+!	 GZM(J)=GSER/2.003
 	 IF(B20(J).EQ.1)THEN 
 	 P(IND)=GZM(J)
 	 P1(IND1)=GZM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
 C   PARAMETERS OF HYPERFINE COUPLING
-C         READ(1,*)B9(J), AXM(J)
-
+!         READ(1,*)B9(J), AXM(J)
 C   CONVERTION FROM CM-1 TO S-1.RAD 
          AXM(J)=PI2*VL*AXM(J)  
 	 IF(B9(J).EQ.1)THEN 
 	 P(IND)=AXM(J)
 	 P1(IND1)=AXM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
 	 INDAPAR(J)=IND
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
-C         READ(1,*)B10(J), AYM(J)
-
+!         READ(1,*)B10(J), AYM(J)
        AYM(J)=PI2*VL*AYM(J)
 	 IF(B10(J).EQ.1)THEN 
 	 P(IND)=AYM(J)
 	 P1(IND1)=AYM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
 	 INDAPER(J)=IND
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
-C         READ(1,*)B21(J), AZM(J)
-
+!         READ(1,*)B21(J), AZM(J)
        AZM(J)=PI2*VL*AZM(J)  
 	 IF(B21(J).EQ.1)THEN 
 	 P(IND)=AZM(J)
 	 P1(IND1)=AZM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/VL/PI2
 	 INDAPER2(J)=IND
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
 C    PARAMETERS OF OUTER-SPHERE 
-C         READ(1,*)B13(J), DM(J)
-
+!         READ(1,*)B13(J), DM(J)
 	 DM(J)=DM(J)*1.E-8
 	 IF(B13(J).EQ.1)THEN 
 	 P(IND)=DM(J)
 	 P2(IND2)=DM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/1.E-8
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)/1.E-8
 	 INDED(J)=IND
 	 IND=IND+1
 	 IND2=IND2+1
 	 ENDIF
-C         READ(1,*)B14(J), DDM(J)
-
+!         READ(1,*)B14(J), DDM(J)
 	 IF(B14(J).EQ.1)THEN 
 	 P(IND)=DDM(J)
 	 P2(IND2)=DDM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND2=IND2+1
 	 ENDIF
-C         READ(1,*)B15(J), CONCM(J)
-
+!         READ(1,*)B15(J), CONCM(J)
 	 IF(B15(J).EQ.1)THEN 
 	 P(IND)=CONCM(J)
 	 P2(IND2)=CONCM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND2=IND2+1
 	 ENDIF
 C   NUMBER OF DIFFERENT SITES
-C      READ(1,*) ACQ
-
+!      READ(1,*) ACQ
 C   PARAMETERS FOR DIFFERENT SITES
-      DO J=1,INT(ACQ)
-C         READ(1,*)B4(J), (TAUMM(J,K),K=1,2)
-
+      DO J=1,ACQ
+!         READ(1,*)B4(J), (TAUMM(J,K),K=1,2)
 	  IF(B4(J).GE.2)THEN
 	  TM1=TAUMM(J,1)
 	  TM2=TAUMM(J,2)
 	  TM11(J)=TAUMM(J,1)
 	  TM21(J)=TAUMM(J,2)
-	   DO K=1,INT(SET)
+	   DO K=1,SET
 	   TAUMM(J,K)=TM1*EXP(TM2/TEMP(K))
 	   END DO
 	 IF(B4(J).EQ.3) NPLUS2=1
@@ -476,7 +441,7 @@ C         READ(1,*)B4(J), (TAUMM(J,K),K=1,2)
 	 IF(B4(J).EQ.1)THEN 
 	   P(IND)=TAUMM(J,1)
 	   P2(IND2)=TAUMM(J,1)
-      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND2=IND2+1
 	 ENDIF
@@ -485,54 +450,49 @@ C         READ(1,*)B4(J), (TAUMM(J,K),K=1,2)
 	   P2(IND2)=TM1
 	   P(IND+1)=TM2
 	   P2(IND2+1)=TM2
-      WRITE(4,'(2X,4(E10.4,2X))') TM1,TM2
+!      WRITE(4,'(2X,4(E10.4,2X))') TM1,TM2
 	   IND=IND+2
 	   IND2=IND2+2
 	 ENDIF
-C         READ(1,*)B5(J), AMOLFRAM(J)
-
+!         READ(1,*)B5(J), AMOLFRAM(J)
 	 AMOLFRAM(J)=AMOLFRAM(J)*1.E-3/111.
 	 IF(B5(J).EQ.1)THEN 
 	 P(IND)=AMOLFRAM(J)
 	 P2(IND2)=AMOLFRAM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)*111./1.E-3
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)*111./1.E-3
 	 INDAMOLFRA(J)=IND
 	 IND=IND+1
 	 IND2=IND2+1
 	 ENDIF
-C         READ(1,*)B6(J), RKM(J)
-
+!         READ(1,*)B6(J), RKM(J)
 	 IF(B6(J).EQ.1)THEN 
 	 P(IND)=RKM(J)
 	 P2(IND2)=RKM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND2=IND2+1
 	 ENDIF
-C         READ(1,*)B16(J), ACONTM(J)
-
+!         READ(1,*)B16(J), ACONTM(J)
 	 IF(B16(J).EQ.1)THEN 
 	 P(IND)=ACONTM(J)
 	 P2(IND2)=ACONTM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND2=IND2+1
 	 ENDIF
-C         READ(1,*)B7(J), THETAM(J)
-
+!         READ(1,*)B7(J), THETAM(J)
 	 IF(B7(J).EQ.1)THEN 
 	 P(IND)=THETAM(J)
 	 P1(IND1)=THETAM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
-C         READ(1,*)B8(J), PHIM(J)
-
+!         READ(1,*)B8(J), PHIM(J)
 	 IF(B8(J).EQ.1)THEN 
 	 P(IND)=PHIM(J)
 	 P1(IND1)=PHIM(J)
-C      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
+!      WRITE(4,'(2X,4(E10.4,2X))') P(IND)
 	 IND=IND+1
 	 IND1=IND1+1
 	 ENDIF
@@ -549,15 +509,18 @@ C   NUMBER OF FITTING PARAMETERS IN EXTERNAL CICLE
 	  NPLUS2=0
 	 END DO
 
-         NVMEM=NV
-         DPARATOT=0.
+	 NVMEM=NV
+	 DPARATOT=0. 
+	 GX=GXM(J)
+	 GY=GYM(J)
+	 GZ=GZM(J)
 	 EPARATOT=0.
 	 APERTOT=0.
 	 APERTOT2=0.
 	 APARTOT=0.
 	 ACONTOT=0.
 	 ACONIND=0.
-         DO J=1,INT(ACQ)
+         DO J=1,ACQ
          DPARATOT=DPARAM(J)+DPARATOT
          EPARATOT=EPARAM(J)+EPARATOT
          APERTOT=AZM(J)+APERTOT
@@ -566,17 +529,21 @@ C   NUMBER OF FITTING PARAMETERS IN EXTERNAL CICLE
 	 ACONTOT=ACONTM(J)+ACONTOT
 	 END DO
 
+!	   WRITE(*,*)ACONTOT,APERTOT, APARTOT, APERTOT2, GX, GY, GZ, EPARATOT, DPARATOT
 C   DEFINITION OF NMX: DIMENSION OF ENERGY MATRIX
          IF(DPARATOT.EQ.0..AND.EPARATOT.EQ.0.
      &	 AND.GX.EQ.GZ.AND.GX.EQ.GY.AND.SPIN.EQ.0.5)THEN
 	 NMX=2.*(2*SI+1.)
+!       WRITE(*,*)'1 NMX=', NMX,'SI=',SI
 	 ELSE
          IF(APERTOT.EQ.0.AND.APARTOT.EQ.0.AND.APERTOT2.EQ.0.AND.
      &    GX.EQ.GZ.AND.GX.EQ.GY.AND.EPARATOT.EQ.0)THEN
 	 SI=0.5
 	 NMX=2*SPIN+1.
+!       WRITE(*,*)'2 NMX=', NMX,'SI=',SI
 	 ELSE
          NMX = (2*SI + 1)*(2*SPIN+1)
+!       WRITE(*,*)'3 NMX=', NMX,'SI=',SI
 	 ENDIF
 	 ENDIF
 	 IF(IREL.NE.1) NMX = (2*SI + 1)*(2*SPIN+1)
@@ -585,28 +552,30 @@ C   DEFINITION OF NMX: DIMENSION OF ENERGY MATRIX
      &    GX.NE.GZ.OR.GX.NE.GY.OR.EPARATOT.NE.0.OR.DPARATOT.NE.0)THEN
          NMX = (2*SI + 1)*(2*SPIN+1)
 	 ACONIND=1.
+!       WRITE(*,*)'NMX=', NMX,'SI=',SI,'ACONIND=',ACONIND
 	 ENDIF
 	 ENDIF
+!       WRITE(*,*)'NMX=', NMX,'SI=',SI
+!	   WRITE(*,*)ACONTOT,APERTOT, APARTOT, APERTOT2, GX, GY, GZ, EPARATOT, DPARATOT
 
-
-C      READ(1,*) (NPT(K),K=1, INT(SET))
-C      READ(1,*) FTOL
-C      READ(1,*) ALFASTEP
+!      READ(1,*) (NPT(K),K=1, SET)
+!      READ(1,*) FTOL
+!      READ(1,*) ALFASTEP
 
 C  Z: FREQUENCIES, PP: RATE
 
       NPTOT=0
-      DO K=1,INT(SET)
+      DO K=1,SET
       NPTOT=NPTOT+NPT(K)
       END DO
 
       DO 11 I=1,NPTOT                                                      
-C      READ(1,*) Z(I),PP(I)
+!      READ(1,*) Z(I),PP(I)
 11    CONTINUE                                                       
 
-C       CLOSE(1)
+!       CLOSE(1)
        OO=10
-
+c	 WRITE(*,*)TAUVM(1,1)
 
       IF (NPT(1).EQ.0)GOTO 250
 
@@ -614,23 +583,23 @@ C    STARTING FITTING PROCEDURE
 
 
        IF(NVEST.EQ.0)THEN
-c       CALL FUNCZFS(P2,FUNC,NMX,NV)
+!       CALL FUNCZFS(P2,FUNC,NMX,NV)
        NP=NV  
        N=NV
        ITER=1000
-c       CALL POWELLINT(P2,XI,N,NP,FTOL,ITER,FRET,NMX) 
+!       CALL POWELLINT(P2,XI,N,NP,FTOL,ITER,FRET,NMX) 
          DO J=1,NP
-C         WRITE(6,'(2X,4(E10.4,2X))') P2(J)
+!         WRITE(6,'(2X,4(E10.4,2X))') P2(J)
          END DO
        ELSE
        NP=NVEST
        N=NVEST
        ITER=1000
-c       CALL POWELL(P1,XI,N,NP,FTOL,ITER,FRET,NMX) 
+!       CALL POWELL(P1,XI,N,NP,FTOL,ITER,FRET,NMX) 
        ENDIF
 
-C       WRITE(4,*) 'ERROR=', FRET/(NPTOT-NV)
-       DO J=1,INT(ACQ)
+!       WRITE(4,*) 'ERROR=', FRET/(NPTOT-NV)
+       DO J=1,ACQ
        IF(B5(J).EQ.1)P2(INDAMOLFRA(J))=P2(INDAMOLFRA(J))*111/1.E-3
        IF(B9(J).EQ.1)P1(INDAPAR(J))=P1(INDAPAR(J))/PI2/VL
        IF(B10(J).EQ.1)P1(INDAPER(J))=P1(INDAPER(J))/PI2/VL
@@ -647,51 +616,51 @@ C   WRITE RESULTS OF FITTING PROCEDURE
          IF(NVEST.NE.0)THEN
 	 JI=1
         IF(B1(1).EQ.2)THEN
-	DO K=1,INT(SET)
-C        WRITE(4,'(2X,4(E10.4,2X))')P1(JI)*EXP(P1(JI+1)/TEMP(K))
+	DO K=1,SET
+!        WRITE(4,'(2X,4(E10.4,2X))')P1(JI)*EXP(P1(JI+1)/TEMP(K))
 	END DO
 	 JI=JI+2
 	 ENDIF
         IF(B2(1).EQ.2)THEN
-	DO K=1,INT(SET)
-C        WRITE(4,'(2X,4(E10.4,2X))')P1(JI)*EXP(P1(JI+1)/TEMP(K))
+	DO K=1,SET
+!        WRITE(4,'(2X,4(E10.4,2X))')P1(JI)*EXP(P1(JI+1)/TEMP(K))
 	END DO
 	 JI=JI+2
 	 ENDIF
         IF(B3(1).EQ.2)THEN
-	DO K=1,INT(SET)
-C        WRITE(4,'(2X,4(E10.4,2X))')P1(JI)*EXP(P1(JI+1)/TEMP(K))
+	DO K=1,SET
+!        WRITE(4,'(2X,4(E10.4,2X))')P1(JI)*EXP(P1(JI+1)/TEMP(K))
 	END DO
 	 JI=JI+2
 	 ENDIF
          DO J=JI,NVEST
-C         WRITE(4,'(2X,4(E10.4,2X))') P1(J)
+!         WRITE(4,'(2X,4(E10.4,2X))') P1(J)
          END DO
 	 ENDIF
 
-           DO JJ=1,INT(ACQ)
+           DO JJ=1,ACQ
          IF(NV-NVEST.NE.0)THEN
 	 JI=1
         IF(B4(JJ).EQ.2)THEN
-	DO K=1,INT(SET)
-C        WRITE(4,'(2X,4(E10.4,2X))')P2(JI)*EXP(P2(JI+1)/TEMP(K))
+	DO K=1,SET
+!        WRITE(4,'(2X,4(E10.4,2X))')P2(JI)*EXP(P2(JI+1)/TEMP(K))
 	END DO
 	 JI=JI+2
 	 ENDIF
          DO J=JI,NV-NVEST
-C         WRITE(4,'(2X,4(E10.4,2X))') P2(J)
+!         WRITE(4,'(2X,4(E10.4,2X))') P2(J)
          END DO
 	 ENDIF
 	   END DO
 
-C         WRITE(4,*) 'MAGN. FIELD,  OBSED.,   CAL.                  '
+!         WRITE(4,*) 'MAGN. FIELD,  OBSED.,   CAL.                  '
 
         DO 1 I=1,NPTOT
-C        WRITE(4,'(2X,3(F8.3,2X))') Z(I),PP(I)/CONCM(1)*0.001,
-C     &	TPUNO(I)/CONCM(1)*0.001  
+!        WRITE(4,'(2X,3(F8.3,2X))') Z(I),PP(I)/CONCM(1)*0.001,
+     &	TPUNO(I)/CONCM(1)*0.001  
 1          CONTINUE
-C	  CLOSE(4)
-       DO J=1,INT(ACQ)
+!	  CLOSE(4)
+       DO J=1,ACQ
        IF(B5(J).EQ.1)P2(INDAMOLFRA(J))=P2(INDAMOLFRA(J))/111*1.E-3
        IF(B9(J).EQ.1)P1(INDAPAR(J))=P1(INDAPAR(J))*PI2*VL
        IF(B10(J).EQ.1)P1(INDAPER(J))=P1(INDAPER(J))*PI2*VL
@@ -706,41 +675,46 @@ C	  CLOSE(4)
 250      CONTINUE
 
 C   CALCULATION OF THE CURVE
-c      OPEN(UNIT=44,FILE='lixo.log')
-c      WRITE(44,'(2X,26(E10.4,2X))') SI, GAMMAI,SPIN,REAL(IREL), 
-c     &  TAUS0M(1,1),TAURM(1,1),TAUVM(1,1),TAUMM(1,1),
-c     &  TAUDELTA,EPARAM(1),S4M(1),GXM(1),
-c     &  GYM(1),GZM(1),AXM(1),AYM(1),
-c     &  AZM(1),DM(1),DDM(1),CONCM(1),
-c     &  ACQ,AMOLFRAM(1),RKM(1),ACONTM(1),
-c     &  THETAM(1),PHIM(1)
+!        OPEN (44, FILE='lixo.log')
+!      WRITE(44,'(2X,26(E10.4,2X))') SI, GAMMAI,SPIN,REAL(IREL), 
+!     &  TAUS0M(1,1),TAURM(1,1),TAUVM(1,1),TAUMM(1,1),
+!     &  TAUDELTA,EPARAM(1),S4M(1),GXM(1),
+!     &  GYM(1),GZM(1),AXM(1),AYM(1),
+!     &  AZM(1),DM(1),DDM(1),CONCM(1),
+!     &  ACQ,AMOLFRAM(1),RKM(1),ACONTM(1),
+!     &  THETAM(1),PHIM(1)
 
-	DO K=1,INT(SET)
+
+
+
+	DO K=1,SET
 	NPT(K)=NUMPUN
 	END DO
 	INDEXSTAMPA=1
-	DO K=1,INT(SET)
+	DO K=1,SET
 	DO I=1,NPT(K)
         ZE = XMIN + (XMAX - XMIN)*FLOAT(I)/FLOAT(NPT(K))
 	ADD=0
 	DO IJK=1,K-1
 	ADD=ADD+NPT(IJK)
 	END DO
-	PP(I+1+INT(ADD))=PP(I+INT(ADD))
-        Z(I+INT(ADD)) = 10.**ZE/1000000.
+	PP(I+1+ADD)=PP(I+ADD)
+        Z(I+ADD) = 10.**ZE/1000000.
 	END DO
 	END DO
 	NVEST=30+OO
       CALL FUNCZFS(P1,FUNC,NMX,NV)
-c	CLOSE(44)
-C        STOP
-      R1(1)=TPUNO(1)
-      R1(2)=RUNO(2)
-      R1(3)=RUNO(3)
-      R1(4)=RUNO(4)
-      R1(5)=RUNO(5)
-      RETURN
-      END
+!	CLOSE(44)
+!        STOP
+        R1(1)=RUNO(1)
+        R1(2)=RUNO(2)
+        R1(3)=RUNO(3)
+        R1(4)=RUNO(4)
+        R1(5)=RUNO(5)
+!        WRITE(*,*)'R1=',R1(1)
+        RETURN
+        END
+
       
 
 
@@ -785,17 +759,15 @@ C        STOP
        COMMON/TEMPERATURE/ TEMP(10)
        DIMENSION TS1(10),TS2(10),TR1(10),TR2(10),TV1(10),TV2(10)
        COMMON /TMSTART/ TM11(10),TM21(10)
-      COMMON /RET/ RUNO(10)
-
-
+       COMMON /RET/ RUNO(10)
 
 
 C   SET PARAMETERS
        FB=0.
        FBW=0.
        IF(NVEST.LT.30)THEN
-C       WRITE(6,*)'PARAMETERS: '
-       DO J=1,INT(ACQ)
+!       WRITE(6,*)'PARAMETERS: '
+       DO J=1,ACQ
        IF(B5(J).EQ.1)P(INDAMOLFRA(J))=P(INDAMOLFRA(J))*111/1.E-3
        IF(B9(J).EQ.1)P(INDAPAR(J))=P(INDAPAR(J))/PI2/VL
        IF(B10(J).EQ.1)P(INDAPER(J))=P(INDAPER(J))/PI2/VL
@@ -806,9 +778,9 @@ C       WRITE(6,*)'PARAMETERS: '
        IF(B19(J).EQ.1)P(INDS4(J))=P(INDS4(J))/PI2/VL
 	 END DO
 	DO I=1,NV
-C	WRITE(6,'(2X,E10.4)')P(I)
+!	WRITE(6,'(2X,E10.4)')P(I)
 	END DO
-       DO J=1,INT(ACQ)
+       DO J=1,ACQ
        IF(B5(J).EQ.1)P(INDAMOLFRA(J))=P(INDAMOLFRA(J))/111*1.E-3
        IF(B9(J).EQ.1)P(INDAPAR(J))=P(INDAPAR(J))*PI2*VL
        IF(B10(J).EQ.1)P(INDAPER(J))=P(INDAPER(J))*PI2*VL
@@ -821,7 +793,7 @@ C	WRITE(6,'(2X,E10.4)')P(I)
        ENDIF
 
        
-       DO 223 K=1,INT(SET)
+       DO 223 K=1,SET
        DO I=1, NPT(K)    
          IND=1
        TPUNOTOT=0
@@ -830,6 +802,7 @@ C	WRITE(6,'(2X,E10.4)')P(I)
 	 TAUR=TAURM(J,1)
 	 TAUV=TAUVM(J,1)
 	 IF(TAUR.EQ.0.AND.TAUV.EQ.0.)TAUC=TAUCM(J)
+!	   WRITE(*,*)'TAUS0=',TAUS0
 	 AX=AXM(J)
 	 AY=AYM(J)
 	 AZ=AZM(J)
@@ -844,8 +817,6 @@ C	WRITE(6,'(2X,E10.4)')P(I)
 	 DD=DDM(J)
 	 CONC=CONCM(J)
 	 ENDIF
-
-	 TAUM=TAUMM(J,1)
 
 C PARAMETERS**************************************************************
 	 IF(B1(J).EQ.1)THEN 
@@ -920,20 +891,7 @@ C PARAMETERS**************************************************************
 	 IF(B14(J).EQ.1) IND2=IND2+1
 	 IF(B15(J).EQ.1) IND2=IND2+1         !!!!!!!!!!!!!!!!!
 
-
-         DO J=1,INT(ACQ)
-
-!	 IF(B4(J).EQ.0)TAUM=TAUMM(J,1)
-	 IF(B4(J).EQ.1)THEN 
-	 TAUM=P(IND)
-	 IND=IND+1
-	 ENDIF
-	 IF(B4(J).EQ.2)THEN 
-	 TM11(J)=P(IND)
-	 TM21(J)=P(IND+1)
-	 IND=IND+2
-	 ENDIF
-
+         DO J=1,ACQ
 	 IF(INDEXSTAMPA.EQ.0.OR.NVEST.EQ.40)THEN
 	 TAUM=TAUMM(J,1)
 	 AMOLFRA=AMOLFRAM(J)
@@ -942,7 +900,16 @@ C PARAMETERS**************************************************************
 	 ENDIF
 
 	 IF(INDEXSTAMPA.EQ.1)THEN     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
+	 IF(B4(J).EQ.0)TAUM=TAUMM(J,1)
+	 IF(B4(J).EQ.1)THEN 
+	 TAUM=P2(IND2)
+	 IND2=IND2+1
+	 ENDIF
+	 IF(B4(J).EQ.2)THEN 
+	 TM11(J)=P2(IND2)
+	 TM21(J)=P2(IND2+1)
+	 IND2=IND2+2
+	 ENDIF
 	 IF(B5(J).EQ.0)AMOLFRA=AMOLFRAM(J)
 	 IF(B5(J).EQ.1)THEN 
 	 AMOLFRA=P2(IND2)
@@ -1000,7 +967,7 @@ C   CONSTANTS IN DIPOLAR RELAXATION
 C   CONSTANT OF CONTACT RELAXATION
       CONA=(ACONT*6.28*1.E6*1.0546E-34)
 
-
+!      WRITE(*,*)'tauC=',TAUC,'TAUS0=',TAUS0
       IF(TAUC.EQ.0.AND.TAUS0.EQ.0) GOTO 56
       CALL GAUINT (BZ,TAUM,NMX)
        
@@ -1011,19 +978,31 @@ C   STORE CONTRIBUTIONS FOR TUNO
       TMATCROSS(IPLUS,J)=TMUNOCROSS
 
 C   CALCULATION OF TPUNO
-      RUNO(2)=TMUNO*RK1
-      RUNO(3)=CONA*CONA*TMUNOCONT
-      RUNO(4)=SQRT(RK1)*CONA*TMUNOCROSS
-C      TMUNO=TMUNO*RK1+CONA*CONA*TMUNOCONT+SQRT(RK1)*CONA*TMUNOCROSS
-      TMUNO=RUNO(2)+RUNO(3)+RUNO(4)
-c      TPUNO1=1./(1./TMUNO+TAUM)*AMOLFRA       
-c      IF(AMOLFRA.EQ.0.)TPUNO1=1./(1./TMUNO+TAUM)
-      TPUNO1=(1./(1./TMUNO+TAUM))
+	  RUNO(2)=TMUNO*RK1
+	  RUNO(3)=CONA*CONA*TMUNOCONT
+	  RUNO(4)=SQRT(RK1)*CONA*TMUNOCROSS
+	  TMUNO=RUNO(2)+RUNO(3)+RUNO(4)
+!      TMUNO=TMUNO*RK1+CONA*CONA*TMUNOCONT+SQRT(RK1)*CONA*TMUNOCROSS
+!      TPUNO1=1./(1./TMUNO+TAUM)*AMOLFRA       
+!      IF(AMOLFRA.EQ.0.)TPUNO1=1./(1./TMUNO+TAUM)
+
+	  TPUNO1=(1./(1./TMUNO+TAUM))
      
-      RUNO(2)=RUNO(2)*(1-TAUM*TPUNO1+(TAUM*TPUNO1)**2)/CONC*0.001      
-      RUNO(3)=RUNO(3)*(1-TAUM*TPUNO1+(TAUM*TPUNO1)**2)/CONC*0.001      
-      RUNO(4)=RUNO(4)*(1-TAUM*TPUNO1+(TAUM*TPUNO1)**2)/CONC*0.001      
- 
+	  EPSILON=TPUNO1*TAUM
+	  IF (EPSILON.LT.0.25) THEN
+       RUNO(2)=RUNO(2)*(1-EPSILON+EPSILON**2)/CONC*0.001      
+       RUNO(3)=RUNO(3)*(1-EPSILON+EPSILON**2)/CONC*0.001      
+       RUNO(4)=RUNO(4)*(1-EPSILON+EPSILON**2)/CONC*0.001      
+ 	  ELSE IF (EPSILON.GT.2.5) THEN
+       RUNO(2)=RUNO(2)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
+       RUNO(3)=RUNO(3)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
+       RUNO(4)=RUNO(4)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
+	  ELSE
+       RUNO(2)=0.5*RUNO(2)/CONC*0.001      
+       RUNO(3)=0.5*RUNO(3)/CONC*0.001      
+       RUNO(4)=0.5*RUNO(4)/CONC*0.001      
+	  ENDIF 
+
       IF(AMOLFRA.NE.0.) THEN
        RUNO(2)=RUNO(2)*AMOLFRA
        RUNO(3)=RUNO(3)*AMOLFRA
@@ -1031,8 +1010,8 @@ c      IF(AMOLFRA.EQ.0.)TPUNO1=1./(1./TMUNO+TAUM)
        TPUNO1=TPUNO1*AMOLFRA
       ENDIF
 
-      TPUNO(IPLUS)=TPUNO1/CONC*0.001
-
+	  TPUNO(IPLUS)=TPUNO1/CONC*0.001
+      
       TPUNOTOT=TPUNOTOT+TPUNO(IPLUS)
       END DO
 56    CONTINUE
@@ -1051,42 +1030,40 @@ C   CALCULATION OF OUTER-SPHERE CONTRIBUTION
       SECONDO=SPIN*(SPIN+1)*CONC/(D*DD)
       TERZO=(3.*GEI+7.*GES)
       TERM=(PRIMO*SECONDO*TERZO)
-      RUNO(5)=TERM
       ENDIF
       TPUNOTOT=TPUNOTOT+TERM
-      RUNO(1)=TPUNOTOT
+	  
+	  RUNO(5)=TERM
+
       TPUNO(IPLUS)=TPUNOTOT
+      RUNO(1)=TPUNO(IPLUS)
 C   DIFFERENCE BETWEEN EXPERIMENTAL AND FITTING VALUES
       FB=((PP(IPLUS)-TPUNO(IPLUS))**2)/PP(IPLUS)+FB   
       FBW=SQRT((PP(IPLUS)-TPUNO(IPLUS))**2)/PP(IPLUS)+FBW
-C      IF (STEPGAMMA.NE.1) WRITE(6,'(2X,2(E10.4))')Z(IPLUS),TPUNO(IPLUS)
-c      IF(INDEXSTAMPA.EQ.1)WRITE(44,'(2X,9(E10.4,2X))')
-c     &      Z(IPLUS),TPUNO(IPLUS),RUNO(1),RUNO(2),RUNO(3),RUNO(4),
-c     &      RUNO(5),AMOLFRA,CONC
+      IF (STEPGAMMA.NE.1) WRITE(6,'(2X,2(E10.4))')Z(IPLUS),TPUNO(IPLUS)
+      IF(INDEXSTAMPA.EQ.1)WRITE(44,'(2X,2(E10.4))')Z(IPLUS),TPUNO(IPLUS)
       END DO
 
 223	CONTINUE
 
 
       FUNC=FBW     
-C      IF(INDEXSTAMPA.EQ.0)WRITE(6,*)'                       ERROR', 
-C     &	'=',FBW/(NPTOT-NVMEM),'**********'
+      IF(INDEXSTAMPA.EQ.0)WRITE(6,*)'                       ERROR', 
+     &	'=',FBW/(NPTOT-NVMEM),'**********'
 
 
       IF(NV.NE.NVMEM)THEN
-C	write(6,*)'errore'
-	stop
 
 C   INTERNAL FITTING PROCEDURE
        NP2=NVMEM-NV  
        N2=NVMEM-NV
        ITER2=1000
        FRET2=0.
-c       CALL POWELLINT(P2,XI2,N2,NP2,FTOL,ITER2,FRET2,NMX) 
-C       WRITE(6,*)'                       ERROR', 
-C     &	'=', FRET2/(NPTOT-NVMEM)
+       CALL POWELLINT(P2,XI2,N2,NP2,FTOL,ITER2,FRET2,NMX) 
+!       WRITE(6,*)'                       ERROR', 
+!     &	'=', FRET2/(NPTOT-NVMEM)
          DO J=1,NP2
-C	 WRITE(6,'(2X,E10.4)')P2(J)
+!	 WRITE(6,'(2X,E10.4)')P2(J)
          END DO
        FUNC=FRET2
       ENDIF
@@ -1140,7 +1117,7 @@ C   SET PARAMETERS
        FB=0.
        FBW=0.
        
-       DO 223 K=1,INT(SET)
+       DO 223 K=1,SET
        DO I=1, NPT(K)    
          IND=1
          TPUNOTOT=0
@@ -1167,22 +1144,19 @@ C PARAMETERS OF INTERNAL FITTING*********************************************
 	 ENDIF
 
 
-         DO J=1,INT(ACQ)
+         DO J=1,ACQ
 
 
-!	 IF(B4(J).EQ.1)THEN 
-!	 TAUM=P(IND)
-!	 IND=IND+1
-!	 ENDIF
-!	 IF(B4(J).EQ.2)THEN
-!	 TM1(1)=P(IND)
-!	 TM2(1)=P(IND+1)
-!	 IND=IND+2
-!	 ENDIF
-!	 IF(B4(J).EQ.0) TAUM=TAUMM(J,1)
-!
-	 TAUM=TAUMM(J,1)   ! per poter fittare su taum quando entra in tauc
-C!	write(6,*)taum
+	 IF(B4(J).EQ.1)THEN 
+	 TAUM=P(IND)
+	 IND=IND+1
+	 ENDIF
+	 IF(B4(J).EQ.2)THEN
+	 TM1(1)=P(IND)
+	 TM2(1)=P(IND+1)
+	 IND=IND+2
+	 ENDIF
+	 IF(B4(J).EQ.0) TAUM=TAUMM(J,1)
 
 	 IF(B5(J).EQ.1)THEN 
 	 AMOLFRA=P(IND)
@@ -1256,9 +1230,9 @@ C   DIFFERENCES BETWEEN EXPERIMENTAL AND FITTED VALUES
       TPUNO(IPLUS)=TPUNOTOT
       FB=((PP(IPLUS)-TPUNO(IPLUS))**2)/PP(IPLUS)+FB   
       FBW=SQRT((PP(IPLUS)-TPUNO(IPLUS))**2)/PP(IPLUS)+FBW
-C      IF (STEPGAMMA.NE.1) WRITE(6,'(2X,2(E10.4))')Z(IPLUS),TPUNO(IPLUS)
-C      IF(INDEXSTAMPA.EQ.1) WRITE(44,'(2X,2(E10.4,2X))') Z(IPLUS),
-C     & TPUNO(IPLUS)
+      !IF (STEPGAMMA.NE.1) WRITE(6,'(2X,2(E10.4))')Z(IPLUS),TPUNO(IPLUS)
+      IF(INDEXSTAMPA.EQ.1) WRITE(44,'(2X,2(E10.4))') Z(IPLUS),
+     & TPUNO(IPLUS)
       END DO
 
 223   CONTINUE
@@ -1287,7 +1261,6 @@ C     & TPUNO(IPLUS)
 
       SUBROUTINE DIAG(BETA,GAMMA,BZ,NMX)
       IMPLICIT REAL*8(A-H,O-Z)
-      INTEGER STEP, NI, NJ
       PARAMETER(PI2 = 6.2831853, VL = 2.9979D+10)
       COMMON /RK10/ SPIN, SI
       COMMON /T1T2/ IREL
@@ -1315,7 +1288,6 @@ C     & TPUNO(IPLUS)
       DIMENSION WK1(MBRANC),WK2(MBRANC),WK3(MBRANC)
       CT=COS(BETA)
       ST=SIN(BETA)
-
 
 C   CALCULATION OF CORRELATION TIME
 	WI=2*3.1416*BZ
@@ -1359,89 +1331,80 @@ C   CALCULATION OF CORRELATION TIME
       COEFFH=1.
       ENDIF
 
+!      WRITE(*,*)'-2 INDEX=',INDEX,'ACONTIND=',ACONIND
       IF(ACONIND.EQ.1.)GO TO 456
 
+!      WRITE(*,*)'-1 INDEX=',INDEX
         IF (DPARATOT.EQ.0..AND.EPARATOT.EQ.0..AND.SPIN.EQ.0.5.AND.
      &      GX.EQ.GY.AND.GX.EQ.GZ.AND.IREL.EQ.1)THEN
 
+!      WRITE(*,*)'-0 INDEX=',INDEX
 C     MATRIX OF ENERGY FOR HYPERFINE COUPLING
       X=BZ*3.1415927*658.2
       ZC=X*CT
       ZS=X*ST
-            
-      N = INT((2.0*SI + 1.0)*2.0)
+       DO 200 I=1,(2.*SI+1.)*2.
+       DO 200 J=1,(2.*SI+1.)*2.                                                     
+200     AR(I,J)=0.                                                       
+           SSI = SI*(SI + 1.)
+           DO I = 1, (2.*SI+1.)*2., 2
+               COEF    = SI - (I - 1)/2
+	       
+              AR(I,I) = ZC*GZ + (SI-I/2)*AZ/2.
+              AR(I+1,I+1) = -(ZC*GZ + (SI-I/2)*AZ/2.)
+              AR(I,I+1) = COEFFH*ZS*GY
+              AR(I+1,I) = COEFFH*ZS*GY
+               AR(I+1,I+2) = 0.5*(AX+AY)/2.*SQRT(SSI-(COEF-1.)*COEF)
+               AR(I+2,I+1) = 0.5*(AX+AY)/2.*SQRT(SSI-(COEF-1.)*COEF)
+           END DO
 
-      DO I = 1, N
-      DO J = 1, N
-      AR(I,J) = 0.0
-      END DO
-      END DO
+!      WRITE(*,*)'0 INDEX=',INDEX
 
-      SSI = SI*(SI + 1.)
-
-      DO I = 1, N, 2
-      COEF = SI - (I - 1)/2.0
-      AR(I,I) = ZC*GZ + (SI - I/2.0)*AZ/2.0
-      AR(I+1,I+1) = -(ZC*GZ + (SI - I/2.0)*AZ/2.0)
-      AR(I,I+1) = COEFFH*ZS*GY
-      AR(I+1,I) = COEFFH*ZS*GY
-      IF (I+2 .LE. N) THEN
-      AR(I+1,I+2) = 0.5*(AX+AY)/2.0*SQRT(SSI-(COEF-1.0)*COEF)
-      AR(I+2,I+1) = 0.5*(AX+AY)/2.0*SQRT(SSI-(COEF-1.0)*COEF)
-      END IF
-      END DO
-
-
-      IF (INDEX.EQ.1) THEN
-C      WRITE(6,*) 'DIM. MATRIX', NMX
-C      OPEN(UNIT=17,FILE='MAT')
-      N = INT((2.*SI+1.)*(2.*SPIN+1.))
-      DO I = 1, N
-      DO J = 1, N
-C      WRITE(17,*) AR(I,J)
-      END DO
-C      WRITE(17,*)
-      END DO
-C      CLOSE(17)
-      ENDIF
-      INDEX = INDEX + 1
-
+        IF (INDEX.EQ.1)THEN
+!       WRITE(6,*)'0 DIM. MATRIX', NMX
+!       OPEN(UNIT=17,FILE='MAT')
+       DO I=1,(2.*SI+1)*(2.*SPIN+1)
+       DO J=1,(2.*SI+1)*(2.*SPIN+1)
+!       WRITE(17,*)AR(I,J)
+       END DO
+!       WRITE(17,*)' '
+       END DO
+!       CLOSE(17)
+       ENDIF
+       INDEX=INDEX+1
 
 C     DIAGONALISATION OF THE MATRIX OF ENERGY
-      DO 45 I=1,NMX
-	DO 44 J=1,NMX
+         DO 45 I=1,NMX
+	 DO 45 J=1,NMX
          ARR(I,J)=REAL(AR(I,J))
          ARI(I,J)=IMAG(AR(I,J))
-44       CONTINUE
 45       CONTINUE
       IFAIL=0
         CALL F02AXF(ARR,MBRANC,ARI,MBRANC,NMX,WR,ZRR,MBRANC,ZRI,MBRANC
      $          ,WK1,WK2,WK3,IFAIL)
-	DO 47 I=1,NMX
+	DO 46 I=1,NMX
 	DO 46 J=1,NMX
 	ZR(I,J)=CMPLX(ZRR(I,J),ZRI(I,J))
 46       CONTINUE
-47       CONTINUE 
 
 
        I=1 
        OM(1,1)=0.
        OMOLD(1)=0.
        DO 700 K=1,NMX 
-       DO 699 L=1,NMX
+       DO 700 L=1,NMX
        IF (K.EQ.L)GO TO 700
        I=I+1
       OM(K,L)=WR(K)-WR(L)  
 C   DIFFERENCES IN ENERGY LEVELS
       OMOLD(I)=WR(K)-WR(L)
-699     CONTINUE
 700     CONTINUE
 
 
 
 C       CALCULATION OF CORRELATION FUNCTIONS
       DO 400 K=1,NMX                                                      
-      DO 399 L=1,NMX                                                      
+      DO 400 L=1,NMX                                                      
       TZ=0                                                              
       DO 1500 J=1,NMX                                                      
       TZ=-((-1.)**J)*ZR(J,K)*CONJG(ZR(J,L))+TZ                                 
@@ -1457,16 +1420,16 @@ C       CALCULATION OF CORRELATION FUNCTIONS
       TM=ZR(J,K)*CONJG(ZR(J-1,L))+TM                                           
       END DO
       SM(K,L)=TM                                                        
-399    CONTINUE  
 400    CONTINUE                                                          
 
       GO TO 567
       ENDIF
 
+!      WRITE(*,*)'INDEX=',INDEX
       IF (APARTOT.EQ.0.AND.APERTOT.EQ.0.AND.APERTOT2.EQ.0.
      & AND.EPARATOT.EQ.0.AND.GX.EQ.GY.AND.GX.EQ.GZ.AND.IREL.EQ.1)THEN
         IF (INDEX.EQ.1)THEN
-C       WRITE(6,*)'DIM. MATRIX', NMX
+!       WRITE(6,*)'1 DIM. MATRIX', NMX
        ENDIF
        INDEX=INDEX+1
 
@@ -1475,12 +1438,9 @@ C     MATRIX OF ENERGY IN ZERO FIELD SPLITTING
       X=BZ*2*3.1415927*658.2
       ZC=X*CT
       ZS=X*ST
-      DO I = 1, NMX
-      DO J = 1, NMX
-      AR(I,J) = 0.
-      END DO
-      END DO
-
+       DO 5200 I=1,NMX
+       DO 5200 J=1,NMX 
+5200     AR(I,J)=0.
 
          S = FLOAT(NMX - 1)/2.
          SS = S*(S + 1.)
@@ -1495,31 +1455,28 @@ C     MATRIX OF ENERGY IN ZERO FIELD SPLITTING
 
 
          DO 145 I=1,NMX
-	 DO 144 J=1,NMX
+	 DO 145 J=1,NMX
          ARR(I,J)=REAL(AR(I,J))
          ARI(I,J)=IMAG(AR(I,J))
-144       CONTINUE
 145       CONTINUE
       IFAIL=0
         CALL F02AXF(ARR,MBRANC,ARI,MBRANC,NMX,WR,ZRR,MBRANC,ZRI,MBRANC
      $          ,WK1,WK2,WK3,IFAIL)
-	DO 147 I=1,NMX
+	DO 146 I=1,NMX
 	DO 146 J=1,NMX
 	ZR(I,J)=CMPLX(ZRR(I,J),ZRI(I,J))
 146       CONTINUE
-147       CONTINUE
 
 
        I=1 
        OM(1,1)=0.
        OMOLD(1)=0.
        DO 570 K=1,NMX 
-       DO 569 L=1,NMX
+       DO 570 L=1,NMX
        IF (K.EQ.L)GO TO 570
        I=I+1
       OM(K,L)=WR(K)-WR(L)
       OMOLD(I)=WR(K)-WR(L)
-569     CONTINUE
 570     CONTINUE
 
 C PER SPIN  (SZ)  DIVERSI DA 1/2
@@ -1533,7 +1490,7 @@ C PER SPIN  (SZ)  DIVERSI DA 1/2
       CO3(J)=SQRT(SS-CO1(J-1)*(CO1(J-1)-1.))    
       END DO
       DO 540 K=1, NMX 
-      DO 539 L=1, NMX
+      DO 540 L=1, NMX
       TZ=0 
       DO 510 J=1,NMX 
       TZ=CO1(J)*CONJG(ZR(J,K))*(ZR(J,L))+TZ
@@ -1549,9 +1506,7 @@ C PER SPIN  (SZ)  DIVERSI DA 1/2
       TM=CO3(J)*CONJG(ZR(J,K))*(ZR(J-1,L))+TM
 530    CONTINUE 
       SM(K,L)=TM 
-539    CONTINUE
 540    CONTINUE
-
 
       GO TO 567
       ENDIF
@@ -1561,21 +1516,17 @@ C     GENERAL MATRIX OF ENERGY
       X=BZ*3.1415927*658.2
       ZC=X*CT
       ZS=X*ST
-      N = INT((2.*SI+1.)*(2.*SPIN+1.)*2.)
-      DO I = 1, N
-      DO J = 1, N
-      AR(I,J) = 0.
-      END DO
-      END DO
+       DO I=1,(2.*SI+1)*(2.*SPIN+1)*2
+       DO J=1,(2.*SI+1)*(2.*SPIN+1)*2
+       AR(I,J)=0.
+       END DO
+       END DO
            SSI = SI*(SI + 1.)
 	   SS=SPIN*(SPIN+1.)
 	   ISMS=2.*SPIN+1
 	   K=0
-      NI = INT((2.*SI+1.)*(2.*SPIN+1.))
-      STEP = INT(2.*SPIN+1.)
-      NJ = INT(2.*SPIN)
-      DO I = 1, NI, STEP
-      DO J = 0, NJ
+       DO I=1,(2.*SI+1)*(2.*SPIN+1),2.*SPIN+1
+       DO J=0,2.*SPIN
                COEF    = SI - K
 	       COEF2 = SPIN-J
        AR(I+J,I+J)=2.*(SPIN-J)*ZC*GZ + (SPIN-J)*AZ*(SI-K)+DPARA*
@@ -1616,116 +1567,94 @@ C     GENERAL MATRIX OF ENERGY
        END DO
 
 
-      IF (INDEX.EQ.1) THEN
-C      WRITE(6,*) 'DIM. MATRIX', NMX
-C      OPEN(UNIT=17,FILE='MAT')
-      N = INT((2.*SI+1.)*(2.*SPIN+1.))
-      DO I = 1, N
-      DO J = 1, N
-C      WRITE(17,*) AR(I,J)
-      END DO
-C      WRITE(17,*)
-      END DO
-C      CLOSE(17)
-      ENDIF
-      INDEX = INDEX + 1
-
+        IF (INDEX.EQ.1)THEN
+!       WRITE(6,*)'2 DIM. MATRIX', NMX
+!       OPEN(UNIT=17,FILE='MAT')
+       DO I=1,(2.*SI+1)*(2.*SPIN+1)
+       DO J=1,(2.*SI+1)*(2.*SPIN+1)
+!       WRITE(17,*)AR(I,J)
+       END DO
+!       WRITE(17,*)' '
+       END DO
+!       CLOSE(17)
+       ENDIF
+       INDEX=INDEX+1
 
 
 C     WR EIGENVALUES   ZR EIGENVECTORS
-      DO 245 I=1,NMX
-	DO 244 J=1,NMX
+         DO 245 I=1,NMX
+	 DO 245 J=1,NMX
          ARR(I,J)=REAL(AR(I,J))
          ARI(I,J)=IMAG(AR(I,J))
-244       CONTINUE
 245       CONTINUE
       IFAIL=0
         CALL F02AXF(ARR,MBRANC,ARI,MBRANC,NMX,WR,ZRR,MBRANC,ZRI,MBRANC
      $          ,WK1,WK2,WK3,IFAIL)
-	DO 247 I=1,NMX
+	DO 246 I=1,NMX
 	DO 246 J=1,NMX
 	ZR(I,J)=CMPLX(ZRR(I,J),ZRI(I,J))
 246       CONTINUE
-247       CONTINUE
 
 
-      I = 1
-      OM(1,1) = 0.0
-      OMOLD(1) = 0.0
-
-      DO K = 1, NMX
-      DO L = 1, NMX
-
-      IF (K .EQ. L) GO TO 70
-
-      I = I + 1
-      OM(K,L) = WR(K) - WR(L)
-      OMOLD(I) = WR(K) - WR(L)
-
-70    CONTINUE
-
-      END DO
-      END DO
-
+       I=1 
+       OM(1,1)=0.
+       OMOLD(1)=0.
+         DO 70 K=1,NMX 
+       DO 70 L=1,NMX
+       IF (K.EQ.L)GO TO 70
+       I=I+1
+      OM(K,L)=WR(K)-WR(L) 
+      OMOLD(I)=WR(K)-WR(L)
+70     CONTINUE
 
 
 
       J=0
-      N = INT((2.*SI+1.)*(2.*SPIN+1.))
-      DO I = 1, N
-      J = J + 1
-      IF (J .GT. INT(2.*SPIN+1.)) J = 1
-      CO1(I) = ( (2.*SPIN+1.) - (2.*J-1) ) / 2.
-C     CO1(I) = -((-1.)**J)
+       DO I=1,(2.*SI+1)*(2.*SPIN+1)
+       J=J+1
+       IF (J.GT.(2*SPIN+1)) J=1
+      CO1(I)=(2*SPIN+1-(2*J-1))/2.
+C      CO1(I)=-((-1.)**J)
       END DO
-      DO I = 1, N-1
-      CO2(I) = SQRT(SPIN*(SPIN+1.) - CO1(I+1)*(CO1(I+1)+1.))
+       DO I=1,(2.*SI+1)*(2.*SPIN+1)-1  
+      CO2(I)=SQRT(SPIN*(SPIN+1)-CO1(I+1)*(CO1(I+1)+1.))  
       END DO
-      DO I = 2, N
-      CO3(I) = SQRT(SPIN*(SPIN+1.) - CO1(I-1)*(CO1(I-1)-1.))
+       DO I=2,(2.*SI+1)*(2.*SPIN+1)
+      CO3(I)=SQRT(SPIN*(SPIN+1)-CO1(I-1)*(CO1(I-1)-1.))
       END DO
-
 
 
         IF (INDEX.EQ.2)THEN
-C       OPEN(UNIT=18,FILE='COE')
+!       OPEN(UNIT=18,FILE='COE')
        DO I=1,NMX
-C       WRITE(18,*)CO1(I),CO2(I), CO3(I)
+!       WRITE(18,*)CO1(I),CO2(I), CO3(I)
        END DO
-C       CLOSE(18)
+!       CLOSE(18)
        ENDIF
 	
 
       DO 40 K=1,NMX                                                      
-      DO 39 L=1, NMX
+      DO 40 L=1, NMX
       TZ=CMPLX(0,0) 
       DO 10 J=1,NMX 
       TZ=CO1(J)*CONJG(ZR(J,K))*(ZR(J,L))+TZ                                 
 10    CONTINUE
       SZ(K,L)=TZ
       TP=CMPLX(0,0) 
-      NI = INT((2.*SI+1.)*(2.*SPIN+1.))
-      STEP = INT(2.*SPIN+1.)
-      NJ = INT(2.*SPIN)
-      DO I = 1, NI, STEP
-      DO J = 0, NJ-1
-      TP = CO2(I+J)*CONJG(ZR(I+J,K))*(ZR(I+J+1,L)) + TP
-      END DO
+       DO I=1,(2.*SI+1)*(2.*SPIN+1),2.*SPIN+1
+       DO J=0,2.*SPIN-1
+       TP=CO2(I+J)*CONJG(ZR(I+J,K))*(ZR(I+J+1,L))+TP
+      END DO 
       END DO
       SP(K,L)=TP
       TM=CMPLX(0,0) 
-      NI   = INT((2.*SI+1.)*(2.*SPIN+1.))
-      STEP = INT(2.*SPIN+1.)
-      NJ   = INT(2.*SPIN)
-      DO I = 1, NI, STEP
-      DO J = 1, NJ
-      TM = CO3(I+J)*CONJG(ZR(I+J,K))*(ZR(I+J-1,L)) + TM
+       DO I=1,(2.*SI+1)*(2.*SPIN+1),2.*SPIN+1
+       DO J=1,2.*SPIN
+      TM=CO3(I+J)*CONJG(ZR(I+J,K))*(ZR(I+J-1,L))+TM
       END DO
       END DO
       SM(K,L)=TM 
-39    CONTINUE
 40    CONTINUE
-
 
 567   CONTINUE
 
@@ -1781,10 +1710,9 @@ C  AUTOCORRELATION FUNCTIONS
       C(1,1,19)=GZ**2*SZ(K,K)*SZ(K,K)+C(1,1,19) 
 
 150   CONTINUE
-      DO K = 1, NMX
-      DO L = 1, NMX
-
-      IF (K .EQ. L) GO TO 100
+      DO 100 K=1,NMX
+      DO 100 L=1,NMX
+      IF(K.EQ.L) GO TO 100
       I=I+1
       C(K,L,1)=(GX**2/4.)*(SP(K,L)*SP(L,K) + SP(K,L)*SM(L,K) +
      &  SM(K,L)*SP(L,K) + SM(K,L)*SM(L,K)) +
@@ -1825,9 +1753,6 @@ C  AUTOCORRELATION FUNCTIONS
       C(K,L,9)=GZ**2*SZ(K,L)*SZ(L,K)
 100   CONTINUE 
 
-      END DO
-      END DO
-
       ELSE
       I=1
       COLD(1,1)=0 
@@ -1835,34 +1760,25 @@ C  AUTOCORRELATION FUNCTIONS
       COLD(1,3)=0
       COLD(1,4)=0
 c                             gx=gy=gz=g/2.003
-
-      DO K = 1, NMX      
+      DO 1501 K=1,NMX 
 C   COEFFICIENTS FOR OMEGA_I
       COLD(1,1)=gz*gz*SP(K,K)**2+COLD(1,1)         
       COLD(1,2)=gz*gz*SP(K,K)*SZ(K,K)+COLD(1,2)
       COLD(1,3)=gz*gz*SP(K,K)*SM(K,K)+COLD(1,3) 
       COLD(1,4)=gz*gz*SZ(K,K)**2+COLD(1,4)
-1501  CONTINUE
-      END DO
-
-
-      DO K = 1, NMX
-      DO L = 1, NMX
-
-      IF (K .EQ. L) GO TO 1001
-
-      I = I + 1
+1501   CONTINUE
+      DO 1001 K=1,NMX
+      DO 1001 L=1,NMX
+      IF(K.EQ.L) GO TO 1001
+      I=I+1
       COLD(I,1)=gz*gz*SP(K,L)*SP(L,K)
       COLD(I,2)=gz*gz*SP(K,L)*SZ(L,K)
       COLD(I,3)=gz*gz*SP(K,L)*SM(L,K)
       COLD(I,4)=gz*gz*SZ(K,L)*SZ(L,K)
-1001  CONTINUE 
-      END DO
-      END DO
-
+1001   CONTINUE 
       ENDIF
-      RETURN
-      END
+       RETURN 
+       END 
 
 
 
@@ -1898,7 +1814,7 @@ C   PERFORMES THE FITTING PROCEDURE
       ENDIF
 13    CONTINUE
       IF(2.*ABS(FP-FRET).LE.FTOL*(ABS(FP)+ABS(FRET)))RETURN
-      IF(ITER.EQ.ITMAX) STOP 'POWELL EXCEEDING MAXIMUM ITERATIONS.'
+      IF(ITER.EQ.ITMAX) PAUSE 'POWELL EXCEEDING MAXIMUM ITERATIONS.'
       DO 14 J=1,N
       PTT(J)=2.*P(J)-PT(J)
       XIT(J)=P(J)-PT(J)
@@ -1951,7 +1867,7 @@ C   PERFORMES THE INTERNAL FITTING PROCEDURE
 13    CONTINUE
       IF(2.*ABS(FP-FRET).LE.FTOL*(ABS(FP)+ABS(FRET)))RETURN
       IF(ITER.EQ.ITMAX) RETURN !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      IF(ITER.EQ.ITMAX) STOP 'POWELL EXCEEDING MAXIMUM ITERATIONS.'
+      IF(ITER.EQ.ITMAX) PAUSE 'POWELL EXCEEDING MAXIMUM ITERATIONS.'
       DO 14 J=1,N
       PTT(J)=2.*P(J)-PT(J)
       XIT(J)=P(J)-PT(J)
@@ -2246,9 +2162,9 @@ C   PERFORMES THE INTERNAL FITTING PROCEDURE
           ENDIF
         ENDIF
 11    CONTINUE
-C      PAUSE 'BRENT EXCEED MAXIMUM ITERATIONS.'
-C      WRITE(6,*) 'BRENT EXCEED MAXIMUM ITERATIONS.'
-      RETURN  
+!      PAUSE 'BRENT EXCEED MAXIMUM ITERATIONS.'
+!      WRITE(6,*) 'BRENT EXCEED MAXIMUM ITERATIONS.'
+      RETURN  !!!!!!!!!!!!!!!!!!!!!
 3     XMIN=X
       BRENT=FX
       RETURN
@@ -2328,8 +2244,8 @@ C      WRITE(6,*) 'BRENT EXCEED MAXIMUM ITERATIONS.'
           ENDIF
         ENDIF
 11    CONTINUE
-C      PAUSE 'BRENT EXCEED MAXIMUM ITERATIONS.'
-C      WRITE(6,*) 'BRENT2 EXCEED MAXIMUM ITERATIONS.'
+!      PAUSE 'BRENT EXCEED MAXIMUM ITERATIONS.'
+!      WRITE(6,*) 'BRENT2 EXCEED MAXIMUM ITERATIONS.'
       RETURN  !!!!!!!!!!!!!!!!!!!!!
 3     XMIN=X
       BRENT2=FX
@@ -2338,9 +2254,8 @@ C      WRITE(6,*) 'BRENT2 EXCEED MAXIMUM ITERATIONS.'
 
       SUBROUTINE XISTEP(NV,XI,P)
       IMPLICIT REAL*8(A-H,O-Z)
-      COMMON /ALFASTEP/ ALFASTEP
       DIMENSION XI(NV,NV),P(NV)
-
+      COMMON /ALFASTEP/ ALFASTEP
       DO I = 1, NV
       DO J = 1, NV
       XI(I,J) = ALFASTEP*P(I)
@@ -2353,7 +2268,6 @@ C      WRITE(6,*) 'BRENT2 EXCEED MAXIMUM ITERATIONS.'
 
       RETURN
       END
-
 
       SUBROUTINE XISTEP2(NV,XI,P)
       IMPLICIT REAL*8(A-H,O-Z)
@@ -2372,7 +2286,6 @@ C      WRITE(6,*) 'BRENT2 EXCEED MAXIMUM ITERATIONS.'
 
       RETURN
       END
-
 
 
       SUBROUTINE F01BCF(N,TOL,Z,IZ,W,IW,D,E,C,S)
@@ -2675,14 +2588,10 @@ C     .. EXECUTABLE STATEMENTS ..
    20    CONTINUE
    40 CONTINUE
       CALL F01BCF(N,X02AKF()/X02AJF(),VR,IVR,VI,IVI,WR,WK1,WK2,WK3)
-c      IFAIL = 1
-      IPIPPO=1
-c      CALL F02AYF(N,X02AJF(),WR,WK1,VR,IVR,VI,IVI,IFAIL)
-      CALL F02AYF(N,X02AJF(),WR,WK1,VR,IVR,VI,IVI,IPIPPO)
-c      IF (IFAIL.EQ.0) GO TO 60
-      IF (IPIPPO.EQ.0) GO TO 60
-c      IFAIL = P01ABF(ISAVE,1,SRNAME,0,P01REC)
-      IPIPPO = P01ABF(ISAVE,1,SRNAME,0,P01REC)
+      IFAIL = 1
+      CALL F02AYF(N,X02AJF(),WR,WK1,VR,IVR,VI,IVI,IFAIL)
+      IF (IFAIL.EQ.0) GO TO 60
+      IFAIL = P01ABF(ISAVE,1,SRNAME,0,P01REC)
       RETURN
 C     NORMALISE
    60 DO 120 I = 1, N
@@ -2705,8 +2614,7 @@ C     NORMALISE
   100    CONTINUE
   120 CONTINUE
       RETURN
-c  140 IFAIL = P01ABF(ISAVE,2,SRNAME,0,P01REC)
-  140 IPIPPO = P01ABF(ISAVE,2,SRNAME,0,P01REC)
+  140 IFAIL = P01ABF(ISAVE,2,SRNAME,0,P01REC)
       RETURN
       END
       SUBROUTINE F02AYF(N,EPS,D,E,Z,IZ,W,IW,IFAIL)
@@ -2914,7 +2822,7 @@ C           NOISY EXIT
                CALL X04BAF(NERR,REC(I))
    20       CONTINUE
             IF (IFAIL.NE.-13) THEN
-C               WRITE (MESS,FMT=99999) SRNAME, IERROR
+               WRITE (MESS,FMT=99999) SRNAME, IERROR
                CALL X04BAF(NERR,MESS)
                IF (ABS(MOD(IFAIL,10)).NE.1) THEN
 C                 HARD FAILURE
@@ -3014,8 +2922,7 @@ C        REMOVE TRAILING BLANKS
             IF (REC(I:I).NE.' ') GO TO 40
    20    CONTINUE
 C        WRITE RECORD TO EXTERNAL FILE
-C        WRITE (NOUT,FMT=99999) REC(1:I)
-40    CONTINUE
+   40    WRITE (NOUT,FMT=99999) REC(1:I)
       END IF
       RETURN
 C
@@ -3145,9 +3052,9 @@ C   ************************
       GA=1/TAUC  
       AKL=0.                                            
 
-      DO K = 1, NMX
-      DO L = 1, NMX
-      IF (K .EQ. L) CYCLE
+      DO 10 K=1,NMX 
+      DO 10 L=1,NMX 
+      IF(K.EQ.L) GO TO 10
 
 
 c      S+S+  
@@ -3294,6 +3201,7 @@ c     SZSZ
      & (3./10.)*G*F1*FMU+H*FMU*F0*SQRT(6./50.)+(3./10.)*AI*FMU*FMU)
      & *C(L,K,9)
 
+
       AIA=(FF1+FF2+FF3+FF4+FF5+FF6+FF7+FF8+FF9)/FLOAT(NMX)
       AJ=(GG1+GG2+GG3+GG4+GG5+GG6+GG7+GG8+GG9)/FLOAT(NMX)
       TMP=(REAL(AIA)*GA+IMAG(AIA)*(OMI+OM(K,L)))*
@@ -3302,8 +3210,7 @@ c     SZSZ
      & 1.E+9/((OM(L,K)-OMI)**2+GA**2)
       AKL=TMP+AKL                     
 
-      END DO
-      END DO
+10    CONTINUE                                     
 
 c      S+S+  
 
@@ -3410,9 +3317,9 @@ C   ************************
       T12FG=0.                                            
       T13FG=0.                                            
 
-      DO K = 1, NMX
-      DO L = 1, NMX
-      IF (K .EQ. L) CYCLE
+      DO 101 K=1,NMX 
+      DO 101 L=1,NMX 
+      IF(K.EQ.L) GO TO 101
 
 
 c      S+S+  
@@ -3621,15 +3528,14 @@ c	SZSZ
 
       CRRFG=(REAL(ACF)*GACR+IMAG(ACF)*(OMI+OM(K,L)))*
      & 1.E+34*SQRT(1.E9)/((OM(K,L)+OMI)**2+GACR**2)+
-     & (REALPART(ACG)*GACR+IMAG(ACG)*(-OMI+OM(L,K)))*
+     & (REAL(ACG)*GACR+IMAG(ACG)*(-OMI+OM(L,K)))*
      & 1.E+34*SQRT(1.E9)/((OM(L,K)-OMI)**2+GACR**2)
 
 C   CONTACT TERM
       T12FG=-TMP/(1.0546)**2*1.E34*RKCONT+T12FG
       T13FG=-CRRFG/1.0546+T13FG
+101   CONTINUE
 
-      END DO
-      END DO
 
 
 c	S+S+
@@ -3751,9 +3657,9 @@ C   ************************
       GA=1/TAUC  
       AKL=0.                                            
 
-      DO K = 1, NMX
-      DO L = 1, NMX
-      IF (K .EQ. L) CYCLE
+      DO 10 K=1,NMX 
+      DO 10 L=1,NMX 
+      IF(K.EQ.L) GO TO 10
 
 c      S+S+  
 
@@ -3984,15 +3890,15 @@ c     SZSZ
       AT=(TT1+TT2+TT3+TT4+TT5+TT6+TT7+TT8+TT9)/FLOAT(NMX)
       TMP=0.5*(REAL(AIA)*GA+IMAG(AIA)*(OMI+OM(K,L)))*
      & 1.E+9/((OM(K,L)+OMI)**2+GA**2)+
-     & 0.5*(REALPART(AJ)*GA+IMAG(AJ)*(-OMI+OM(L,K)))*
+     & 0.5*(REAL(AJ)*GA+IMAG(AJ)*(-OMI+OM(L,K)))*
      & 1.E+9/((OM(L,K)-OMI)**2+GA**2)
      & -(REAL(AT)*GA+IMAG(AT)*OM(K,L))*
      & 1.E+9/(OM(K,L)**2+GA**2)
      
       AKL=TMP+AKL 
 
-      END DO
-      END DO
+10    CONTINUE                                     
+
 c      S+S+  
 
       HH1=(A*F0*F0/20. + (B+D)*F0*FMU*(1./20.)*SQRT(3.)
@@ -4175,9 +4081,9 @@ C   ************************
       GA=1/TAUE                                          
       T1CONT=0.                                            
 
-      DO K = 1, NMX
-      DO L = 1, NMX
-      IF (K .EQ. L) CYCLE
+      DO 101 K=1,NMX
+      DO 101 L=1,NMX 
+      IF(K.EQ.L) GO TO 101
 
 
 c      S+S+  
@@ -4330,8 +4236,7 @@ c     SZSZ
 
       T1CONT=-TMP+T1CONT
 
-      END DO
-      END DO
+101   CONTINUE
 
 c      S+S+  
 
@@ -4572,4 +4477,4 @@ C    CONTACT TERM
 
       RETURN          
       END            
-
+      
