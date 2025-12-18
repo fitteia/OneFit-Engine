@@ -1,6 +1,5 @@
 OS=LINUX
 CC=gcc
-#F77=gfortran -fPIC -std=legacy 
 F77=gfortran -fPIC -funroll-loops -ffast-math  -std=legacy --fixed-line-length-none -fd-lines-as-comments -fbackslash
 ARCH=x86_64
 ROOT=/home/fitteia
