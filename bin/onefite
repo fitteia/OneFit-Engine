@@ -1183,7 +1183,6 @@ MSG
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     try {
-		 say now - $time;
 		 $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
@@ -1196,7 +1195,6 @@ MSG
 			:R2($R2),
 			:quiet($quiet)
 		);
-		 say now - $time;
 	} 
 	if $! {
 		my @errors = "ofe-tmp/compile.log".IO.lines.grep(/ error ':' /).map({ .split(/error ':'/).tail.split(';').head  });
@@ -1321,7 +1319,7 @@ MSG
 	if $export {
 		my $basename = $input-file.IO.extension("").Str; 
 		"data-$basename.txt".IO.spurt: $engine.h<Dados>;
-		"AuxCode-$basename.c".IO.spurt: $engine.h<AuxCode>;
+		"AuxCode-$basename.c".IO.spurt($engine.h<AuxCode>) if $engine.h<AuxCode>;
 		note qq:to/MSG/;
 {'-' x 80}
 data exported to: data-$basename.txt
@@ -1341,7 +1339,6 @@ MSG
     
 	$engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
-	say now - $time;
     $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
@@ -1354,7 +1351,7 @@ MSG
 			:R2($R2),
 			:quiet($quiet)
 	);
-	say now - $time;
+	
 	define-alias($engine,$dali) if $dali.so;
 	
 	if $archive {
