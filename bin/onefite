@@ -1319,11 +1319,15 @@ MSG
 	if $export {
 		my $basename = $input-file.IO.extension("").Str; 
 		"data-$basename.txt".IO.spurt: $engine.h<Dados>;
-		"AuxCode-$basename.c".IO.spurt($engine.h<AuxCode>) if $engine.h<AuxCode>;
+		my $ac-txt="no AuxCode";
+		if $engine.h<AuxCode> {
+			"AuxCode-$basename.c".IO.spurt: $engine.h<AuxCode>;
+			$ac-txt = "AuxCode exported to: AuxCode-$basename.c"; 
+		}
 		note qq:to/MSG/;
 {'-' x 80}
 data exported to: data-$basename.txt
-AuxCode exported to: AuxCode-$basename.c
+$ac-txt
 {'-' x 80}
 MSG
 	}
