@@ -1183,7 +1183,7 @@ MSG
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     try {
-		 say now;
+		 say now - $time;
 		 $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
@@ -1340,7 +1340,7 @@ MSG
     
 	$engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
-	say now;
+	say now - $time;
     $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
