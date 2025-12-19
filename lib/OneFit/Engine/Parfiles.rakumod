@@ -17,7 +17,7 @@ class Parfile is export {
 	    my $f = {
 		$^a ??
 #		sprintf( { (abs($^b) > 1e6 or abs($^b) < 1e-2) ?? "%10.3e" !! "%10.3e" }($^a), $^a)
-		sprintf( { (abs($^b) > 1e6 or abs($^b) < 1e-3) ?? "%-10.3e" !! "%-9g" }($^a), $^a) 
+		sprintf( { (abs($^b) > 1e9 or abs($^b) < 1e-3) ?? "%9.2e" !! "%-9g" }($^a), $^a) 
 		!! $^a
 		}; 
 	    $table ~= sprintf("%-10.1f%-10s%-10s%-10s%-10s%-10s\n",$_+2,@parameters[$_]<name>,$f($v),$f($s),$f($m),$f($M));
