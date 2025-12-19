@@ -1183,6 +1183,7 @@ MSG
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     try {
+		 say now;
 		 $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
@@ -1339,6 +1340,7 @@ MSG
     
 	$engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
+	say now;
     $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
