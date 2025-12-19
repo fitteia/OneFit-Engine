@@ -135,7 +135,7 @@
     },
      "SDFreed": {
 	"devision": "Diffusion",
-    	"function": "SDFreed(x,d,n,tauD,NP)",
+    "function": "SDFreed(x,d,n,tauD,NP)",
 	"source": "C/local/SDFreed.c"
     },
     "SDFreedHF": {
@@ -180,11 +180,30 @@
     },
     "mnpR1HSc": {
 	"function": "mnpR1HSc(f,T,gH,gS,C,S,d,D,NP)"
-    },
+   	},
     "mnpR1Hsze": {
+	"devision": "Paramagnetic",
 	"function": "mnpR1Hsze(f,T,gH,gS,C,S,d,D,T2e,NP)"
-    },
+	},
     "mnpR1Hszn": {
+	"devision": "Paramagnetic",
 	"function": "mnpR1Hszn(f,T,gH,gS,C,S,d,D,T1e,NP)"
+    },
+    "florence": {
+	"devision": "Paramagnetic",
+	"function": "Florence(FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)"
+    },
+    "florenceN": {
+	"devision": "Paramagnetic",
+	"function": "FlorenceN(index,n,FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)"
+    },
+    "florence4": {
+	"devision": "Paramagnetic",
+	"function": "Florence4(index,FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)"
+    },
+    "R1spmHeur": {
+	"description": "R1 model based on eq. 31 of Roch et al.paper J. Chem. Phys. 1999, 110 (11), 5403−5411; * index: 0: total; 1: 1st term; 2: 2nd term; 3: 3th term * f: frequency; Unit: Hz  * T: temperature; Unit: Hz  * C: concentration of magnetic particvles; Unit: mmol/L * mu: Magnetic moment os paramagnetic particles; Unit: A m^2 * r: mean sqaure diffusion distance; (td=r^2/D); Unit: meter * P: relative paramagnertic contributions; Unit; none * D: self-diffusion coefficient; Unit: m^2/s * tN: Neel relaxation; Unit: second ",
+	"devision": "Paramagnetic",
+	"function": "R1spmHeur(index, f, T, C, mu, r, P, D, tN, w0)"
     }
 }

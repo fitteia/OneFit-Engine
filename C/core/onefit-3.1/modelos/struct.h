@@ -90,8 +90,9 @@ typedef	struct	  {
 /******************************************************************************/
 /*									      */
 /******************************************************************************/
+struct ODE2;
 
-typedef struct    {
+typedef struct ODE2 {
   double             x0;
   double             y0;
   double             z0;
@@ -99,7 +100,7 @@ typedef struct    {
   double             y;
   double             z;
   double             h;
-  double             (*dydx)();                 /* function */
-  double             (*d2ydx2)();                 /* function */
+  double             (*dydx)(struct ODE2 *a);                 /* function */
+  double             (*d2ydx2)(struct ODE2 *b);                 /* function */
   Parameter          par[10];
 } ODE2;

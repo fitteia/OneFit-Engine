@@ -212,9 +212,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>] [--eb|--errorbars]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>] [--eb|--errorbars] [--R2|--pco|--pearson-correlation]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>]i [--eb|--errorbars]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>]i [--eb|--errorbars] [--R2|--pco|--pearson-correlation]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -312,7 +312,7 @@ onefite archive [-f||--fit=<Str>]
 
 =begin code
 
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg] [--git]
 
 =end code
 
@@ -542,6 +542,7 @@ multi MAIN ('upgrade',
       Bool :d(:$systemd-daemon) = False, #= create a sysmtemd-daemon service
       Bool :$cernlib = False, #= install cern lib instead of just minuit.a from src
       Bool :$shell = False, #= install shellinabox
+	  Bool :$git = True, #= By default it runs git to pull the package for remote repository
       Int  :$shell-port = 8100, #= shellinabox port
       Str  :$ip = '*', #= set IP
 	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
@@ -555,7 +556,7 @@ multi MAIN ('upgrade',
 	  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
       shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-      shell "cd { ::('OFE-PATH') }  && git stash && git pull && ./INSTALL { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg}";
+      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg}";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
@@ -650,6 +651,7 @@ multi MAIN ('start-web-engine',
 		       <tr><td>logx: </td><td><input name="logx" type="radio" value="yes">/<input name="logx" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>logy: </td><td><input name="logy" type="radio" value="yes">/<input name="logy" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>reduced-chi2: </td><td><input name="reduced-chi2" type="radio" value="yes">/<input name="reduced-chi2" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>Pearson Correlation: </td><td><input name="R2" type="radio" value="yes">/<input name="R2" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>R1: </td><td><input name="R1" type="radio" value="yes">/<input name="R1" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>err: </td><td><input name="err" type="text" value="">(number, num%, num%avg, num% avg split xvalue, stdv, stdv split xvalue; ex. 1.0, 10%, 10%avg, 1% avg split at 2e4, stdv, "stdv split at 2e4")</td></tr>
 		       <tr><td>range: </td><td><input name="range" type="text" value="">(window range: i:f)</td></tr>
@@ -747,6 +749,7 @@ HTML
 		my $logy= "";
 		my $global="";
 		my $R1 = "";
+		my $R2= "";
 		my $err = "";
 		my $fit-if = "";
 		my $plot-if = "";
@@ -777,7 +780,8 @@ HTML
 		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
 		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
 		       $reduced-chi2      = "--reduced-chi2  " if $k eq "reduced-chi2" and $v eq any("yes",1);
-		       $R1  		         = "--R1  " if $k eq "R1" and $v eq any("yes",1);
+		       $R1  		         = "--R1 " if $k eq "R1" and $v eq any("yes",1);
+		       $R2  		         = "--R2 " if $k eq "R2" and $v eq any("yes",1);
 		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file" and $v.so;
 		       $err                = "--err={$v.Str}  " if $k eq "err" and $v.so;
 		       $range                = "--range={$v.Str}  " if $k eq "range" and $v.so;
@@ -785,9 +789,6 @@ HTML
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq "fit-if" and $v.so;
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq "plot-if" and $v.so;
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
-			
-
-
 
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
@@ -808,11 +809,11 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		 else {
-		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		    $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
@@ -880,8 +881,11 @@ multi MAIN ('help',
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
-    my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str };
-    my $txt = "$model => " ~ to-json(%info, :sorted-keys);
+	#my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str // $model };
+    my %info;
+   	try {	%info = %meta-c{ $model }; }
+	if $! { %info<error> = "===> $model not found in the liraries list"; }
+	my $txt = "$model => " ~ to-json(%info, :sorted-keys);
     say $txt unless $quiet;
     $txt
 }
@@ -896,8 +900,12 @@ multi MAIN ('help',
     @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
-    my %info = %meta-c{ @list.grep(/$model/).Str };
+    my %info;
+   	try {	%info = %meta-c{ $model }; }
+	if $! { %info<error> = "===> $model not found in the library's' list"; }
+	#my %info = %meta-c{ @list.grep(/$model/).Str };
     my $txt = %info{ $key };
+	if $txt.^name ~~ <Any> { $txt = "===> error: $key key not found in library's model: $model" }
     say $txt unless $quiet;
     $txt
 }
@@ -1016,6 +1024,7 @@ multi MAIN  ('create',
 		%e<AuxCode> = @aux.splice(0,1).IO.slurp;
 		%e<AuxDeclar> = "double " ~ @aux.map({ $_.subst(/ <ws> 'double' <ws> /,"",:g) }).join(', ');
 	}
+
     my $engine = Engine.new.path("$work-folder").set(%e);
     $engine.blocks(
 	:read,
@@ -1118,6 +1127,7 @@ multi MAIN  ('fit',
 	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
 	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
 	Str	 :pc(:print-cols(:print-columns(:$cols))) ="", #= select fit-results columns by number or name or name+1 or name-1
+	Bool :pco(:pearson-correlation(:$R2)) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
 		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -1182,6 +1192,7 @@ MSG
 			:remove-outliers($remove-outliers),
 			:reduced-chi2($reduced-chi2),
 			:errorbars($errorbars),
+			:R2($R2),
 			:quiet($quiet)
 		);
 	} 
@@ -1253,7 +1264,7 @@ multi MAIN  ('fit',
 	 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
      Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	 Str  :save-to(:$to), # write fit settings to .json or .sav file 	     
+	 Str  :st(:save-to(:$to)), # write fit settings to .json or .sav file 	     
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
      Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
      Str  :wf(:$work-folder) = '.',
@@ -1265,6 +1276,7 @@ multi MAIN  ('fit',
 	 Str  :da(:define-alias(:$dali)) ="",
 	 Bool :ar(:$archive) = False,
 	 Str  :pc(:print-cols(:print-columns(:$cols))) ="", 
+	 Bool :pco(:pearson-correlation(:$R2)) = False, 
 	 *%_
     ){
 	do {
@@ -1307,11 +1319,15 @@ MSG
 	if $export {
 		my $basename = $input-file.IO.extension("").Str; 
 		"data-$basename.txt".IO.spurt: $engine.h<Dados>;
-		"AuxCode-$basename.c".IO.spurt: $engine.h<AuxCode>;
+		my $ac-txt="no AuxCode";
+		if $engine.h<AuxCode> {
+			"AuxCode-$basename.c".IO.spurt: $engine.h<AuxCode>;
+			$ac-txt = "AuxCode exported to: AuxCode-$basename.c"; 
+		}
 		note qq:to/MSG/;
 {'-' x 80}
 data exported to: data-$basename.txt
-AuxCode exported to: Auxcode-$basename.c
+$ac-txt
 {'-' x 80}
 MSG
 	}
@@ -1336,6 +1352,7 @@ MSG
 			:remove-outliers($remove-outliers),
 			:reduced-chi2($reduced-chi2),
 			:errorbars($errorbars),
+			:R2($R2),
 			:quiet($quiet)
 	);
 	
@@ -1613,8 +1630,8 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 				@cols.push: $i + 1 + $sign * @two.tail.Int ;
 			}
 			when /:i <[a..z]>+/ { 
-				my $pos = @a>>.trim.grep($col, :k).head;
-				if $pos.defined && $pos.Int {
+				my $pos = @a>>.trim.grep(/$col/, :k).head;
+				if $pos.defined && $pos.Int >= 0 {
 					@cols.push: $pos.Int +1; 
 				}
 				else {

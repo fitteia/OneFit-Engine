@@ -51,9 +51,11 @@ multi MAIN (
    	if $git {
 		shell "git stash";
 		shell "git pull";
-		shell 'git merge -m "$merge-site" site' if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains('site').Bool;
    	}
-   
+   	if $merge-site.so {
+		shell "git merge -m '$merge-site' $merge-site" if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains($merge-site).Bool;
+	}
+
   	$cpu = %cpus{ shell("uname -a",:out).out.slurp(:close).words.tail( $macos ?? 1 !! 2  ).head.Str } unless so $cpu;
 	
    	my $pv =shell("perl -MConfig -e 'print \$Config\{archlib\}' | awk -F'/' '\{print \$NF\}'",:out).out.lines(:close).head;
@@ -125,7 +127,7 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore ) if $compile;
+   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git ) if $compile;
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
@@ -271,11 +273,14 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore) {
-   	say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
-   	shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
+sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git) {
+	if $git {
+   		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
+   		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
-   	shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && make install && make clean";
+		shell "cd $*CWD/../minuit && git pull";
+	}
+   	shell "cd $*CWD/../minuit && make install && make clean";
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;

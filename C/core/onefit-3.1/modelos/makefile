@@ -8,9 +8,9 @@ PREFIX=
 DESTDIR=$(ROOT)/$(PREFIX)
 LIBDIR=$(DESTDIR)/lib
 LIBNUMBER=4.0.4
-FLAGS= -D$(OS) -O2 -fPIC -I$(PERLCORE) -I$(ROOT)/C/core/onefit-3.1/
+FLAGS= -D$(OS) -O3 -fPIC -I$(PERLCORE) -I$(ROOT)/C/core/onefit-3.1/
 CC= gcc $(FLAGS)
-F77= gfortran -fPIC
+F77= gfortran -O3 -fPIC
 SRCDIR=$(DESTDIR)/src
 
 LIBNAME=libonefit-modelos-$(LIBNUMBER).a
@@ -34,6 +34,7 @@ Lib: $(OBJ)
 install-lib: Lib
 	install -d $(LIBDIR)
 	install -m 0644 $(LIBNAME) $(LIBDIR)
+	install -m 0644 *.h $(ROOT)$(PREFIX)/include
 
 tar: $(SRC)
 	tar zcvf modelos.tar $(SRC) 

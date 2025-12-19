@@ -315,6 +315,7 @@ class Engine is export {
 		Bool :$reduced-chi2,
 		Bool :$errorbars,
 		Str  :$remove-outliers="",
+		Bool :$R2 = False,
 		Bool :$quiet=False
 	       ) {
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
@@ -336,7 +337,7 @@ class Engine is export {
 	 $*ERR.say("===> write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
 	 note "===> fit" unless $quiet;
-
+	 
 	 my Bool $MIXED=False;
 	 my %last = @!par-tables[0].a.tail;
 	 $MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
@@ -404,8 +405,8 @@ class Engine is export {
 
 		
 	   	if @outliers.so {
-	 		my $TXT = self!results();
-			$TXT = self!reset-parameters-std($TXT);
+	 		my $TXT = self!results( :R2($R2) );
+			$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
@@ -483,7 +484,7 @@ EOT
 	     }  unless $no-plot;
 	 }
 
-	 my $TXT = self!results();
+	 my $TXT = self!results( :R2($R2) );
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
 		$TXT = @a.head 
@@ -494,8 +495,7 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-#		$TXT = $reset-parameters-std($TXT);
-		$TXT = self!reset-parameters-std($TXT);
+		$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
 
 		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed*@!blocks.elems );
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points/block removed";
@@ -508,8 +508,8 @@ EOT
 EOT
 	 }
 	 else { 
-		if $reduced-chi2 { 
-			$TXT = self!reset-parameters-std($TXT);
+		if $reduced-chi2 {
+			$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
 			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $size = max-line-length($TXT);
@@ -535,7 +535,7 @@ EOT
 		}		
 	 }
 	 %!engine<fit-results> = $TXT;
-	 %!engine<SimulFitOutput> = self!results(fmt => " ");
+	 %!engine<SimulFitOutput> = self!results( fmt => " ", :R2($R2) );
 	 my @fit-curves;
 	 for (1 .. @!blocks.elems) {
 	     @fit-curves.push: "$!path/fit-curves-$_".IO.slurp
@@ -591,13 +591,14 @@ EOT
 		self
     }
 
-    method !results ( :$fmt = ', ' ) {
+    method !results ( :$fmt = ', ',  :$R2 = False ) {
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
 		#		say %last<name value>;
 	 	my @fields = ("# TAG");
 	 	@fields.push: "Npts";
+		@fields.push: "R\x[B2]" if $R2;
 	 	@fields.push: "chi2";
 	 	my @a = ("%!engine<T>_" <<~<< ( (0 ..^ @!blocks[0].T.words.elems) >>+>> 1 ) );
 	 	@fields.push: @a.Slip;
@@ -624,6 +625,7 @@ EOT
 	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED) ?? .No !! 0;
 	     	@line-fields.push: .Tag;
 	     	@line-fields.push: .X.elems;
+			@line-fields.push: .correlation-coefficient.fmt('%.4f') if $R2;
 	     	@line-fields.push: .chi2;
 	     	@line-fields.push: .T.words.join($fmt);
 	     	if "$!path/fit{.No+1}.log".IO.e and $MIXED {
@@ -656,12 +658,13 @@ EOT
 	 	return $TXT;
     }
 
-	method !reset-parameters-std ($txt) {
+	method !reset-parameters-std ( $txt, :$R2 = False ) {
 		my $chi2 =	(@!blocks>>.chi2).sum;
 		my $npts = ((@!blocks>>.Data)>>.elems).sum;
 		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $ngfp;
 		my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
+		my $off-set = $R2 ?? 1 !! 0; # positions change because option R2 is set
 
 #`(		say "chi2 = $chi2";
 		say "npts = $npts";
@@ -682,9 +685,9 @@ EOT
 						my @b = $v.split(', ');
 						if %!engine<FitType> ~~ /Individual/ {
 							$ndf = @b[1] - @!blocks[$i].parameters.free; 
-							$chi2= @b[2];
+							$chi2= @b[2+$off-set];
 						}
-						@b[2] = (@b[2]/($chi2/$ndf)).Rat;
+						@b[2+$off-set] = (@b[2+$off-set]/($chi2/$ndf)).Rat;
 						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
 							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Rat;
 						}

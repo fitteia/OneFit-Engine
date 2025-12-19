@@ -34,7 +34,7 @@ LIB=  -L$(DESTDIR)/lib -lonefit-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -lonefit
 SRC= functions.c tabfunc.c
 OBJ= functions.o tabfunc.o
 
-FLAGS= -D$(OS) -O2 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I./ -Wall
+FLAGS= -D$(OS) -O3 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I./ -Wall
 
 #CC = $(CC) $(FLAGS) 
 
@@ -194,15 +194,15 @@ actpar: actpar.c
 afactors-xyz: afactors-xyz.c
 	$(CC)  $(FLAGS) afactors-xyz.c -lm -O3 -o afactors-xyz
 
-install-fitteia: Lib fft cop gfilt ccat afactors-xyz
+install-fitteia: Lib fft cop gfilt ccat afactors-xyz 
 	install -d $(BINDIR) $(LIBDIR) $(INCLUDEDIR) 
 	install -m 0644 $(LIBNAME) $(LIBUTILNAME) $(LIBDIR)
-	install -m 0644 globals.h struct.h mixed.h integra.h $(INCLUDEDIR)
+	install -m 0644 globals.h struct.h mixed.h integra.h fitutil.h $(INCLUDEDIR)
 	install -m 0755 fft cop gfilt ccat afactors-xyz $(BINDIR)
 	make -C modelos install-lib
 	make -C perl install-pcop
 
-install: all
+install: all 
 	install -d $(BINDIR) $(LIBDIR) $(LIBEXECDIR) $(INCLUDEDIR) $(PERLDIR)
 	install -m 0644 $(LIBUTILNAME) $(LIBNAME) $(LIBDIR)
 	install -m 0644 globals.h struct.h mixed.h integra.h $(INCLUDEDIR)
@@ -216,7 +216,6 @@ install: all
 #	make -C gnuplot-3.7.2 install
 #	make -C grace-5.1.14  install
 #	make -C Tk-804.027-knoppix3.3 install
-
 
 install-src:
 	make clean
