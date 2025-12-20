@@ -1694,12 +1694,17 @@ sub update-from-input-options($function is copy, %options) {
 					when 1 {
 						my $range = '[' ~ @targets[$i].split('[').tail;
 						@targets[$i] = $value ~ $range;
+						say "1 ", @targets[$i];
 					}
 					when 2 {
 						my $range = @targets[$i].split(/ $<sep> = '='|':'/).tail;
 						@targets[$i] = $value ~ $<sep> ~ $range;
+						say "2 ", @targets[$i];
 					}
-					default	{ @targets[$i]=$value }
+					default	{ 
+						@targets[$i]=$value;
+						say "0 ", @targets[$i];
+				   	}
 				}			
 			}
 		}
