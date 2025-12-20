@@ -1681,10 +1681,10 @@ sub update-from-input-options($function is copy, %options) {
 	}
 	for (0 ..^ @targets.elems) -> $i {
 		for %options.kv -> $k, $v {
-			my $name = $k.subst('#','').split(/'='|':'|'['/).head;
+			my $name = $k.subst('#','').split(/':'|'['/).head;
 			my $keep-range = 0;
 			my $value = $k.subst('#','');
-			say $value;
+			$value ~= '=' ~ $v if $v.so; 	
 			if $value ~~ /'..'/ { 
 				$value .= subst(/'..' '.'*/,'');
 				if $value.contains(/<[=:]> <ws> '.'? \d+/) { $keep-range = 1 }
