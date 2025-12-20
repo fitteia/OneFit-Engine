@@ -1708,7 +1708,7 @@ sub update-from-input-options($function is copy, %options, :$quiet = False ) {
 				$match-not-found = False;
 			}
 		}
-		if $match-not-found {  note "===> option --#{ $name } without match!" unless $quiet }
+		if $match-not-found {  note "===> option --{ $k } without match!" unless $quiet }
 	}
 	$function = @targets[0] ~ ' (' ~ @targets[1..*].join(', ') ~ ') = ' ~ @function-internals[1];
 }
