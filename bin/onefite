@@ -1687,7 +1687,7 @@ sub update-from-input-options($function is copy, %options) {
 			if $k.contains(/'..'/) { 
 				$value .= subst(/'..' '.'*/,'');
 				if $value.contains(/<[=:]> <ws> '.'? \d+/) { $keep-range = 1 }
-				eles { $keep-range = 2 }
+				else { $keep-range = 2 }
 			}
 			if @targets[$i].contains($name) {
 				given $keep-range {
