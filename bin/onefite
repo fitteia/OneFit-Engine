@@ -212,7 +212,7 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>] [--eb|--errorbars] [--R2|--pco|--pearson-correlation]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>] [--eb|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
 
 onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>]i [--eb|--errorbars] [--R2|--pco|--pearson-correlation]
 
@@ -226,11 +226,13 @@ onefite archive [-f||--fit=<Str>]
     [--define-alias|--dali=<Str>] adds alias Str to the function used to fit the data in the ./aliases.json file (overwrites existing alias)
     [--export] writes data and AuxCode to files for later use with: onefite fit <function>
     [--aux-code] accepts the name of the file with the AuxCode and the new fitting functions declarations
+	[--#....] after '#' model equations variables, '=',':', [...<...]
 
     Examples
 
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
+    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
     onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.txt --autox --logx --autoy
@@ -1130,7 +1132,7 @@ multi MAIN  ('fit',
 	Bool :pco(:pearson-correlation(:$R2)) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
-		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -1169,6 +1171,9 @@ MSG
 		note "===> you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
 		$global = True;
 	}
+
+	$function = update-from-input-options( $function, %_, quiet => $quiet ) if %_.keys;
+
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
@@ -1659,3 +1664,53 @@ EOT
 	$txt
 }
 
+sub update-from-input-options($function is copy, %options, :$quiet = False ) {
+	my @function-internals;
+	my @targets;
+    if $function.contains(/']' <ws> '='/)  { 
+		@function-internals=$function.split(/']' <ws> '='/)>>.trim; 
+		@function-internals[0] ~= ']';
+		@targets = @function-internals[0].split(/'('|')'/);
+		@targets[0] ~= @targets.pop;
+		@targets[1] = @targets[1].split(',').Slip;
+		@targets = @targets>>.trim;
+	}
+	else {	
+		@function-internals=$function.split(/')' <ws> '='/)>>.trim; 
+		@targets = @function-internals[0].split(/'('|')'/);
+		@targets[1] = @targets[1].split(',').Slip;
+		@targets = @targets>>.trim;
+	}
+	for %options.kv -> $k, $v {
+		my $name = $k.subst('#','').split(/':'|'['/).head;
+		my $keep-range = 0;
+		my $value = $k.subst('#','');
+		$value ~= '=' ~ $v unless $v ~~ Bool; 	
+		if $value ~~ /'..'/ { 
+			$value .= subst(/'..' '.'*/,'');
+			if $value.contains(/<[=:]> <ws> '.'? \d+/) { $keep-range = 1 }
+			else { $keep-range = 2 }
+		}
+		my $match-not-found = True;
+		for (0 ..^ @targets.elems) -> $i {
+			if @targets[$i].contains($name) {
+				given $keep-range {
+					when 1 {
+						my $range = '[' ~ @targets[$i].split('[').tail;
+						@targets[$i] = $value ~ $range;
+					}
+					when 2 {
+						my $range = @targets[$i].split(/ $<sep> = '='|':'/).tail;
+						@targets[$i] = $value ~ $<sep> ~ $range;
+					}
+					default	{ 
+						@targets[$i]=$value;
+				   	}
+				}			
+				$match-not-found = False;
+			}
+		}
+		if $match-not-found {  note "===> option --{ $k } without match!" unless $quiet }
+	}
+	$function = @targets[0] ~ ' (' ~ @targets[1..*].join(', ') ~ ') = ' ~ @function-internals[1];
+}
