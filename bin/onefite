@@ -1679,7 +1679,7 @@ sub update-from-input-options($function is copy, %options) {
 		@targets[1] = @targets[1].split(',').Slip;
 		@targets = @targets>>.trim;
 	}
-	for (0 ..^ @targets.elems) -> $i ({
+	for (0 ..^ @targets.elems) -> $i {
 		for %options.kv -> $k, $v {
 			my $name = $k.subst('#','').split(/'='|':'|'['/).head;
 			my $keep-range = 0;
