@@ -1666,7 +1666,7 @@ sub update-from-input-options($function is copy, %options) {
 	my @function-internals;
 	my @targets;
     if $function.contains(/']' <ws> '='/)  { 
-		@function-internals=$function.split(/']' <ws> '='/); 
+		@function-internals=$function.split(/']' <ws> '='/)>>.trim; 
 		@function-internals[0] ~= ']';
 		@targets = @function-internals[0].split(/'('|')'/);
 		@targets[0] ~= @targets.pop;
@@ -1674,10 +1674,37 @@ sub update-from-input-options($function is copy, %options) {
 		@targets = @targets>>.trim;
 	}
 	else {	
-		@function-internals=$function.split(/')' <ws> '='/); 
+		@function-internals=$function.split(/')' <ws> '='/)>>.trim; 
 		@targets = @function-internals[0].split(/'('|')'/);
 		@targets[1] = @targets[1].split(',').Slip;
 		@targets = @targets>>.trim;
 	}
-	say @targets;
+	for (0 ..^ @targets.elems) -> $i ({
+		for %options.kv -> $k, $v {
+			my $name = $k.split(/'='|':'|'['/).head;
+			my $keep-range = 0;
+			my $value = $k;
+			if $k.contains(/'..'/) { 
+				$value .= subst(/'..' '.'*/,'');
+				if $value.contains(/<[=:]> <ws> '.'? \d+/) { $keep-range = 1 }
+				eles { $keep-range = 2 }
+			}
+			if @targets[$i].contains($name) {
+				given $keep-range {
+					when 1 {
+						my $range = '[' ~ @targets[$i].split('[').tail;
+						@targets[$i] = $value ~ $range;
+					}
+					when 2 {
+						my $range = @targets[$i].split(/'='|':')).tail;
+						@targets[$i] = $value ~ $range;
+					}
+					default	{ @targets[$i]=$value }
+				}			
+			}
+		}
+	}
+	$function = @targets[0] ~ ' (' ~ @targets[1..*].join(', ') ~ ') = ' ~ @function-internals[1];
+	say $function;
+
 }
