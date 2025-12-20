@@ -1130,7 +1130,7 @@ multi MAIN  ('fit',
 	Bool :pco(:pearson-correlation(:$R2)) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
-		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -1169,6 +1169,9 @@ MSG
 		note "===> you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
 		$global = True;
 	}
+
+	update-from-input-options($function,%_) if %_.keys;
+
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
@@ -1659,3 +1662,22 @@ EOT
 	$txt
 }
 
+sub update-from-input-options($function is copy, %options) {
+	my @function-internals;
+	my @targets;
+    if $function.contains(/']' <ws> '='/)  { 
+		@function-internals=$function.split(/']' <ws> '='/); 
+		@function-internals[0] ~= ']';
+		@targets = @function-internals.split(/'('|')'/);
+		@targets[0] ~= @targets.pop;
+		@targets[1] = @targets.split(',').Slip;
+		@targets = @targets>>.trim;
+	}
+	else {	
+		@function-internals=$function.split(/')' <ws> '='/); 
+		@targets = @function-internals.split(/'('|')'/);
+		@targets[1] = @targets.split(',').Slip;
+		@targets = @targets>>.trim;
+	}
+	say @targets;
+}
