@@ -1685,7 +1685,7 @@ sub update-from-input-options($function is copy, %options) {
 			my $keep-range = 0;
 			my $value = $k.subst('#','');
 			say $v.^name;
-			$value ~= '=' ~ $v if $v.chars; 	
+			$value ~= '=' ~ $v unless $v ~~ Bool; 	
 			if $value ~~ /'..'/ { 
 				$value .= subst(/'..' '.'*/,'');
 				if $value.contains(/<[=:]> <ws> '.'? \d+/) { $keep-range = 1 }
