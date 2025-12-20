@@ -1170,7 +1170,7 @@ MSG
 		$global = True;
 	}
 
-	update-from-input-options($function,%_) if %_.keys;
+	$function = update-from-input-options($function,%_) if %_.keys;
 
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
@@ -1684,35 +1684,28 @@ sub update-from-input-options($function is copy, %options) {
 			my $name = $k.subst('#','').split(/':'|'['/).head;
 			my $keep-range = 0;
 			my $value = $k.subst('#','');
-			say $v.^name;
 			$value ~= '=' ~ $v unless $v ~~ Bool; 	
 			if $value ~~ /'..'/ { 
 				$value .= subst(/'..' '.'*/,'');
 				if $value.contains(/<[=:]> <ws> '.'? \d+/) { $keep-range = 1 }
 				else { $keep-range = 2 }
-				say $keep-range,$value;
 			}
 			if @targets[$i].contains($name) {
 				given $keep-range {
 					when 1 {
 						my $range = '[' ~ @targets[$i].split('[').tail;
 						@targets[$i] = $value ~ $range;
-						say "1 ", @targets[$i];
 					}
 					when 2 {
 						my $range = @targets[$i].split(/ $<sep> = '='|':'/).tail;
 						@targets[$i] = $value ~ $<sep> ~ $range;
-						say "2 ", @targets[$i];
 					}
 					default	{ 
 						@targets[$i]=$value;
-						say "0 ", @targets[$i];
 				   	}
 				}			
 			}
 		}
 	}
 	$function = @targets[0] ~ ' (' ~ @targets[1..*].join(', ') ~ ') = ' ~ @function-internals[1];
-	say $function;
-
 }
