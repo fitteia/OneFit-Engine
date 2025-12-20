@@ -1670,13 +1670,13 @@ sub update-from-input-options($function is copy, %options) {
 		@function-internals[0] ~= ']';
 		@targets = @function-internals.split(/'('|')'/);
 		@targets[0] ~= @targets.pop;
-		@targets[1] = @targets.split(',').Slip;
+		@targets[1] = @targets[1].split(',').Slip;
 		@targets = @targets>>.trim;
 	}
 	else {	
 		@function-internals=$function.split(/')' <ws> '='/); 
 		@targets = @function-internals.split(/'('|')'/);
-		@targets[1] = @targets.split(',').Slip;
+		@targets[1] = @targets[1].split(',').Slip;
 		@targets = @targets>>.trim;
 	}
 	say @targets;
