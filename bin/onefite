@@ -1696,7 +1696,7 @@ sub update-from-input-options($function is copy, %options) {
 						@targets[$i] = $value ~ $range;
 					}
 					when 2 {
-						my $range = @targets[$i].split(/'='|':')).tail;
+						my $range = @targets[$i].split(/'='|':'/).tail;
 						@targets[$i] = $value ~ $range;
 					}
 					default	{ @targets[$i]=$value }
