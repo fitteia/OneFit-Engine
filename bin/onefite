@@ -1679,6 +1679,7 @@ sub update-from-input-options($function is copy, %options) {
 		@targets[1] = @targets[1].split(',').Slip;
 		@targets = @targets>>.trim;
 	}
+	my $match=0;
 	for (0 ..^ @targets.elems) -> $i {
 		for %options.kv -> $k, $v {
 			my $name = $k.subst('#','').split(/':'|'['/).head;
@@ -1691,6 +1692,7 @@ sub update-from-input-options($function is copy, %options) {
 				else { $keep-range = 2 }
 			}
 			if @targets[$i].contains($name) {
+				$match++;
 				given $keep-range {
 					when 1 {
 						my $range = '[' ~ @targets[$i].split('[').tail;
@@ -1706,6 +1708,7 @@ sub update-from-input-options($function is copy, %options) {
 				}			
 			}
 		}
+		note "===> some { %options.keys.join(' ') } without match!" if $match < %options.elems;
 	}
 	$function = @targets[0] ~ ' (' ~ @targets[1..*].join(', ') ~ ') = ' ~ @function-internals[1];
 }
