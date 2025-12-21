@@ -1624,8 +1624,8 @@ sub define-alias($engine,$dali) {
 		%aliases{$dali}=$value;
 		"./aliases.json".IO.spurt: to-json(%aliases, :sorted-keys);
 		note "{'-' x 80}\nalias $dali replaced in ./aliases.json\n{'-' x 80}";
+		$value
 	}
-	$value
 }
 
 sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
