@@ -1327,10 +1327,8 @@ MSG
 		my $function = define-alias($engine,"_auto_");
 		$function = update-from-input-options( $function, %_, quiet => $quiet );
 		%e = %e, OneFit::Engine::Grammars::Function.parse-me($function);
-		say %e
+		$engine.set(%e)
 	}
-
-
 
 	if $export {
 		my $basename = $input-file.IO.extension("").Str; 
