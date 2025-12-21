@@ -214,7 +214,8 @@ onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 
 onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>] [--eb|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>]i [--eb|--errorbars] [--R2|--pco|--pearson-correlation]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>]i [--eb|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
+
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -1132,7 +1133,7 @@ multi MAIN  ('fit',
 	Bool :pco(:pearson-correlation(:$R2)) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
-		note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
+		note "===> onefite options: { %_.keys.grep(/^<-[#]>/).map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
@@ -1288,7 +1289,7 @@ multi MAIN  ('fit',
 		say "{'-' x 80}\nfile $input-file dosen't exist\n{'-' x 80}";
 		exit(1);
 	} unless $input-file.IO.e;
-	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
+	note "===> onefite options: { %_.keys.grep(/^<-[#]>/).map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
 	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	try {
@@ -1321,6 +1322,15 @@ MSG
 	}
 	$input-file.IO.copy("$work-folder/$name/$input-file");
 	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+
+	if %_.keys.grep(/'#'/) {
+		my %e = $engine.h;
+		my $function = define-alias($engine,"_auto_");
+		$function = update-from-input-options( $function, %_, quiet => $quiet );
+		%e = %e, OneFit::Engine::Grammars::Function.parse-me($function);
+		$engine.set(%e)
+	}
+
 	if $export {
 		my $basename = $input-file.IO.extension("").Str; 
 		"data-$basename.txt".IO.spurt: $engine.h<Dados>;
@@ -1575,45 +1585,46 @@ EOT
 }
 
 sub define-alias($engine,$dali) {
-		if $dali.so {
-			my @p = $engine.h<par-tables>;
-			my @pars;
-			for 0 ..^ @p.head.head.elems {
-				my $par;
-			   	if all(@p.head.head[$_]<min>, @p.head.head[$_]<max>) {
-					$par = @p.head.head[$_]<name>  
-						~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
-						~ @p.head.head[$_]<value>
-						~ '['
-						~ @p.head.head[$_]<min>
-			   			~ '<'
-						~ @p.head.head[$_]<max>
-						~ ']';
-				}
-				else {
-					$par = @p.head.head[$_]<name>  
-						~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
-						~ @p.head.head[$_]<value>;
-				}
-				@pars.push: $par;
+	if $dali.so {
+		my @p = $engine.h<par-tables>;
+		my @pars;
+		for 0 ..^ @p.head.head.elems {
+			my $par;
+		   	if all(@p.head.head[$_]<min>, @p.head.head[$_]<max>) {
+				$par = @p.head.head[$_]<name>  
+					~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
+					~ @p.head.head[$_]<value>
+					~ '['
+					~ @p.head.head[$_]<min>
+		   			~ '<'
+					~ @p.head.head[$_]<max>
+					~ ']';
 			}
-			my $X =   $engine.h<X> ~ 
-				'[' ~ $engine.h<Xmin>.subst('\\',"",:g).split(",").head ~ 
-				'<' ~ $engine.h<Xmax>.subst('\\',"",:g).split(",").head ~
-				']';
-			my $Y =  $engine.h<Y> ~ 
-				'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
-				'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
-				']';
-			my $value = "$Y\( $X, { @pars.join(', ')} \) = "
-						~	
-						$engine.h<Function>.subst(/\n|\r/,"",:g).split('=').tail;
-			my %aliases;
-			%aliases = from-json("./aliases.json".IO.slurp) if "./aliases.json".IO.e;
-			%aliases{$dali}=$value;
-			"./aliases.json".IO.spurt: to-json(%aliases, :sorted-keys);
-			note "{'-' x 80}\nalias $dali replaced in ./aliases.json\n{'-' x 80}";
+			else {
+				$par = @p.head.head[$_]<name>  
+					~ "{ @p.head.head[$_]<free> ?? ':' !! '=' }"
+					~ @p.head.head[$_]<value>;
+			}
+			@pars.push: $par;
 		}
+		my $X =   $engine.h<X> ~ 
+			'[' ~ $engine.h<Xmin>.subst('\\',"",:g).split(",").head ~ 
+			'<' ~ $engine.h<Xmax>.subst('\\',"",:g).split(",").head ~
+			']';
+		my $Y =  $engine.h<Y> ~ 
+			'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
+			'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
+			']';
+		my $value = "$Y\( $X, { @pars.join(', ')} \) = "
+					~	
+					$engine.h<Function>.subst(/\n|\r/,"",:g).split('=').tail;
+		my %aliases;
+		%aliases = from-json("./aliases.json".IO.slurp) if "./aliases.json".IO.e;
+		%aliases{$dali}=$value;
+		"./aliases.json".IO.spurt: to-json(%aliases, :sorted-keys);
+		note "===> alias $dali replaced in ./aliases.json";
+		$value
+	}
 }
 
 sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
