@@ -1704,7 +1704,9 @@ sub update-from-input-options($function is copy, %options, :$quiet = False ) {
 		}
 		my $match-not-found = True;
 		for (0 ..^ @targets.elems) -> $i {
-			if @targets[$i].contains($name) {
+			my $target-name = @targets[$i].split(/'='|':'|'['/).head.trim;
+			#			if @targets[$i].contains($name) {
+			if $target-name ~~ /^ $name $/ {
 				given $keep-range {
 					when 1 {
 						my $range = '[' ~ @targets[$i].split('[').tail;
