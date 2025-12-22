@@ -1642,11 +1642,11 @@ sub print-cols($fit-results is copy,$s, :$label = "fit-results") {
 			    my $sign = $col.contains('-') ?? -1 !! +1;	
 				my @two = $col.split(/<ws> '+'|'-' <ws>/)>>.trim;
 				@two = @two.head.contains(/\D+/) ?? @two !! @two.reverse ;
-				my $i = @a>>.trim.grep(@two.head, :k).head.Int;
+				my $i = @a>>.trim.grep(/^ {@two.head} $/, :k).head.Int;
 				@cols.push: $i + 1 + $sign * @two.tail.Int ;
 			}
 			when /:i <[a..z]>+/ { 
-				my $pos = @a>>.trim.grep(/$col/, :k).head;
+				my $pos = @a>>.trim.grep(/^ $col $/, :k).head;
 				if $pos.defined && $pos.Int >= 0 {
 					@cols.push: $pos.Int +1; 
 				}
