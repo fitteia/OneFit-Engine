@@ -687,9 +687,9 @@ EOT
 							$ndf = @b[1] - @!blocks[$i].parameters.free; 
 							$chi2= @b[2+$off-set];
 						}
-						@b[2+$off-set] = (@b[2+$off-set]/($chi2/$ndf)).Num.fmt("%.4f");
+						@b[2+$off-set] = (@b[2+$off-set]/($chi2/$ndf)).Num.fmt("%.8g");
 						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
-							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Num.fmt("%.4f");
+							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Num.fmt("%.8g");
 						}
 						@b.join(', ')
 					}).join("\n")
