@@ -771,26 +771,26 @@ HTML
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
-		       $fit-methods	      = "--fit-methods=\"{$v.Str}\" " if $k eq "fit-methods";
+		       $fit-methods	      = "--fit-methods=\"{$v.Str}\" " if $k eq any(<fit-methods fm>);
 		       $function      	      = "\"{$v.Str}\""     if $k.contains("function");
-		       $num        	      = "--Num={+$v.Str} " if $k eq "Num";
-		       $ssz		      = "--SymbSize={$v.Str} " if $k eq "SymbSize";
+		       $num        	      = "--Num={+$v.Str} " if $k eq any(<Num n npts>);
+		       $ssz		      = "--SymbSize={$v.Str} " if $k eq any(<SymbSize ssz>);
 		       $username   	      = $v.Str     if $k eq "username";
-		       $global      	      = "--global" if $k eq "global"  and $v eq any("yes",1);
-		       $autox      	      = "--autox"  if $k eq "autox"  and $v eq any("yes",1);
-		       $autoy      	      = "--autoy"  if $k eq "autoy"  and $v eq any("yes",1);
-		       $autoxy     	      = "--autoxy" if $k eq "autoxy" and $v eq any("yes",1);
-		       $logx       	      = "--logx"   if $k eq "logx" and $v eq any("yes",1);
-		       $logy       	      = "--logy  " if $k eq "logy" and $v eq any("yes",1);
-		       $reduced-chi2      = "--reduced-chi2  " if $k eq "reduced-chi2" and $v eq any("yes",1);
+		       $global      	      = "--global" if $k eq any(<global g>)  and $v eq any("yes",1);
+		       $autox      	      = "--autox"  if $k eq any(<autox auto-x ax>)  and $v eq any("yes",1);
+		       $autoy      	      = "--autoy"  if $k eq any(<autoy auto-y ay>)  and $v eq any("yes",1);
+		       $autoxy     	      = "--autoxy" if $k eq any(<autoxy auto-xy axy>) and $v eq any("yes",1);
+		       $logx       	      = "--logx"   if $k eq any(<logx log-x xlog loglin lx>) and $v eq any("yes",1);
+		       $logy       	      = "--logy  " if $k eq any(<logy log-y ylog linlog ly>) and $v eq any("yes",1);
+		       $reduced-chi2      = "--reduced-chi2  " if $k eq any(<reduced-chi2 rchi2 rc>) and $v eq any("yes",1);
 		       $R1  		         = "--R1 " if $k eq "R1" and $v eq any("yes",1);
-		       $R2  		         = "--R2 " if $k eq "R2" and $v eq any("yes",1);
-		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq "sef-R1-file" and $v.so;
-		       $err                = "--err={$v.Str}  " if $k eq "err" and $v.so;
-		       $range                = "--range={$v.Str}  " if $k eq "range" and $v.so;
-		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq "remove-outliers" and $v.so;
-		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq "fit-if" and $v.so;
-		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq "plot-if" and $v.so;
+		       $R2  		         = "--R2 " if $k eq any(<R2 pearson-correlation pc>) and $v eq any("yes",1);
+		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq any(<sef-R1-file sf>) and $v.so;
+		       $err                = "--err={$v.Str}  " if $k eq any(<err set-err se>) and $v.so;
+		       $range                = "--range={$v.Str}  " if $k eq any(<range r>) and $v.so;
+		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq any(<remove-outliers ro>) and $v.so;
+		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.so;
+		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.so;
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
 
 		       if $k eq "download" {
