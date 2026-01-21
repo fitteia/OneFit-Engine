@@ -766,6 +766,7 @@ HTML
 		my $fit-methods = "--fit-methods=\"simp scan min minos\"";
 		my $file-content = $file.body-blob;
 		my $tmp-folder=10000;
+		my @ht-args=();
 		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
 		my $work-folder = "./$tmp-folder";
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
@@ -792,6 +793,7 @@ HTML
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.so;
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.so;
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
+			   @ht-args.push: $k ~~ /^'#'/ ?? qq{"--$v"} !! "";
 
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
@@ -812,11 +814,11 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		 else {
-		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		    $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
