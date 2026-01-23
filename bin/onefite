@@ -243,6 +243,10 @@ onefite archive [-f||--fit=<Str>]
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
 	onefite fit "#1exp" file.txt --autox --logx --autoy
     onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
+	onefite fit "y(x,a,b) = a \+ b*x" file.dat 
+	onefite fit "y[0<1](x[-1<1],a:1,b=2) = a \+ b*x" file.dat 
+	onefite fit "y[0<1](x[-1<1],a:1[-1<1],b:0.1[-2<2]) = a \+ b*x" file.dat "--#a=0.0..." --#x"[0<2]" 
+	onefite fit "y[0<1](x[-1<1],a:1[-1<1],b:0.1[-2<2]) = a \+ b*x" file.dat "--#a=0.0[0<2]" "--#y[0<2]" 
 	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0"
 	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="x10/100"
 	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10x"
