@@ -79,7 +79,7 @@ multi MAIN (
 		$DOCKER = True;
 		$web-server = False;
 		$test = False;
-		$systemd-daemon = False;
+#		$systemd-daemon = False;
 		$post-test = False;
 	}
 	if $macos {
