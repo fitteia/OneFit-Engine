@@ -657,7 +657,7 @@ C   WRITE RESULTS OF FITTING PROCEDURE
 
         DO 1 I=1,NPTOT
 !        WRITE(4,'(2X,3(F8.3,2X))') Z(I),PP(I)/CONCM(1)*0.001,
-     &	TPUNO(I)/CONCM(1)*0.001  
+!     &	TPUNO(I)/CONCM(1)*0.001  
 1          CONTINUE
 !	  CLOSE(4)
        DO J=1,ACQ
