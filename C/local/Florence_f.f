@@ -117,10 +117,10 @@ C   DIMENSION=MAX NUMBER OF PARAMETERS (21)
       NUMPUN = 1
       SET    = 1
       TEMP(1) = 293
-      TAUS0M(J,2) = 0
-      TAURM(J,2)  = 0
-      TAUVM(J,2)  = 0
-      TAUMM(J,2)  = 0
+      TAUS0M(1,2) = 0
+      TAURM(1,2)  = 0
+      TAUVM(1,2)  = 0
+      TAUMM(1,2)  = 0
       X1 = FREQ
       X2 = X1
       X3 = 1.
@@ -511,9 +511,9 @@ C   NUMBER OF FITTING PARAMETERS IN EXTERNAL CICLE
 
 	 NVMEM=NV
 	 DPARATOT=0. 
-	 GX=GXM(J)
-	 GY=GYM(J)
-	 GZ=GZM(J)
+	 GX=GXM(1)
+	 GY=GYM(1)
+	 GZ=GZM(1)
 	 EPARATOT=0.
 	 APERTOT=0.
 	 APERTOT2=0.
@@ -528,6 +528,34 @@ C   NUMBER OF FITTING PARAMETERS IN EXTERNAL CICLE
          APARTOT=AYM(J)+APARTOT
 	 ACONTOT=ACONTM(J)+ACONTOT
 	 END DO
+
+c      WRITE(*,*) SI
+c      WRITE(*,*)  GAMMAI
+c      WRITE(*,*)  SPIN
+c      WRITE(*,*)  IREL
+c      WRITE(*,*)  TAUS0M(1,1)
+c      WRITE(*,*)  TAURM(1,1)
+c      WRITE(*,*)  TAUVM(1,1)
+c      WRITE(*,*)  TAUMM(1,1)
+c      WRITE(*,*)  TAUDELTA
+c      WRITE(*,*)  DPARAM(1)
+c      WRITE(*,*)  EPARAM(1)
+c      WRITE(*,*)  S4M(1)
+c      WRITE(*,*)  GXM(1)
+c      WRITE(*,*)  GYM(1)
+c      WRITE(*,*)  GZM(1)
+c      WRITE(*,*)  AXM(1)
+c      WRITE(*,*)  AYM(1)
+c      WRITE(*,*)  AZM(1)
+c      WRITE(*,*)  DM(1)
+c      WRITE(*,*)  DDM(1)
+c      WRITE(*,*)  CONCM(1)
+c      WRITE(*,*)  ACQ
+c      WRITE(*,*)  AMOLFRAM(1)
+c      WRITE(*,*)  RKM(1)
+c      WRITE(*,*)  ACONTM(1)
+c      WRITE(*,*)  THETAM(1)
+c      WRITE(*,*)  PHIM(1)
 
 !	   WRITE(*,*)ACONTOT,APERTOT, APARTOT, APERTOT2, GX, GY, GZ, EPARATOT, DPARATOT
 C   DEFINITION OF NMX: DIMENSION OF ENERGY MATRIX
