@@ -529,34 +529,34 @@ C   NUMBER OF FITTING PARAMETERS IN EXTERNAL CICLE
 	 ACONTOT=ACONTM(J)+ACONTOT
 	 END DO
 
-      WRITE(*,*) FREQ
-      WRITE(*,*) SI
-      WRITE(*,*)  GAMMAI
-      WRITE(*,*)  SPIN
-      WRITE(*,*)  IREL
-      WRITE(*,*)  TAUS0M(1,1)
-      WRITE(*,*)  TAURM(1,1)
-      WRITE(*,*)  TAUVM(1,1)
-      WRITE(*,*)  TAUMM(1,1)
-      WRITE(*,*)  TAUDELTA
-      WRITE(*,*)  DPARAM(1)
-      WRITE(*,*)  EPARAM(1)
-      WRITE(*,*)  S4M(1)
-      WRITE(*,*)  GXM(1)
-      WRITE(*,*)  GYM(1)
-      WRITE(*,*)  GZM(1)
-      WRITE(*,*)  AXM(1)
-      WRITE(*,*)  AYM(1)
-      WRITE(*,*)  AZM(1)
-      WRITE(*,*)  DM(1)
-      WRITE(*,*)  DDM(1)
-      WRITE(*,*)  CONCM(1)
-      WRITE(*,*)  ACQ
-      WRITE(*,*)  AMOLFRAM(1)
-      WRITE(*,*)  RKM(1)
-      WRITE(*,*)  ACONTM(1)
-      WRITE(*,*)  THETAM(1)
-      WRITE(*,*)  PHIM(1)
+c      WRITE(*,*) FREQ
+c      WRITE(*,*) SI
+c      WRITE(*,*)  GAMMAI
+c      WRITE(*,*)  SPIN
+c      WRITE(*,*)  IREL
+c      WRITE(*,*)  TAUS0M(1,1)
+c      WRITE(*,*)  TAURM(1,1)
+c      WRITE(*,*)  TAUVM(1,1)
+c      WRITE(*,*)  TAUMM(1,1)
+c      WRITE(*,*)  TAUDELTA
+c      WRITE(*,*)  DPARAM(1)
+c      WRITE(*,*)  EPARAM(1)
+c      WRITE(*,*)  S4M(1)
+c      WRITE(*,*)  GXM(1)
+c      WRITE(*,*)  GYM(1)
+c      WRITE(*,*)  GZM(1)
+c      WRITE(*,*)  AXM(1)
+c      WRITE(*,*)  AYM(1)
+c      WRITE(*,*)  AZM(1)
+c      WRITE(*,*)  DM(1)
+c      WRITE(*,*)  DDM(1)
+c      WRITE(*,*)  CONCM(1)
+c      WRITE(*,*)  ACQ
+c      WRITE(*,*)  AMOLFRAM(1)
+c      WRITE(*,*)  RKM(1)
+c      WRITE(*,*)  ACONTM(1)
+c      WRITE(*,*)  THETAM(1)
+c      WRITE(*,*)  PHIM(1)
 
 !	   WRITE(*,*)ACONTOT,APERTOT, APARTOT, APERTOT2, GX, GY, GZ, EPARATOT, DPARATOT
 C   DEFINITION OF NMX: DIMENSION OF ENERGY MATRIX
@@ -1005,7 +1005,7 @@ C   STORE CONTRIBUTIONS FOR TUNO
 
 C   CALCULATION OF TPUNO
 	  RUNO(2)=TMUNO*RK1
-      WRITE(*,'("0 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
+c      WRITE(*,'("0 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
 	  RUNO(3)=CONA*CONA*TMUNOCONT
 	  RUNO(4)=SQRT(RK1)*CONA*TMUNOCROSS
 	  TMUNO=RUNO(2)+RUNO(3)+RUNO(4)
@@ -1018,24 +1018,24 @@ C   CALCULATION OF TPUNO
 	  EPSILON=TPUNO1*TAUM
 	  IF (EPSILON.LT.0.9) THEN
        RUNO(2)=RUNO(2)*(1-EPSILON+EPSILON**2)/CONC*0.001      
-      WRITE(*,'("1 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
+c      WRITE(*,'("1 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
        RUNO(3)=RUNO(3)*(1-EPSILON+EPSILON**2)/CONC*0.001      
        RUNO(4)=RUNO(4)*(1-EPSILON+EPSILON**2)/CONC*0.001      
- 	  ELSE IF (EPSILON.GT.0.9) THEN
+ 	  ELSE IF (EPSILON.GT.1.1) THEN
        RUNO(2)=RUNO(2)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
-      WRITE(*,'("2 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
+c      WRITE(*,'("2 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
        RUNO(3)=RUNO(3)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
        RUNO(4)=RUNO(4)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
 	  ELSE
        RUNO(2)=0.5*RUNO(2)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
-      WRITE(*,'("3 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
+c      WRITE(*,'("3 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
        RUNO(3)=0.5*RUNO(3)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
        RUNO(4)=0.5*RUNO(4)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
 	  ENDIF 
 
       IF(AMOLFRA.NE.0.) THEN
        RUNO(2)=RUNO(2)*AMOLFRA
-      WRITE(*,'("4 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
+c      WRITE(*,'("4 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
        RUNO(3)=RUNO(3)*AMOLFRA
        RUNO(4)=RUNO(4)*AMOLFRA
        TPUNO1=TPUNO1*AMOLFRA
