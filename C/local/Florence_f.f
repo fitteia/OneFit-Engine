@@ -511,9 +511,9 @@ C   NUMBER OF FITTING PARAMETERS IN EXTERNAL CICLE
 
 	 NVMEM=NV
 	 DPARATOT=0. 
-	 GX=GXM(1)
-	 GY=GYM(1)
-	 GZ=GZM(1)
+	 GX=GXM(1) 
+	 GY=GYM(1) 
+	 GZ=GZM(1) 
 	 EPARATOT=0.
 	 APERTOT=0.
 	 APERTOT2=0.
@@ -529,12 +529,12 @@ C   NUMBER OF FITTING PARAMETERS IN EXTERNAL CICLE
 	 ACONTOT=ACONTM(J)+ACONTOT
 	 END DO
 
-c      WRITE(*,*) FREQ
-c      WRITE(*,*) SI
-c      WRITE(*,*)  GAMMAI
-c      WRITE(*,*)  SPIN
-c      WRITE(*,*)  IREL
-c      WRITE(*,*)  TAUS0M(1,1)
+c      WRITE(*,*) FREQ 
+c      WRITE(*,*) SI 
+c      WRITE(*,*)  GAMMAI 
+c      WRITE(*,*)  SPIN 
+c      WRITE(*,*)  IREL 
+c      WRITE(*,*)  TAUS0M(1,1) 
 c      WRITE(*,*)  TAURM(1,1)
 c      WRITE(*,*)  TAUVM(1,1)
 c      WRITE(*,*)  TAUMM(1,1)
