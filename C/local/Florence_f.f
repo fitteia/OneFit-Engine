@@ -529,33 +529,33 @@ C   NUMBER OF FITTING PARAMETERS IN EXTERNAL CICLE
 	 ACONTOT=ACONTM(J)+ACONTOT
 	 END DO
 
-c      WRITE(*,*) SI
-c      WRITE(*,*)  GAMMAI
-c      WRITE(*,*)  SPIN
-c      WRITE(*,*)  IREL
-c      WRITE(*,*)  TAUS0M(1,1)
-c      WRITE(*,*)  TAURM(1,1)
-c      WRITE(*,*)  TAUVM(1,1)
-c      WRITE(*,*)  TAUMM(1,1)
-c      WRITE(*,*)  TAUDELTA
-c      WRITE(*,*)  DPARAM(1)
-c      WRITE(*,*)  EPARAM(1)
-c      WRITE(*,*)  S4M(1)
-c      WRITE(*,*)  GXM(1)
-c      WRITE(*,*)  GYM(1)
-c      WRITE(*,*)  GZM(1)
-c      WRITE(*,*)  AXM(1)
-c      WRITE(*,*)  AYM(1)
-c      WRITE(*,*)  AZM(1)
-c      WRITE(*,*)  DM(1)
-c      WRITE(*,*)  DDM(1)
-c      WRITE(*,*)  CONCM(1)
-c      WRITE(*,*)  ACQ
-c      WRITE(*,*)  AMOLFRAM(1)
-c      WRITE(*,*)  RKM(1)
-c      WRITE(*,*)  ACONTM(1)
-c      WRITE(*,*)  THETAM(1)
-c      WRITE(*,*)  PHIM(1)
+      WRITE(*,*) SI
+      WRITE(*,*)  GAMMAI
+      WRITE(*,*)  SPIN
+      WRITE(*,*)  IREL
+      WRITE(*,*)  TAUS0M(1,1)
+      WRITE(*,*)  TAURM(1,1)
+      WRITE(*,*)  TAUVM(1,1)
+      WRITE(*,*)  TAUMM(1,1)
+      WRITE(*,*)  TAUDELTA
+      WRITE(*,*)  DPARAM(1)
+      WRITE(*,*)  EPARAM(1)
+      WRITE(*,*)  S4M(1)
+      WRITE(*,*)  GXM(1)
+      WRITE(*,*)  GYM(1)
+      WRITE(*,*)  GZM(1)
+      WRITE(*,*)  AXM(1)
+      WRITE(*,*)  AYM(1)
+      WRITE(*,*)  AZM(1)
+      WRITE(*,*)  DM(1)
+      WRITE(*,*)  DDM(1)
+      WRITE(*,*)  CONCM(1)
+      WRITE(*,*)  ACQ
+      WRITE(*,*)  AMOLFRAM(1)
+      WRITE(*,*)  RKM(1)
+      WRITE(*,*)  ACONTM(1)
+      WRITE(*,*)  THETAM(1)
+      WRITE(*,*)  PHIM(1)
 
 !	   WRITE(*,*)ACONTOT,APERTOT, APARTOT, APERTOT2, GX, GY, GZ, EPARATOT, DPARATOT
 C   DEFINITION OF NMX: DIMENSION OF ENERGY MATRIX
