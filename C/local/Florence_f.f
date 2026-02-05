@@ -1014,24 +1014,39 @@ c      WRITE(*,'("0 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
 !      IF(AMOLFRA.EQ.0.)TPUNO1=1./(1./TMUNO+TAUM)
 
 	  TPUNO1=(1./(1./TMUNO+TAUM))
+
+      X=TPUNO1*TAUM
+      Y=0
+      IF (ABS(X-1) < 2) THEN
+         DO KK=0,6
+           Y=Y + (X-1)**KK * (-1)**KK / 2**(KK+1)
+         END DO
+      ELSE
+         DO KK=0,6
+           Y=Y + X**(-KK-1) * (-1)**KK
+         END DO
+      ENDIF
+      RUNO(2)=RUNO(2)*Y/CONC*0.001
+      RUNO(3)=RUNO(3)*Y/CONC*0.001
+      RUNO(4)=RUNO(4)*Y/CONC*0.001
      
-	  EPSILON=TPUNO1*TAUM
-	  IF (EPSILON.LT.0.9) THEN
-       RUNO(2)=RUNO(2)*(1-EPSILON+EPSILON**2)/CONC*0.001      
-c      WRITE(*,'("1 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
-       RUNO(3)=RUNO(3)*(1-EPSILON+EPSILON**2)/CONC*0.001      
-       RUNO(4)=RUNO(4)*(1-EPSILON+EPSILON**2)/CONC*0.001      
- 	  ELSE IF (EPSILON.GT.1.1) THEN
-       RUNO(2)=RUNO(2)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
-c      WRITE(*,'("2 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
-       RUNO(3)=RUNO(3)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
-       RUNO(4)=RUNO(4)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
-	  ELSE
-       RUNO(2)=0.5*RUNO(2)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
-c      WRITE(*,'("3 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
-       RUNO(3)=0.5*RUNO(3)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
-       RUNO(4)=0.5*RUNO(4)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
-	  ENDIF 
+c	  EPSILON=TPUNO1*TAUM
+c	  IF (EPSILON.LT.0.9) THEN
+c       RUNO(2)=RUNO(2)*(1-EPSILON+EPSILON**2)/CONC*0.001      
+cc      WRITE(*,'("1 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
+c       RUNO(3)=RUNO(3)*(1-EPSILON+EPSILON**2)/CONC*0.001      
+c       RUNO(4)=RUNO(4)*(1-EPSILON+EPSILON**2)/CONC*0.001      
+c 	  ELSE IF (EPSILON.GT.1.1) THEN
+c       RUNO(2)=RUNO(2)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
+cc      WRITE(*,'("2 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
+c       RUNO(3)=RUNO(3)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
+c       RUNO(4)=RUNO(4)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
+c	  ELSE
+c       RUNO(2)=0.5*RUNO(2)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
+cc      WRITE(*,'("3 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
+c       RUNO(3)=0.5*RUNO(3)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
+c       RUNO(4)=0.5*RUNO(4)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
+c	  ENDIF 
 
       IF(AMOLFRA.NE.0.) THEN
        RUNO(2)=RUNO(2)*AMOLFRA
