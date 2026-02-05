@@ -17,9 +17,9 @@
       DPARAM(J) = 0.0
       EPARAM(J) = 0.0
       S4M(J)    = 0.0
-      GXM(J)=1
-      GYM(J)=1
-      GZM(J)=1
+      GXM(J)=2.003
+      GYM(J)=2.003
+      GZM(J)=2.003
       AXM(J) = 0.00
       AYM(J) = 0.00
       AZM(J) = 0.0
