@@ -501,7 +501,11 @@ multi MAIN ('convert',
     Str $output-file, #= name of the converted file (sav or json)
     Str :wf(:$work-folder) = "/tmp" #= work folder for onefite convert
    ) {
-	   	note "===> work folder: $work-folder. use --work-folder=\"<other folder>\" " unless $work-folder ~~ /^ '/' tmp $/;
+	   	note "===> work folder: $work-folder. use --work-folder=\"<other folder>\" " if $work-folder ~~ /^ '/' tmp $/;
+		do {
+			$work-folder.IO.mkdir;
+		   	note "===> creating dir: $work-folder";
+		} unless $work-folder.IO.d;
    		my $eng = Engine.new.path($work-folder).read($input-file).blocks(:r).parameters(:r).functions(:r).code(:write,:compile).save($output-file);
     	return 0;
 }
