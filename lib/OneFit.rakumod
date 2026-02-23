@@ -23,42 +23,43 @@ class Engine is export {
     method path ($folder) { $!path = $folder; self }
     
     method read ($file, Bool :$h) {
-	die "OFE input file reading error: $file doesn't exist" unless "$file".IO.e;
-	if $file.contains('json') {
-	    %!engine = from-json($file.IO.slurp) ;
-	}
-	else {
-		use Inline::Perl5;
-	    use CGI:from<Perl5>;
-
-		try {
-    		my $sav = CGI.new( $file.IO.open );
-    		for $sav.param { %!engine{$_} = $sav.param($_) }	 
-
-			CATCH { default { note "===> $_" } }
+		die "OFE input file reading error: $file doesn't exist" unless "$file".IO.e;
+		if $file.contains('json') {
+	    	%!engine = from-json($file.IO.slurp) ;
 		}
-	}
-	%!engine<FitType> = "Global" unless %!engine<FitType>;
-	($h.Bool) ?? %!engine !! self;
+		else {
+			use Inline::Perl5;
+	    	use CGI:from<Perl5>;
+
+			try {
+    			my $sav = CGI.new( $file.IO.open );
+    			for $sav.param { %!engine{$_} = $sav.param($_) }	 
+
+				CATCH { default { note "===> $_" } }
+			}
+		}
+		%!engine<FitType> = "Global" unless %!engine<FitType>;
+		($h.Bool) ?? %!engine !! self;
     }
+
     method save ($file) {
-	my %e=%!engine;
-	%e<par-tables> = @!par-tables>>.table;
-	if $file.contains('json') {
-	    spurt( $file, to-json(%e, :sorted-keys) );
-	}
-	else {
-	    use Inline::Perl5;
-	    use CGI:from<Perl5>;
+		my %e=%!engine;
+		%e<par-tables> = @!par-tables>>.table;
+		if $file.contains('json') {
+	    	spurt( $file, to-json(%e, :sorted-keys) );
+		}
+		else {
+	    	use Inline::Perl5;
+	    	use CGI:from<Perl5>;
 
-	    my $sav = CGI.new;
-	    for %!engine.keys -> $key { $sav.param($key,%e{$key})  }	 
+	    	my $sav = CGI.new;
+	    	for %!engine.keys -> $key { $sav.param($key,%e{$key})  }	 
 
-	    unless my $fh = open $file.subst("json","sav"), :w { say "dammed!"; };
-	    $sav.save($fh);
-	    $fh.close;
-	}
-	self
+	    	unless my $fh = open $file.subst("json","sav"), :w { say "dammed!"; };
+	    	$sav.save($fh);
+	    	$fh.close;
+		}
+		self
     }
 
     multi method h () { %!engine }
