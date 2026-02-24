@@ -389,15 +389,7 @@ service shellinabox stop
 
 ### Specific
 
-- IST ffc data file with magnetizatin decays: call onefite with option [--ist-ffc]
-
-- IST ffc data file with R1 profile: call onefite with option [--ist-ffc-R1] or [--ist-ffc-R1-err=<Rat>]
-
-- Stelar hdf5 file: call onefite with options [--stelar-hdf5] or [--stelar-hdf5-R1] of [--stelar-hdf5-R1-err=<Rat>] 
-
-- Stelar sdf file: call onefite with options [--stelar-sdf] or [--stelar-sdf-R1] of [--stelar-sdf-R1-err=<Rat>] 
-
-- Stelar sef file: call onefite with options [--stelar-sef-R1] of [--stelar-sef-R1-err=<Rat>]
+- Stelar sef file: call onefite with option --sef-R1-file=filename 
 
 ### ZIP files
 
