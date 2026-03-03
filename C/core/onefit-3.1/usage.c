@@ -37,5 +37,6 @@ void usage()
   printf("-h <help>\n");
 
   // printf("\nTry x1fit (xonefit) as a GUI fitting environment!\n");
+  printf("\n");
   exit(0);
 }
