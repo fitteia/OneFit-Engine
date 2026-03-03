@@ -36,6 +36,6 @@ void usage()
   printf("-l <list compliled fitting function names>\n");
   printf("-h <help>\n");
 
-  printf("\nTry x1fit (xonefit) as a GUI fitting environment!\n");
+  // printf("\nTry x1fit (xonefit) as a GUI fitting environment!\n");
   exit(0);
 }
