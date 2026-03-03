@@ -8,7 +8,7 @@ void usage()
   printf("\n was the result of a suggestion of Carlos Cruz");
   printf("\n Thank you Carlos for that challenge)\n\n");
 
-  printf("usage: onefit [-@options_file] [-short_options] [--long_options=] datafiles [-short_options] [--long_options=] datafiles ...\n");
+  printf("usage: onefit-user [-@options_file] [-short_options] [--long_options=] datafiles [-short_options] [--long_options=] datafiles ...\n");
   printf("short options: -DFGOPgdo@ntpzleh\n");
   printf("long  options: autox_scale, autox, autoy_scale, autoy, fit, nofit,plot\n");
   printf("               noplot, label, nolabel, errors, device, Outdev, xlabel\n");
@@ -36,6 +36,7 @@ void usage()
   printf("-l <list compliled fitting function names>\n");
   printf("-h <help>\n");
 
-  printf("\nTry x1fit (xonefit) as a GUI fitting environment!\n");
+  // printf("\nTry x1fit (xonefit) as a GUI fitting environment!\n");
+  printf("\n");
   exit(0);
 }
