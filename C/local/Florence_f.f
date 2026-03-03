@@ -1015,6 +1015,9 @@ c      WRITE(*,'("0 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
 
 	  TPUNO1=(1./(1./TMUNO+TAUM))
 
+c
+c   Taylor expensnsion to calculare the RUNO components
+c
       X=TPUNO1*TAUM
       Y=0
       IF (ABS(X-1) < 2) THEN
@@ -1030,24 +1033,6 @@ c      WRITE(*,'("0 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
       RUNO(3)=RUNO(3)*Y/CONC*0.001
       RUNO(4)=RUNO(4)*Y/CONC*0.001
      
-c	  EPSILON=TPUNO1*TAUM
-c	  IF (EPSILON.LT.0.9) THEN
-c       RUNO(2)=RUNO(2)*(1-EPSILON+EPSILON**2)/CONC*0.001      
-cc      WRITE(*,'("1 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
-c       RUNO(3)=RUNO(3)*(1-EPSILON+EPSILON**2)/CONC*0.001      
-c       RUNO(4)=RUNO(4)*(1-EPSILON+EPSILON**2)/CONC*0.001      
-c 	  ELSE IF (EPSILON.GT.1.1) THEN
-c       RUNO(2)=RUNO(2)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
-cc      WRITE(*,'("2 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
-c       RUNO(3)=RUNO(3)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
-c       RUNO(4)=RUNO(4)*(1.0/EPSILON - 1.0/EPSILON**2 + 1.0/EPSILON**3)/CONC*0.001      
-c	  ELSE
-c       RUNO(2)=0.5*RUNO(2)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
-cc      WRITE(*,'("3 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
-c       RUNO(3)=0.5*RUNO(3)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
-c       RUNO(4)=0.5*RUNO(4)*(1 -0.5*EPSILON + 0.5*EPSILON**2)/CONC*0.001      
-c	  ENDIF 
-
       IF(AMOLFRA.NE.0.) THEN
        RUNO(2)=RUNO(2)*AMOLFRA
 c      WRITE(*,'("4 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
