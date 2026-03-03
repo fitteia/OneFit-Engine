@@ -1628,7 +1628,7 @@ sub define-alias($engine,$dali) {
 			']';
 		my $value = "$Y\( $X, { @pars.join(', ')} \) = "
 					~	
-					$engine.h<Function>.subst(/\n|\r/,"",:g).split('=').tail;
+					$engine.h<Function>.subst(/\n|\r/,"",:g).split('=').skip(1).join('=');
 		my %aliases;
 		%aliases = from-json("./aliases.json".IO.slurp) if "./aliases.json".IO.e;
 		%aliases{$dali}=$value;
