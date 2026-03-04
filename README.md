@@ -628,6 +628,7 @@ onefite upgrade -systemd-daemon --merge-site=site
 
 ## Usage
 
+```bash
   onefite [-h|--help] -- Get onefite usage help
   onefite [--man] -- Get onefite man page
   onefite archive [-f|--fit=<Str>] [--<_>=...] -- Show archive log
@@ -658,7 +659,7 @@ onefite upgrade -systemd-daemon --merge-site=site
   onefite test list
   onefite test [<arr> ...] [-d|--systemd-daemon] [-p|--post-install] [--verbose|-v]
   onefite [-v|--version]
-
+```
     -h|--help                                          help option true by default
     --man                                              generate man page standar output [default: False]
     -f|--fit=<Str>                                     fit archive log entry: ex: onefite archive -f last or onefite log --fit 10 [default: '']
