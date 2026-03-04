@@ -1633,9 +1633,7 @@ sub define-alias($engine,$dali) {
 						$engine.h<Function>.contains('=') 
 						??  $engine.h<Function>
 							.subst(/\n|\r/,"",:g)
-							.split('=')
-							.skip(1)
-							.join('=') 
+							.split('=',2).tail
 					   	!!  $engine.h<Function> 
 					);
 		my %aliases;
