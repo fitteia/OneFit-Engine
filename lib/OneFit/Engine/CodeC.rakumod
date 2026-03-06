@@ -138,7 +138,7 @@ EOT
 	    $auxcode = "#include <stdlib.h>\n" ~ $auxcode unless $auxcode.contains("stdlib.h");
 	    $auxcode = "#include <math.h>\n" ~ $auxcode unless $auxcode.contains("math.h");
 	    $auxcode = "#include <stdio.h>\n" ~ $auxcode unless $auxcode.contains("stdio.h");
-say $!engine<fit-methods>;
+say %!engine<fit-methods>;
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
 	
