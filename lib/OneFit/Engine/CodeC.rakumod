@@ -141,9 +141,9 @@ EOT
 		if %!engine<FitMethods> {
 			my $methods = %!engine<FitMethods>.words.map({ qq{"$_"} }).join(',');
 			my @lines = $auxcode.lines;
-			#my $k = @lines.grep(/SET_FIT_METHODS/,:k).head;
-			#@lines[$k] = "SET_FIT_METHODS($methods);";
-			#$auxcode = @lines.join("\n");
+			my $k = @lines.grep(/SET_FIT_METHODS/,:k).head;
+			@lines[$k] = "SET_FIT_METHODS($methods);";
+			$auxcode = @lines.join("\n");
 			say @lines;
 		}
 		say $auxcode;
