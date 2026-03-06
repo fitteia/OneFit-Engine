@@ -138,7 +138,12 @@ EOT
 	    $auxcode = "#include <stdlib.h>\n" ~ $auxcode unless $auxcode.contains("stdlib.h");
 	    $auxcode = "#include <math.h>\n" ~ $auxcode unless $auxcode.contains("math.h");
 	    $auxcode = "#include <stdio.h>\n" ~ $auxcode unless $auxcode.contains("stdio.h");
-say %!engine<FitMethods>.words;
+		if %!engine<FitMethods> {
+			my $methods = %!engine<FitMethods>.words.map({ qq{"$_"} }).join(',');
+			my @lines = $auxcode.words;
+			@lines.grep(/SET_FIT_METHODS/).map({"SET_FIT_METHODS($methods)"});
+			$auxcode = @lines.join("\n");
+		}
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
 	
