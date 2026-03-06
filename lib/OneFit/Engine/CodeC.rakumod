@@ -145,6 +145,7 @@ EOT
 		#		@lines[$k] = "SET_FIT_METHODS($methods);";
 		#		$auxcode = @lines.join("\n");
 		#}
+		say $auxcode;
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
 	
