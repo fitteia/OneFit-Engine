@@ -143,6 +143,8 @@ EOT
 			my @lines = $auxcode.lines;
 			@lines.grep(/SET_FIT_METHODS/).map({"SET_FIT_METHODS($methods)"});
 			$auxcode = @lines.join("\n");
+			say $methods;
+			say $auxcode;
 		}
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
