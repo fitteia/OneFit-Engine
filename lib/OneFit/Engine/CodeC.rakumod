@@ -142,11 +142,8 @@ EOT
 			my $methods = %!engine<FitMethods>.words.map({ qq{"$_"} }).join(',');
 			my @lines = $auxcode.lines;
 			my $k = @lines.grep(/SET_FIT_METHODS/,:k).head;
-			say $k;
-			@lines[$k-1] = "SET_FIT_METHODS($methods);";
+			@lines[$k] = "SET_FIT_METHODS($methods);";
 			$auxcode = @lines.join("\n");
-			say $methods;
-			say $auxcode;
 		}
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
