@@ -210,11 +210,11 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =head2 Fit commands
 
 =begin code :lang<bash>
-onefite random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
+onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>] [--eb|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>]i [--eb|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>]i [--eb|--error-bars|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
 
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
@@ -1135,7 +1135,7 @@ multi MAIN  ('fit',
     Str  :wf(:$work-folder) = '.',
     Int  :n(:N(:Num(:$npts))) = +100,
 	Bool :ar(:$archive) = False, #= add log entry and archive data
-	Bool :eb(:$errorbars) = False, #= set errorbars
+	Bool :eb(:error-bars(:$errorbars)) = False, #= set errorbars
 	Bool :q(:$quiet) = False,
 	Str  :da(:define-alias(:$dali))="",
 	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
@@ -1287,7 +1287,7 @@ multi MAIN  ('fit',
      Str  :wf(:$work-folder) = '.',
      Int  :n(:N(:Num(:$npts))),
 	 Bool :e(:$export) = False,
-	 Bool :eb(:$errorbars) = False,
+	 Bool :eb(:error-bars(:$errorbars)) = False,
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :da(:define-alias(:$dali)) ="",
