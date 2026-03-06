@@ -122,7 +122,7 @@ EOT
 
 	for (0 ..^ @Functions.elems).race { @Functions[$_].write-c(path => $!path, name => "userfitf$_" ,x => %!engine<X>.Str ,y => %!engine<Y>.Str,t => %!engine<T>.Str, AuxDeclar => ($auxdeclar.defined) ?? $auxdeclar.subst(/double|int|void|string|<ws>/,'') !! '') }
 
-	if ($auxcode.defined) {
+	if $auxcode {
 	    $auxcode = gather {
 		for $auxcode.lines {
 		    take $_ unless $_.contains(any <stdio.h stdlib.h math.h string.h globals.h struct.h userlib.h ndata.h mixed.h AuxCode.h>)
@@ -138,13 +138,13 @@ EOT
 	    $auxcode = "#include <stdlib.h>\n" ~ $auxcode unless $auxcode.contains("stdlib.h");
 	    $auxcode = "#include <math.h>\n" ~ $auxcode unless $auxcode.contains("math.h");
 	    $auxcode = "#include <stdio.h>\n" ~ $auxcode unless $auxcode.contains("stdio.h");
-		#		if %!engine<FitMethods> {
-			#	my $methods = %!engine<FitMethods>.words.map({ qq{"$_"} }).join(',');
-			#	my @lines = $auxcode.lines;
-			#	my $k = @lines.first(/SET_FIT_METHODS/,:k);
-			#@lines[$k] = "SET_FIT_METHODS($methods);";
-			#$auxcode = @lines.join("\n");
-			#}
+		if %!engine<FitMethods> {
+			my $methods = %!engine<FitMethods>.words.map({ qq{"$_"} }).join(',');
+			my @lines = $auxcode.lines;
+			my $k = @lines.first(/SET_FIT_METHODS/,:k);
+			@lines[$k] = "SET_FIT_METHODS($methods);";
+			$auxcode = @lines.join("\n");
+		}
 	    "$!path/AuxCode.c".IO.spurt: $auxcode;
 	}
 	
