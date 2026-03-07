@@ -93,7 +93,7 @@ grammar Function is Number {
 	%res<X> = { $m<X><par><name>  or $m<X><par><range><name> }().Str;
 	%res<Xmin> = $m<X><par><range>.Bool ??  $m<X><par><range><min>.Str !! 0;
 	%res<Xmax> = $m<X><par><range>.Bool ??  $m<X><par><range><max>.Str !! 10;
-	%res<Function> = %res<Y> ~ "=" ~ $m<expression>.Str;
+	%res<Function> = %res<Y> ~ " = " ~ $m<expression>.Str;
 	my $i=0;
 	for $m<pars><par> -> $par {
 		%res{"Pval" ~ $i} = 1;
