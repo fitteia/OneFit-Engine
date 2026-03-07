@@ -1169,7 +1169,7 @@ multi MAIN  ('fit',
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
 	%aliases = %aliases.Slip, from-json("{$*CWD}/aliases.json".IO.slurp).Hash.Slip  if "{$*CWD}/aliases.json".IO.e; 
 
-    if $function.contains(/^\s* \w* \s* ':' \s* \w+ | ^ <ws> '#' \w+ /) {
+    if $function.contains(/^ <ws> \w* <ws> ':' <ws> \w+ | ^ <ws> '#' \w+ /) {
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/^\s*'#'\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { 
@@ -1318,7 +1318,7 @@ multi MAIN  ('fit',
 {'-' x 80}
 I am not sure about your list of arguments: \"{ @*ARGS[0] ~ ' "' ~ @*ARGS[1] ~ '" ' ~ @*ARGS[2..*].join(' ') }\" 
 { @*ARGS[1].contains(':') ?? 'I think you mean \'onefite ' ~ @args.join(' ') ~ '\''  !! ''}
-{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, or { '" ' ~ @*ARGS[1] ~ '"'} also work
+{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, { '" ' ~ @*ARGS[1] ~ '"'}, or { '#' ~ @*ARGS[1] ~ '"'}  lso work
 {'-' x 80}
 MSG
 		}
