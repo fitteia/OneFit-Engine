@@ -101,7 +101,7 @@ onefite list aliases [-q|--quiet]
 =item Paths finder
 
 =begin code :lang<bash>
-onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
+onefite path [-s|--src] [-t] [-exa|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
 =end code
 
     Paths to OneFit-Engine folders installed.
@@ -111,7 +111,7 @@ onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--lo
 
     [-s|--src]       Source
     [-t]             Raku test folder
-    [-e|--examples]  Examples folder
+    [-exa|--examples]  Examples folder
     [-b|--bin]       Binaries folder
     [-l|--lib]       Libraries folder
     [-c|-C]          C code/F code folders
@@ -214,7 +214,7 @@ onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 
 onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>]i [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>]i [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....]
 
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
@@ -225,7 +225,7 @@ onefite archive [-f||--fit=<Str>]
     Options
 
     [--define-alias|--dali=<Str>] adds alias Str to the function used to fit the data in the ./aliases.json file (overwrites existing alias)
-    [--export] writes data and AuxCode to files for later use with: onefite fit <function>
+    [-e|--export] writes data and AuxCode to files for later use with: onefite fit <function>
     [--aux-code] accepts the name of the file with the AuxCode and the new fitting functions declarations
 	[--#....] after '#' model equations variables, '=',':', [...<...]
 
@@ -514,7 +514,7 @@ multi MAIN ('convert',
 multi MAIN ('path',
       Bool :s(:$src) = False, #= path to src
       Bool :$t = False, #= path to test
-      Bool :e(:$examples) = False, #= path to examples
+      Bool :exa(:$examples) = False, #= path to examples
       Bool :b(:$bin) = False, #= path to bin
       Bool :l(:$lib) = False, #= path to lib
       Bool :c(:$C) = False, #= path to C code
@@ -1136,7 +1136,7 @@ multi MAIN  ('fit',
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
     Str  :st(:$save-to), # write fit settings to json or sav file 
     Str  :wf(:$work-folder) = '.',
-    Int  :n(:N(:Num(:$npts))) = +100,
+    Int  :n(:num(:N(:Num(:$npts)))) = +100,
 	Bool :ar(:$archive) = False, #= add log entry and archive data
 	Bool :eb(:error-bars(:$errorbars)) = False, #= set errorbars
 	Bool :q(:$quiet) = False,
@@ -1288,8 +1288,8 @@ multi MAIN  ('fit',
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
      Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
      Str  :wf(:$work-folder) = '.',
-     Int  :n(:N(:Num(:$npts))),
-	 Bool :e(:$export) = False,
+     Int  :n(:num(:N(:Num(:$npts)))),
+	 Bool :e(:$export) = False, #= expand json file data and create alias fot the fitting function
 	 Bool :eb(:error-bars(:$errorbars)) = False,
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
