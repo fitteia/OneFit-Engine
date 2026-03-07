@@ -1289,7 +1289,7 @@ multi MAIN  ('fit',
      Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
      Str  :wf(:$work-folder) = '.',
      Int  :n(:num(:N(:Num(:$npts)))),
-	 Bool :e(:$export) = False, #= expand json file data and create alias fot the fitting function
+	 Bool :e(:$export) = False, #= expand json file data and create alias for the fitting function
 	 Bool :eb(:error-bars(:$errorbars)) = False,
 	 Bool :q(:$quiet) = False,
 	 Str  :ro(:$remove-outliers) = "",
