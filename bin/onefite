@@ -212,9 +212,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|print-cols|--print-columns=<Str>]i [--eb|--error-bars|--errorbars] [--R2|--pco|--pearson-correlation] [--#....]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>]i [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....]
 
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
@@ -672,6 +672,7 @@ multi MAIN ('start-web-engine',
 		       <tr><td>fit-if: </td><td><input name="fit-if" type="text" value="">(ex: c1<2,10)</td></tr>
 		       <tr><td>gfilt: </td><td><input name="gfilt" type="text" value="">(int number)</td></tr>
 		       <tr><td>sef-R1-file: </td><td><input name="sef-R1-file" type="text" value=""></td></tr>
+		       <tr><td>print-cols: </td><td><input name="print-cols" type="text" value=""></td></tr>
 		       </table>
            	       <button type="submit">fit</button>
             	     </form>
@@ -770,6 +771,7 @@ HTML
 		my $remove-outliers="";
 		my $reduced-chi2="";
 		my $sef-R1-file = "";
+		my $print-cols = "";
 		my $num   = "--Num=100";
 		my $ssz   = "--SymbSize=1.0";
 		my $fit-methods = "--fit-methods=\"simp scan min minos\"";
@@ -794,8 +796,9 @@ HTML
 		       $logy       	      = "--logy  " if $k eq any(<logy log-y ylog linlog ly>) and $v eq any("yes",1);
 		       $reduced-chi2      = "--reduced-chi2  " if $k eq any(<reduced-chi2 rchi2 rc>) and $v eq any("yes",1);
 		       $R1  		         = "--R1 " if $k eq "R1" and $v eq any("yes",1);
-		       $R2  		         = "--R2 " if $k eq any(<R2 pearson-correlation pc>) and $v eq any("yes",1);
+		       $R2  		         = "--R2 " if $k eq any(<R2 pearson-correlation pco peco>) and $v eq any("yes",1);
 		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq any(<sef-R1-file sf>) and $v.so;
+		       $print-cols         = "--print-cols={$v.Str}  " if $k eq any(<pc prco print-cols cols print-columns>) and $v.so;
 		       $err                = "--err={$v.Str}  " if $k eq any(<err set-err se>) and $v.so;
 		       $range                = "--range={$v.Str}  " if $k eq any(<range r>) and $v.so;
 		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq any(<remove-outliers ro>) and $v.so;
@@ -823,11 +826,11 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		 else {
-		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		    $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
@@ -1140,8 +1143,8 @@ multi MAIN  ('fit',
 	Str  :da(:define-alias(:$dali))="",
 	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
 	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
-	Str	 :pc(:print-cols(:print-columns(:$cols))) ="", #= select fit-results columns by number or name or name+1 or name-1
-	Bool :pco(:pearson-correlation(:$R2)) = False, #= Pearson correlation coefficient (quality coefficient)
+	Str	 :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", #= select fit-results columns by number or name or name+1 or name-1
+	Bool :pco(:peco(:pearson-correlation(:$R2))) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
 		note "===> onefite options: { %_.keys.grep(/^<-[#]>/).map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
@@ -1166,7 +1169,7 @@ multi MAIN  ('fit',
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
 	%aliases = %aliases.Slip, from-json("{$*CWD}/aliases.json".IO.slurp).Hash.Slip  if "{$*CWD}/aliases.json".IO.e; 
 
-    if $function.contains(/^ <ws> \w* <ws> ':' <ws> | ^ <ws> '#' <ws> /) {
+    if $function.contains(/^ <ws> \w* <ws> ':' <ws> \w+ | ^ <ws> '#' \w+ /) {
 		my $falias = %aliases{ $function.subst(/\s*\w*\s*':'?\s*/,'').subst(/^\s*'#'\s*/,'').subst(/\s+/,' ') };
 		if so $falias { $function = $falias }
 		else { 
@@ -1292,8 +1295,8 @@ multi MAIN  ('fit',
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :da(:define-alias(:$dali)) ="",
 	 Bool :ar(:$archive) = False,
-	 Str  :pc(:print-cols(:print-columns(:$cols))) ="", 
-	 Bool :pco(:pearson-correlation(:$R2)) = False, 
+	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
+	 Bool :pco(:peco(:pearson-correlation(:$R2))) = False, 
 	 *%_
     ){
 	do {
@@ -1315,7 +1318,7 @@ multi MAIN  ('fit',
 {'-' x 80}
 I am not sure about your list of arguments: \"{ @*ARGS[0] ~ ' "' ~ @*ARGS[1] ~ '" ' ~ @*ARGS[2..*].join(' ') }\" 
 { @*ARGS[1].contains(':') ?? 'I think you mean \'onefite ' ~ @args.join(' ') ~ '\''  !! ''}
-{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, or { '" ' ~ @*ARGS[1] ~ '"'} also work
+{ '"alias' ~ @*ARGS[1] ~ '"'}, { '"a' ~ @*ARGS[1] ~ '"'}, { '" ' ~ @*ARGS[1] ~ '"'}, or { '#' ~ @*ARGS[1] ~ '"'}  lso work
 {'-' x 80}
 MSG
 		}
@@ -1626,7 +1629,7 @@ sub define-alias($engine,$dali) {
 			'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
 			'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
 			']';
-			
+
 			my $value = "$Y\( $X, { @pars.join(', ')} \) = "
 					~	
 					( 
