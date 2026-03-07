@@ -1629,7 +1629,7 @@ sub define-alias($engine,$dali) {
 			'[' ~ $engine.h<Ymin>.subst('\\',"",:g).split(",").head ~
 			'<' ~ $engine.h<Ymax>.subst('\\',"",:g).split(",").head ~ 
 			']';
-		say $engine.h<Function>;	
+
 			my $value = "$Y\( $X, { @pars.join(', ')} \) = "
 					~	
 					( 
