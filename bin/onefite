@@ -214,7 +214,7 @@ onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 
 onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>]i [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] 
 
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
@@ -1298,6 +1298,8 @@ multi MAIN  ('fit',
 	 Bool :ar(:$archive) = False,
 	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
 	 Bool :pco(:peco(:pearson-correlation(:$R2))) = False, 
+	 Bool :g(:$global) = False,
+	 Bool :i(:$individual) = False, #= forces fit to be individual
 	 *%_
     ){
 	do {
@@ -1370,7 +1372,15 @@ and to export AuxCode to: Auxcode-$basename.c
 {'-' x 80}
 MSG
 	}
-    
+
+	if $global || $individual {
+		my %e = $engine.h;
+		%e<SelectedDataSet> = (%e<Dados>.lines.first(/TAG \s* '=' \s*/) // "").split(/ \s* '=' \s* /, 2).tail;
+		if $global { %e<FitType> = "Global" }
+	   	elsif $individual { %e<FitType> = "Individual" }
+		$engine.set(%e)
+	}
+
 	$engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods);
     $engine.fit(
