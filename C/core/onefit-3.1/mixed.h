@@ -169,10 +169,10 @@ int First_Make_Individual_Fits(double N, double *par, double no);
     int write_parfile();						\
     int print_pars_();							\
     int update_pars_();							\
-									\
+	static int i=0;								\
     NP       = (int) par[0];						\
     MIXED = (int) par[NP-1];						\
-									\
+	printf("%d\n",++i);								\
     if(INIT) {								\
       pars_=dmatrix(0,NT,0, NP);					\
       for( int i=0; i<=NT; i++) {					\
