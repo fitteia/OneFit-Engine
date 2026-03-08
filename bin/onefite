@@ -1375,7 +1375,7 @@ MSG
 
 	if $global || $individual {
 		my %e = $engine.h;
-		say %e<Dados>.lines.first(/TAG \s* '=' \s*/);
+		%e<SelectedDataSet> = (%e<Dados>.lines.first(/TAG \s* '=' \s*/) // "").split(/ \s* '=' \s* /, 2).tail;
 		if $global { %e<FitType> = "Global" }
 	   	elsif $individual { %e<FitType> = "Individual" }
 		$engine.set(%e)
