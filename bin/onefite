@@ -1737,7 +1737,7 @@ sub update-from-input-options($function is copy, %options, :$quiet = False ) {
 					}
 					when 2 {
 						my $range = @targets[$i].split(/ $<sep> = '='|':'/).tail;
-						@targets[$i] = $value ~ $<sep> ~ $range;
+						@targets[$i] = $value ~ $<sep> ~ $range ?? $range !! "";
 					}
 					default	{ 
 						@targets[$i]=$value;
