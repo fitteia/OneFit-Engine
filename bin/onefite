@@ -1397,7 +1397,7 @@ MSG
 	if $cols.so {
 		 if $engine.h<fit-results>.so {
 			my $txt = print-cols( $engine.h<fit-results>,$cols );
-			$engine.add-to-hash( fit-results-iselected-cols => $txt );
+			$engine.add-to-hash( fit-results-selected-cols => $txt );
 		}
 	}
     
