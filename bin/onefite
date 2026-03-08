@@ -1182,12 +1182,13 @@ MSG
 			exit(1);
 		}
     }
+	$function = update-from-input-options( $function, %_, quiet => $quiet ) if %_.keys;
+
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
 		note "===> you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
 		$global = True;
 	}
 
-	$function = update-from-input-options( $function, %_, quiet => $quiet ) if %_.keys;
 
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
@@ -1735,8 +1736,8 @@ sub update-from-input-options($function is copy, %options, :$quiet = False ) {
 						@targets[$i] = $value ~ $range;
 					}
 					when 2 {
-						my $range = @targets[$i].split(/ $<sep> = '='|':'/).tail;
-						@targets[$i] = $value ~ $<sep> ~ $range;
+						my $range = @targets[$i].split( / <[=:]> /, 2).tail // "";
+						@targets[$i] = $value ~ $range;
 					}
 					default	{ 
 						@targets[$i]=$value;
