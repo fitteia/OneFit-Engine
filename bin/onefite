@@ -1736,13 +1736,9 @@ sub update-from-input-options($function is copy, %options, :$quiet = False ) {
 						@targets[$i] = $value ~ $range;
 					}
 					when 2 {
-							say @targets[$i];
-						if @targets[$i] ~~ / $<sep> = <[=:]> / {
-							my $sep = ~$<sep>;
-							say $sep;
-							my $range = @targets[$i].split( / $sep /, 2).tail // "";
-							@targets[$i] = $value ~ $range;
-							say @targets[$i];
+						my $range = @targets[$i].split( / <[=:]> /, 2).tail // "";
+						@targets[$i] = $value ~ $range;
+						say @targets[$i];
 						}
 					}
 					default	{ 
