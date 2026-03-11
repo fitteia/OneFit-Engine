@@ -632,7 +632,7 @@ EOT
 	     	if "$!path/fit{.No+1}.log".IO.e and $MIXED {
 		 		.parameters.from-output(file => "fit{ .No+1 }.out");
 		 		.parameters.from-log(file => "fit{ .No+1 }.log");
-		 @!par-tables[$i] = .parameters;
+				#		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[.No] = .parameters;
 				for @!par-tables[.No].a.kv -> $i, $v {
 					if $v.<name> !~~ / 'MIXED' | '_' $/ {
@@ -641,7 +641,7 @@ EOT
 				}
 		
 				#		say .No;
-				#say @!par-tables[.No].table;
+				say @!par-tables[.No].table;
 	     	}
 	     	
 			for @!par-tables[$i].a {
