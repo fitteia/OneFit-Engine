@@ -467,6 +467,7 @@ EOT
 		}
 	 }
 	 else {
+		 say "ola";
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
 	     shell  "cd $!path; ./onefit-user -@fitenv.stp -f -pg $datafiles <fit.par >fit.log 2>&1";
 	     @!blocks.race.map( { .export(:plot) });
