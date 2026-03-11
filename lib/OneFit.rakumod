@@ -467,7 +467,6 @@ EOT
 		}
 	 }
 	 else {
-		 say "ola";
 	     my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
 	     shell  "cd $!path; ./onefit-user -@fitenv.stp -f -pg $datafiles <fit.par >fit.log 2>&1";
 	     @!blocks.race.map( { .export(:plot) });
@@ -633,7 +632,7 @@ EOT
 	     	if "$!path/fit{.No+1}.log".IO.e and $MIXED {
 		 		.parameters.from-output(file => "fit{ .No+1 }.out");
 		 		.parameters.from-log(file => "fit{ .No+1 }.log");
-				#		 @!par-tables[$i] = .parameters;
+#		 @!par-tables[$i] = .parameters;
 		 		@!par-tables[.No] = .parameters;
 				for @!par-tables[.No].a.kv -> $i, $v {
 					if $v.<name> !~~ / 'MIXED' | '_' $/ {
