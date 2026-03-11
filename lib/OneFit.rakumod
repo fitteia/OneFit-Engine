@@ -641,7 +641,7 @@ EOT
 				}
 		
 				#		say .No;
-				say @!par-tables[.No].table;
+				#say @!par-tables[.No].table;
 	     	}
 	     	
 			for @!par-tables[$i].a {
