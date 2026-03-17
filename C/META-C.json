@@ -200,7 +200,7 @@
     "florenceN4LS": {
 	"devision": "Paramagnetic",
 	"function": "FlorenceN4LS(index,n,FREQ,SI,GAMMAI,SPIN,IREL,DELTA2,TAURM,TAUVM,TAUMM,DPARAM,EPARAM,S4M,GXM,GYM,GZM,AXM,AYM,AZM,DM,DDM,CONCM,ACQ,AMOLFRAM,RKM,ACONTM,THETAM,PHIM)",
-	"description": "FlorenceN() and FlorenceN4LS() are identical. Use both when R1 = FlorenceN(1.0,4.0,...,ts,...)*S*S \+ FlorenceN4LS(1.0,4.0,...,tf...)*(1-S+S)"
+	"description": "FlorenceN() and FlorenceN4LS() are identical. Use both when R1 = FlorenceN(1.0,4.0,...,ts,...)*S*S + FlorenceN4LS(1.0,4.0,...,tf...)*(1-S+S)"
     },
     "florence4": {
 	"devision": "Paramagnetic",
