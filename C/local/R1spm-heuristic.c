@@ -5,7 +5,6 @@
 #include "globals.h"
 #include "struct.h"
 #include "userlib.h"
-#include "mixed.h"
 #include "R1spm-heuristic.h"
 
 #define pi 3.1415926
