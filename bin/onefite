@@ -1150,11 +1150,11 @@ multi MAIN  ('fit',
     ){
 	my $ENV-PARALLEL;
 	my $ENV_WORKERS;
-	if( !$parallel ) { 
+	if ( !$parallel )  { 
 		$ENV-PARALLEL = %*ENV<ONEFITE_NO_PARALLEL> // 0;
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
-	if( $workers > 0 ) { 
+	if ( $workers > 0 )  { 
 		$ENV-WORKERS = %*ENV<ONEFITE_WORKERS> // 0;
 	  	%*ENV<ONEFITE_WORKERS> = $workers  
 	}
@@ -1284,10 +1284,10 @@ MSG
 
 	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	if( !$parallel ) { 
+	if ( !$parallel ) { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = $ENV-PARALLEL  
 	}
-	if( $workers > 0 ) { 
+	if(  $workers > 0 ) { 
 	  	%*ENV<ONEFITE_WORKERS> = $ENV-WORKERS  
 	}
 
@@ -1325,11 +1325,11 @@ multi MAIN  ('fit',
     ){
 	my $ENV-PARALLEL;
 	my $ENV_WORKERS;
-	if( !$parallel ) { 
+	if ( !$parallel ) { 
 		$ENV-PARALLEL = %*ENV<ONEFITE_NO_PARALLEL> // 0;
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
-	if( $workers > 0 ) { 
+	if ( $workers > 0 ) { 
 		$ENV-WORKERS = %*ENV<ONEFITE_WORKERS> // 0;
 	  	%*ENV<ONEFITE_WORKERS> = $workers  
 	}
@@ -1449,10 +1449,10 @@ MSG
 	
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	if( !$parallel ) { 
+	if ( !$parallel ) { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = $ENV-PARALLEL  
 	}
-	if( $workers > 0 ) { 
+	if ( $workers > 0 ) { 
 	  	%*ENV<ONEFITE_WORKERS> = $ENV-WORKERS  
 	}
 
