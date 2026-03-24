@@ -1149,7 +1149,7 @@ multi MAIN  ('fit',
 	*%_
     ){
 	my $ENV-PARALLEL;
-	my $ENV_WORKERS;
+	my $ENV-WORKERS;
 	if ( !$parallel )  { 
 		$ENV-PARALLEL = %*ENV<ONEFITE_NO_PARALLEL> // 0;
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
@@ -1324,7 +1324,7 @@ multi MAIN  ('fit',
 	 *%_
     ){
 	my $ENV-PARALLEL;
-	my $ENV_WORKERS;
+	my $ENV-WORKERS;
 	if ( !$parallel ) { 
 		$ENV-PARALLEL = %*ENV<ONEFITE_NO_PARALLEL> // 0;
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
