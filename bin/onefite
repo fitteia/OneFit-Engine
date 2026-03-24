@@ -1287,7 +1287,7 @@ MSG
 	if ( !$parallel ) { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = $ENV-PARALLEL  
 	}
-	if(  $workers > 0 ) { 
+	if (  $workers > 0 ) { 
 	  	%*ENV<ONEFITE_WORKERS> = $ENV-WORKERS  
 	}
 
