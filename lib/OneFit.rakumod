@@ -451,7 +451,15 @@ class Engine is export {
 				$log.close;
 				#shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
-     		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
+			run 'pdftk',
+    			|@pdfs,          # flatten list of PDFs into args
+    			'cat',
+    			'output',
+    			'All.pdf',
+    			:cwd($!path),
+    			:check;
+
+				#shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	    } unless $no-plot.Bool;
 
 		
