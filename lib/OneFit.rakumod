@@ -435,7 +435,7 @@ class Engine is export {
 				my $in  = open "$!path/fit$i.par",  :r;
 				my $log = open "$!path/plot$i.log", :w;
 				
-				run("./onefit-user",
+				run "./onefit-user",
 					"-@fitenv$i.stp",
 					"-nf",
 					"-pg",
@@ -445,19 +445,18 @@ class Engine is export {
 					:cwd($!path),
 					:in($in),
 					:out($log),
-					:err($log)
-				).check;	
+					:err($log);
+
 				$in.close;
 				$log.close;
 				#shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
-			run('pdftk',
+			run 'pdftk',
     			|@pdfs,          # flatten list of PDFs into args
     			'cat',
     			'output',
     			'All.pdf',
-    			:cwd($!path)
-			).check;
+    			:cwd($!path);
 
 				#shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	    } unless $no-plot.Bool;
@@ -480,14 +479,35 @@ EOT
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
 			}
 	
-			for (1 .. @!blocks.elems).race {
-				$npts-removed = @!blocks[$_-1].prune( remove => @outliers );
-				shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
+			for (1 .. @!blocks.elems).race -> $i {
+				$npts-removed = @!blocks[$i-1].prune( remove => @outliers );
+
+    			my $par = open "$!path/fit$i.par", :r;
+    			my $log = open "$!path/fit$i.log", :w;
+
+    			run "./onefit-user",
+        			"-@fitenv$i.stp",
+        			"-f",
+        			"-pg",
+        			"-ofit$i.out",
+        			"data{$i}ro.dat",
+        			:cwd($!path),
+        			:in($par),
+        			:out($log),
+        			:err($log);
+
+    			$par.close;
+    			$log.close;
+
+    			copy "$!path/fit-residues-1.res", "$!path/fit-residues-$i.res-tmp";
+				#shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
-     	 	
-			for (1 .. @!blocks.elems).race {
-		 		shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
-	     	}
+     	 	for 1 .. @!blocks.elems -> $i {
+    			rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
+			}
+			#for (1 .. @!blocks.elems).race {
+			#	shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
+			#}
 	     	
 			@!blocks.race.map( { .export(:plot) });
 	     	
@@ -495,22 +515,26 @@ EOT
 	
 			do {
 		 		self.agr;
-		 		for (1 .. @!blocks.elems).race {
-#`[	    	        my $i = $_-1;
-               		my $file = "$!path/data{$_}ro.dat";
-               		my @data = $file.IO.lines.grep(/\d+/);
-               		my $ndf = @data.elems - 1 - @!blocks[$i].parameters.free; 
-               		$file.IO.spurt: 
-                  		@data.head
-                  		~ "\n" ~ 
-                  		@data.tail(*-1)
-                     		.map({ my @a = .words.head(3); @a[2] *= sqrt( @!blocks[$i].chi2 / $ndf ); @a.join(' ') })
-                     		.join("\n");
-#					$set-data-err($_-1,"$!path/data{$_}ro.dat");
-#					say "$!path/data{$_}ro.dat".IO.slurp;
-]
-					@!blocks[$_-1].set-data-err( file => "$!path/data{$_}ro.dat", :removed-outliers );
-					shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
+				for (1 .. @!blocks.elems).race -> $i {
+					@!blocks[$i-1].set-data-err( file => "$!path/data{$i}ro.dat", :removed-outliers );
+    				my $in  = open "$!path/fit$i.par",   :r;
+    				my $log = open "$!path/plot$i.log",  :w;
+
+    				run "./onefit-user",
+        				"-@fitenv$i.stp",
+        				"-nf",
+        				"-pg",
+        				"-ofit$i.out",
+        				"--grbatch=PDF",
+        				"data{$i}ro.dat",
+        				:cwd($!path),
+        				:in($in),
+        				:out($log),
+        				:err($log);
+
+    				$in.close;
+    				$log.close;
+					#shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsro.elems) -> $i {
