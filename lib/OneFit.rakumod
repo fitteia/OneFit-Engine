@@ -542,9 +542,20 @@ EOT
 					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
 				}
 				my @pdfs-all = flat @pdfs Z @pdfsro;
-				my $cmd = "cd $!path; pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
-				try { shell $cmd; }
+
+				try {
+   					 run 'pdftk',
+       						|@pdfs-all,   # expand list into args
+       						'cat',
+       						'output',
+       						'All.pdf',
+       						:cwd($!path);
+				}
 				if $! { say "something went wrong" }
+
+				#my $cmd = "cd $!path; pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
+				#try { shell $cmd; }
+				#if $! { say "something went wrong" }
 	     	} unless $no-plot.Bool;
 		}
 	 }
