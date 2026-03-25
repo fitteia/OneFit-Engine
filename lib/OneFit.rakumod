@@ -430,27 +430,27 @@ class Engine is export {
 					@!blocks[$_-1].set-data-err() if (@outliers.so || $reduced-chi2);
 				}
 				#say "b :\n","$!path/data{$_}.dat".IO.slurp;
-				my $i = $_;
-
-				my $in  = open "$!path/fit$i.par",  :r;
-				my $log = open "$!path/plot$i.log", :w;
-
-				run "./onefit-user",
-    				"-@fitenv$i.stp",
-    				"-nf",
-    				"-pg",
-    				"-ofit$i.out",
-    				"--grbatch=PDF",
-    				"data$i.dat",
-    				:cwd($!path),
-    				:in($in),
-    				:out($log),
-    				:err($log),
-    				:check;
-
-				$in.close;
-				$log.close;
-				#shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+				#		my $i = $_;
+				#
+				#my $in  = open "$!path/fit$i.par",  :r;
+				#my $log = open "$!path/plot$i.log", :w;
+				#
+				#run "./onefit-user",
+				#	"-@fitenv$i.stp",
+				#	"-nf",
+				#	"-pg",
+				#	"-ofit$i.out",
+				#	"--grbatch=PDF",
+				#	"data$i.dat",
+				#	:cwd($!path),
+				#	:in($in),
+				#	:out($log),
+				#	:err($log),
+				#	:check;
+				#
+				#$in.close;
+				#$log.close;
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
      		shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	    } unless $no-plot.Bool;
