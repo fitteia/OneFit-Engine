@@ -772,8 +772,8 @@ EOT
 	    @!blocks.race.map( { .export(:plot) });
 	     	     self.parameters(:read, :from-output);
 	    self.agr;
-		my $in  = open "$!path/fit.par",  :r;
-		my $log = open "$!path/plot.log", :w;
+		$in  = open "$!path/fit.par",  :r;
+		$log = open "$!path/plot.log", :w;
 
 		run "./onefit-user",
     		"-@fitenv.stp",
