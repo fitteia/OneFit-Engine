@@ -1148,14 +1148,10 @@ multi MAIN  ('fit',
 	Bool :pco(:peco(:pearson-correlation(:$R2))) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
-	my $ENV-PARALLEL;
-	my $ENV-WORKERS;
 	if ( !$parallel )  { 
-		$ENV-PARALLEL = %*ENV<ONEFITE_NO_PARALLEL> // 0;
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
 	if ( $workers > 0 )  { 
-		$ENV-WORKERS = %*ENV<ONEFITE_WORKERS> // 0;
 	  	%*ENV<ONEFITE_WORKERS> = $workers  
 	}
 
@@ -1284,13 +1280,6 @@ MSG
 
 	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
-	if ( !$parallel ) { 
-	  	%*ENV<ONEFITE_NO_PARALLEL> = $ENV-PARALLEL  
-	}
-	if (  $workers > 0 ) { 
-	  	%*ENV<ONEFITE_WORKERS> = $ENV-WORKERS  
-	}
-
  	exit;
 }
 
@@ -1323,14 +1312,10 @@ multi MAIN  ('fit',
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
 	 *%_
     ){
-	my $ENV-PARALLEL;
-	my $ENV-WORKERS;
 	if ( !$parallel ) { 
-		$ENV-PARALLEL = %*ENV<ONEFITE_NO_PARALLEL> // 0;
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
 	if ( $workers > 0 ) { 
-		$ENV-WORKERS = %*ENV<ONEFITE_WORKERS> // 0;
 	  	%*ENV<ONEFITE_WORKERS> = $workers  
 	}
 
@@ -1448,13 +1433,6 @@ MSG
     shell "mv $name.zip $zip-to" unless $name eq $zip-to;
 	
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
-
-	if ( !$parallel ) { 
-	  	%*ENV<ONEFITE_NO_PARALLEL> = $ENV-PARALLEL  
-	}
-	if ( $workers > 0 ) { 
-	  	%*ENV<ONEFITE_WORKERS> = $ENV-WORKERS  
-	}
 
  	exit;
 }
