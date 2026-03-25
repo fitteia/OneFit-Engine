@@ -435,7 +435,7 @@ class Engine is export {
 				my $in  = open "$!path/fit$i.par",  :r;
 				my $log = open "$!path/plot$i.log", :w;
 				
-				run "./onefit-user",
+				run("./onefit-user",
 					"-@fitenv$i.stp",
 					"-nf",
 					"-pg",
@@ -445,19 +445,19 @@ class Engine is export {
 					:cwd($!path),
 					:in($in),
 					:out($log),
-					:err($log);
-				.check;	
+					:err($log)
+				).check;	
 				$in.close;
 				$log.close;
 				#shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
-			run 'pdftk',
+			run('pdftk',
     			|@pdfs,          # flatten list of PDFs into args
     			'cat',
     			'output',
     			'All.pdf',
-    			:cwd($!path);
-    		.check;
+    			:cwd($!path)
+			).check;
 
 				#shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	    } unless $no-plot.Bool;
