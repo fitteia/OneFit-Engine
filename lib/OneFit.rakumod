@@ -371,12 +371,44 @@ class Engine is export {
 	 if ($errorbars || @outliers.so || $reduced-chi2) { @!blocks>>.set-errorbars(:on) }
 
 	 if %!engine<FitType> ~~ /Individual/ {
-		for (1 .. @!blocks.elems).race {
-			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-	}
-     	for (1 .. @!blocks.elems).race {
-			shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
-	    }
+		 for (1 .. @!blocks.elems).race -> $i {	
+			my $par-path = "$!path/fit$i.par";
+    		my $log-path = "$!path/fit$i.log";
+    		my $tmp-path = "$!path/fit-residues-$i.res-tmp";
+
+    		given open $par-path, :r {
+        		my $in = $_;
+        		given open $log-path, :w {
+            		my $log = $_;
+
+            		run "$!path/onefit-user",
+                		"-@fitenv$i.stp",
+                		"-f",
+                		"-pg",
+                		"data$i.dat",
+                		:cwd($!path),
+                		:in($in),
+                		:out($log),
+                		:err($log);
+
+            		$log.close;
+        		}
+        		$in.close;
+    		}
+
+    		copy "$!path/fit-residues-1.res", $tmp-path;
+		}
+
+		for 1 .. @!blocks.elems -> $i {
+    		rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
+		}
+		#		for (1 .. @!blocks.elems).race {
+		#			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+		#}
+		#for (1 .. @!blocks.elems).race {
+		#	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
+		#}
+		
 	    @!blocks.race.map( { .export(:plot) });
 	    self.parameters(:read, :from-output, :from-log);
 	
