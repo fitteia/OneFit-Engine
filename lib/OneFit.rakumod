@@ -381,7 +381,7 @@ class Engine is export {
         		given open $log-path, :w {
             		my $log = $_;
 
-            		run "cd $!path; .//onefit-user",
+            		run "./onefit-user",
                 		"-@fitenv$i.stp",
                 		"-f",
                 		"-pg",
