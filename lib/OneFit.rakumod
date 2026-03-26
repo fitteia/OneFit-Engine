@@ -563,6 +563,9 @@ EOT
 		my $in  = open "$!path/fit.par", :r;
 		my $log = open "$!path/fit.log", :w;
 
+
+		say $!path;
+
 		run "./onefit-user",
    			"-@fitenv.stp",
     		"-f",
