@@ -36,9 +36,12 @@ class Function is export {
 	}
 	say $function;
 	say $!formula;
-	$!formula.subst(/\n/,"").match:
-	/'('
-	 $<head> = ( <-[",)]>+ )?
+	$!formula.subst(/\n/,"",:g).match:
+	/'(' <.ws>
+	 $<head> = [ 
+		 <-[",)]>+  
+		 [ <.ws> ',' <-[",)]>+ ]* 
+	 ]
 	 [
 	     <.ws> ','? <.ws>
 	     <["]> $<captures>=(<-["]>+) <["]>
