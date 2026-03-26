@@ -566,7 +566,7 @@ EOT
 
 		say $!path;
 		$datafiles = $datafiles.words.map({ "./" ~ $_ }).join(" ");
-		say @datafiles;
+		say $datafiles;
 		run "./onefit-user",
    			"-@fitenv.stp",
     		"-f",
