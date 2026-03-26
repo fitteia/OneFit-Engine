@@ -37,20 +37,38 @@ class Function is export {
 	say $function;
 	say $!formula;
 	$!formula.subst(/\n/,"",:g).match:
-	/'(' <.ws>
-	 $<head> = [ 
-		 <-[",)]>+  
-		 [ <.ws> ',' <-[",)]>+ ]* 
-	 ]
-	 [
-	     <.ws> ','? <.ws>
-	     <["]> $<captures>=(<-["]>+) <["]>
-	     <.ws> ','? <.ws>
-	 ]+
-	 ','? <.ws>
-	 $<no>=(<-[")]>+)?
-	 ')'? <.ws> $
-	 /;
+    / ^
+    [
+        ||
+        [
+            $<head> = [
+                <-[",)]>+
+                [ <.ws> ',' <.ws> <-[",)]>+ ]*
+            ]
+            [
+                <.ws> ',' <.ws>
+                '"' $<captures> = ( <-["]>+ ) '"'
+            ]+
+            [
+                <.ws> ',' <.ws>
+                $<no> = ( <-[)]>+ )
+            ]?
+            ')'
+        ]
+
+        ||
+        $<plain-call> = [
+            <[\w]>+
+            '('
+            <-[)]>*
+            ')'
+        ]
+
+        ||
+        $<expr> = \N+
+    ]
+    $
+    /;
 	say @!dif-eqs;
 	say $<captures>;
 	@!dif-eqs=$<captures>.Array>>.Str if $<captures>.defined;
