@@ -34,17 +34,36 @@ class Function is export {
 	for @p {
 	    @!parameters.push($_) if $!formula.contains(/ <|w> $_ <?wb> /);
 	}
-	$!formula.subst(/\n/,"").match:
-	/<-["]>+
-	 [
-	     <ws> ','? <ws>
-	     <["]> $<captures>=(<-["]>+) <["]>
-	     <ws> ','? <ws>
-	 ]+
-	 ','? <ws>
-	 $<no>=(<-["]>+)
-	 ')' <ws> $
-	 /;
+	$!formula.subst(/\n/,"",:g).match:
+    / ^ [
+        ||
+        [
+            $<head> = [
+                <-[",)]>+
+                [ <.ws> ',' <.ws> <-[",)]>+ ]*
+            ]
+            [
+                <.ws> ',' <.ws>
+                '"' $<captures> = ( <-["]>+ ) '"'
+            ]+
+            [
+                <.ws> ',' <.ws>
+                $<no> = ( <-[)]>+ )
+            ]?
+            ')'
+        ]
+
+        ||
+        $<plain-call> = [
+            <[\w]>+
+            '('
+            <-[)]>*
+            ')'
+        ]
+
+        ||
+        $<expr> = \N+
+    ] $ /;
 	@!dif-eqs=$<captures>.Array>>.Str if $<captures>.defined;
 	$!solve-to = $<no>.Str if $<no>.defined;
 	$!IS-NODE1 = ($!formula.contains(/^NODE1/)) ?? True !! False;
