@@ -565,13 +565,13 @@ EOT
 
 
 		say $!path;
-		my @datafiles = "./" ~ $_ for $datafiles.words;
+		$datafiles = $datafiles.words.map({ "./" ~ $_ }).join(" ");
 		say @datafiles;
 		run "./onefit-user",
    			"-@fitenv.stp",
     		"-f",
     		"-pg",
-    		|@datafiles,   # or |@datafiles if already an array
+    		$datafiles,   # or |@datafiles if already an array
     		:cwd($!path),
     		:in($in),
     		:out($log),
