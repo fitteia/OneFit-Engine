@@ -371,40 +371,12 @@ class Engine is export {
 	 if ($errorbars || @outliers.so || $reduced-chi2) { @!blocks>>.set-errorbars(:on) }
 
 	 if %!engine<FitType> ~~ /Individual/ {
-		 for (1 .. @!blocks.elems).race -> $i {	
-			my $par-path = "fit$i.par";
-    		my $log-path = "fit$i.log";
-    		my $tmp-path = "fit-residues-$i.res-tmp";
-
-    		given open $par-path, :r {
-        		my $in = $_;
-        		given open $log-path, :w {
-            		my $log = $_;
-
-            		run "./onefit-user",
-                		"-@fitenv$i.stp",
-                		"-f",
-                		"-pg",
-                		"data$i.dat",
-                		:cwd($!path),
-                		:in($in),
-                		:out($log),
-                		:err($log);
-
-            		$log.close;
-        		}
-        		$in.close;
-    		}
-
-    		copy "$!path/fit-residues-1.res", "$!path/$tmp-path";
+ 	 for (1 .. @!blocks.elems).race {
+			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
 		}
-
 		for 1 .. @!blocks.elems -> $i {
     		rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
 		}
-		#		for (1 .. @!blocks.elems).race {
-		#			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-		#}
 		#for (1 .. @!blocks.elems).race {
 		#	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
 		#}
@@ -430,26 +402,7 @@ class Engine is export {
 					@!blocks[$_-1].set-data-err() if (@outliers.so || $reduced-chi2);
 				}
 				#say "b :\n","$!path/data{$_}.dat".IO.slurp;
-				my $i = $_;
-				
-				my $in  = open "fit$i.par",  :r;
-				my $log = open "plot$i.log", :w;
-				
-				run "./onefit-user",
-					"-@fitenv$i.stp",
-					"-nf",
-					"-pg",
-					"-ofit$i.out",
-					"--grbatch=PDF",
-					"data$i.dat",
-					:cwd($!path),
-					:in($in),
-					:out($log),
-					:err($log);
-
-				$in.close;
-				$log.close;
-				#shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		 	}
 			run 'pdftk',
     			|@pdfs,          # flatten list of PDFs into args
@@ -481,26 +434,8 @@ EOT
 	
 			for (1 .. @!blocks.elems).race -> $i {
 				$npts-removed = @!blocks[$i-1].prune( remove => @outliers );
-
-    			my $par = open "fit$i.par", :r;
-    			my $log = open "fit$i.log", :w;
-
-    			run "./onefit-user",
-        			"-@fitenv$i.stp",
-        			"-f",
-        			"-pg",
-        			"-ofit$i.out",
-        			"data{$i}ro.dat",
-        			:cwd($!path),
-        			:in($par),
-        			:out($log),
-        			:err($log);
-
-    			$par.close;
-    			$log.close;
-
+				shell "cd $!path; ./onefit-user -@fitenv$i.stp -f -pg -ofit{$i}.out data{$i}ro.dat <fit$i.par >fit{$i}.log 2>&1; cp fit-residues-1.res fit-residues-{$i}.res-tmp";
     			copy "$!path/fit-residues-1.res", "$!path/fit-residues-$i.res-tmp";
-				#shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg -ofit{$_}.out data{$_}ro.dat <fit$_.par >fit{$_}.log 2>&1; cp fit-residues-1.res fit-residues-{$_}.res-tmp";
 		 	}
      	 	for 1 .. @!blocks.elems -> $i {
     			rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
@@ -517,24 +452,7 @@ EOT
 		 		self.agr;
 				for (1 .. @!blocks.elems).race -> $i {
 					@!blocks[$i-1].set-data-err( file => "$!path/data{$i}ro.dat", :removed-outliers );
-    				my $in  = open "fit$i.par",   :r;
-    				my $log = open "plot$i.log",  :w;
-
-    				run "./onefit-user",
-        				"-@fitenv$i.stp",
-        				"-nf",
-        				"-pg",
-        				"-ofit$i.out",
-        				"--grbatch=PDF",
-        				"data{$i}ro.dat",
-        				:cwd($!path),
-        				:in($in),
-        				:out($log),
-        				:err($log);
-
-    				$in.close;
-    				$log.close;
-					#shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit{$_}.out --grbatch=PDF data{$_}ro.dat <fit$_.par >plot{$_}.log 2>&1";
+					shell "cd $!path; ./onefit-user -@fitenv$i.stp -nf -pg -ofit{$i}.out --grbatch=PDF data{$i}ro.dat <fit$i.par >plot{$i}.log 2>&1";
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsro.elems) -> $i {
@@ -560,29 +478,11 @@ EOT
 	 }
 	 else {
 	    my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
-		my $in  = open "$!path/fit.par", :r;
-		my $log = open "$!path/fit.log", :w;
-
-
-		say $!path;
-		$datafiles = $datafiles.words.map({ "./" ~ $_ }).join(" ");
-		say $datafiles;
-		run "./onefit-user",
-   			"-@fitenv.stp",
-    		"-f",
-    		"-pg",
-    		$datafiles,   # or |@datafiles if already an array
-    		:cwd($!path),
-    		:in($in),
-    		:out($log),
-    		:err($log);
-
-		$in.close;
-		$log.close;
-	    # shell  "cd $!path; ./onefit-user -@fitenv.stp -f -pg $datafiles <fit.par >fit.log 2>&1";
-	     @!blocks.race.map( { .export(:plot) });
-	     self.parameters(:read, :from-output, :from-log);
-	     do {
+		shell  "cd $!path; ./onefit-user -@fitenv.stp -f -pg $datafiles <fit.par >fit.log 2>&1";
+	   	@!blocks.race.map( { .export(:plot) });
+	    self.parameters(:read, :from-output, :from-log);
+	     
+		do {
 		 	if $reduced-chi2 {
 				my $chi2 =	(@!blocks>>.chi2).sum;
 				my $npts = ((@!blocks>>.Data)>>.elems).sum;
@@ -591,24 +491,7 @@ EOT
 				@!blocks>>.set-data-err( chi2 => $chi2, ndf => $ndf );
 			}
 			self.agr;
-			my $in  = open "fit.par",  :r;
-			my $log = open "plot.log", :w;
-
-			run "./onefit-user",
-    			"-@fitenv.stp",
-    			"-nf",
-    			"-pg",
-    			"-ofit.out",
-    			"--grbatch=PDF",
-    			$datafiles,   # or |@datafiles if already a list
-    			:cwd($!path),
-    			:in($in),
-    			:out($log),
-    			:err($log);
-
-			$in.close;
-			$log.close;
-			#shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
+			shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
 			try {
    				 run 'pdftk',
        					|@pdfs,   # expand list into args
@@ -700,28 +583,10 @@ EOT
 	 self.stp;
 	 self.code(:write,:compile);
 	 if %!engine<FitType> ~~ /Individual/ {
-		 for (1 .. @!blocks.elems).race -> $i {
-    		my $in  = open "fit$i.par",  :r;
-    		my $log = open "fit$i.log",  :w;
-
-    		run "./onefit-user",
-        	"-@fitenv$i.stp",
-        	"-f",
-        	"-pg",
-        	"data$i.dat",
-        	:cwd($!path),
-        	:in($in),
-        	:out($log),
-        	:err($log);
-
-    		$in.close;
-    		$log.close;
-
-		    copy "$!path/fit-residues-1.res", "$!path/fit-residues-$i.res-tmp";
+		for (1 .. @!blocks.elems).race {
+		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
+	    	copy "$!path/fit-residues-1.res", "$!path/fit-residues-$i.res-tmp";
 		}
-		# for (1 .. @!blocks.elems).race {
-		# shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-		# }
 		for 1 .. @!blocks.elems -> $i {
 		    rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
 		}
@@ -732,68 +597,17 @@ EOT
 	   	@!blocks.race.map( { .export(:plot) });
 	    self.parameters(:read, :from-output, :from-log);
 	    self.agr;
-		for (1 .. @!blocks.elems).race -> $i {
-    		my $in  = open "fit$i.par",  :r;
-    		my $log = open "plot$i.log", :w;
-
-    		run "./onefit-user",
-        		"-@fitenv$i.stp",
-        		"-nf",
-        		"-pg",
-        		"-ofit$i.out",
-        		"--grbatch=PDF",
-        		"data$i.dat",
-        		:cwd($!path),
-        		:in($in),
-        		:out($log),
-	        	:err($log);
-
-    		$in.close;
-    		$log.close;
+		for (1 .. @!blocks.elems).race {
+			shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
 		}
-		# for (1 .. @!blocks.elems).race {
-		#shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
-		#}
 	 }
 	 else {
 	    my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
-		my $in  = open "fit.par", :r;
-		my $log = open "fit.log", :w;
-
-		run "./onefit-user",
-    		"-@fitenv.stp",
-    		"-f",
-    		"-pg",
-    		$datafiles,   # or |@datafiles if it's already a list
-    		:cwd($!path),
-    		:in($in),
-    		:out($log),
-    		:err($log);
-
-		$in.close;
-		$log.close;
-	    #shell  "cd $!path; ./onefit-user -@fitenv.stp -f -pg $datafiles <fit.par >fit.log 2>&1";
+    	shell  "cd $!path; ./onefit-user -@fitenv.stp -f -pg $datafiles <fit.par >fit.log 2>&1";
 	    @!blocks.race.map( { .export(:plot) });
 	     	     self.parameters(:read, :from-output);
 	    self.agr;
-		$in  = open "fit.par",  :r;
-		$log = open "plot.log", :w;
-
-		run "./onefit-user",
-    		"-@fitenv.stp",
-    		"-nf",
-    		"-pg",
-    		"-ofit.out",
-    		"--grbatch=PDF",
-    		$datafiles,   # or |@datafiles if already a list
-    		:cwd($!path),
-    		:in($in),
-    		:out($log),
-    		:err($log);
-
-		$in.close;
-		$log.close;
-	    #shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
+    	shell "cd $!path; ./onefit-user -@fitenv.stp -nf -pg -ofit.out --grbatch=PDF $datafiles <fit.par >plot.log 2>&1";
 
 	 }
 	 self
