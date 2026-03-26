@@ -1296,7 +1296,7 @@ multi MAIN  ('fit',
 	 Str  :st(:save-to(:$to)), # write fit settings to .json or .sav file 	     
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
      Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
-     Str  :wf(:$work-folder) = $*CWD.Str,
+     Str  :wf(:$work-folder) = '.',
      Int  :n(:num(:N(:Num(:$npts)))),
 	 Bool :e(:$export) = False, #= extract data from json file and create alias for the json fitting function
 	 Bool :eb(:error-bars(:$errorbars)) = False,
