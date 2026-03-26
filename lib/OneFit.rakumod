@@ -372,9 +372,9 @@ class Engine is export {
 
 	 if %!engine<FitType> ~~ /Individual/ {
 		 for (1 .. @!blocks.elems).race -> $i {	
-			my $par-path = "$!path/fit$i.par";
-    		my $log-path = "$!path/fit$i.log";
-    		my $tmp-path = "$!path/fit-residues-$i.res-tmp";
+			my $par-path = "fit$i.par";
+    		my $log-path = "fit$i.log";
+    		my $tmp-path = "fit-residues-$i.res-tmp";
 
     		given open $par-path, :r {
         		my $in = $_;
@@ -396,7 +396,7 @@ class Engine is export {
         		$in.close;
     		}
 
-    		copy "$!path/fit-residues-1.res", $tmp-path;
+    		copy "$!path/fit-residues-1.res", "$!path/$tmp-path";
 		}
 
 		for 1 .. @!blocks.elems -> $i {
@@ -432,8 +432,8 @@ class Engine is export {
 				#say "b :\n","$!path/data{$_}.dat".IO.slurp;
 				my $i = $_;
 				
-				my $in  = open "$!path/fit$i.par",  :r;
-				my $log = open "$!path/plot$i.log", :w;
+				my $in  = open "fit$i.par",  :r;
+				my $log = open "plot$i.log", :w;
 				
 				run "./onefit-user",
 					"-@fitenv$i.stp",
@@ -482,8 +482,8 @@ EOT
 			for (1 .. @!blocks.elems).race -> $i {
 				$npts-removed = @!blocks[$i-1].prune( remove => @outliers );
 
-    			my $par = open "$!path/fit$i.par", :r;
-    			my $log = open "$!path/fit$i.log", :w;
+    			my $par = open "fit$i.par", :r;
+    			my $log = open "fit$i.log", :w;
 
     			run "./onefit-user",
         			"-@fitenv$i.stp",
@@ -517,8 +517,8 @@ EOT
 		 		self.agr;
 				for (1 .. @!blocks.elems).race -> $i {
 					@!blocks[$i-1].set-data-err( file => "$!path/data{$i}ro.dat", :removed-outliers );
-    				my $in  = open "$!path/fit$i.par",   :r;
-    				my $log = open "$!path/plot$i.log",  :w;
+    				my $in  = open "fit$i.par",   :r;
+    				my $log = open "plot$i.log",  :w;
 
     				run "./onefit-user",
         				"-@fitenv$i.stp",
@@ -560,8 +560,8 @@ EOT
 	 }
 	 else {
 	    my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
-		my $in  = open "$!path/fit.par", :r;
-		my $log = open "$!path/fit.log", :w;
+		my $in  = open "fit.par", :r;
+		my $log = open "fit.log", :w;
 
 		run "./onefit-user",
    			"-@fitenv.stp",
@@ -587,8 +587,8 @@ EOT
 				@!blocks>>.set-data-err( chi2 => $chi2, ndf => $ndf );
 			}
 			self.agr;
-			my $in  = open "$!path/fit.par",  :r;
-			my $log = open "$!path/plot.log", :w;
+			my $in  = open "fit.par",  :r;
+			my $log = open "plot.log", :w;
 
 			run "./onefit-user",
     			"-@fitenv.stp",
@@ -697,8 +697,8 @@ EOT
 	 self.code(:write,:compile);
 	 if %!engine<FitType> ~~ /Individual/ {
 		 for (1 .. @!blocks.elems).race -> $i {
-    		my $in  = open "$!path/fit$i.par",  :r;
-    		my $log = open "$!path/fit$i.log",  :w;
+    		my $in  = open "fit$i.par",  :r;
+    		my $log = open "fit$i.log",  :w;
 
     		run "./onefit-user",
         	"-@fitenv$i.stp",
@@ -729,8 +729,8 @@ EOT
 	    self.parameters(:read, :from-output, :from-log);
 	    self.agr;
 		for (1 .. @!blocks.elems).race -> $i {
-    		my $in  = open "$!path/fit$i.par",  :r;
-    		my $log = open "$!path/plot$i.log", :w;
+    		my $in  = open "fit$i.par",  :r;
+    		my $log = open "plot$i.log", :w;
 
     		run "./onefit-user",
         		"-@fitenv$i.stp",
@@ -753,8 +753,8 @@ EOT
 	 }
 	 else {
 	    my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
-		my $in  = open "$!path/fit.par", :r;
-		my $log = open "$!path/fit.log", :w;
+		my $in  = open "fit.par", :r;
+		my $log = open "fit.log", :w;
 
 		run "./onefit-user",
     		"-@fitenv.stp",
@@ -772,8 +772,8 @@ EOT
 	    @!blocks.race.map( { .export(:plot) });
 	     	     self.parameters(:read, :from-output);
 	    self.agr;
-		$in  = open "$!path/fit.par",  :r;
-		$log = open "$!path/plot.log", :w;
+		$in  = open "fit.par",  :r;
+		$log = open "plot.log", :w;
 
 		run "./onefit-user",
     		"-@fitenv.stp",
