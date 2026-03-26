@@ -585,7 +585,7 @@ EOT
 	 if %!engine<FitType> ~~ /Individual/ {
 		for (1 .. @!blocks.elems).race {
 		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-	    	copy "$!path/fit-residues-1.res", "$!path/fit-residues-$i.res-tmp";
+	    	copy "$!path/fit-residues-1.res", "$!path/fit-residues-$_.res-tmp";
 		}
 		for 1 .. @!blocks.elems -> $i {
 		    rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
