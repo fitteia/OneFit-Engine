@@ -45,7 +45,7 @@ class Function is export {
 	     <.ws> ','? <.ws>
 	 ]+
 	 ','? <.ws>
-	 $<no>=(<-[")]>+)
+	 $<no>=(<-[")]>+)?
 	 ')' <.ws> $
 	 /;
 	say @!dif-eqs;
