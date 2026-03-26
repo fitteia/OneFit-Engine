@@ -34,11 +34,8 @@ class Function is export {
 	for @p {
 	    @!parameters.push($_) if $!formula.contains(/ <|w> $_ <?wb> /);
 	}
-	say $function;
-	say $!formula;
 	$!formula.subst(/\n/,"",:g).match:
-    / ^
-    [
+    / ^ [
         ||
         [
             $<head> = [
@@ -66,11 +63,7 @@ class Function is export {
 
         ||
         $<expr> = \N+
-    ]
-    $
-    /;
-	say @!dif-eqs;
-	say $<captures>;
+    ] $ /;
 	@!dif-eqs=$<captures>.Array>>.Str if $<captures>.defined;
 	$!solve-to = $<no>.Str if $<no>.defined;
 	$!IS-NODE1 = ($!formula.contains(/^NODE1/)) ?? True !! False;
