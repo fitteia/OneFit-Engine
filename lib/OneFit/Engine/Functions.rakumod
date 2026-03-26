@@ -38,15 +38,15 @@ class Function is export {
 	say $!formula;
 	$!formula.subst(/\n/,"").match:
 	/'('
-	 $<head> = [ <-[",)]>+ ** 1..* ]?
+	 $<head> = ( <-[",)]>+ )?
 	 [
-	     <ws> ','? <ws>
+	     <.ws> ','? <.ws>
 	     <["]> $<captures>=(<-["]>+) <["]>
-	     <ws> ','? <ws>
+	     <.ws> ','? <.ws>
 	 ]+
-	 ','? <ws>
-	 $<no>=(<-["]>+)
-	 ')' <ws> $
+	 ','? <.ws>
+	 $<no>=(<-[")]>+)
+	 ')' <.ws> $
 	 /;
 	say @!dif-eqs;
 	say $<captures>;
