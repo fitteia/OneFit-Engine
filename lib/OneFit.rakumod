@@ -563,6 +563,12 @@ EOT
 		my $in  = open "$*CWD/$!path/fit.par", :r;
 		my $log = open "$*CWD/$!path/fit.log", :w;
 
+		say "./onefit-user",
+   			"-@fitenv.stp",
+    		"-f",
+    		"-pg",
+    		$datafiles;   # or |@datafiles if already an array
+
 		run "./onefit-user",
    			"-@fitenv.stp",
     		"-f",
