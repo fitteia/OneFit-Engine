@@ -47,6 +47,7 @@ class Function is export {
 	 ')' <ws> $
 	 /;
 	@!dif-eqs=$<captures>.Array>>.Str if $<captures>.defined;
+	say @!dif-eqs;
 	$!solve-to = $<no>.Str if $<no>.defined;
 	$!IS-NODE1 = ($!formula.contains(/^NODE1/)) ?? True !! False;
 	if $!IS-NODE1 {
