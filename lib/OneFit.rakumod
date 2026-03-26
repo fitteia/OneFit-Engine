@@ -565,7 +565,7 @@ EOT
 
 
 		say $!path;
-		my @datafiles = "./" $_ for $datafiles.words;
+		my @datafiles = "./" ~ $_ for $datafiles.words;
 		say @datafiles;
 		run "./onefit-user",
    			"-@fitenv.stp",
