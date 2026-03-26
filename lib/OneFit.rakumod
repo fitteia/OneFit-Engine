@@ -560,14 +560,8 @@ EOT
 	 }
 	 else {
 	    my $datafiles = (1 ..@!blocks.elems).map({'data' ~ $_ ~ '.dat'}).join: ' ';
-		my $in  = open "$*CWD/$!path/fit.par", :r;
-		my $log = open "$*CWD/$!path/fit.log", :w;
-
-		say "./onefit-user",
-   			"-@fitenv.stp",
-    		"-f",
-    		"-pg",
-    		$datafiles;   # or |@datafiles if already an array
+		my $in  = open "$!path/fit.par", :r;
+		my $log = open "$!path/fit.log", :w;
 
 		run "./onefit-user",
    			"-@fitenv.stp",
