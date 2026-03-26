@@ -49,7 +49,7 @@ class Function is export {
 	 ]+
 	 ','? <.ws>
 	 $<no>=(<-[")]>+)?
-	 ')' <.ws> $
+	 ')'? <.ws> $
 	 /;
 	say @!dif-eqs;
 	say $<captures>;
