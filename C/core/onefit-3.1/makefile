@@ -34,7 +34,7 @@ LIB=  -L$(DESTDIR)/lib -lonefit-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -lonefit
 SRC= functions.c tabfunc.c
 OBJ= functions.o tabfunc.o
 
-FLAGS= -D$(OS) -O3 -fPIC -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I./ -Wall
+FLAGS= -D$(OS) -O3 -fPIC -pthread -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I./ -Wall
 
 #CC = $(CC) $(FLAGS) 
 
@@ -51,7 +51,7 @@ SRC= 	gfitn.c fitutil.c funcoes.c  readdat.c \
 	lfit1n.c usage.c ppcovar.c ludcmp.c \
 	lubksb.c gamma.c ppcovar.c pp3d.c gchi2out.c tabfunc.c plot.c mygnus.c getopt.c\
 	getopt1.c getopt.h fitenv.c integra.c makefile gfitn.h globals.h \
-	struct.h mixed.h actpar.c xmgr.c
+	struct.h mixed.h actpar.c xmgr.c 
 
 UTIL= 	fitutil.o ludcmp.o lubksb.o gamma.o integra.o getopt.o getopt1.o ode2.o
 
