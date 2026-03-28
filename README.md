@@ -253,7 +253,12 @@ In the case of MIXED (hybrid) fit, where some model parameters are obtained for 
 
 Some MIXED fits can become I/O intensive. In those cases it is better to perform the fits in a ramdisk. For Derbian/Ubuntu, WSL/Debian, MacOS Colima/Docker/Debian the ramdisk already exists at /dev/shm
 
-When using the OFE through the web port all fits are performed in folder $HOME/public_html. In that case at the instalation instead of creating a public_html folder it is better to ln -s /dev/shm $HOME/public_html. There might a significan decrease of run time for some fits. 
+When using the OFE through the web port all fits are performed in folder $HOME/public_html. In that case after completing the instalation 
+
+	```bash
+	mv $HOME/public_html/* /dev/shm; rm -fr $HOME/public_html; ln -s /dev/shm $HOME/public_html
+	```
+There might a significan decrease of run time for some fits. 
 
 ## Upgrades
 
