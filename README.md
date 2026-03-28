@@ -7,6 +7,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 - [Prerequisites](#Prerequisites)
 - [Installation](#Installation)
+- [Performance](#Performance)
 - [Upgrades](#Upgrades)
 - [WebService](#WebService)
 - [INSTALL-help](#INSTALL-help)
@@ -243,6 +244,16 @@ Create a user account, ex: ofe
 	sudo apt purge shelloinabox 
 	```
 	(to remove shellinabox dor the system)
+
+## Performance
+
+OFE provides a reasonable level of parallelization particular when performing individual fits.
+
+In the case of MIXED (hybrid) fit, where some model parameters are obtained for a global chi2 minimum traget and orther are obtained for each data set model fit chi2 minimum target, OFE offer a second level or parallelaization with a performance that depends on the number of CPU cores available. The user can then control the level or parallelization with option --workers=Int or remove paralellization with the --no-parallel option.
+
+Some MIXED fits can become I/O intensive. In those cases it is better to perform the fits in a ramdisk. For Derbian/Ubuntu, WSL/Debian, MacOS Colima/Docker/Debian the ramdisk already exists at /dev/shm
+
+When using the OFE through the web port all fits are performed in folder $HOME/public_html. In that case at the instalation instead of creating a public_html folder it is better to ln -s /dev/shm $HOME/public_html. There might a significan decrease of run time for some fits. 
 
 ## Upgrades
 
