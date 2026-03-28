@@ -247,18 +247,20 @@ Create a user account, ex: ofe
 
 ## Performance
 
-OFE provides a reasonable level of parallelization particular when performing individual fits.
+OFE provides a reasonable level of parallelization, particularly when performing individual fits.
 
-In the case of MIXED (hybrid) fit, where some model parameters are obtained for a global chi2 minimum traget and orther are obtained for each data set model fit chi2 minimum target, OFE offer a second level or parallelaization with a performance that depends on the number of CPU cores available. The user can then control the level or parallelization with option --workers=Int or remove paralellization with the --no-parallel option.
+In the case of MIXED (hybrid) fits—where some model parameters are obtained from a global χ² minimization target and others are obtained from individual data set χ² minimizations—OFE offers a second level of parallelization. The performance depends on the number of available CPU cores. The user can control the level of parallelization using the --workers=Int option, or disable parallelization with the --no-parallel option.
 
-Some MIXED fits can become I/O intensive. In those cases it is better to perform the fits in a ramdisk. For Derbian/Ubuntu, WSL/Debian, MacOS Colima/Docker/Debian the ramdisk already exists at /dev/shm
+Some MIXED fits can become I/O-intensive. In such cases, it is beneficial to perform the fits on a RAM disk. For Debian/Ubuntu, WSL (Debian), and macOS setups using Colima/Docker/Debian, a RAM-backed filesystem is typically available at /dev/shm
+.
+When using OFE through the web interface, all fits are performed in the folder $HOME/public_html. In that case, after completing the installation, you can run:
 
-When using the OFE through the web port all fits are performed in folder $HOME/public_html. In that case after completing the instalation 
-
-	```bash
-	mv $HOME/public_html/* /dev/shm; rm -fr $HOME/public_html; ln -s /dev/shm $HOME/public_html
+```bash
+	mv $HOME/public_html/* /dev/shm
+	rm -fr $HOME/public_html
+	ln -s /dev/shm $HOME/public_html
 	```
-There might a significan decrease of run time for some fits. 
+This may result in a significant reduction in runtime for some fits.
 
 ## Upgrades
 
