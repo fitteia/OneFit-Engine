@@ -243,7 +243,7 @@ Create a user account, ex: ofe
 	```bash		
 	sudo apt purge shelloinabox 
 	```
-	(to remove shellinabox dor the system)
+	(to remove shellinabox from the system)
 
 ## Performance
 
