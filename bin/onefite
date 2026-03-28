@@ -260,6 +260,10 @@ onefite archive [-f||--fit=<Str>]
     onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --reduced-chi2
     onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
     onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
+    onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global \+ individual_*x" files*.dat --no-parallel
+    onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global \+ individual_*x" files*.dat 
+    onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global \+ individual_*x" files*.dat --workers=2 
+    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
 	onefite archive --fit last
 	onefite archive -f last-1 --rchi2
 	onefite log -f 2 --ro 1
