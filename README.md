@@ -256,9 +256,9 @@ Some MIXED fits can become I/O-intensive. In such cases, it is beneficial to per
 When using OFE through the web interface, all fits are performed in the folder $HOME/public_html. In that case, after completing the installation, you can run:
 
 ```bash
-	mv $HOME/public_html/* /dev/shm
-	rm -fr $HOME/public_html
-	ln -s /dev/shm $HOME/public_html
+mv $HOME/public_html/* /dev/shm
+rm -fr $HOME/public_html
+ln -s /dev/shm $HOME/public_html
 ``` 
 
 This may result in a significant reduction in runtime for some fits.
