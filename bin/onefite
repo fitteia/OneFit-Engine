@@ -635,7 +635,8 @@ multi MAIN ('service','start',
         	.out(:close)
         	.lines
         	.grep(/start\-web\-engine/)
-        	.map({ .words[1] })[0];
+        	.map({ .words[1] })
+			.first;
 
     	run("kill", "-9", $proc) if $proc;
 
