@@ -588,72 +588,21 @@ multi MAIN ('service','start',
       Str  :$ip = '*', #= accept access form IP
       Int  :p(:$port) = 8142, #= onefite werbservice port
       ) {
-	  
-	  #      if $systemd-daemon {
-	  #           say "stoping onefite service...";
-	  #	   my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
-	  #	   shell "sudo kill -9 $proc" if so $proc;
-	  #     shell 'sudo systemctl daemon-reload';
-	  # shell 'sudo systemctl enable onefite.service';
-	  # shell 'sudo service onefite start';
-	  # say "service onefite started on IPv4 $ip and port $port";
-	  #}
-   	  #	  else {           
- 	  #      say "stoping onefite service...";
-	  #	    my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
-	  #	    shell "kill -9 $proc" if so $proc;
-	  #	    say "starting onefite service on $*HOME/public_html and go in the backgound";
-	  #	    shell "cd $*HOME/public_html; nohup onefite start-web-engine --ip=$ip --port=$port &";
-	  #}
-
-  	  if $systemd-daemon {
-   		say "stopping onefite service...";
-
-    	# Find PID of process matching start-web-engine
-    	my $ps = run("ps", "aux", :out).out.slurp.lines;
-    	my $proc = $ps
-        	.grep(/start\-web\-engine/)
-        	.map({ .words[1] })
-        	.first;
-
-    	# Kill if found
-    	if $proc {
-        	run "sudo", "kill", "-9", $proc;
-    	}
-
-    	# Reload + enable + start service
-    	run "sudo", "systemctl", "daemon-reload";
-    	run "sudo", "systemctl", "enable", "onefite.service";
-    	run "sudo", "service", "onefite", "start";
-
-    	say "service onefite started on IPv4 $ip and port $port";
+	  if $systemd-daemon {
+	    say "stoping onefite service...";
+	    my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
+	    shell "sudo kill -9 $proc" if so $proc;	
+		shell 'sudo systemctl daemon-reload';
+	   	shell 'sudo systemctl enable onefite.service';
+	   	shell 'sudo service onefite start';
+	   say "service onefite started on IPv4 $ip and port $port";
 	  }
-	  else {
-    	say "stoping onefite service...";
-
-    	my $proc = run("ps", "aux", :out)
-        	.out(:close)
-        	.lines
-        	.grep(/start\-web\-engine/)
-        	.map({ .words[1] })
-			.first;
-
-    	run("kill", "-9", $proc) if $proc;
-
-    	say "starting onefite service on $*HOME/public_html and go in the backgound";
-
-    	# Change directory + run in background (no shell needed)
-    	my $dir = "$*HOME/public_html";
-
-    	run "nohup",
-        	"onefite",
-        	"start-web-engine",
-        	"--ip=$ip",
-        	"--port=$port",
-        	:cwd($dir),
-        	:out, :err;
-
-    	# detach so it keeps running
+   	  else {           
+ 	    say "stoping onefite service...";
+	  	my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
+	  	shell "kill -9 $proc" if so $proc;
+	  	say "starting onefite service on $*HOME/public_html and go in the backgound";
+	  	shell "cd $*HOME/public_html; nohup onefite start-web-engine --ip=$ip --port=$port &";
 	  }
       exit
 }
