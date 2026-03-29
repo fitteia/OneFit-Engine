@@ -591,6 +591,7 @@ multi MAIN ('service','start',
       Int  :p(:$port) = 8142, #= onefite werbservice port
       ) {
 	  if $use-ramdisk {
+		"$*HOME/public_html_bak".IO.mkdir unless "$*HOME/public_html_bak".IO.d;
 		shell "cp -r $*HOME/public_html/* $*HOME/public_html_bak";
 		my $RAMDisk = create-RAMDisk();
 		run "rm", "-fr", "public_html", :cwd($*HOME);
