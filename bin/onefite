@@ -148,7 +148,7 @@ onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
 =item Systemd service
 
 =begin code :lang<bash>
-onefite service start [--ip=<Str>] [-d|--systemd-daemon] [-p|--port=<Int>]
+onefite service start [--ip=<Str>] [-d|--systemd-daemon] [-p|--port=<Int>] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
 onefite service stop
 =end code
 
@@ -157,6 +157,7 @@ onefite service stop
     [--ip=<Str>]      Default '*'. For [--macos] or [--wsl] use --ip=127.0.0.1
     [-p|--port=<Int>] Default 8142. Check your Firewall just in case
     [-d|--systemd-daemon] Default False. For [--docker], [--macos], or [--wsl] keep the default.
+	[--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]. Create and run on a ramdisk.
 
 =item LOG and PID services
 
@@ -212,9 +213,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -585,9 +586,17 @@ multi MAIN ('uninstall'){
 #|(onefite web service start)
 multi MAIN ('service','start',	
       Bool :d(:$systemd-daemon) = False, #= start systemd-daemon
+	  Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
       Str  :$ip = '*', #= accept access form IP
       Int  :p(:$port) = 8142, #= onefite werbservice port
       ) {
+	  if $use-ramdisk {
+		shell "cp -r $*HOME/public_html/* $*HOME/public_html_bak";
+		my $RAMDisk = create-RAMDisk();
+		run "rm", "-fr", "public_html", :cwd($*HOME);
+		run "ln", "-s", $RAMDisk, "public_html", :cwd($*HOME);
+		shell "cp -r $*HOME/public_html_bak/* $RAMDisk";
+	  }
 	  if $systemd-daemon {
 	    say "stoping onefite service...";
 	    my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
@@ -1138,11 +1147,12 @@ multi MAIN  ('fit',
 	Str  :se(:set-err(:$err)) ="",
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
     Str  :st(:$save-to), # write fit settings to json or sav file 
-    Str  :wf(:$work-folder) = '.',
+    Str  :wf(:$work-folder) is copy = '.',
     Int  :n(:num(:N(:Num(:$npts)))) = +100,
 	Bool :ar(:$archive) = False, #= add log entry and archive data
 	Bool :eb(:error-bars(:$errorbars)) = False, #= set errorbars
 	Bool :q(:$quiet) = False,
+	Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
 	Int	 :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
 	Str  :da(:define-alias(:$dali))="",
@@ -1157,6 +1167,9 @@ multi MAIN  ('fit',
 	}
 	if ( $workers > 0 )  { 
 	  	%*ENV<ONEFITE_WORKERS> = $workers  
+	}
+    if $use-ramdisk {
+		$work-folder = create-RAMDisk();
 	}
 
 	note "===> onefite options: { %_.keys.grep(/^<-[#]>/).map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
@@ -1300,11 +1313,12 @@ multi MAIN  ('fit',
 	 Str  :st(:save-to(:$to)), # write fit settings to .json or .sav file 	     
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
      Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
-     Str  :wf(:$work-folder) = '.',
+     Str  :wf(:$work-folder) is copy = '.',
      Int  :n(:num(:N(:Num(:$npts)))),
 	 Bool :e(:$export) = False, #= extract data from json file and create alias for the json fitting function
 	 Bool :eb(:error-bars(:$errorbars)) = False,
 	 Bool :q(:$quiet) = False,
+	 Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :da(:define-alias(:$dali)) ="",
 	 Bool :ar(:$archive) = False,
@@ -1321,6 +1335,9 @@ multi MAIN  ('fit',
 	}
 	if ( $workers > 0 ) { 
 	  	%*ENV<ONEFITE_WORKERS> = $workers  
+	}
+    if $use-ramdisk {
+		$work-folder = create-RAMDisk();
 	}
 
 	do {
@@ -1792,4 +1809,15 @@ sub is-macos() {
     False
 }
 
-
+sub create-RAMDisk() {
+	if is-macos() {
+		return "/Volumes/RAMDisk" if "/Volumes/RAMDisk".IO.d;
+		my $proc = run "hdiutil", "attach", "-nomount", "ram://8388608", :out, :err;
+		my $device = $proc.out(:close).lines.first.trim;
+		run "diskutil", "erasevolume", "HFS+", "RAMDisk", $device;
+		return "/Volumes/RAMDisk";
+	}
+	else {
+		return "/dev/shm";
+	}
+}
