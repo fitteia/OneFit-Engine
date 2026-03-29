@@ -1839,7 +1839,7 @@ sub is-macos() {
     my $k = $*KERNEL.name.lc;
     return True if $k eq 'darwin';
     # Fallback: well-known macOS path
-    return True if dir-exists('/System/Library/CoreServices');
+    return True if '/System/Library/CoreServices'.IO.d;
     False
 }
 
