@@ -1,4 +1,4 @@
-      SUBROUTINE FLORENCEF77(PINP,FREQIN,R1)
+     SUBROUTINE FLORENCEF77(PINP,FREQIN,R1)
       IMPLICIT REAL*8(A-H,O-Z)
       DOUBLE PRECISION PINP(27),FREQIN,R1(10)
       COMMON /RET/ RUNO(10)
@@ -1018,7 +1018,7 @@ c      WRITE(*,'("0 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
 c
 c   Taylor expensnsion to calculare the RUNO components
 c
-      X=TPUNO1*TAUM
+      X=TMUNO*TAUM
       Y=0
       IF (ABS(X-1) < 2) THEN
          DO KK=0,6
