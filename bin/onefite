@@ -1303,7 +1303,7 @@ MSG
 
 multi MAIN  ('fit',
      Str  $input-file, # name of the (sav or json) to compile
-     Str  :fm(:$fit-methods) = "simp scan min minos",
+     Str  :fm(:$fit-methods),
      Bool :np(:$no-plot),
    	 Bool :ax(:auto-x(:$autox)),#= auto scale x
    	 Bool :ay(:auto-y(:$autoy)),#= auto scale y
@@ -1421,7 +1421,7 @@ MSG
 	}
 
 	$engine.Num($npts) if $npts.Bool;
-    $engine.fit-methods($fit-methods);
+    $engine.fit-methods($fit-methods // $engine.h<FitMethods> // "simp scan min minos");
     $engine.fit(
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),

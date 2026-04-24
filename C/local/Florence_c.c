@@ -63,20 +63,21 @@ double FlorenceN(
       double RKM,
       double ACONTM,
       double THETAM,
-      double PHIM
+      double PHIM,
+      double FLAG
 )
 {
 	static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 	static int count = 0;	
 
-	double PINP[27];
-    double aux;
+	double PINP[28];
+      double aux;
 
 	if (count < 1 || count > (int) n-1 ) {
 		FREQ = log10(FREQ);
 
-     	PINP[0] = SI;
-    	PINP[1] = GAMMAI;
+     	      PINP[0] = SI;
+    	      PINP[1] = GAMMAI;
    		PINP[2] = SPIN;
       	PINP[3] = IREL;
       	PINP[4] = DELTA2; // TAUS0M
@@ -102,9 +103,20 @@ double FlorenceN(
       	PINP[24] = ACONTM;
       	PINP[25] = THETAM;
       	PINP[26] = PHIM;
+      	PINP[27] = FLAG;
 
 		//printf("before: %lg %lg %lg %lg %lg %lg %lg RkM=%lg\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23]);
-		florencef77_(PINP,&FREQ,R1);
+     		// florencef77_(PINP,&FREQ,R1);
+            // modflor_(PINP,&FREQ,R1);
+
+		switch ( (int) FLAG ) {
+			case 2:
+				modflor_(PINP,&FREQ,R1);
+				break;
+			default: /* FLAG == 1 */
+				florencef77_(PINP,&FREQ,R1);
+				break;
+		}
  
 		//printf("after: %lg %lg %lg %lg %lg %lg %lg RKM=%lg\nreset count: %d\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23], count);
 	//	printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, pow(10.0,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
@@ -164,13 +176,14 @@ double FlorenceN4LS(
       double RKM,
       double ACONTM,
       double THETAM,
-      double PHIM
+      double PHIM,
+      double FLAG
 )
 {
 	static double R1LS[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 	static int countLS = 0;	
 
-	double PINP[27];
+	double PINP[28];
     double aux;
 
 	if (countLS < 1 || countLS > (int) n-1 ) {
@@ -203,9 +216,18 @@ double FlorenceN4LS(
       	PINP[24] = ACONTM;
       	PINP[25] = THETAM;
       	PINP[26] = PHIM;
+		PINP[27] = FLAG;
+
 
 		//printf("before: %lg %lg %lg %lg %lg %lg %lg RkM=%lg\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23]);
-		florencef77_(PINP,&FREQ,R1LS);
+		switch ( (int) FLAG ) {
+			case 2:
+				modflor_(PINP,&FREQ,R1LS);
+				break;
+			default: /* FLAG == 1 */
+				florencef77_(PINP,&FREQ,R1LS);
+				break;
+		}
  
 		//printf("after: %lg %lg %lg %lg %lg %lg %lg RKM=%lg\nreset count: %d\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23], count);
 	//	printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, pow(10.0,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
@@ -264,10 +286,11 @@ double Florence(
       double RKM,
       double ACONTM,
       double THETAM,
-      double PHIM
+      double PHIM,
+      double FLAG
 )
 {
-	double PINP[27],R1[10];
+	double PINP[28],R1[10];
     double aux;
 
 	FREQ = log10(FREQ);
@@ -299,8 +322,20 @@ double Florence(
       PINP[24] = ACONTM;
       PINP[25] = THETAM;
       PINP[26] = PHIM;
+      PINP[27] = FLAG;
 
-	florencef77_(PINP,&FREQ,R1);
+
+	// modflor_(PINP,&FREQ,R1);
+
+
+		switch ( (int) FLAG ) {
+			case 2:
+				modflor_(PINP,&FREQ,R1);
+				break;
+			default: /* FLAG == 1 */
+				florencef77_(PINP,&FREQ,R1);
+				break;
+		}
 	// printf("%lg %lg\n",FREQ,R1[0]);
  	return R1[0];	
 }
@@ -333,13 +368,14 @@ double Florence4(
       double RKM,
       double ACONTM,
       double THETAM,
-      double PHIM
+      double PHIM,
+      double FLAG
 )
 {
 	static double R1[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 	static int count = 0;	
 
-	double PINP[27];
+	double PINP[28];
     double aux;
 	int i;
 
@@ -373,9 +409,21 @@ double Florence4(
       	PINP[24] = ACONTM;
       	PINP[25] = THETAM;
       	PINP[26] = PHIM;
+		PINP[27] = FLAG;
+
+
+
+		// modflor_(PINP,&FREQ,R1);
 
 		//printf("before: %lg %lg %lg %lg %lg %lg %lg RkM=%lg\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23]);
-		florencef77_(PINP,&FREQ,R1);
+		switch ( (int) FLAG ) {
+			case 2:
+				modflor_(PINP,&FREQ,R1);
+				break;
+			default: /* FLAG == 1 */
+				florencef77_(PINP,&FREQ,R1);
+				break;
+		}
 		// for (i=0; i<10; i++) { R1[i] = aR1[i]; }	
  		count = 0;
 		//printf("after: %lg %lg %lg %lg %lg %lg %lg RKM=%lg\nreset count: %d\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23], count);
