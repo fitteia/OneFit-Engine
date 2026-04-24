@@ -1760,7 +1760,7 @@ c      WRITE(*,'("0 ",E10.4,1X,E10.4,1X,E10.4)') BZ, RUNO(2)
 	  TPUNO1=(1./(1./TMUNO+TAUM))
 
 c
-c   Taylor expensnsion to calculare the RUNO components
+c   Taylor expansion to calculare the RUNO components
 c
       X=TMUNO*TAUM
       Y=0
