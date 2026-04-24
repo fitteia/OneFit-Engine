@@ -225,7 +225,7 @@ double FlorenceN4LS(
 				modflor_(PINP,&FREQ,R1LS);
 				break;
 			default: /* FLAG == 1 */
-				florencef77_(PINP,&FREQ,R1);
+				florencef77_(PINP,&FREQ,R1LS);
 				break;
 		}
  
