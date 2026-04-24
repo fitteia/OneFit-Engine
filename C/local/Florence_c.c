@@ -222,7 +222,7 @@ double FlorenceN4LS(
 		//printf("before: %lg %lg %lg %lg %lg %lg %lg RkM=%lg\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23]);
 		switch ( (int) FLAG ) {
 			case 2:
-				modflor_(PINP,&FREQ,R1);
+				modflor_(PINP,&FREQ,R1LS);
 				break;
 			default: /* FLAG == 1 */
 				florencef77_(PINP,&FREQ,R1);
