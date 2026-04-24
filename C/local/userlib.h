@@ -246,6 +246,8 @@ double Florence4( double index, double FREQ, double SI, double GAMMAI, double SP
 
 double FlorenceN( double index, double n, double FREQ, double SI, double GAMMAI, double SPIN, double IREL, double DELTA2, double TAURM, double TAUVM, double TAUMM, double DPARAM, double EPARAM, double S4M, double GXM, double GYM, double GZM, double AXM, double AYM, double AZM, double DM, double DDM, double CONCM, double ACQ, double AMOLFRAM, double RKM, double ACONTM, double THETAM, double PHIM, double FLAG);
 
+double FlorenceN4LS( double index, double n, double FREQ, double SI, double GAMMAI, double SPIN, double IREL, double DELTA2, double TAURM, double TAUVM, double TAUMM, double DPARAM, double EPARAM, double S4M, double GXM, double GYM, double GZM, double AXM, double AYM, double AZM, double DM, double DDM, double CONCM, double ACQ, double AMOLFRAM, double RKM, double ACONTM, double THETAM, double PHIM, double FLAG);
+
 /** florence_f.h **/
 
 void florencef77_(double PINP[28], double *FREQ, double R1[10]);

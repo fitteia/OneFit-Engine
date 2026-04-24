@@ -147,116 +147,116 @@ double FlorenceN(
 	return aux;
 }
 
-// double FlorenceN4LS(
-// 	  double index,
-// 	  double n,
-//       double FREQ,
-//       double SI,
-//       double GAMMAI,
-//       double SPIN,
-//       double IREL,
-//       double DELTA2,
-//       double TAURM,
-//       double TAUVM,
-//       double TAUMM,
-//       double DPARAM,
-//       double EPARAM,
-//       double S4M,
-//       double GXM,
-//       double GYM,
-//       double GZM,
-//       double AXM,
-//       double AYM,
-//       double AZM,
-//       double DM,
-//       double DDM,
-//       double CONCM,
-//       double ACQ,
-//       double AMOLFRAM,
-//       double RKM,
-//       double ACONTM,
-//       double THETAM,
-//       double PHIM,
-//       double FLAG
-// )
-// {
-// 	static double R1LS[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
-// 	static int countLS = 0;	
+double FlorenceN4LS(
+	  double index,
+	  double n,
+      double FREQ,
+      double SI,
+      double GAMMAI,
+      double SPIN,
+      double IREL,
+      double DELTA2,
+      double TAURM,
+      double TAUVM,
+      double TAUMM,
+      double DPARAM,
+      double EPARAM,
+      double S4M,
+      double GXM,
+      double GYM,
+      double GZM,
+      double AXM,
+      double AYM,
+      double AZM,
+      double DM,
+      double DDM,
+      double CONCM,
+      double ACQ,
+      double AMOLFRAM,
+      double RKM,
+      double ACONTM,
+      double THETAM,
+      double PHIM,
+      double FLAG
+)
+{
+	static double R1LS[]={0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+	static int countLS = 0;	
 
-// 	double PINP[28];
-//     double aux;
+	double PINP[28];
+    double aux;
 
-// 	if (countLS < 1 || countLS > (int) n-1 ) {
-// 		FREQ = log10(FREQ);
+	if (countLS < 1 || countLS > (int) n-1 ) {
+		FREQ = log10(FREQ);
 
-//      	PINP[0] = SI;
-//     	PINP[1] = GAMMAI;
-//    		PINP[2] = SPIN;
-//       	PINP[3] = IREL;
-//       	PINP[4] = DELTA2; // TAUS0M
-//       	PINP[5] = TAURM;
-//       	PINP[6] = TAUVM;
-//       	PINP[7] = TAUMM;
-//       	PINP[8] = 2.0; // TAUDELTA // TO FORCE PINP[4] TO BE DELTA2
-//       	PINP[9] = DPARAM;
-//       	PINP[10] = EPARAM;
-//       	PINP[11] = S4M;
-//       	PINP[12] = GXM;
-//       	PINP[13] = GYM;
-//       	PINP[14] = GZM;
-//       	PINP[15] = AXM;
-//       	PINP[16] = AYM;
-//       	PINP[17] = AZM;
-//       	PINP[18] = DM;
-//       	PINP[19] = DDM;
-//       	PINP[20] = CONCM;
-//       	PINP[21] = ACQ;
-//       	PINP[22] = AMOLFRAM;
-//       	PINP[23] = RKM;
-//       	PINP[24] = ACONTM;
-//       	PINP[25] = THETAM;
-//       	PINP[26] = PHIM;
-// 		PINP[27] = FLAG;
+     	PINP[0] = SI;
+    	PINP[1] = GAMMAI;
+   		PINP[2] = SPIN;
+      	PINP[3] = IREL;
+      	PINP[4] = DELTA2; // TAUS0M
+      	PINP[5] = TAURM;
+      	PINP[6] = TAUVM;
+      	PINP[7] = TAUMM;
+      	PINP[8] = 2.0; // TAUDELTA // TO FORCE PINP[4] TO BE DELTA2
+      	PINP[9] = DPARAM;
+      	PINP[10] = EPARAM;
+      	PINP[11] = S4M;
+      	PINP[12] = GXM;
+      	PINP[13] = GYM;
+      	PINP[14] = GZM;
+      	PINP[15] = AXM;
+      	PINP[16] = AYM;
+      	PINP[17] = AZM;
+      	PINP[18] = DM;
+      	PINP[19] = DDM;
+      	PINP[20] = CONCM;
+      	PINP[21] = ACQ;
+      	PINP[22] = AMOLFRAM;
+      	PINP[23] = RKM;
+      	PINP[24] = ACONTM;
+      	PINP[25] = THETAM;
+      	PINP[26] = PHIM;
+		PINP[27] = FLAG;
 
 
-// 		//printf("before: %lg %lg %lg %lg %lg %lg %lg RkM=%lg\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23]);
-// 		switch ( (int) FLAG ) {
-// 			case 2:
-// 				modflor_(PINP,&FREQ,R1);
-// 				break;
-// 			default: /* FLAG == 1 */
-// 				florencef77_(PINP,&FREQ,R1);
-// 				break;
-// 		}
+		//printf("before: %lg %lg %lg %lg %lg %lg %lg RkM=%lg\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23]);
+		switch ( (int) FLAG ) {
+			case 2:
+				modflor_(PINP,&FREQ,R1);
+				break;
+			default: /* FLAG == 1 */
+				florencef77_(PINP,&FREQ,R1);
+				break;
+		}
  
-// 		//printf("after: %lg %lg %lg %lg %lg %lg %lg RKM=%lg\nreset count: %d\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23], count);
-// 	//	printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, pow(10.0,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
-//  		countLS = 0;
-// 	}
-// 	switch ( (int) index ) {
-// 		default:
-// 			aux = R1LS[0];
-// 			break;
-// 		case 1:
-// 			countLS++;
-// 			aux = R1LS[1];
-// 			break;
-// 		case 2:
-// 			countLS++;
-// 			aux = R1LS[2];
-// 			break;
-// 		case 3:
-// 			countLS++;
-// 			aux = R1LS[3];
-// 			break;
-// 		case 4:
-// 			countLS++;
-// 			aux = R1LS[4];
-// 			break;
-// 	}
-// 	// printf("index: %d\n", (int) index);
-// 	return aux;
-// }
+		//printf("after: %lg %lg %lg %lg %lg %lg %lg RKM=%lg\nreset count: %d\n", FREQ,R1[0],R1[1],R1[2],R1[3],R1[4],R1[5],PINP[23], count);
+	//	printf("reset count: %d\n%lg %lg %lg %lg %lg %lg %lg\n",count, pow(10.0,FREQ),R1[0],R1[1],R1[2],R1[3],R1[4],R1[5]);
+ 		countLS = 0;
+	}
+	switch ( (int) index ) {
+		default:
+			aux = R1LS[0];
+			break;
+		case 1:
+			countLS++;
+			aux = R1LS[1];
+			break;
+		case 2:
+			countLS++;
+			aux = R1LS[2];
+			break;
+		case 3:
+			countLS++;
+			aux = R1LS[3];
+			break;
+		case 4:
+			countLS++;
+			aux = R1LS[4];
+			break;
+	}
+	// printf("index: %d\n", (int) index);
+	return aux;
+}
 
 
 double Florence(
