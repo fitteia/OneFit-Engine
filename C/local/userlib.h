@@ -165,6 +165,10 @@ double R1LipSzab(double f, double q, double C, double ms, double rho, double S, 
 double R1OSabhf(double f, double C, double S, double a, double D, double tv, double Delta2);
 double jhf(double re, double im);
 
+/** R1OSabh.h **/
+
+double R1OSabh(double f, double C, double S, double a, double D, double tv, double Delta2, double fn);
+
 /** R1Torrey.h **/
 
 double R1Torrey(double f, double n, double d, double r, double tau);
