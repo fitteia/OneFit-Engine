@@ -3215,7 +3215,7 @@ C   CALCULATION OF CORRELATION TIME
 
       if(tauv.ne.0.and.dparatot.ne.0) stock=1
 
-      if(stock.eq.0)then      !inizio99
+      if(stock.eq.0) then      !inizio99
 
       IF(ACONIND.EQ.1.)GO TO 456
 
