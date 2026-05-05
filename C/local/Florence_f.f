@@ -3211,7 +3211,9 @@ C   CALCULATION OF CORRELATION TIME
       COEFFH=1.
       ENDIF
 
-      if(tauv.ne.0.and.dparatot.ne.0)stock=1
+      stock=0
+
+      if(tauv.ne.0.and.dparatot.ne.0) stock=1
 
       if(stock.eq.0)then      !inizio99
 
