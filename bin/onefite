@@ -843,6 +843,7 @@ HTML
 		   my $log="/tmp/ofe.log".IO.slurp if "/tmp/ofe.log".IO.e;
 		   "/tmp/ofe.log".IO.spurt: $log ~ "\n$txt\n";
 		   $txt ~= shell($txt,:out).out.slurp(:close);
+		   "/tmp/run.log".IO.spurt: $txt;
 		}
 		 else {
 		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
