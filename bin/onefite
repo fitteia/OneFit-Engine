@@ -572,22 +572,8 @@ multi MAIN ('upgrade',
 	  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
       shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-      shell "cd { ::('OFE-PATH') }  
-	           { '&& git stash && git pull' if $git } 
-			   && ./INSTALL  
-			       { ($git) ?? '' !! '--no-git'  } 
-			       { ($to-user) ?? '--to-user' !! '' } 
-			       { '-/c' unless $compile } 
-			       { '-d' if $systemd-daemon } 
-			       { $test ?? '--test' !! '--/test' } 
-			       --ip=$ip 
-			       --port=$port 
-			   	   { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } 
-			       { '--cernlib' if $cernlib } 
-			       { '--shell --shell-port=' ~ $shell-port if $shell } 
-			       { '--wsl' if $wsl } { '--macos' if $macos } 
-			       { '--docker' if $docker } { '--no-dpkg' unless $dpkg}
-			 ";
+      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} ";
+
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
