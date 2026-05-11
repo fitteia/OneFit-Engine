@@ -810,14 +810,14 @@ HTML
 		       $reduced-chi2      = "--reduced-chi2  " if $k eq any(<reduced-chi2 rchi2 rc>) and $v eq any("yes",1);
 		       $R1  		         = "--R1 " if $k eq "R1" and $v eq any("yes",1);
 		       $R2  		         = "--R2 " if $k eq any(<R2 pearson-correlation pco peco>) and $v eq any("yes",1);
-		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq any(<sef-R1-file sf>) and $v.so;
-		       $print-cols         = "--print-cols={$v.Str}  " if $k eq any(<pc prco print-cols cols print-columns>) and $v.so;
-		       $err                = "--err={$v.Str}  " if $k eq any(<err set-err se>) and $v.so;
-		       $range                = "--range={$v.Str}  " if $k eq any(<range r>) and $v.so;
-		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq any(<remove-outliers ro>) and $v.so;
-		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.so;
-		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.so;
-		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
+		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq any(<sef-R1-file sf>) and $v.Bool;
+		       $print-cols         = "--print-cols={$v.Str}  " if $k eq any(<pc prco print-cols cols print-columns>) and $v.Bool;
+		       $err                = "--err={$v.Str}  " if $k eq any(<err set-err se>) and $v.Bool;
+		       $range                = "--range={$v.Str}  " if $k eq any(<range r>) and $v.Bool;
+		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq any(<remove-outliers ro>) and $v.Bool;
+		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.Bool;
+		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.Bool;
+		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.Bool;
 			   @ht-args.push: $k ~~ /^'#'/ ?? qq{"--$v"} !! "";
 
 		       if $k eq "download" {
