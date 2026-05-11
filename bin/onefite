@@ -823,7 +823,7 @@ HTML
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
 			  elsif $v eq "json" { $file-to-download = "$folder/" ~ $filename.IO.extension('json') }
-			  else { $file-to-download = "$folder/$v" }
+			  else { $file-to-download = "$folder/{$v.Str}" if $v.Str.Bool }
 		       }
 		   }
 		}
