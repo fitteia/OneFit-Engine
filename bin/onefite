@@ -560,7 +560,7 @@ multi MAIN ('upgrade',
       Bool :$shell = False, #= install shellinabox
 	  Bool :$git = True, #= By default it runs git to pull the package for remote repository
       Int  :$shell-port = 8100, #= shellinabox port
-      Str  :$ip = '*', #= set IP
+      Str  :$ip = '0.0.0.0', #= set IP
 	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
 	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
