@@ -560,7 +560,7 @@ multi MAIN ('upgrade',
       Bool :$shell = False, #= install shellinabox
 	  Bool :$git = True, #= By default it runs git to pull the package for remote repository
       Int  :$shell-port = 8100, #= shellinabox port
-      Str  :$ip = '*', #= set IP
+      Str  :$ip = '0.0.0.0', #= set IP
 	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
 	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
@@ -572,7 +572,22 @@ multi MAIN ('upgrade',
 	  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
       shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg}";
+      shell "cd { ::('OFE-PATH') }  
+	           { '&& git stash && git pull' if $git } 
+			   && ./INSTALL  
+			       { ($git) ?? '' !! '--no-git'  } 
+			       { ($to-user) ?? '--to-user' !! '' } 
+			       { '-/c' unless $compile } 
+			       { '-d' if $systemd-daemon } 
+			       { $test ?? '--test' !! '--/test' } 
+			       --ip=$ip 
+			       --port=$port 
+			   	   { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } 
+			       { '--cernlib' if $cernlib } 
+			       { '--shell --shell-port=' ~ $shell-port if $shell } 
+			       { '--wsl' if $wsl } { '--macos' if $macos } 
+			       { '--docker' if $docker } { '--no-dpkg' unless $dpkg}
+			 ";
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
@@ -587,7 +602,7 @@ multi MAIN ('uninstall'){
 multi MAIN ('service','start',	
       Bool :d(:$systemd-daemon) = False, #= start systemd-daemon
 	  Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
-      Str  :$ip = '*', #= accept access form IP
+      Str  :$ip = '0.0.0.0', #= accept access from IP
       Int  :p(:$port) = 8142, #= onefite werbservice port
       ) {
 	  if $use-ramdisk {
@@ -810,20 +825,20 @@ HTML
 		       $reduced-chi2      = "--reduced-chi2  " if $k eq any(<reduced-chi2 rchi2 rc>) and $v eq any("yes",1);
 		       $R1  		         = "--R1 " if $k eq "R1" and $v eq any("yes",1);
 		       $R2  		         = "--R2 " if $k eq any(<R2 pearson-correlation pco peco>) and $v eq any("yes",1);
-		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq any(<sef-R1-file sf>) and $v.so;
-		       $print-cols         = "--print-cols={$v.Str}  " if $k eq any(<pc prco print-cols cols print-columns>) and $v.so;
-		       $err                = "--err={$v.Str}  " if $k eq any(<err set-err se>) and $v.so;
-		       $range                = "--range={$v.Str}  " if $k eq any(<range r>) and $v.so;
-		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq any(<remove-outliers ro>) and $v.so;
-		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.so;
-		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.so;
-		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.so;
+		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq any(<sef-R1-file sf>) and $v.Bool;
+		       $print-cols         = "--print-cols={$v.Str}  " if $k eq any(<pc prco print-cols cols print-columns>) and $v.Str.Bool;
+		       $err                = "--err={$v.Str}  " if $k eq any(<err set-err se>) and $v.Str.Bool;
+		       $range                = "--range={$v.Str}  " if $k eq any(<range r>) and $v.Str.Bool;
+		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq any(<remove-outliers ro>) and $v.Str.Bool;
+		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.Str.Bool;
+		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.Str.Bool;
+		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.Str.Bool;
 			   @ht-args.push: $k ~~ /^'#'/ ?? qq{"--$v"} !! "";
 
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
 			  elsif $v eq "json" { $file-to-download = "$folder/" ~ $filename.IO.extension('json') }
-			  else { $file-to-download = "$folder/$v" }
+			  else { $file-to-download = "$folder/{$v.Str}" if $v.Str.Bool }
 		       }
 		   }
 		}
@@ -834,13 +849,18 @@ HTML
 		    $filename.IO.spurt: $file-content.decode('UTF-8')
 		}	   
 		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
-		$work-folder = "./$username" if $username.so and $username.IO.e;
+		$work-folder = "./$username" if $username.so and "./$username".IO.e;
 		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
 		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   #		   my $log="/tmp/ofe.log".IO.slurp if "/tmp/ofe.log".IO.e;
+		   #		   "/tmp/ofe.log".IO.spurt: $log ~ "\n$txt\n";
+
 		   $txt ~= shell($txt,:out).out.slurp(:close);
+
+		   #		   "/tmp/run.log".IO.spurt: $txt;
 		}
 		 else {
 		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
