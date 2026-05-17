@@ -509,7 +509,7 @@ EOT
 	    $result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
 	    say $result;
 	    if $result.contains("zone12, 16") {
-			say "localhost web service works OK";
+			say "localhost web service works OK\n\n";
 	    }
 	    else {
 			say "localhost web service error!";
@@ -526,7 +526,7 @@ EOT
 	    		$result = shell("cd /tmp && $result");
 	    		$result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
 	    		say $result;
-	    		if $result.contains("zone12, 16") { say "localhost web service works OK"; }
+	    		if $result.contains("zone12, 16") { say "localhost web service works OK\n\n"; }
 	    		else { say "localhost web service error!"; }
 			}					
 			else { say "onefite is not running. Consider: 'sudo systemctl start onefite.service' first, or 'onefite service start'"; } 
