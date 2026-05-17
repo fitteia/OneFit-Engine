@@ -245,7 +245,9 @@ sub install-apt-packages ($cpu,:$cernlib) {
 sub install-web-server () {
    	"$*HOME/public_html".IO.mkdir unless "$*HOME/public_html".IO.d;
    	"$*HOME/public_html/ofe".IO.mkdir unless "$*HOME/public_html/ofe".IO.d;
-   	shell "chmod 711 $*HOME && chmod 755 $*HOME/public_html && chmod 755 $*HOME/public_html/ofe";
+   	shell "chmod 711 $*HOME";
+   	shell "chmod 755 $*HOME/public_html" unless "$*HOME/public_html".IO.l;
+    shell "chmod 755 $*HOME/public_html/ofe";
    	my $is-installed = so shell("tasksel --list-tasks",:out).out.lines(:close).grep(/web\-server/).words[0] eq "i";
    	do {
 		say "tasksel install Web-server and SSH-server";
@@ -478,7 +480,7 @@ sub run-post-install-tests(Bool :$daemon = False, :$port = 8142) {
 0.006 1.0 1.0 
 EOT
 
-    say "Running post-install tests...";
+    say "===> Running post-install tests...";
     "/tmp/zone12.dat".IO.spurt: $data;
 	#my $service = shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
 	my $service = False; 
@@ -491,55 +493,55 @@ EOT
 			$proc.stdout.tap(-> $v { print "Output: $v" });
 			$proc.stderr.tap(-> $v { print "Err: $v" });
 			await $proc.start;
-			say "onefite service stoped";
+			say "===> onefite service stoped";
 		}
 		my $proc = Proc::Async.new($SUDO, 'systemctl', 'start', 'onefite.service');
 		$proc.stdout.tap(-> $v { print "Output: $v" });
 		$proc.stderr.tap(-> $v { print "Err: $v" });
 		await $proc.start;
-		say "onefite service started" if shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
+		say "===> onefite service started" if shell("systemctl status onefite.service",:out).out.slurp(:close).contains("active (running)");
 	
     	wait-for-port('127.0.0.1', $port, 10 ,1);
-	
+	    say "===> test localhost onefite web service\n";
 		my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
 	    say $result;
 	    $result = shell("cd /tmp && $result");
 	    $result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
 	    say $result;
 	    if $result.contains("zone12, 16") {
-			say "localhost web service works OK";
+			say "===> localhost onefite web service: works OK\n\n";
 	    }
 	    else {
-			say "localhost web service error!";
+			say "===> localhost onefite web service error!";
 	    }
 	}
 	else {
-		if $service { say "onefite service status unchanged: is running" }
+		if $service { say "===> onefite service status unchanged: is running" }
 		else 	{
 		   	my $pid = shell("onefite service PID",:out).out.slurp(:close);
 			if $pid.so {
-				say "onefite is running with PID: $pid";
+				say "===> onefite is running with PID: $pid";
 				my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
 	    		say $result;
 	    		$result = shell("cd /tmp && $result");
 	    		$result = "/tmp/ofe-test.log".IO.slurp(:close) if "/tmp/ofe-test.log".IO.e;
 	    		say $result;
-	    		if $result.contains("zone12, 16") { say "localhost web service works OK"; }
-	    		else { say "localhost web service error!"; }
+	    		if $result.contains("zone12, 16") { say "localhost web service works OK\n\n"; }
+	    		else { say "===> localhost web service error!"; }
 			}					
-			else { say "onefite is not running. Consider: 'sudo systemctl start onefite.service' first, or 'onefite service start'"; } 
+			else { say "===> onefite is not running. Consider: 'sudo systemctl start onefite.service' first, or 'onefite service start'"; } 
 		}
 	}
 	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
 	</tmp/ofe-tmp>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
-
+	say "===> test onefite command line call\n";
 	my $result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --no-stelar-hdf5 --autox --logx", :out).out.slurp(:close);
 	say $result;
 	if $result.contains("zone12, 16") {
-	    say "command line onefite OK\n\n";
+	    say "===> onefite command line call: OK\n\n";
 	}
 	else {
-	    say "command line onefite error!\n\n";
+	    say "onefite command line call error!\n\n";
 	}
 #	my &fileowner = { my $file = $^a; shell("ls { $file.IO.d ?? '-ld' !! '-la'} $file | awk '\{print \$3\}'",:out).out.slurp(:close) };
 #	my $SUDO="";
