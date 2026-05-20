@@ -85,7 +85,13 @@ class Block is export {
 
 				#				if $line ~~ /^ \s* '#'/ or $line.words.elems < 2 {
 					#		say $line.words.any: { !( try .Numeric ).defined }; 
-				if $line.words.elems < 2 || $line.words.any({ $_ !~~ /^ <number> $/ }) {
+				if 
+					$line.words.elems < 2 
+					|| 
+					$line.words.map({ 
+						so $_ !~~ /^ <[+-]>?  [ \d+ [ '.' \d*]?  | '.' \d+ ] [ <[eEr]> <[+-]>? \d+ ]? $/ 
+					}).any.so 
+					{
 					note "     onefite warning: ignoring non-conform line: $line" unless $quiet
 		    	}
 		    	else { 
