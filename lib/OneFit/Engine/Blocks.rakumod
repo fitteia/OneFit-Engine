@@ -80,8 +80,9 @@ class Block is export {
 	    }
 	    else {
 			if $line {
-				#		    	if $line ~~ /^ \s* '#'/ or $line.words.elems < 2 {
-		    	if $line.words.elems < 2 || $line.words.any: { !( try .Numeric ).defined } {
+				if $line ~~ /^ \s* '#'/ or $line.words.elems < 2 {
+					say $line.words.any: { !( try .Numeric ).defined }; 
+					#	if $line.words.elems < 2 || $line.words.any: { !( try .Numeric ).defined } {
 					note "     onefite warning: ignoring non-conform line: $line" unless $quiet
 		    	}
 		    	else { 
