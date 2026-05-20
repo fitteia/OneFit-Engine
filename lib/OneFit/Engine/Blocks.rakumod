@@ -80,7 +80,14 @@ class Block is export {
 	    }
 	    else {
 			if $line {
-		    	if $line ~~ /^'#'/ or $line.words.elems < 2 {
+				#				if $line ~~ /^ \s* '#'/ or $line.words.elems < 2 {
+				if 
+					$line.words.elems < 2 
+					|| 
+					$line.words.map({ 
+						so $_ !~~ /^ <[+-]>?  [ \d+ [ '.' \d*]?  | '.' \d+ ] [ <[eEr]> <[+-]>? \d+ ]? $/ 
+					}).any.so 
+					{
 					note "     onefite warning: ignoring non-conform line: $line" unless $quiet
 		    	}
 		    	else { 
