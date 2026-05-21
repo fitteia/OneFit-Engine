@@ -292,7 +292,7 @@ class Import is export {
 				@Mz.push: $_.words[1].Num;
 			}	
 			my $max = @Mz.max;
-			if @tau.max > 1000.0 { @tau.map({ $_ / 1e6 })  }
+			if @tau.max > 1000.0 { @tau.map({ $_ / 1e6 }); say @tau  }
 			my $datafile = "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat";  
 			@zones[$_] = (@tau Z @Mz.map({ $_/$max}))>>.join(" ").join("\n");
 			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = { $datafile.IO.extension('').Str }\n" ~ @zones[$_].join("\n");
