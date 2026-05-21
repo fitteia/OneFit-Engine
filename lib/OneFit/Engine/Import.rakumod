@@ -282,7 +282,7 @@ class Import is export {
 		$stelar-sef = $file if $file.so;
 		my $path = self.path();
 		$stelar-sef.IO.copy: "$path/$stelar-sef";
-		my @zones = gather for $stelar-sef.IO.split(/MAGNITUDES\n/)[1..*] -> $zone { take gather for $zone.lines { take $_ if $_.contains(/^\s*\d+/) } .join("\n"); }
+		my @zones = gather for $stelar-sef.IO.split(/:i MAGNITUDES\n/)[1..*] -> $zone { take gather for $zone.lines { take $_ if $_.contains(/^\s*\d+/) } .join("\n"); }
 
 		my @files;
 		for 0 ..^ @zones.elems { 
