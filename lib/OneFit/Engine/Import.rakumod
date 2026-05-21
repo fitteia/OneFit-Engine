@@ -401,7 +401,7 @@ class Import is export {
 	}
 	
 	method is-sef-Mz ($file) 	 { 
-		return $file.IO.slurp(:enc('utf8'),:close).contains(:i/MAGNITUDES\n/) 
+		return $file.IO.slurp(:enc('utf8'),:close).contains(/:i MAGNITUDES\n/) 
 	}
 	
 	method is-ffc ($file) 	 { 
