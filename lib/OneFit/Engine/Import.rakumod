@@ -282,7 +282,7 @@ class Import is export {
 		$stelar-sef = $file if $file.so;
 		my $path = self.path();
 		$stelar-sef.IO.copy: "$path/$stelar-sef";
-		my @zones = gather for $stelar-sef.IO.split(/MAGNITUDES\n/)[1..*] -> $zone { take gather for $zone.lines { take $_ if $_.contains(/^\s\d+/) } .join("\n"); }
+		my @zones = gather for $stelar-sef.IO.split(/:i MAGNITUDES\n/)[1..*] -> $zone { take gather for $zone.lines { take $_ if $_.contains(/^\s*\d+/) } .join("\n"); }
 
 		my @files;
 		for 0 ..^ @zones.elems { 
@@ -292,6 +292,7 @@ class Import is export {
 				@Mz.push: $_.words[1].Num;
 			}	
 			my $max = @Mz.max;
+			if @tau.max > 1000.0 { @tau .= map({ $_ / 1e6 })  }
 			my $datafile = "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat";  
 			@zones[$_] = (@tau Z @Mz.map({ $_/$max}))>>.join(" ").join("\n");
 			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = { $datafile.IO.extension('').Str }\n" ~ @zones[$_].join("\n");
@@ -401,7 +402,7 @@ class Import is export {
 	}
 	
 	method is-sef-Mz ($file) 	 { 
-		return $file.IO.slurp(:enc('utf8'),:close).contains(/MAGNITUDES\n/) 
+		return $file.IO.slurp(:enc('utf8'),:close).contains(/:i MAGNITUDES\n/) 
 	}
 	
 	method is-ffc ($file) 	 { 
