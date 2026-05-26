@@ -58,7 +58,6 @@ UTIL= 	fitutil.o ludcmp.o lubksb.o gamma.o integra.o getopt.o getopt1.o ode2.o
 all: install-src Lib fitenv actpar cop fft afactors-xyz ccat
 
 Lib: $(OBJ) $(UTIL)
-	rm $(LIBNAME) $(LIBUTILNAME)
 	$(AR) -rvs  $(LIBNAME) $(OBJ)
 	$(AR) -rvs $(LIBUTILNAME) $(UTIL)
 	make -C modelos

@@ -29,7 +29,6 @@ SRC=	dimer.c fij.c lor.c odf.c rot.c sdvilfsa7.c \
         struf.h 
 
 Lib: $(OBJ)
-	rm $(LIBNAME)
 	$(AR) -rvs $(LIBNAME) $(OBJ)
 
 install-lib: Lib
