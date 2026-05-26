@@ -38,6 +38,7 @@ OBJS  := $(CSRCS:.c=.o) $(FSRCS:.f=.o)
 
 lib: $(OBJS) 
 #	$(CC) $(CCFLAGS) -c *.c
+	rm libuserlib.a
 	ar -rvs libuserlib.a *.o
 
 module: *.c  $(INTERFACE).i
