@@ -240,9 +240,9 @@ class Engine is export {
 			Bool :$to-json,
 			Bool :$fix-all
 		       ){
-#	say "Greatings from update parameters form engine" if $from-engine;
-#	say "Greatings from update parameters form output" if $from-output;
-	 #	say "Greatings from update parameters form log" if $from-log;
+				 #	say "Greatings from update parameters form engine" if $from-engine;
+				 #	say "Greatings from update parameters form output" if $from-output;
+	 			 #	say "Greatings from update parameters form log" if $from-log;
 
 	 $!fit-methods = %!engine<FitMethods> if %!engine<FitMethods>.Bool;
 	
@@ -308,7 +308,90 @@ class Engine is export {
 	self
      }
 
-     method fit(Bool :$no-plot,
+	 method hybrid (Bool :$reset = False, Bool :$set = False, Bool :$set-dum = False) {
+		my $nblocks = @!blocks.elems;
+		if $set-dum {
+    		%!engine<Dados> = %!engine<Dados>.subst(
+        		/ '#' \s* 'DATA' \s* $<T>= [\w+] \s* '=' \s* $<dum> = [\N*] \n /,
+        		-> $/ { "# DATA {$<T>} = {$<dum>} 1\n" },
+				:g
+    		);
+		}
+		if $set && !$reset {
+			%!engine<Function-tmp> = %!engine<Function>;
+			# say  %!engine<Function>.subst(/\s*$/,'',:g);
+			%!engine<Parameters-tmp> = %!engine<Parameters>;
+			# say %!engine<Parameters>;
+			my @pars = %!engine<Parameters>.split(/\s* ',' \s*/);
+			my @new-pars=@pars;
+			my $npars = @pars.elems;
+			my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
+
+			my $MAX = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(
+				/'MNI=' $<MNI> = [\s+]/
+			).Num;
+			if $MAX < ($nblocks - 1) * @hybrid-keys.elems + @npars {
+				note "===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
+				note "===> adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
+				exit($MAX);
+			}
+
+			for 0 ..^ ($nblocks-1) -> $i {
+				for 0 ..^ @hybrid-keys.elems -> $j {
+				    my $k = @hybrid-keys[$j];	
+					my $nhybrid = @hybrid-keys.elems;
+					my $no = $npars+$i*$nhybrid+$j;
+					@new-pars.push: "{$k+2}_{$i+1}";
+					%!engine{"Pval$no"} = %!engine{"Pval$k"};
+					%!engine{"Pmin$no"} = %!engine{"Pmin$k"};
+					%!engine{"Pmax$no"} = %!engine{"Pmax$k"};
+					%!engine{"F$no"} = %!engine{"F$k"};
+				} 
+			}
+			for 0 ..^ @hybrid-keys.elems -> $i {
+			   my $par = @pars[@hybrid-keys[$i]];	
+				my $T = %!engine<T>;
+				%!engine<Function> = %!engine<Function>.subst(
+					/$par/, '((' ~ 
+							$T ~ '_0 == 1)' ~ 
+							' ? ' ~ 
+							$par ~ 
+							' : par[' ~ 
+								$npars+1  ~ ' + ((int) ' ~ $T ~ '_0 - 2) * ' ~ 
+								@hybrid-keys.elems ~ '+' ~ 
+							    $i ~ 
+							'])',
+						:g
+					);
+			}
+			%!engine<Parameters>= @new-pars.join(',');
+			# say @new-pars.join(',');
+			# say to-json(%!engine, :sorted-keys);
+		}
+		if $reset && !$set {
+			%!engine<Function> = %!engine<Function-tmp>;
+			%!engine<Parameters> = %!engine<Parameters-tmp>;
+			my @pars = %!engine<Parameters>.split(/\s* ',' \s*/);
+			my $npars = @pars.elems;
+			my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
+			for (0 ..^ $nblocks-1) -> $i {
+				for 0 ..^ @hybrid-keys.elems -> $j {
+					my $no = $npars + $i * @hybrid-keys.elems + $j;
+					%!engine{"Pval$no"}:delete;
+					%!engine{"Pmin$no"}:delete;
+					%!engine{"Pmax$no"}:delete;
+					%!engine{"F$no"}:delete;
+				} 
+			}
+			%!engine<Function-tmp>:delete;
+			%!engine<Parameters-tmp>:delete;
+		}
+		self
+	 }
+
+     method fit(
+		Bool :$hybrid = False, 
+		Bool :$no-plot,
 		Bool :$autox,
 		Bool :$autoy,
 		Bool :$logx,
@@ -319,7 +402,10 @@ class Engine is export {
 		Bool :$R2 = False,
 		Bool :$quiet=False
 	       ) {
+	 self.hybrid( :set-dum );
+
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
+
 	 $*ERR.say("===> read blocks") unless $quiet;
 	 self.blocks(:read,
 		     :fit,:export,
@@ -329,14 +415,21 @@ class Engine is export {
 		     :logy($logy),
 		     :quiet($quiet)
 		    );
+	 
+	 self.hybrid(:set) if $hybrid;
+	 
 	 $*ERR.say("===> read pars") unless $quiet;
 	 self.parameters(:read);
+	 
 	 $*ERR.say("===> read functions") unless $quiet;
 	 self.functions(:read);
+	 
 	 $*ERR.say("===> write stp") unless $quiet;
 	 self.stp;
+	 
 	 $*ERR.say("===> write code") unless $quiet;
 	 self.code(:write,:compile, :quiet($quiet));
+	 
 	 note "===> fit" unless $quiet;
 	 
 	 my Bool $MIXED=False;
@@ -416,7 +509,7 @@ class Engine is export {
 
 		
 	   	if @outliers.so {
-	 		my $TXT = self!results( :R2($R2) );
+	 		my $TXT = self!results( :R2($R2), :hybrid($hybrid) );
 			$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
@@ -506,7 +599,7 @@ EOT
 	     }  unless $no-plot;
 	 }
 
-	 my $TXT = self!results( :R2($R2) );
+	 my $TXT = self!results( :R2($R2), :hybrid($hybrid) );
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
 		$TXT = @a.head 
@@ -557,7 +650,7 @@ EOT
 		}		
 	 }
 	 %!engine<fit-results> = $TXT;
-	 %!engine<SimulFitOutput> = self!results( fmt => " ", :R2($R2) );
+	 %!engine<SimulFitOutput> = self!results( fmt => " ", :R2($R2), :hybrid($hybrid) );
 	 my @fit-curves;
 	 for (1 .. @!blocks.elems) {
 	     @fit-curves.push: "$!path/fit-curves-$_".IO.slurp
@@ -568,6 +661,7 @@ EOT
 	     @fit-residues.push: "$!path/fit-residues-$_.res".IO.slurp
 	 }
 	 %!engine<fit-residues> = @fit-residues;
+	 self.hybrid(:reset) if $hybrid;
 	 self
      }
 
@@ -618,7 +712,8 @@ EOT
 		self
     }
 
-    method !results ( :$fmt = ', ',  :$R2 = False ) {
+    method !results ( :$fmt = ', ',  :$R2 = False, :$hybrid = False) {
+		self!adjust-parameters() if $hybrid;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
@@ -649,7 +744,7 @@ EOT
 		#}
 	 	for @!blocks {
 	     	my @line-fields;
-	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED) ?? .No !! 0;
+	     	my $i = any(%!engine<FitType> ~~ /Individual/, $MIXED, $hybrid) ?? .No !! 0;
 	     	@line-fields.push: .Tag;
 	     	@line-fields.push: .X.elems;
 			@line-fields.push: .correlation-coefficient.fmt('%.4f') if $R2;
@@ -733,6 +828,30 @@ EOT
 		my $nfps = $nifps*@!blocks.elems + $ngfp;
 		$ndf = $npts - $nfps;  
 		return "tchi2 = $chi2, tnpts = $npts, nfps = $nfps"
+	}
+
+	method !adjust-parameters () {
+    	my @pars = %!engine<Parameters-tmp>.split(/\s* ',' \s*/);
+    	my $npars = @pars.elems;
+    	my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
+
+    	for 1 ..^ @!blocks.elems -> $b {
+        	my @arr = @!blocks[$b].parameters.a;
+        	for @hybrid-keys.kv -> $i, $key {
+            	my $src = $npars + ($b - 1) * @hybrid-keys.elems + $i;
+
+				#		say $key, " " , $src, " ", @arr[$key], " " , @arr[$src];
+            	my $name = @arr[$key]<name>;
+
+            	@arr[$key] = @arr[$src].clone;
+            	@arr[$key]<name> = $name;
+				# say @arr[$key];
+        	}
+			# say @arr;
+        	@!blocks[$b].parameters.a(@arr);
+    	}
+		for 0 ..^@!blocks { @!par-tables[$_]=@!blocks[$_].parameters }
+    	self
 	}
 
 	sub max-line-length ($TXT) {

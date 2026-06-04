@@ -34,6 +34,7 @@ multi MAIN (
 	Bool :$man-page = True; #= Install man page
    	Str  :$ip is copy = '*', #= accept access from IP
    	Int  :$port = 8142, #= onefite service port
+   	Int  :$minuit = 200, #= Minuit maximum number of parameters: defualt=50
    	Int  :$shell-port = 8100, #= shellinabox service port
   	Str  :b(:$bindir) = "$*CWD/../bin", #= choose /home/<user>/bin if you want and make sure it is included in the PATH
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
@@ -127,7 +128,7 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git ) if $compile;
+   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit ) if $compile;
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
@@ -275,14 +276,14 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git) {
+sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 	if $git {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
-		shell "cd $*CWD/../minuit && git pull";
+		shell "cd $*CWD/../minuit && git pull ";
 	}
-   	shell "cd $*CWD/../minuit && make install && make clean";
+   	shell "cd $*CWD/../minuit && sed -i '' -e 's/MNE=100/MNE={$minuit * 2}/; s/MNI=50/MNI=$minuit/' minuit/d506cm.inc && make install && make clean";
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
