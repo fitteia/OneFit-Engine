@@ -605,7 +605,7 @@ EOT
 	     }  unless $no-plot;
 	 }
 	 my $TXT = self!results( :R2($R2), :hybrid($hybrid) );
-say "ola";
+
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
 		$TXT = @a.head 
