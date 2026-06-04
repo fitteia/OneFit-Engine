@@ -316,7 +316,9 @@ class Engine is export {
         		-> $/ { "# DATA {$<T>} = {$<dum>} 1\n" },
 				:g
     		);
+			say %!engine<Dados>;
 		}
+
 		if $set && !$reset {
 			%!engine<Function-tmp> = %!engine<Function>;
 			# say  %!engine<Function>.subst(/\s*$/,'',:g);
@@ -602,7 +604,7 @@ EOT
 			#shell "cd $!path; pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
 	 }
-
+say "ola";
 	 my $TXT = self!results( :R2($R2), :hybrid($hybrid) );
 	 if $npts-removed > 0 { 
 		my @a = $TXT.lines;
