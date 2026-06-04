@@ -331,7 +331,7 @@ class Engine is export {
 			my $MAX=0;
 			try {
 				my $m =  $file.IO.slurp.match(
-					/'MNI=' $<MNI> = [\s+]/
+					/'MNI=' $<MNI> = [\d+]/
 				);
 				$MAX = $m.Num;
 			}
