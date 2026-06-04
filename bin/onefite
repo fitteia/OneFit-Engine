@@ -213,9 +213,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -234,6 +234,9 @@ onefite archive [-f||--fit=<Str>]
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
+    onefite fit "Mz(t[1e-3<20],M0_,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
+    onefite fit "Mz(t[1e-3<20],M0_,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --global
+    onefite fit "Mz(t[1e-3<20],M0_,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --hybrid
     onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.txt --autox --logx --autoy
@@ -1144,6 +1147,7 @@ multi MAIN  ('fit',
    	Bool :ly(:logy(:log-y(:ylog(:$linlog)))),
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
    	Bool :g(:$global) is copy,
+   	Bool :$hybrid = False,
 	Str  :fi(:$fit-if) = "",
 	Str  :pi(:$plot-if) = "",
 	Str  :sf(:$sef-R1-file) = "",
@@ -1169,6 +1173,7 @@ multi MAIN  ('fit',
 	Bool :pco(:peco(:pearson-correlation(:$R2))) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
+	$global = True if $hybrid;
 	if ( !$parallel )  { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
@@ -1237,6 +1242,7 @@ MSG
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     try {
 		 $engine.fit(
+			:hybrid($hybrid),
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
@@ -1331,12 +1337,14 @@ multi MAIN  ('fit',
 	 Bool :ar(:$archive) = False,
 	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
 	 Bool :pco(:peco(:pearson-correlation(:$R2))) = False, 
-	 Bool :g(:$global) = False,
+	 Bool :g(:$global) is copy = False,
+	 Bool :$hybrid) = False,
 	 Bool :i(:$individual) = False, #= forces fit to be individual
      Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
 	 *%_
     ){
+	$global = True if $hybrid;
 	if ( !$parallel ) { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
@@ -1429,6 +1437,7 @@ MSG
 	$engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods // $engine.h<FitMethods> // "simp scan min minos");
     $engine.fit(
+		    :hybrid($hybrid),
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
