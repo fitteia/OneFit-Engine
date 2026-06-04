@@ -312,7 +312,7 @@ class Engine is export {
 		my $nblocks = @!blocks.elems;
 		if $set-dum {
     		%!engine<Dados> = %!engine<Dados>.subst(
-        		/ '#' \s* 'DATA' \s* $<T>= [\w+] \s* '=' \s* $<dum> = [\N*] \n /,
+        		/ '#' \s* 'DATA' \s* $<T> = [\w+] \s* '=' \s* $<dum> = [\N*] \n /,
         		-> $/ { "# DATA {$<T>} = {$<dum>} 1\n" },
 				:g
     		);
@@ -332,7 +332,7 @@ class Engine is export {
 			my $file = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc";
 			my $MAX=0;
 			my $m =  $file.IO.slurp.match(
-				/'MNI=' $<MNI> = (\d+)/
+				/'MNI=' $<MNI> = [\d+]/
 			);
 			$MAX = +$m<MNI>.Num;
 		
