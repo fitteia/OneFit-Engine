@@ -1341,7 +1341,7 @@ multi MAIN  ('fit',
 	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
 	 Bool :pco(:peco(:pearson-correlation(:$R2))) = False, 
 	 Bool :g(:$global) is copy = False,
-	 Bool :$hybrid) = False,
+	 Bool :$hybrid = False,
 	 Bool :i(:$individual) = False, #= forces fit to be individual
      Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
