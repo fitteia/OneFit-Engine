@@ -119,7 +119,9 @@ class Block is export {
 	
 	method Export-data-removed-outliers () { @!Export-data-removed-outliers }
     
-	method T () { $!T }
+	multi method T () { $!T }
+	
+	multi method T ($str) { $!T = $str }
     
 	method export ( :$path, Bool :$fit, Bool :$plot ) {
 		$!path = $path if $path.defined;
