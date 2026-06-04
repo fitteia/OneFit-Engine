@@ -1217,7 +1217,7 @@ MSG
 	$function = update-from-input-options( $function, %_, quiet => $quiet ) if %_.keys;
 
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
-		note "===> you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
+		note "===> you are going to performa a MIXED fitting and your option global is False. Setting global to True";
 		$global = True;
 	}
 
