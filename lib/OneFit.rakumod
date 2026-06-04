@@ -330,7 +330,7 @@ class Engine is export {
 			my $MAX = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(
 				/'MNI=' $<MNI> = [\s+]/
 			).Num;
-			if $MAX < ($nblocks - 1) * @hybrid-keys.elems + @npars {
+			if $MAX < ($nblocks - 1) * @hybrid-keys.elems + $npars {
 				note "===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
 				note "===> adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
 				exit($MAX);
