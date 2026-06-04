@@ -283,7 +283,8 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
 		shell "cd $*CWD/../minuit && git pull ";
 	}
-   	shell "cd $*CWD/../minuit && sed -i '' -e 's/MNE=100/MNE={$minuit * 2}/; s/MNI=50/MNI=$minuit/' minuit/d506cm.inc && make install && make clean";
+	note "===> Installing Minuit for a maximum number of parameters: $minuit";
+	shell "cd $*CWD/../minuit && sed -i '' -e 's/MNE=100/MNE={$minuit * 2}/; s/MNI=50/MNI=$minuit/' minuit/d506cm.inc && make install && make clean";
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
