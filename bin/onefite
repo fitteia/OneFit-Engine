@@ -673,6 +673,7 @@ multi MAIN ('start-web-engine',
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
+		       <tr><td>hybrid fit: </td><td><input name="hybrid" type="radio" value="yes">/<input name="hybrid" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>global fit: </td><td><input name="global" type="radio" value="yes">/<input name="global" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autox: </td><td><input name="autox" type="radio" value="yes">/<input name="autox" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
@@ -778,6 +779,7 @@ HTML
 		my $logx= "";
 		my $logy= "";
 		my $global="";
+		my $hybrid="";
 		my $R1 = "";
 		my $R2= "";
 		my $err = "";
@@ -806,6 +808,7 @@ HTML
 		       $ssz		      = "--SymbSize={$v.Str} " if $k eq any(<SymbSize ssz>);
 		       $username   	      = $v.Str     if $k eq "username";
 		       $global      	      = "--global" if $k eq any(<global g>)  and $v eq any("yes",1);
+		       $hybrid      	      = "--hybrid" if $k eq any(<hybrid mixed>)  and $v eq any("yes",1);
 		       $autox      	      = "--autox"  if $k eq any(<autox auto-x ax>)  and $v eq any("yes",1);
 		       $autoy      	      = "--autoy"  if $k eq any(<autoy auto-y ay>)  and $v eq any("yes",1);
 		       $autoxy     	      = "--autoxy" if $k eq any(<autoxy auto-xy axy>) and $v eq any("yes",1);
@@ -843,7 +846,7 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit $function $filename $global $hybrid $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   #		   my $log="/tmp/ofe.log".IO.slurp if "/tmp/ofe.log".IO.e;
 		   #		   "/tmp/ofe.log".IO.spurt: $log ~ "\n$txt\n";
 
@@ -852,7 +855,7 @@ HTML
 		   #		   "/tmp/run.log".IO.spurt: $txt;
 		}
 		 else {
-		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		    $txt = "onefite fit $filename $global $hybrid $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		    $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
@@ -1147,7 +1150,7 @@ multi MAIN  ('fit',
    	Bool :ly(:logy(:log-y(:ylog(:$linlog)))),
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
    	Bool :g(:$global) is copy,
-   	Bool :$hybrid = False,
+   	Bool :$hybrid = False, #= hybrid fit
 	Str  :fi(:$fit-if) = "",
 	Str  :pi(:$plot-if) = "",
 	Str  :sf(:$sef-R1-file) = "",
