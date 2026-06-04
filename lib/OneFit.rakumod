@@ -329,7 +329,7 @@ class Engine is export {
 
 			my $file = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc";
 			try {
-				my $MAX = .IO.slurp.match(
+				my $MAX = $file.IO.slurp.match(
 					/'MNI=' $<MNI> = [\s+]/
 				).Num;
 			}
