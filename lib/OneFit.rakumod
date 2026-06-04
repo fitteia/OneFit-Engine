@@ -331,9 +331,9 @@ class Engine is export {
 			my $MAX=0;
 			try {
 				my $m =  $file.IO.slurp.match(
-					/'MNI=' $<MNI> = [\d+]/
+					/'MNI=' $<MNI> = (\d+)/
 				);
-				$MAX = $m.Num;
+				$MAX = $m<MNI>.Num;
 			}
 			if $! { say $file, " ", $file.IO.e }
 			if $MAX.Num < ($nblocks - 1) * @hybrid-keys.elems + $npars {
