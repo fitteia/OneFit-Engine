@@ -328,8 +328,9 @@ class Engine is export {
 			my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
 
 			my $file = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc";
+			my $MAX=0;
 			try {
-				my $MAX = $file.IO.slurp.match(
+				$MAX = $file.IO.slurp.match(
 					/'MNI=' $<MNI> = [\s+]/
 				).Num;
 			}
