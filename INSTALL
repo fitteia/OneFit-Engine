@@ -298,7 +298,8 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 	);
 	"$*CWD/../minuit/minuit/d506cm.inc".IO.spurt(@d506cm-inc.join("\n") ~ "\n");
 
-	#shell "cd $*CWD/../minuit && sed -i'' -e 's/MNE=100/MNE={$minuit * 2}/; s/MNI=50/MNI=$minuit/' minuit/d506cm.inc && make install && make clean";
+	shell "cd $*CWD/../minuit && make install && make clean";
+
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
