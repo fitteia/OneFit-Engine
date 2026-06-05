@@ -98,6 +98,9 @@ multi MAIN (
 			openssl
 			hdf5
 			gnuplot
+			poppler
+			ffmpeg
+			pdftk-java
 		>;
 		my $brew-installed = shell("brew list --version",:out).out.lines(:close).map({ $_.words.head }).join(" ");
 		for @brew-packages {
@@ -186,7 +189,7 @@ sub aptpkgs () {
    	ghostscript
    	libcgi-pm-perl
    	zip
-   	pdftk
+   	pdftk-java
    	sudo
    	curl
 	jq
@@ -196,6 +199,8 @@ sub aptpkgs () {
 	debianutils
    	libssl-dev
    	hdf5-tools
+	poppler-utils
+	ffmpeg
    	tasksel
 	>
 }
