@@ -843,18 +843,20 @@ EOT
 
     	for 1 ..^ @!blocks.elems -> $b {
         	my @arr = @!blocks[$b].parameters.a;
-        	for @hybrid-keys.kv -> $i, $key {
-            	my $src = $npars + ($b - 1) * @hybrid-keys.elems + $i;
+        	if @arr.elems >= $npars {
+				for @hybrid-keys.kv -> $i, $key {
+            		my $src = $npars + ($b - 1) * @hybrid-keys.elems + $i;
 
-				#		say $key, " " , $src, " ", @arr[$key], " " , @arr[$src];
-            	my $name = @arr[$key]<name>;
+					#		say $key, " " , $src, " ", @arr[$key], " " , @arr[$src];
+            		my $name = @arr[$key]<name>;
 
-            	@arr[$key] = @arr[$src].clone;
-            	@arr[$key]<name> = $name;
-				# say @arr[$key];
-        	}
-			# say @arr;
-        	@!blocks[$b].parameters.a( $clean ?? @arr.head($npars) !! @arr );
+            		@arr[$key] = @arr[$src].clone;
+            		@arr[$key]<name> = $name;
+					# say @arr[$key];
+        		}
+				# say @arr;
+        		@!blocks[$b].parameters.a( $clean ?? @arr.head($npars) !! @arr );
+			}
     	}
 		for 0 ..^@!blocks { @!par-tables[$_]=@!blocks[$_].parameters }
     	self
