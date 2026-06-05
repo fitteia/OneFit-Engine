@@ -213,9 +213,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid] [--mp4|mpeg4]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid] [--mp4|mpeg4]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -1166,6 +1166,7 @@ multi MAIN  ('fit',
 	Bool :ar(:$archive) = False, #= add log entry and archive data
 	Bool :eb(:error-bars(:$errorbars)) = False, #= set errorbars
 	Bool :q(:$quiet) = False,
+	Bool :mp4(:$mpeg4) = False, #= create a mpeg4 video with All.pdf
 	Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
 	Int	 :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
@@ -1311,6 +1312,7 @@ MSG
 	$engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
+	shell "cd $work-folder/$name && { ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf";
 	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
  	exit;
@@ -1334,6 +1336,7 @@ multi MAIN  ('fit',
 	 Bool :e(:$export) = False, #= extract data from json file and create alias for the json fitting function
 	 Bool :eb(:error-bars(:$errorbars)) = False,
 	 Bool :q(:$quiet) = False,
+	 Bool :mp4(:$mpeg4) = False,
 	 Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :da(:define-alias(:$dali)) ="",
@@ -1472,6 +1475,7 @@ MSG
     zip-fit($engine,$work-folder,$name);
     shell "mv $name.zip $zip-to" unless $name eq $zip-to;
 	
+	shell "cd $work-folder/$name && { ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf";
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
  	exit;

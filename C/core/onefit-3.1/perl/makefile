@@ -20,6 +20,8 @@ clean:
 install-pcop: 
 	install -d $(BINDIR)
 	install -m 0755 pcop $(BINDIR)
+	install -m 0755 pdf2mp4 $(BINDIR)
+
 install: 
 	rm -f *~ *.flc
 	install -d $(PERLDIR)
