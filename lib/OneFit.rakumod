@@ -719,7 +719,7 @@ EOT
     }
 
     method !results ( :$fmt = ', ',  :$R2 = False, :$hybrid = False) {
-		self!adjust-parameters( :clean ) if $hybrid;
+		self!adjust-parameters() if $hybrid;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
@@ -858,6 +858,7 @@ EOT
 				# say @arr;
         		@!blocks[$b].parameters.a( $clean ?? @arr.head($npars) !! @arr );
 			}
+        	@!blocks.head.parameters.a( $clean ?? @arr.head($npars) !! @arr );
     	}
 		for 0 ..^@!blocks { @!par-tables[$_]=@!blocks[$_].parameters }
     	self
