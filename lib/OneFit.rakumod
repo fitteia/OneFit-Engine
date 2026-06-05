@@ -836,7 +836,7 @@ EOT
 		return "tchi2 = $chi2, tnpts = $npts, nfps = $nfps"
 	}
 
-	method !adjust-parameters ( :$clean ) {
+	method !adjust-parameters ( Bool :$clean = False ) {
     	my $n-main-pars = %!engine<Parameters>.split(/\s* ',' \s*/).elems;
     	my @pars = %!engine<Parameters-tmp>.split(/\s* ',' \s*/);
     	my $npars = @pars.elems;
