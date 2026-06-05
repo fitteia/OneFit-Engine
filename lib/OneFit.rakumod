@@ -719,7 +719,7 @@ EOT
     }
 
     method !results ( :$fmt = ', ',  :$R2 = False, :$hybrid = False) {
-		self!adjust-parameters() if $hybrid;
+		self!adjust-parameters( :clean ) if $hybrid;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
