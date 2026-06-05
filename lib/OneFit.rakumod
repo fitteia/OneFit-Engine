@@ -836,7 +836,7 @@ EOT
 		return "tchi2 = $chi2, tnpts = $npts, nfps = $nfps"
 	}
 
-	method !adjust-parameters () {
+	method !adjust-parameters ( :$clean ) {
     	my @pars = %!engine<Parameters-tmp>.split(/\s* ',' \s*/);
     	my $npars = @pars.elems;
     	my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
@@ -854,7 +854,7 @@ EOT
 				# say @arr[$key];
         	}
 			# say @arr;
-        	@!blocks[$b].parameters.a(@arr);
+        	@!blocks[$b].parameters.a( $clean ?? @arr.head($npars) !! @arr );
     	}
 		for 0 ..^@!blocks { @!par-tables[$_]=@!blocks[$_].parameters }
     	self
