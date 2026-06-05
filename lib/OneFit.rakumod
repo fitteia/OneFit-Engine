@@ -837,13 +837,14 @@ EOT
 	}
 
 	method !adjust-parameters ( :$clean ) {
+    	my $n-main-pars = %!engine<Parameters>.split(/\s* ',' \s*/).elems;
     	my @pars = %!engine<Parameters-tmp>.split(/\s* ',' \s*/);
     	my $npars = @pars.elems;
     	my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
 
     	for 1 ..^ @!blocks.elems -> $b {
         	my @arr = @!blocks[$b].parameters.a;
-        	if @arr.elems >= $npars {
+        	if @arr.elems >= $n-main-pars {
 				for @hybrid-keys.kv -> $i, $key {
             		my $src = $npars + ($b - 1) * @hybrid-keys.elems + $i;
 
