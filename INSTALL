@@ -309,7 +309,12 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 }
 
 sub uninstall () {
-   	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
+   	my $target = "/opt/homebrew/bin/onefite".IO.resolve;
+	for "/opt/homebrew/bin".IO.dir(:test(*.l)) -> $f {
+    	say $f.basename if $f.resolve eq $target;
+	}
+	exit(2);
+	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
    	my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
    	for @binaries.splice(1,@binaries.elems-2).push('pcop') {
