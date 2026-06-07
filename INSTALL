@@ -744,9 +744,11 @@ sub create-alias ($alias) {
 	if $alias {
 		my @lns = $alias.split(/\s+ | ',' | ';'/).map(
 			{
-				$_ = "ln -s onefite $_"	
+				"ln -s onefite $_"	
 			}
 		);
-		shell("cd /usr/local/bin && { @lns.join(' ') }") 
+		my $ln = @lns.join(" && ");
+		note "===> In /usr/local/bin, create aliases: $ln";
+		shell("cd /usr/local/bin && $ln") 
 	}
 }
