@@ -747,13 +747,8 @@ sub is-sys-summary() {
 
 sub create-alias ($alias) {
 	if $alias {
-		my @lns = $alias.split(/\s+ | ',' | ';'/).map(
-			{
-				"$SUDO ln -s onefite $_"	
-			}
-		);
-		my $ln = @lns.join(" && ");
-		note "===> Create, in /usr/local/bin, aliases: $ln";
-		shell("cd /usr/local/bin && $ln") 
+		for $alias.split(/\s+ | ',' | ';'/) -> $f {
+			shell("$SUDO ln -s onefite $_", cwd => "/usr/local/bin") unless "/usr/local/bin/$_".IO.e;	
+		}
 	}
 }
