@@ -38,6 +38,7 @@ multi MAIN (
    	Int  :$shell-port = 8100, #= shellinabox service port
   	Str  :b(:$bindir) = "$*CWD/../bin", #= choose /home/<user>/bin if you want and make sure it is included in the PATH
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
+	Str :$alias = "" #= create onefite alias. ex: onefit, ofe, of ...
 	){
  
 	my $system = is-sys-summary();
@@ -150,6 +151,7 @@ multi MAIN (
 
 	install-manpage(macos => $macos) if $man-page;
 
+	create-alias( $alias );
 }
 
 #|(onefite INSTALL help)
@@ -736,4 +738,15 @@ sub is-sys-summary() {
         return "debian-pure";
     }
     return "Not Debian or macOS (no classification).";
+}
+
+sub create-alias ($alias) {
+	if $alias {
+		my @lns = @$alias.split(/\s+ | ',' | ';'/).map(
+			{
+				$_ = "ln -s onefite $_"	
+			}
+		);
+		shell("cd /usr/local/bin && { @lns.join(' ') }") 
+	}
 }
