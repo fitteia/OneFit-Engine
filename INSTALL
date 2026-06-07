@@ -744,11 +744,11 @@ sub create-alias ($alias) {
 	if $alias {
 		my @lns = $alias.split(/\s+ | ',' | ';'/).map(
 			{
-				"ln -s onefite $_"	
+				"$SUDO ln -s onefite $_"	
 			}
 		);
 		my $ln = @lns.join(" && ");
 		note "===> Create, in /usr/local/bin, aliases: $ln";
-		shell("$SUDO cd /usr/local/bin && $ln") 
+		shell("cd /usr/local/bin && $ln") 
 	}
 }
