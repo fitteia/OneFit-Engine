@@ -309,8 +309,8 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 }
 
 sub uninstall () {
-   	my $target = "/opt/homebrew/bin/onefite".IO.resolve;
-	for "/opt/homebrew/bin".IO.dir(:test(*.l)) -> $f {
+   	my $target = "/usr/local/bin/onefite".IO.resolve;
+	for "/usr/local/bin".IO.dir(:test(*.l)) -> $f {
     	say $f.basename if $f.resolve eq $target;
 	}
 	exit(2);
