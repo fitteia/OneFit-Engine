@@ -310,7 +310,9 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 
 sub uninstall () {
    	my $target = "/usr/local/bin/onefite".IO.resolve;
-	for "/usr/local/bin".IO.dir(:test(*.IO.l)) -> $f {
+	say $target;
+	for "/usr/local/bin".IO.dir( test=>{ .IO.l} ) -> $f {
+		say $f;
     	say $f.basename if $f.resolve eq $target;
 	}
 	exit(2);
@@ -748,7 +750,7 @@ sub is-sys-summary() {
 sub create-alias ($alias) {
 	if $alias {
 		for $alias.split(/\s+ | ',' | ';'/) -> $f {
-			shell("$SUDO ln -s onefite $_", cwd => "/usr/local/bin") unless "/usr/local/bin/$_".IO.e;	
+			shell("$SUDO ln -s onefite $f", cwd => "/usr/local/bin") unless "/usr/local/bin/$f".IO.e;	
 		}
 	}
 }
