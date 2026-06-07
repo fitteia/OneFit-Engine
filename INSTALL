@@ -742,7 +742,7 @@ sub is-sys-summary() {
 
 sub create-alias ($alias) {
 	if $alias {
-		my @lns = @$alias.split(/\s+ | ',' | ';'/).map(
+		my @lns = $alias.split(/\s+ | ',' | ';'/).map(
 			{
 				$_ = "ln -s onefite $_"	
 			}
