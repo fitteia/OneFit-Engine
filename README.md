@@ -84,7 +84,8 @@ mkdir ~/.raku $$ cd $_ && git clone https://github.com/ugexe/zef.git && cd zef &
 
 
 ## Installation
-	During installation, users can set the maximum number of fitting parameters with:
+
+During installation, users can set the maximum number of fitting parameters with:
 
 	INSTALL ... --minuit=###
 
@@ -95,7 +96,9 @@ mkdir ~/.raku $$ cd $_ && git clone https://github.com/ugexe/zef.git && cd zef &
 	INSTALL ... --alias "ofe onefit of"
 
 	or any other list of aliases.
-	After installation, users can also create additional shell commands at any time to simplify repetitive or routine tasks.
+	After installation, users can also create additional shell commands at any time 
+	to simplify repetitive or routine tasks.
+
 ```bash
 which ofe
 unset -f ofe
@@ -109,6 +112,7 @@ iofe() {
     ./INSTALL --no-test
     cd -
 }
+```
 
 ### Simple single user instalations
 
