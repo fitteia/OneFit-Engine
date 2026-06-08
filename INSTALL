@@ -317,7 +317,7 @@ sub uninstall () {
 			shell("$SUDO rm $f", cwd => $dir); 
 		}
 	}
-	if "$dir/onefite".IO.e { $target = "$dir/onefite".IO.resolve;
+	if "$dir/onefite".IO.e { $target = "$dir/onefite".IO.resolve }
 	for $dir.IO.dir( test => { "$dir/$_".IO.l } ) -> $f {
     	if $f.resolve eq $target {
 			note "===> removing $dir/$f....";
