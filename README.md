@@ -808,8 +808,9 @@ Usage:
 
 ### Examples
 
+```bash
 	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
-
+```
 	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
 
 	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
