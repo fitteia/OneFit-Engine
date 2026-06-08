@@ -317,7 +317,6 @@ sub uninstall () {
 			shell("$SUDO rm $f", cwd => $dir);
 		}
 	}
-	exit(2);
 
 	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
