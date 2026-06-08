@@ -232,7 +232,7 @@ Create a user account, ex: ofe
 
 	***CERN Lib Minuit***
 
-	Since version OneFit-Engine version 0.9.0, Minuit is installed from source in a OneFit-Engine parallel folder minuit OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a installed from source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in that makefile.
+	Since version OneFit-Engine version 0.9.0, Minuit is installed from source, for a maximum of 200 fitting parameters (otherwise ./INSTALL....--minuit=###) , in a OneFit-Engine parallel folder minuit OneFit-Engine/etc/OFE/default/makefile (used to compile the user defined source) is now set to work with the libminuit.a installed from source. In order to keep using the debian package version, uncomment the appropriate MINUIT tag in that makefile.
 
 	To (re-)install the cernlib packages both "INSTALL" and "onefite upgrade..." raku scripts  accept option "--cernlib"
 
