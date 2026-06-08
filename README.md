@@ -84,6 +84,31 @@ mkdir ~/.raku $$ cd $_ && git clone https://github.com/ugexe/zef.git && cd zef &
 
 
 ## Installation
+	During installation, users can set the maximum number of fitting parameters with:
+
+	INSTALL ... --minuit=###
+
+	The default value is 200.
+
+	Aliases for the default onefite program name can be defined during installation with:
+
+	INSTALL ... --alias "ofe onefit of"
+
+	or any other list of aliases.
+	After installation, users can also create additional shell commands at any time to simplify repetitive or routine tasks.
+```bash
+which ofe
+unset -f ofe
+ofe() { command onefite "$@"; }
+
+which iofe
+unset -f iofe
+onefiteSrcPath="$(onefite path --src 2>/dev/null)"
+iofe() {
+    cd "$onefiteSrcPath"
+    ./INSTALL --no-test
+    cd -
+}
 
 ### Simple single user instalations
 
