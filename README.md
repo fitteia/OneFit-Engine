@@ -806,7 +806,7 @@ Usage:
     "f(x,p1: 2, p2=0.3, p3[5<10]) :[-5;5]=p1*exp(-p2*x)*sin(2*pi*x/p3)" p1 is initialized to 1, p2 is fixed to 2 p3 will be in the range 5 to 10
 ```
 
-###Examples
+### Examples
 
            onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
            onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
