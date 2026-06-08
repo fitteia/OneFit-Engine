@@ -808,56 +808,89 @@ Usage:
 
 ### Examples
 
-onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
-onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
-onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
+	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
 
-onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --individual
-onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --global
-onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --hybrid --mp4
+	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
 
-onefite fit "#2exp" file.hdf5 --autox --logx --autoy --hybrid --mp4 --save-to=file.json
-onefite fit file.json --autox --logx --autoy --hybrid --mp4 --save-to=file.json
+	onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
 
-onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
-onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
-onefite fit "a: 1exp" file.txt --autox --logx --autoy
-onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
-onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
-onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
+	onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --individual
 
-onefite fit "#1exp" file.txt --autox --logx --autoy
+	onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --global
 
-onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
+	onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --hybrid --mp4
 
-onefite fit "y(x,a,b) = a + b*x" file.dat
-onefite fit "y[0<1](x[-1<1],a:1,b=2) = a + b*x" file.dat
-onefite fit "y[0<1](x[-1<1],a:1[-1<1],b:0.1[-2<2]) = a + b*x" file.dat "--#a=0.0..." --#x"[0<2]"
-onefite fit "y[0<1](x[-1<1],a:1[-1<1],b:0.1[-2<2]) = a + b*x" file.dat "--#a=0.0[0<2]" "--#y[0<2]"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="1.0"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="x10/100"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10x"
+	onefite fit "#2exp" file.hdf5 --autox --logx --autoy --hybrid --mp4 --save-to=file.json
 
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="1%"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="std"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="standard deviation"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="std split at 5"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="1% avg"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="1% average"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10% avg split at 10.5" --cols="a,b,b+1"
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1
-onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --reduced-chi2
-onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
-onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global + individual_*x" files*.dat --no-parallel
-onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global + individual_*x" files*.dat
-onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global + individual_*x" files*.dat --workers=2
-onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
+	onefite fit file.json --autox --logx --autoy --hybrid --mp4 --save-to=file.json
 
-onefite archive --fit last
-onefite archive -f last-1 --rchi2
-onefite log -f 2 --ro 1
-onefite log --fit=5 --save-to=trash.json
+	onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
+
+	onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
+
+	onefite fit "a: 1exp" file.txt --autox --logx --autoy
+
+	onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
+
+	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
+	
+	onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
+
+	onefite fit "#1exp" file.txt --autox --logx --autoy
+
+	onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat
+
+	onefite fit "y[0<1](x[-1<1],a:1,b=2) = a + b*x" file.dat
+
+	onefite fit "y[0<1](x[-1<1],a:1[-1<1],b:0.1[-2<2]) = a + b*x" file.dat "--#a=0.0..." --#x"[0<2]"
+	
+	onefite fit "y[0<1](x[-1<1],a:1[-1<1],b:0.1[-2<2]) = a + b*x" file.dat "--#a=0.0[0<2]" "--#y[0<2]"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="1.0"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="x10/100"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10x"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="1%"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="std"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="standard deviation"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="std split at 5"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="1% avg"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="1% average"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10% avg split at 10.5" --cols="a,b,b+1"
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1
+
+	onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --reduced-chi2
+
+	onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
+
+	onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global + individual_*x" files*.dat --no-parallel
+
+	onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global + individual_*x" files*.dat
+
+	onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global + individual_*x" files*.dat --workers=2
+
+	onefite fit "y(x,a,b) = a + b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
+
+	onefite archive --fit last
+
+	onefite archive -f last-1 --rchi2
+
+	onefite log -f 2 --ro 1
+
+	onefite log --fit=5 --save-to=trash.json
 
 
 
