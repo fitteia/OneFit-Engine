@@ -309,15 +309,23 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 }
 
 sub uninstall () {
-   	my $target = "/usr/local/bin/onefite".IO.resolve;
 	my $dir = "/usr/local/bin";
+   	my $target = "$dir/onefite".IO.resolve;
 	for $dir.IO.dir( test => { "$dir/$_".IO.l } ) -> $f {
     	if $f.resolve eq $target {
 			note "===> removing $dir/$f....";
-			shell("$SUDO rm $f", cwd => $dir);
+			shell("$SUDO rm $f", cwd => $dir); 
+		}
+	}
+	if "$dir/onefite".IO.e { $target = "$dir/onefite".IO.resolve;
+	for $dir.IO.dir( test => { "$dir/$_".IO.l } ) -> $f {
+    	if $f.resolve eq $target {
+			note "===> removing $dir/$f....";
+			shell("$SUDO rm $f", cwd => $dir); 
 		}
 	}
 	exit(2);
+
 	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
    	my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
