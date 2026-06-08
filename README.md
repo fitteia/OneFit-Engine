@@ -249,7 +249,7 @@ Create a user account, ex: ofe
 
 OFE provides a reasonable level of parallelization, particularly when performing individual fits.
 
-In the case of MIXED (hybrid) fits—where some model parameters are obtained from a global χ² minimization target and others are obtained from individual data set χ² minimizations—OFE offers a second level of parallelization. The performance depends on the number of available CPU cores. The user can control the level of parallelization using the --workers=Int option, or disable parallelization with the --no-parallel option.
+In the case of MIXED fits—where some model parameters are obtained from a global χ² minimization target and others are obtained from individual data set χ² minimizations—OFE offers a second level of parallelization. The performance depends on the number of available CPU cores. The user can control the level of parallelization using the --workers=Int option, or disable parallelization with the --no-parallel option.
 
 Some MIXED fits can become I/O-intensive. In such cases, it is beneficial to perform the fits on a RAM disk. For Debian/Ubuntu, WSL (Debian), and macOS setups using Colima/Docker/Debian, a RAM-backed filesystem is typically available at /dev/shm .
 
@@ -333,29 +333,39 @@ service shellinabox stop
 
  **Usage:**
 
-	./INSTALL [-h|--help]\
-      	./INSTALL [--dpkg] [--cpu] [-c|--compile] [-t|--test] [-i|--install] [-p|--inline-perl5] [-g|--enable-gs]\ 
-                [-w|--web-server] [-U|--Uninstall] [--to-site] [--bindir=<Str>] [--systemd-daemon] [-u|--to-user]\ 
-    	--dpkg         # to install required debian packages\
-    	--web-server   # to run tasksel install web-server\
-    	--cpu          # cpu [amd64|arm64] defaults to automatic detection based on "uname -a"\
-    	--compile      # to comlipe and install the OneFit engine core (use [-/c|--no-c|--/compile|--no-compile] to skip compiling)\
-    	--test         # to run raku module tests (use [--/test|--no-test] to avoid test fase)\
-    	--install      # to install OneFit-Engine as a raku modules available to all users\
-    	--Uninstall    # to uninstall: use together with --to-site or --no-to-site\
-    	--p6-modules   # to install raku module Inline::Perl5\
-    	--enable-gs    # enable ghostsript in ImageMagick policy.xml\
-    	--to-site      # by default install raku module to site (use [--/to-site|--no-to-site] otherwise\
-    	--to-user      # to install raku module to user ( sets --no-to-site --no-web-server --no-enable-gs  --no-dpkg)\
-    	--bindir       # defaults to /home/ofe/public_html/../bin (use --bindir=/$HOME/bin to set another folder for binaries)\
-    	--systemd-daemon # to create and start the onefite daemon service\
-    	--cernlib      # by default it will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings\
-    	--git          # by default it runs git pull. Use --no-git to avoid git pull \
-    	--ip = '*'     # creates the onefite.service for all IPv4 interfaces\
-    	--port = 8142  # onefite web service service port defaults to 8142\
-    	--merge-site=<Str> # merge git site files with git main/dev files when updating\
-		 
-    	negated options:\
+	./INSTALL [--dpkg] [-w|--web-server] [--cpu=<Str>] [-c|--compile] [-t|--test] [-i|--install] [-U|--Uninstall] [-p|--p6-modules] [-g|--enable-gs] [-s|--to-site] [-u|--to-user] [-d|--systemd-daemon] [--cernlib] [--shell] [--git] [--wsl] [--macos] [--docker] [--post-test] [--man-page] [--ip=<Str>] [--port[=Int]] [--minuit[=Int]] [--shell-port[=Int]] [-b|--bindir=<Str>] [-m|--merge-with|--merge-from|--merge-site=<Str>] -- onefite INSTALL script
+  	./INSTALL help -- onefite INSTALL help
+  	./INSTALL [-h|--help] -- onefite INSTALL help
+  
+    	--dpkg                                             to install required debian packages [default: True]
+    	-w|--web-server                                    to run tasksel install web-server [default: True]
+    	--cpu=<Str>                                        [amd64|arm64| defaults to "uname -a" detection
+    	-c|--compile                                       to compile and install the OneFit engine core [default: True]
+    	-t|--test                                          to run raku module tests [default: True]
+    	-i|--install                                       to install OneFit-Engine as a raku modules available to all users [default: True]
+    	-U|--Uninstall                                     to uninstall OneFit-Engine module [default: False]
+    	-p|--p6-modules                                    attempt to install raku module Inline::Perl5 [default: True]
+    	-g|--enable-gs                                     enable ghostscript in ImageMagick policy.xml [default: True]
+    	-s|--to-site                                       install raku module to site (use --/to-site to install-to user) [default: True]
+    	-u|--to-user                                       if True --/dpkg -/w -/g --no-to-site [default: False]
+    	-d|--systemd-daemon                                if true runs sudo systemctl start onefite (or sudo service onefite start) [default: False]
+    	--cernlib                                          by default it NOT will not install the cernlib packages (Later the user has to modify the ./OneFit-Engine/etc/OFE/default/makefile MINUIT variable settings [default: False]
+    	--shell                                            by default it NOT will install shellinabox service in port 8100 [default: False]
+    	--git                                              By default it runs git to pull the package for remote repository [default: True]
+    	--wsl                                              Flag for a WSL2 Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg ) [default: False]
+    	--macos                                            Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg ) [default: False]
+    	--docker                                           Flag for a Docker Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg ) [default: False]
+    	--post-test                                        Run post install tests [default: True]
+    	--man-page                                         Install man page [default: True]
+    	--ip=<Str>                                         accept access from IP [default: '*']
+    	--port[=Int]                                       onefite service port [default: 8142]
+    	--minuit[=Int]                                     Minuit maximum number of parameters: defualt=50 [default: 200]
+    	--shell-port[=Int]                                 shellinabox service port [default: 8100]
+    	-b|--bindir=<Str>                                  choose /home/<user>/bin if you want and make sure it is included in the PATH [default: '/Users/pedros/Downl…']
+    	-m|--merge-with|--merge-from|--merge-site=<Str>    if merge string then merge site branch (it it exits) into current branch [default: '']
+    	-h|--help                                          help
+   	
+		negated options:\
     	ex: use [-/c|--/compile]  or [--no-c|--no-compile] to negate option compile\
 
 
@@ -648,6 +658,7 @@ onefite upgrade -systemd-daemon --merge-site=site
 ## Usage
 
 ```bash
+Usage:
   onefite [-h|--help] -- Get onefite usage help
   onefite [--man] -- Get onefite man page
   onefite archive [-f|--fit=<Str>] [--<_>=...] -- Show archive log
@@ -658,10 +669,10 @@ onefite upgrade -systemd-daemon --merge-site=site
   onefite list models [-q|--quiet] -- Get onefite library models list
   onefite list aliases [-q|--quiet] -- Get onefite library models aliases list
   onefite convert <input-file> <output-file> [--wf|--work-folder=<Str>] -- onefite convert sav <-> json files
-  onefite path [-s|--src] [-t] [-e|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--ar|--archive] [--log] [-a|--aliases] -- Get onefite paths to src, etc
+  onefite path [-s|--src] [-t] [--exa|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--ar|--archive] [--log] [-a|--aliases] -- Get onefite paths to src, etc
   onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--cernlib] [--shell] [--git] [--shell-port[=Int]] [--ip=<Str>] [--wsl] [--macos] [--docker] [-p|--port[=Int]] [--test] [--apt|--apt-get|--dpkg] [-m|--merge-from|--merge-with|--merge-site=<Str>] -- onefite upgrade
   onefite uninstall -- onefite uninstall
-  onefite service start [-d|--systemd-daemon] [--ip=<Str>] [-p|--port[=Int]] -- onefite web service start
+  onefite service start [-d|--systemd-daemon] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--ip=<Str>] [-p|--port[=Int]] -- onefite web service start
   onefite service stop -- onefite web service stop
   onefite service log -- onefite web service log
   onefite service PID -- get onefite service PID
@@ -672,79 +683,86 @@ onefite upgrade -systemd-daemon --merge-site=site
   onefite start-engine [--np|--no-plot] [-q|--quiet] [--wf|--work-folder=<Str>]
   onefite create <function> [<data-files> ...] [--dl|--data-label|--data-labels=<Str>] [--fm|--fit-methods=<Str>] [-t|--tags=<Str>] [--ax|--auto-x|--autox] [--ay|--auto-y|--autoy] [--axy|--auto-xy|--autoxy] [--lx|--logx|--log-x|--xlog|--loglin] [--ly|--logy|--log-y|--ylog|--linlog] [--lxy|--logxy|--log-xy|--xylog|--loglog] [-g|--global] [--ist-ffc-Mz|--ist-ffc] [--fi|--fit-if=<Str>] [--pi|--plot-if=<Str>] [--sf|--sef-R1-file=<Str>] [-r|--range=<Str>] [--R1] [--gfilt[=Int]] [--se|--set-err|--err=<Str>] [--SymbSize|--ssz[=Str where { ... }]] [--st|--save-to|--to=<Str>] [--wf|--work-folder=<Str>] [-n|--Num|--npts[=Int]] [-q|--quiet] [--ac|--AC|--AuxCode|--auxcode|--aux-code=<Str>] [--<_>=...] -- onefite create a json file from cmd line
   onefite random <function> [<data-files> ...] [--dl|--data-label|--data-labels=<Str>] [-t|--tags=<Str>] [--zt|--zip-to=<Str>] [--inp|--no-plot] [--ax|--auto-x|--autox] [--ay|--auto-y|--autoy] [--axy|--auto-xy|--autoxy] [--lx|--logx|--log-x|--xlog|--loglin] [--ly|--logy|--log-y|--ylog|--linlog] [--lxy|--logxy|--log-xy|--xylog|--loglog] [-g|--global] [--st|--to|--save-to=<Str>] [--wf|--work-folder=<Str>] [-n|--Num|--npts[=Int]] [-q|--quiet]
-  onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fm|--fit-methods=<Str>] [-t|--tags=<Str>] [--zt|--zip-to=<Str>] [--np|--no-plot] [--ax|--auto-x|--autox] [--ay|--auto-y|--autoy] [--axy|--auto-xy|--autoxy] [--lx|--logx|--log-x|--xlog|--loglin] [--ly|--logy|--log-y|--ylog|--linlog] [--lxy|--logxy|--log-xy|--xylog|--loglog] [-g|--global] [--fi|--fit-if=<Str>] [--pi|--plot-if=<Str>] [--sf|--sef-R1-file=<Str>] [-r|--range=<Str>] [--R1] [--rc|--rchi2|--reduced-chi2] [--gfilt[=Int]] [--se|--set-err|--err=<Str>] [--SymbSize|--ssz[=Str where { ... }]] [--st|--save-to=<Str>] [--wf|--work-folder=<Str>] [-n|-N|--Num|--npts[=Int]] [--ar|--archive] [--eb|--errorbars] [-q|--quiet] [--da|--define-alias|--dali=<Str>] [--ac|--AC|--AuxCode|--auxcode|--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--pc|--print-cols|--print-columns|--cols=<Str>] [--pco|--pearson-correlation|--R2] [--<_>=...]
-  onefite fit <input-file> [--fm|--fit-methods=<Str>] [--np|--no-plot] [--ax|--auto-x|--autox] [--ay|--auto-y|--autoy] [--axy|--auto-xy|--autoxy] [--lx|--logx|--log-x|--xlog|--loglin] [--ly|--logy|--log-y|--ylog|--linlog] [--lxy|--logxy|--log-xy|--xylog|--loglog] [--st|--save-to|--to=<Str>] [--rc|--rchi2|--reduced-chi2] [--zt|--zip-to=<Str>] [--wf|--work-folder=<Str>] [-n|-N|--Num|--npts[=Int]] [-e|--export] [--eb|--errorbars] [-q|--quiet] [--ro|--remove-outliers=<Str>] [--da|--define-alias|--dali=<Str>] [--ar|--archive] [--pc|--print-cols|--print-columns|--cols=<Str>] [--pco|--pearson-correlation|--R2] [--<_>=...]
+  onefite fit <function> [<data-files> ...] [--data-label|--data-labels=<Str>] [--fm|--fit-methods=<Str>] [-t|--tags=<Str>] [--zt|--zip-to=<Str>] [--np|--no-plot] [--ax|--auto-x|--autox] [--ay|--auto-y|--autoy] [--axy|--auto-xy|--autoxy] [--lx|--logx|--log-x|--xlog|--loglin] [--ly|--logy|--log-y|--ylog|--linlog] [--lxy|--logxy|--log-xy|--xylog|--loglog] [-g|--global] [--hybrid] [--fi|--fit-if=<Str>] [--pi|--plot-if=<Str>] [--sf|--sef-R1-file=<Str>] [-r|--range=<Str>] [--R1] [--rc|--rchi2|--reduced-chi2] [--gfilt[=Int]] [--se|--set-err|--err=<Str>] [--SymbSize|--ssz[=Str where { ... }]] [--st|--save-to=<Str>] [--wf|--work-folder=<Str>] [-n|--num|-N|--Num|--npts[=Int]] [--ar|--archive] [--eb|--error-bars|--errorbars] [-q|--quiet] [--mp4|--mpeg4] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--parallel] [--workers[=Int]] [--da|--define-alias|--dali=<Str>] [--ac|--AC|--AuxCode|--auxcode|--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--pc|--prco|--print-cols|--print-columns|--cols=<Str>] [--pco|--peco|--pearson-correlation|--R2] [--<_>=...]
+  onefite fit <input-file> [--fm|--fit-methods=<Str>] [--np|--no-plot] [--ax|--auto-x|--autox] [--ay|--auto-y|--autoy] [--axy|--auto-xy|--autoxy] [--lx|--logx|--log-x|--xlog|--loglin] [--ly|--logy|--log-y|--ylog|--linlog] [--lxy|--logxy|--log-xy|--xylog|--loglog] [--st|--save-to|--to=<Str>] [--rc|--rchi2|--reduced-chi2] [--zt|--zip-to=<Str>] [--wf|--work-folder=<Str>] [-n|--num|-N|--Num|--npts[=Int]] [-e|--export] [--eb|--error-bars|--errorbars] [-q|--quiet] [--mp4|--mpeg4] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--ro|--remove-outliers=<Str>] [--da|--define-alias|--dali=<Str>] [--ar|--archive] [--pc|--prco|--print-cols|--print-columns|--cols=<Str>] [--pco|--peco|--pearson-correlation|--R2] [-g|--global] [--hybrid] [-i|--individual] [--parallel] [--workers[=Int]] [--<_>=...]
   onefite plot <input-file> [--ax|--auto-x|--autox] [--ay|--auto-y|--autoy] [--axy|--auto-xy|--autoxy] [--lx|--logx|--log-x|--xlog|--loglin] [--ly|--logy|--log-y|--ylog|--linlog] [--lxy|--logxy|--log-xy|--xylog|--loglog] [--wf|--work-folder=<Str>] [-n|-N|--Num|--npts[=Int]]
   onefite test list
   onefite test [<arr> ...] [-d|--systemd-daemon] [-p|--post-install] [--verbose|-v]
   onefite [-v|--version]
-```
-    -h|--help                                          help option true by default
-    --man                                              generate man page standar output [default: False]
-    -f|--fit=<Str>                                     fit archive log entry: ex: onefite archive -f last or onefite log --fit 10 [default: '']
-    -q|--quiet                                         reduces output log info, false by default [default: False]
-    <input-file>                                       name of the file to be converted (sav or json)
-    <output-file>                                      name of the converted file (sav or json)
-    --wf|--work-folder=<Str>                           work folder for onefite convert [default: '/tmp']
-    -s|--src                                           path to src [default: False]
-    -t                                                 path to test [default: False]
-    -e|--examples                                      path to examples [default: False]
-    -b|--bin                                           path to bin [default: False]
-    -l|--lib                                           path to lib [default: False]
-    -c|-C                                              path to C code [default: False]
-    --ar|--archive                                     path to archive [default: False]
-    --log                                              path to log [default: False]
-    -u|--to-user                                       install to user [default: False]
-    -c|--compile                                       compile before install [default: True]
-    -d|--systemd-daemon                                create a sysmtemd-daemon service [default: False]
-    --cernlib                                          install cern lib instead of just minuit.a from src [default: False]
-    --shell                                            install shellinabox [default: False]
-    --git                                              By default it runs git to pull the package for remote repository [default: True]
-    --shell-port[=Int]                                 shellinabox port [default: 8100]
-    --ip=<Str>                                         set IP [default: '*']
-    --wsl                                              subset of options for a Windows Subsystem Linux [default: False]
-    --macos                                            subset of options for a MacOS native install with brew [default: False]
-    --docker                                           subset of options for a MacOS colima/docker install [default: False]
-    -p|--port[=Int]                                    onefite web service port [default: 8142]
-    --test                                             perform tests [default: False]
-    --apt|--apt-get|--dpkg                             run apt update/upgrade [default: True]
-    -m|--merge-from|--merge-with|--merge-site=<Str>    merge remote onefite main/dev branches with locl branch [default: '']
-    --ip[=Any]                                         run onefite web service in ip
-    -p|--port[=Any]                                    onefite web service port [default: 8142]
-    <model>                                            model name
-    <key>                                              model key info
-    --np|--no-plot                                     no plot
-    <function>                                         fitting function
-    --dl|--data-label|--data-labels=<Str>              data labels and values
-    --fm|--fit-methods=<Str>                           minuit fit methods [default: 'simp scan min minos']
-    -t|--tags=<Str>                                    Data blocks TAGS
-    --ax|--auto-x|--autox                              auto scale x
-    --ay|--auto-y|--autoy                              auto scale y
-    --axy|--auto-xy|--autoxy                           auto scale xy
-    --lx|--logx|--log-x|--xlog|--loglin                logaroithmic x scale
-    --ly|--logy|--log-y|--ylog|--linlog                logarithmic y scale
-    --lxy|--logxy|--log-xy|--xylog|--loglog            log log scale
-    -g|--global                                        global/individual [default: False]
-    --ist-ffc-Mz|--ist-ffc                             import Mz data from ist-ffc [default: False]
-    --fi|--fit-if=<Str>                                include fit if condition when fitting data [default: '']
-    --pi|--plot-if=<Str>                               include plot if tag condition when plotting data and fitting curves [default: '']
-    --sf|--sef-R1-file=<Str>                           use file to get freqs when importing data from Stelar sef files [default: '']
-    -r|--range=<Str>                                   define range when importing data zones form Stelar data [default: '']
-    --R1                                               import R1 and not Mz data from ist-ffc and Stelar sdf files [default: False]
-    --gfilt[=Int]                                      used a Gaussian filter to smooth data
-    --se|--set-err|--err=<Str>                         set err in data files doesn't apply to ist-ffc, sef, hdf5 data files [default: '']
-    --SymbSize|--ssz[=Str where { ... }]               set size of symbols [default: '1.0']
-    --st|--save-to|--to=<Str>                          write fit settings and results to json or sav file
-    -n|--Num|--npts[=Int]                              number of points in the theoretical curves [default: 100]
-    --ac|--AC|--AuxCode|--auxcode|--aux-code=<Str>     additional auxiliar code [default: '']
-    --zt|--zip-to=<Str>                                zip work-folder to zipfile
-    --inp|--no-plot                                    no plot in onefit random ...
-    --rc|--rchi2|--reduced-chi2                        recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom [default: False]
-    --eb|--errorbars                                   set errorbars [default: False]
-    --ro|--remove-outliers=<Str>                       remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5) [default: '']
-    --pc|--print-cols|--print-columns|--cols=<Str>     select fit-results columns by number or name or name+1 or name-1 [default: '']
-    --pco|--pearson-correlation|--R2                   Pearson correlation coefficient (quality coefficient) [default: False]
-    -p|--post-install                                  post-install [default: True]
+
+    -h|--help                                                help option true by default
+    --man                                                    generate man page standar output [default: False]
+    -f|--fit=<Str>                                           fit archive log entry: ex: onefite archive -f last or onefite log --fit 10 [default: '']
+    -q|--quiet                                               reduces output log info, false by default [default: False]
+    <input-file>                                             name of the file to be converted (sav or json)
+    <output-file>                                            name of the converted file (sav or json)
+    --wf|--work-folder=<Str>                                 work folder for onefite convert [default: '/tmp']
+    -s|--src                                                 path to src [default: False]
+    -t                                                       path to test [default: False]
+    --exa|--examples                                         path to examples [default: False]
+    -b|--bin                                                 path to bin [default: False]
+    -l|--lib                                                 path to lib [default: False]
+    -c|-C                                                    path to C code [default: False]
+    --ar|--archive                                           path to archive [default: False]
+    --log                                                    path to log [default: False]
+    -u|--to-user                                             install to user [default: False]
+    -c|--compile                                             compile before install [default: True]
+    -d|--systemd-daemon                                      create a sysmtemd-daemon service [default: False]
+    --cernlib                                                install cern lib instead of just minuit.a from src [default: False]
+    --shell                                                  install shellinabox [default: False]
+    --git                                                    By default it runs git to pull the package for remote repository [default: True]
+    --shell-port[=Int]                                       shellinabox port [default: 8100]
+    --ip=<Str>                                               set IP [default: '0.0.0.0']
+    --wsl                                                    subset of options for a Windows Subsystem Linux [default: False]
+    --macos                                                  subset of options for a MacOS native install with brew [default: False]
+    --docker                                                 subset of options for a MacOS colima/docker install [default: False]
+    -p|--port[=Int]                                          onefite web service port [default: 8142]
+    --test                                                   perform tests [default: False]
+    --apt|--apt-get|--dpkg                                   run apt update/upgrade [default: True]
+    -m|--merge-from|--merge-with|--merge-site=<Str>          merge remote onefite main/dev branches with locl branch [default: '']
+    --rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk             run service on a RAMDisk [default: False]
+    --ip[=Any]                                               run onefite web service in ip
+    -p|--port[=Any]                                          onefite web service port [default: 8142]
+    <model>                                                  model name
+    <key>                                                    model key info
+    --np|--no-plot                                           no plot
+    <function>                                               fitting function
+    --dl|--data-label|--data-labels=<Str>                    data labels and values
+    --fm|--fit-methods=<Str>                                 minuit fit methods [default: 'simp scan min minos']
+    -t|--tags=<Str>                                          Data blocks TAGS
+    --ax|--auto-x|--autox                                    auto scale x
+    --ay|--auto-y|--autoy                                    auto scale y
+    --axy|--auto-xy|--autoxy                                 auto scale xy
+    --lx|--logx|--log-x|--xlog|--loglin                      logaroithmic x scale
+    --ly|--logy|--log-y|--ylog|--linlog                      logarithmic y scale
+    --lxy|--logxy|--log-xy|--xylog|--loglog                  log log scale
+    -g|--global                                              global/individual [default: False]
+    --ist-ffc-Mz|--ist-ffc                                   import Mz data from ist-ffc [default: False]
+    --fi|--fit-if=<Str>                                      include fit if condition when fitting data [default: '']
+    --pi|--plot-if=<Str>                                     include plot if tag condition when plotting data and fitting curves [default: '']
+    --sf|--sef-R1-file=<Str>                                 use file to get freqs when importing data from Stelar sef files [default: '']
+    -r|--range=<Str>                                         define range when importing data zones form Stelar data [default: '']
+    --R1                                                     import R1 and not Mz data from ist-ffc and Stelar sdf files [default: False]
+    --gfilt[=Int]                                            used a Gaussian filter to smooth data
+    --se|--set-err|--err=<Str>                               set err in data files doesn't apply to ist-ffc, sef, hdf5 data files [default: '']
+    --SymbSize|--ssz[=Str where { ... }]                     set size of symbols [default: '1.0']
+    --st|--save-to|--to=<Str>                                write fit settings and results to json or sav file
+    -n|--Num|--npts[=Int]                                    number of points in the theoretical curves [default: 100]
+    --ac|--AC|--AuxCode|--auxcode|--aux-code=<Str>           additional auxiliar code [default: '']
+    --zt|--zip-to=<Str>                                      zip work-folder to zipfile
+    --inp|--no-plot                                          no plot in onefit random ...
+    --hybrid                                                 hybrid fit [default: False]
+    --rc|--rchi2|--reduced-chi2                              recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom [default: False]
+    --eb|--error-bars|--errorbars                            set errorbars [default: False]
+    --mp4|--mpeg4                                            create a mpeg4 video with All.pdf [default: False]
+    --parallel                                               set Env ONEFITE_NO_PARALLEL (default = 0) [default: True]
+    --workers[=Int]                                          set ENV ONEFITE_WORKERS (default = 0) [default: 0]
+    --ro|--remove-outliers=<Str>                             remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5) [default: '']
+    --pc|--prco|--print-cols|--print-columns|--cols=<Str>    select fit-results columns by number or name or name+1 or name-1 [default: '']
+    --pco|--peco|--pearson-correlation|--R2                  Pearson correlation coefficient (quality coefficient) [default: False]
+    -e|--export                                              extract data from json file and create alias for the json fitting function [default: False]
+    -i|--individual                                          forces fit to be individual [default: False]
+    -p|--post-install                                        post-install [default: True]
     <input-file>     name of the file to be converted (.sav or .json)
     <output-file>    name of the converted file (.sav or .json)
     fit-methods: simp scan min minos
@@ -757,7 +775,7 @@ onefite upgrade -systemd-daemon --merge-site=site
     "R1(f:[0;1e9], A, tau[0<1e-9])=A*tau/(1+pow(2*pi*f*tau,2.0)" f is limite to positive values up to 1e9 and tau also
     "y[-1;1](x:[0<1],a,b,c)=a + b*x + c*x*x" theoretical curves generated for x is limited to range 0 to 1; in the plot y axis will be limited to range -1 to 1
     "f(x,p1: 2, p2=0.3, p3[5<10]) :[-5;5]=p1*exp(-p2*x)*sin(2*pi*x/p3)" p1 is initialized to 1, p2 is fixed to 2 p3 will be in the range 5 to 10
-
+```
 
 
 
