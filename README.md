@@ -808,16 +808,16 @@ Usage:
 
 ### Examples
 
-           onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
-           onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
-           onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
+    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
+    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
+    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
 
-           onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --individual
-           onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --global
-           onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --hybrid --mp4
+    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --individual
+    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --global
+    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --hybrid --mp4
 
-           onefite fit "#2exp" file.hdf5 --autox --logx --autoy --hybrid --mp4 --save-to=file.json
-           onefite fit file.json --autox --logx --autoy --hybrid --mp4 --save-to=file.json
+    onefite fit "#2exp" file.hdf5 --autox --logx --autoy --hybrid --mp4 --save-to=file.json
+    onefite fit file.json --autox --logx --autoy --hybrid --mp4 --save-to=file.json
 
            onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
            onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
