@@ -752,9 +752,10 @@ sub is-sys-summary() {
 }
 
 sub create-alias ($alias) {
+   	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
 	if $alias {
 		for $alias.split(/\s+ | ',' | ';'/) -> $f {
-			shell("$SUDO ln -s onefite $f", cwd => "/usr/local/bin") unless "/usr/local/bin/$f".IO.e;	
+			shell("$SUDO ln -s $onefite-bin $f", cwd => "/usr/local/bin") unless "/usr/local/bin/$f".IO.e;	
 		}
 	}
 }
