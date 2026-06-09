@@ -1206,6 +1206,8 @@ multi MAIN  ('fit',
 		$work-folder = create-RAMDisk();
 	}
 
+	if $reduced-chi2 && $global { note "===> reduced chi2 is not implemented for a global fit" }
+
 	note "===> onefite options: { %_.keys.grep(/^<-[#]>/).map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
 	my $name = "ofe-tmp";
    	if $zip-to.Bool {
