@@ -218,7 +218,7 @@ class Engine is export {
 	my $code = Code.new.path($!path);
 	$code.cwrite(%!engine,@!blocks,@!Functions) if $w;
 	$code.compile(:quiet($quiet)) if $c;
-	%!engine<compile-log> = "compile.log".IO.slurp;
+	%!engine<compile-log> = "$!path/compile.log".IO.slurp;
 	self
     }
     
