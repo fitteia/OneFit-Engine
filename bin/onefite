@@ -249,9 +249,9 @@ onefite archive [-f||--fit=<Str>]
 
     onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --individual
     onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --global
-    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --hybrid --mp4
-	onefite fit "#2exp" file.hdf5 --autox --logx --autoy --hybrid --mp4 --save-to=file.json
-	onefite fit file.json --autox --logx --autoy --hybrid --mp4 --save-to=file.json
+    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --hybrid --mp4 --fit-methods="simp scan min"
+	onefite fit "#2exp" file.hdf5 --autox --logx --autoy --hybrid --fit-methods="simp scan min" --mp4 --save-to=file.json
+	onefite fit file.json --autox --logx --autoy --hybrid --mp4 --fit-methods="simp scan min" --save-to=file.json
 
     onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
