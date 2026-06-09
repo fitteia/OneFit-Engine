@@ -1195,7 +1195,9 @@ multi MAIN  ('fit',
 	Bool :pco(:peco(:pearson-correlation(:$R2))) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
+
 	$global = True if $hybrid;
+
 	if ( !$parallel )  { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
@@ -1205,8 +1207,6 @@ multi MAIN  ('fit',
     if $use-ramdisk {
 		$work-folder = create-RAMDisk();
 	}
-
-	if $reduced-chi2 && $global { note "===> reduced chi2 is not implemented for a global fit" }
 
 	note "===> onefite options: { %_.keys.grep(/^<-[#]>/).map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
 	my $name = "ofe-tmp";
