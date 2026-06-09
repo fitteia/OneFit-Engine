@@ -341,7 +341,7 @@ onefite archive [-f||--fit=<Str>]
 
 =begin code
 
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg] [--git]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg] [--git] [--minuit=<Int>]
 
 =end code
 
@@ -366,6 +366,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
     [--shell]      Install a web shell service (default port 8100 or --shell-port). Default False
     [--shell-port] Port number for the web shell service. Default 8100
     [--dpkg]       Run apt update by default. Use --no-dpkg otherwise
+	[--minuit=<Int>] set <Int> as the maximum number of parameters for minuit
 
     Use --/<option> or --no-<option> to negate defaults (e.g., --no-test or --/test)
 
@@ -583,14 +584,17 @@ multi MAIN ('upgrade',
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
 	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
       Int  :p(:$port) = 8142, #= onefite web service port
+      Int  :$minuit is copy = 200, #= onefite web service port
       Bool :$test = False, #= perform tests
 	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with locl branch
 ){
+	  $minuit = ::('OFE:PATH') ~ "/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni>=[\d+]/);
+	  $minuit = $<mni>.Int;
 	  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
       shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} ";
+      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit ";
 
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
