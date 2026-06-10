@@ -159,6 +159,16 @@ Clone OneFit-Engine
 ```bash
 mkdir ~/folder && cd $_ && git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && ./INSTALL  --macos
 ```
+
+Make sure zef and App::Prove6 are installed and links for them exist in /usr/local/bin.
+
+If the links are missing, or do not point to the most recente version of rakudo,
+```bash
+cd /usr/local/bin
+sudo ln -s "$(raku -e 'say $*REPO.repo-chain[1].Str.subst("inst#","")')/bin/zef"
+sudo ln -s "$(raku -e 'say $*REPO.repo-chain[1].Str.subst("inst#","")')/bin/prove6"
+```
+
 Start the OneFit-Engine service
 ```bash
 onefite service start --ip=127.0.0.1
