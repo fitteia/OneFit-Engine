@@ -337,8 +337,8 @@ class Engine is export {
 			$MAX = +$m<MNI>.Num;
 		
 			if $MAX < ($nblocks - 1) * @hybrid-keys.elems + $npars {
-				say "\nThe number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
-				say "Adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
+				say "\n===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
+				say "===> Adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
 				note "===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
 				note "===> adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
 				exit($MAX);
