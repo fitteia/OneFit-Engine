@@ -8,7 +8,8 @@ say "Compile time: ", now - $time;
 use OneFit;
 use Test;
 
-our constant OFE-PATH="/Users/pedros/Downloads/.local/OneFit-Engine";
+our constant OFE-PATH="%OFE-PATH%";
+
 my $workfolder="/tmp/OneFit-Engine-test";
 $workfolder.IO.mkdir unless $workfolder.IO.d;
 
