@@ -8,7 +8,7 @@ say "Compile time: ", now - $time;
 use OneFit;
 use Test;
 
-our constant OFE-PATH="%OFE-PATH%";
+our constant OFE-PATH="/Users/pedros/Downloads/.local/OneFit-Engine";
 my $workfolder="/tmp/OneFit-Engine-test";
 $workfolder.IO.mkdir unless $workfolder.IO.d;
 
@@ -45,7 +45,12 @@ $time = now;
 for (1 .. $eng.blocks.a.elems).race {
     shell "cd $workfolder; ./onefit-user -@fitenv$_.stp -f data$_.dat <fit$_.par >fit$_.log 2>&1";
 }
-is "$workfolder/fit1.log".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit1.log-$cpu".IO.slurp(enc => 'utf8-c8'), "individual fit 1: OK! ({ now -$time } s)";
+my $val = sprintf("%3d",$minuit);
+my $test-log =  "$test-path/7/fit1.log-$cpu".IO.slurp(enc => 'utf8-c8').subst(/'DIMENSIONS 100/ 50'/,"DIMENSIONS { $minuit*2 }/$val");
+$test-log=$test-log.subst("NDIM=  50","NDIM= $val");
+"/tmp/test-log.log".IO.spurt: $test-log, :enc<utf8-c8>;
+
+is "$workfolder/fit1.log".IO.slurp(enc => 'utf8-c8'), "/tmp/test-log.log".IO.slurp(enc => 'utf8-c8'), "individual fit 1: OK! ({ now -$time } s)";
 
 $time = now;
 $eng.parameters(:r,:from-output).agr;
@@ -56,10 +61,12 @@ for (1 .. $eng.blocks.a.elems).race {
     shell "cd $workfolder ; cp fit-residues-$_.res-tmp fit-residues-$_.res" ;
 }
 
-my $test-log =  "$test-path/7/fit40.log-$cpu".IO.slurp(enc => 'utf8-c8').subst(/'DIMENSIONS 100/ 50'/,"DIMENSIONS { $minuit*2 }/{ printf("%3d",$minuit) }");
-$test-log=$test-log.subst("NDIM=  50",printf("NDIM=%4d",$minuit));
+$val = sprintf("%3d",$minuit);
+$test-log =  "$test-path/7/fit40.log-$cpu".IO.slurp(enc => 'utf8-c8').subst(/'DIMENSIONS 100/ 50'/,"DIMENSIONS { $minuit*2 }/$val");
+$test-log=$test-log.subst("NDIM=  50","NDIM= $val");
+"/tmp/test-log.log".IO.spurt: $test-log, :enc<utf8-c8>;
 
-is "$workfolder/fit40.log".IO.slurp(enc => 'utf8-c8'), $test-log, "individual plot 40: OK! ({ now -$time } s)" ;
+is "$workfolder/fit40.log".IO.slurp(enc => 'utf8-c8'),"/tmp/test-log.log".IO.slurp(enc => 'utf8-c8'), "individual plot 40: OK! ({ now -$time } s)" ;
 
 is "$workfolder/fit19.out".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit19.out".IO.slurp(enc => 'utf8-c8'), "individual plot 19 output: OK! ({ now -$time } s)" ;
 
