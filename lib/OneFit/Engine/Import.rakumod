@@ -53,7 +53,8 @@ class Import is export {
 					return  self.import( infiles => [$name] );
 				}
 				when 'zip' {
-					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename !eq %!options<sef-R1-file> }
+					my $r1 = %!options<sef-R1-file> // '';
+					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename ne $r1 }
 					shell "unzip -jo $file";
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
