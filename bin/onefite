@@ -1337,7 +1337,7 @@ MSG
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
 	if $mpeg4 { 
-		note "===> creting All.mp4 using All.pdf";
+		note "===> creating All.mp4 using All.pdf";
 		shell "cd $work-folder/$name && { ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1";
    	}
 	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
@@ -1503,7 +1503,7 @@ MSG
     shell "mv $name.zip $zip-to" unless $name eq $zip-to;
 	
 	if $mpeg4 { 
-		note "===> creting All.mp4 using All.pdf";
+		note "===> creating All.mp4 using All.pdf";
 		shell "cd $work-folder/$name && { ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1";
    	}
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
