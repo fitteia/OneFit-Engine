@@ -12,9 +12,21 @@
     "Keeping the simple easy, making the complex feasible, and getting the impossible within reach."
 
 =NOTE
-    This man page is expected to help you take full advantage of onefite on both the server and client sides.
+	This man page is intended to help you take full advantage of onefite on both the server and client sides.
+	
+	During installation, users can set the maximum number of fitting parameters with:
 
-	After installation, users can create shell commands at any time to help with monotonous, repetitive use.
+	INSTALL ... --minuit=###
+
+	The default value is 200.
+
+	Aliases for the default onefite program name can be defined during installation with:
+
+	INSTALL ... --alias "ofe onefit of"
+
+	or any other list of aliases.
+	
+	After installation, users can create additional shell commands at any time to simplify repetitive or routine tasks.
 
 =begin code 
 	
@@ -213,9 +225,9 @@ onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [-
 =begin code :lang<bash>
 onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
+onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid] [--mp4|mpeg4]
 
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
+onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid] [--mp4|mpeg4]
 
 onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
 
@@ -234,11 +246,17 @@ onefite archive [-f||--fit=<Str>]
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
     onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
+
+    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --individual
+    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --global
+    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --hybrid --mp4 --fit-methods="simp scan min"
+	onefite fit "#2exp" file.hdf5 --autox --logx --autoy --hybrid --fit-methods="simp scan min" --mp4 --save-to=file.json
+	onefite fit file.json --autox --logx --autoy --hybrid --mp4 --fit-methods="simp scan min" --save-to=file.json
+
     onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
     onefite fit "a: 1exp" file.txt --autox --logx --autoy
     onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
-    onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
     onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
 	onefite fit "#1exp" file.txt --autox --logx --autoy
@@ -323,7 +341,7 @@ onefite archive [-f||--fit=<Str>]
 
 =begin code
 
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg] [--git]
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg] [--git] [--minuit=<Int>]
 
 =end code
 
@@ -348,6 +366,7 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str
     [--shell]      Install a web shell service (default port 8100 or --shell-port). Default False
     [--shell-port] Port number for the web shell service. Default 8100
     [--dpkg]       Run apt update by default. Use --no-dpkg otherwise
+	[--minuit=<Int>] set <Int> as the maximum number of parameters for minuit
 
     Use --/<option> or --no-<option> to negate defaults (e.g., --no-test or --/test)
 
@@ -565,14 +584,17 @@ multi MAIN ('upgrade',
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
 	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
       Int  :p(:$port) = 8142, #= onefite web service port
+      Int  :$minuit is copy, #= onefite web service port
       Bool :$test = False, #= perform tests
 	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with locl branch
 ){
+	  "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni>=[\d+]/);
+	  $minuit = $<mni>.Int unless $minuit > 0;
 	  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
       shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} ";
+      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit ";
 
       MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
@@ -670,6 +692,8 @@ multi MAIN ('start-web-engine',
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
+		       <tr><td>create mpeg4: </td><td><input name="mp4" type="radio" value="yes">/<input name="mp4" type="radio" value="no" checked="checked"></td></tr>
+		       <tr><td>hybrid fit: </td><td><input name="hybrid" type="radio" value="yes">/<input name="hybrid" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>global fit: </td><td><input name="global" type="radio" value="yes">/<input name="global" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autox: </td><td><input name="autox" type="radio" value="yes">/<input name="autox" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>autoy: </td><td><input name="autoy" type="radio" value="yes">/<input name="autoy" type="radio" value="no" checked="checked"></td></tr>
@@ -775,6 +799,8 @@ HTML
 		my $logx= "";
 		my $logy= "";
 		my $global="";
+		my $hybrid="";
+		my $mp4="";
 		my $R1 = "";
 		my $R2= "";
 		my $err = "";
@@ -803,6 +829,8 @@ HTML
 		       $ssz		      = "--SymbSize={$v.Str} " if $k eq any(<SymbSize ssz>);
 		       $username   	      = $v.Str     if $k eq "username";
 		       $global      	      = "--global" if $k eq any(<global g>)  and $v eq any("yes",1);
+		       $hybrid      	      = "--hybrid" if $k eq any(<hybrid mixed>)  and $v eq any("yes",1);
+		       $mp4      	      = "--mpeg4" if $k eq any(<mpeg4 mp4>)  and $v eq any("yes",1);
 		       $autox      	      = "--autox"  if $k eq any(<autox auto-x ax>)  and $v eq any("yes",1);
 		       $autoy      	      = "--autoy"  if $k eq any(<autoy auto-y ay>)  and $v eq any("yes",1);
 		       $autoxy     	      = "--autoxy" if $k eq any(<autoxy auto-xy axy>) and $v eq any("yes",1);
@@ -840,7 +868,7 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "onefite fit $function $filename $global $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit $function $filename $mp4 $global $hybrid $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   #		   my $log="/tmp/ofe.log".IO.slurp if "/tmp/ofe.log".IO.e;
 		   #		   "/tmp/ofe.log".IO.spurt: $log ~ "\n$txt\n";
 
@@ -849,7 +877,7 @@ HTML
 		   #		   "/tmp/run.log".IO.spurt: $txt;
 		}
 		 else {
-		    $txt = "onefite fit $filename $global $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		    $txt = "onefite fit $filename $mp4 $global $hybrid $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		    $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
@@ -1144,6 +1172,7 @@ multi MAIN  ('fit',
    	Bool :ly(:logy(:log-y(:ylog(:$linlog)))),
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
    	Bool :g(:$global) is copy,
+   	Bool :$hybrid = False, #= hybrid fit
 	Str  :fi(:$fit-if) = "",
 	Str  :pi(:$plot-if) = "",
 	Str  :sf(:$sef-R1-file) = "",
@@ -1159,6 +1188,7 @@ multi MAIN  ('fit',
 	Bool :ar(:$archive) = False, #= add log entry and archive data
 	Bool :eb(:error-bars(:$errorbars)) = False, #= set errorbars
 	Bool :q(:$quiet) = False,
+	Bool :mp4(:$mpeg4) = False, #= create a mpeg4 video with All.pdf
 	Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
 	Int	 :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
@@ -1169,6 +1199,9 @@ multi MAIN  ('fit',
 	Bool :pco(:peco(:pearson-correlation(:$R2))) = False, #= Pearson correlation coefficient (quality coefficient)
 	*%_
     ){
+
+	$global = True if $hybrid;
+
 	if ( !$parallel )  { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
@@ -1217,7 +1250,7 @@ MSG
 	$function = update-from-input-options( $function, %_, quiet => $quiet ) if %_.keys;
 
 	if $function.contains(/ 'MIXED' <ws> '=' <ws> '1'/) and !$global {
-		note "===> you are going to performa a MIXED fitting and your optcion global is False. Setting global to True";
+		note "===> you are going to performa a MIXED fitting and your option global is False. Setting global to True";
 		$global = True;
 	}
 
@@ -1237,6 +1270,7 @@ MSG
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
     try {
 		 $engine.fit(
+			:hybrid($hybrid),
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
@@ -1302,6 +1336,10 @@ MSG
 	$engine.save($save-to) if $save-to.defined;
     zip-fit($engine,$work-folder,$name) if $zip-to.Bool;
 
+	if $mpeg4 { 
+		note "===> creating All.mp4 using All.pdf";
+		shell "cd $work-folder/$name && { ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1";
+   	}
 	#    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
  	exit;
@@ -1325,18 +1363,21 @@ multi MAIN  ('fit',
 	 Bool :e(:$export) = False, #= extract data from json file and create alias for the json fitting function
 	 Bool :eb(:error-bars(:$errorbars)) = False,
 	 Bool :q(:$quiet) = False,
+	 Bool :mp4(:$mpeg4) = False,
 	 Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	 Str  :ro(:$remove-outliers) = "",
 	 Str  :da(:define-alias(:$dali)) ="",
 	 Bool :ar(:$archive) = False,
 	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
 	 Bool :pco(:peco(:pearson-correlation(:$R2))) = False, 
-	 Bool :g(:$global) = False,
+	 Bool :g(:$global) is copy = False,
+	 Bool :$hybrid = False,
 	 Bool :i(:$individual) = False, #= forces fit to be individual
      Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
 	 *%_
     ){
+	$global = True if $hybrid;
 	if ( !$parallel ) { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
 	}
@@ -1429,6 +1470,7 @@ MSG
 	$engine.Num($npts) if $npts.Bool;
     $engine.fit-methods($fit-methods // $engine.h<FitMethods> // "simp scan min minos");
     $engine.fit(
+		    :hybrid($hybrid),
 			:no-plot($no-plot),
 			:autox($autox or $autoxy),
 			:autoy($autoy or $autoxy),
@@ -1460,6 +1502,10 @@ MSG
     zip-fit($engine,$work-folder,$name);
     shell "mv $name.zip $zip-to" unless $name eq $zip-to;
 	
+	if $mpeg4 { 
+		note "===> creating All.mp4 using All.pdf";
+		shell "cd $work-folder/$name && { ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1";
+   	}
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
  	exit;
@@ -1657,8 +1703,10 @@ EOT
 sub define-alias($engine,$dali) {
 	if $dali.so {
 		my @p = $engine.h<par-tables>;
+		my $npars = $engine.h<Parameters>.split(/\s* ',' \s*/).elems;
 		my @pars;
-		for 0 ..^ @p.head.head.elems {
+		#		for 0 ..^ @p.head.head.elems {
+		for 0 ..^ $npars {
 			my $par;
 		   	if all(@p.head.head[$_]<min>, @p.head.head[$_]<max>) {
 				$par = @p.head.head[$_]<name>  

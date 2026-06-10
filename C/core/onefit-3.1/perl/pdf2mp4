@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#
+# create by chatGPT on my request
+# 2026/03/13
+
+set -euo pipefail
+
+FPS=2
+DPI=200
+
+if [ "$#" -lt 2 ]; then
+    echo "Usage: $0 output.mp4 file1.pdf [file2.pdf ...]"
+    exit 1
+fi
+
+OUT="$1"
+shift
+
+WORK=$(mktemp -d)
+IMG="$WORK/img"
+mkdir -p "$IMG"
+
+trap "rm -rf $WORK" EXIT
+
+frame=1
+
+render_pdf() {
+    pdf="$1"
+
+    stem=$(printf "%06d" "$frame")
+
+    pdftoppm \
+        -png \
+        -r "$DPI" \
+        -singlefile \
+        "$pdf" "$IMG/$stem"
+
+    frame=$((frame+1))
+}
+
+for pdf in "$@"; do
+    [ -f "$pdf" ] || { echo "Missing $pdf"; exit 1; }
+
+    pages=$(pdfinfo "$pdf" | awk '/Pages/ {print $2}')
+
+    if (( pages > 1 )); then
+        echo "Bursting $pdf ($pages pages)"
+
+        tmpdir="$WORK/burst"
+        mkdir -p "$tmpdir"
+
+        pdftk "$pdf" burst output "$tmpdir/page_%04d.pdf"
+
+        for p in "$tmpdir"/page_*.pdf; do
+            render_pdf "$p"
+        done
+
+        rm -rf "$tmpdir"
+
+    else
+        render_pdf "$pdf"
+    fi
+done
+
+ffmpeg -y \
+  -framerate "$FPS" \
+  -i "$IMG/%06d.png" \
+  -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" \
+  -c:v libx264 \
+  -pix_fmt yuv420p \
+  -movflags +faststart \
+  "$OUT"
+
+echo "Created $OUT"

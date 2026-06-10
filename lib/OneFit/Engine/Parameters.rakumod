@@ -66,7 +66,8 @@ class Parameters {
     }
     
     method table () { @!p }
-    method a () { @!p }
+    multi method a () { @!p }
+    multi method a ( @arr ) { @!p = @arr }
 
     method parfile () { $!parfile = Parfile.new.path($!path) }
 }

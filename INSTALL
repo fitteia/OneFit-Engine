@@ -34,9 +34,11 @@ multi MAIN (
 	Bool :$man-page = True; #= Install man page
    	Str  :$ip is copy = '*', #= accept access from IP
    	Int  :$port = 8142, #= onefite service port
+   	Int  :$minuit = 200, #= Minuit maximum number of parameters: defualt=50
    	Int  :$shell-port = 8100, #= shellinabox service port
   	Str  :b(:$bindir) = "$*CWD/../bin", #= choose /home/<user>/bin if you want and make sure it is included in the PATH
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
+	Str :$alias = "" #= create onefite alias. ex: onefit, ofe, of ...
 	){
  
 	my $system = is-sys-summary();
@@ -97,6 +99,9 @@ multi MAIN (
 			openssl
 			hdf5
 			gnuplot
+			poppler
+			ffmpeg
+			pdftk-java
 		>;
 		my $brew-installed = shell("brew list --version",:out).out.lines(:close).map({ $_.words.head }).join(" ");
 		for @brew-packages {
@@ -127,7 +132,7 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git ) if $compile;
+   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit ) if $compile;
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
@@ -146,6 +151,7 @@ multi MAIN (
 
 	install-manpage(macos => $macos) if $man-page;
 
+	create-alias( $alias );
 }
 
 #|(onefite INSTALL help)
@@ -185,7 +191,7 @@ sub aptpkgs () {
    	ghostscript
    	libcgi-pm-perl
    	zip
-   	pdftk
+   	pdftk-java
    	sudo
    	curl
 	jq
@@ -195,6 +201,8 @@ sub aptpkgs () {
 	debianutils
    	libssl-dev
    	hdf5-tools
+	poppler-utils
+	ffmpeg
    	tasksel
 	>
 }
@@ -275,14 +283,25 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git) {
+sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 	if $git {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
-		shell "cd $*CWD/../minuit && git pull";
+		shell "cd $*CWD/../minuit && git pull ";
 	}
-   	shell "cd $*CWD/../minuit && make install && make clean";
+	note "===> Installing Minuit for a maximum number of parameters: $minuit";
+	my @d506cm-inc="$*CWD/../minuit/minuit/d506cm.inc".IO.lines.map(
+		{ 
+			$_ ~~ /'PARAMETER' \s+ '(MNE='/ ??
+		  	"      PARAMETER (MNE={ $minuit * 2 } , MNI=$minuit)" !!
+			$_	
+		}
+	);
+	"$*CWD/../minuit/minuit/d506cm.inc".IO.spurt(@d506cm-inc.join("\n") ~ "\n");
+
+	shell "cd $*CWD/../minuit && make install && make clean";
+
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
@@ -290,7 +309,16 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git) {
 }
 
 sub uninstall () {
-   	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
+	my $dir = "/usr/local/bin";
+   	my $target = "$dir/onefite".IO.resolve;
+	for $dir.IO.dir( test => { "$dir/$_".IO.l } ) -> $f {
+    	if $f.resolve eq $target {
+			note "===> removing $dir/$f....";
+			shell("$SUDO rm $f", cwd => $dir);
+		}
+	}
+
+	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
    	my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
    	for @binaries.splice(1,@binaries.elems-2).push('pcop') {
@@ -420,7 +448,7 @@ sub shellinabox(Bool $shell, $shell-port) {
 			shell "sudo service shellinabox stop";
 		}
 		my $port = "/etc/default/shellinabox".IO.lines(:close).grep(/PORT/).split("=").tail;
-		shell("sudo sed -i 's/$port/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload"); 
+		shell("sudo sed -i'' 's/$port/$shell-port/g' /etc/default/shellinabox && sudo systemctl daemon-reload"); 
 		shell "sudo service shellinabox start";
 	}
 	else {
@@ -719,4 +747,13 @@ sub is-sys-summary() {
         return "debian-pure";
     }
     return "Not Debian or macOS (no classification).";
+}
+
+sub create-alias ($alias) {
+   	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
+	if $alias {
+		for $alias.split(/\s+ | ',' | ';'/) -> $f {
+			shell("$SUDO ln -s $onefite-bin $f", cwd => "/usr/local/bin") unless "/usr/local/bin/$f".IO.e;	
+		}
+	}
 }
