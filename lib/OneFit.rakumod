@@ -339,7 +339,7 @@ class Engine is export {
 			if $MAX < ($nblocks - 1) * @hybrid-keys.elems + $npars {
 				say "\n===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
 				say "===> Adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
-				note "===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
+				note "\n===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
 				note "===> adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
 				exit($MAX);
 			}
@@ -844,6 +844,7 @@ EOT
     	my $npars = @pars.elems;
     	my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
 
+       	if $clean { @!blocks.head.parameters.a( @!blocks.head.parameters.a.head($npars) ); }
     	for 1 ..^ @!blocks.elems -> $b {
         	my @arr = @!blocks[$b].parameters.a;
         	if @arr.elems >= $n-main-pars {
@@ -860,7 +861,6 @@ EOT
 				# say @arr;
         		@!blocks[$b].parameters.a( $clean ?? @arr.head($npars) !! @arr );
 			}
-        	@!blocks.head.parameters.a( $clean ?? @arr.head($npars) !! @arr );
     	}
 		for 0 ..^@!blocks { @!par-tables[$_]=@!blocks[$_].parameters }
     	self
