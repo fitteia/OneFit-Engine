@@ -34,7 +34,7 @@ multi MAIN (
 	Bool :$man-page = True; #= Install man page
    	Str  :$ip is copy = '*', #= accept access from IP
    	Int  :$port = 8142, #= onefite service port
-   	Int  :$minuit = 200, #= Minuit maximum number of parameters: defualt=50
+   	Int  :$minuit = 250, #= Minuit maximum number of parameters: default=250
    	Int  :$shell-port = 8100, #= shellinabox service port
   	Str  :b(:$bindir) = "$*CWD/../bin", #= choose /home/<user>/bin if you want and make sure it is included in the PATH
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch

@@ -1,0 +1,37 @@
+#!/usr/bin/env raku
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use OneFit;
+use OneFit::Engine::Stpfiles;
+use Test;
+
+our constant OFE-PATH="%OFE-PATH%";
+
+my $workfolder="/tmp/OneFit-Engine-test";
+my $test-path=OFE-PATH ~ "/t";
+
+my class OutputCapture {
+    has @!lines;
+    
+    method print (\s) { @!lines.append(s) }
+    method captured () { @!lines.join }
+}
+
+plan 3;
+
+$time = now;
+my @d506cm-inc="{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni> = \d+/); 
+cmp-ok  $<mni> ,'>=', 225, "hybrid fit test can only be performed when INSTALL ... --minuit=225 ({ now -$time } s)" ; 
+
+$time = now;
+my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit( :hybrid ).save("$workfolder/hybrid.json");
+is "$workfolder/hybrid.json".IO.e, True, "hybrid fit finish ok! ({ now -$time } s)" ;
+
+$time = now;
+shell("{ ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1",:cwd("$workfolder"));
+is "$workfolder/All.mp4".IO.e, True, "mp4 generate ok! ({ now -$time } s)" ;
+

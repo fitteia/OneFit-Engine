@@ -18,7 +18,7 @@
 
 	INSTALL ... --minuit=###
 
-	The default value is 200.
+	The default value is 250.
 
 	Aliases for the default onefite program name can be defined during installation with:
 
@@ -587,16 +587,16 @@ multi MAIN ('upgrade',
       Int  :$minuit is copy, #= onefite web service port
       Bool :$test = False, #= perform tests
 	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
-      Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with locl branch
+      Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with local branch
 ){
-	  "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni>=[\d+]/);
-	  $minuit = $<mni>.Int unless $minuit > 0;
-	  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
-      shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
+  "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni>= \d+ /);
+  $minuit = $<mni>.Int unless $minuit.defined and $minuit > 0;
+  my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
+  shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-      shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit ";
+  shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit ";
 
-      MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
+  MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
 
 #|(onefite uninstall)
