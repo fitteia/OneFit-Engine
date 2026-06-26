@@ -21,9 +21,13 @@ my class OutputCapture {
     method captured () { @!lines.join }
 }
 
-plan 1;
+plan 2
 
 $time = now;
-my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit( mp4 => true).save("$workfolder/hybrid.json");
+my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit.save("$workfolder/hybrid.json");
 is "$workfolder/hybrid.json".IO.e, True, "hybrid fit finish ok! ({ now -$time } s)" ;;
+
+$time = now;
+shell("{ ::('OFE-PATH') }/../../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1",:cwd("$workfolder/p96");
+is "$workfolder/p96/All.mp4".IO.e, True, "mp4 generate ok! ({ now -$time } s)" ;
 
