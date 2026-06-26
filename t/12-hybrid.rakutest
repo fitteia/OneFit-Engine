@@ -21,6 +21,10 @@ my class OutputCapture {
     method captured () { @!lines.join }
 }
 
+
+my @d506cm-inc="{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni> = \d+/); 
+if $<mni> < 250 { say "hybrid test cannot be performed reinstall with option --minuit=250! ({ now -$time } s)" ;
+
 plan 2;
 
 $time = now;
