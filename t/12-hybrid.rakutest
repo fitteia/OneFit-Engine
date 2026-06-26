@@ -24,7 +24,7 @@ my class OutputCapture {
 plan 2;
 
 $time = now;
-my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit.save("$workfolder/hybrid.json");
+my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit( :hybrid ).save("$workfolder/hybrid.json");
 is "$workfolder/hybrid.json".IO.e, True, "hybrid fit finish ok! ({ now -$time } s)" ;
 
 $time = now;
