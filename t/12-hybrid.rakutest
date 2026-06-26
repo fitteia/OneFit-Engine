@@ -25,7 +25,7 @@ plan 3;
 
 $time = now;
 my @d506cm-inc="{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni> = \d+/); 
-cmp-ok  $<mni> ,'>=', 225, "hybrid  can only be performed when INSTALL ... --minuit=250 ({ now -$time } s)" ; 
+cmp-ok  $<mni> ,'>=', 225, "hybrid fit test can only be performed when INSTALL ... --minuit=225 ({ now -$time } s)" ; 
 
 $time = now;
 my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit( :hybrid ).save("$workfolder/hybrid.json");
