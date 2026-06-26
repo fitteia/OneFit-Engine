@@ -18,7 +18,7 @@
 
 	INSTALL ... --minuit=###
 
-	The default value is 200.
+	The default value is 250.
 
 	Aliases for the default onefite program name can be defined during installation with:
 
