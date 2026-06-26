@@ -21,20 +21,17 @@ my class OutputCapture {
     method captured () { @!lines.join }
 }
 
+plan 3;
 
 $time = now;
 my @d506cm-inc="{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni> = \d+/); 
-if $<mni> < 250 { 
-	say "hybrid test cannot be performed reinstall with option --minuit=250! ({ now -$time } s)" ; 
-}
-else {
-	plan 2;
+cmp-ok  $<mni> ,'>=', 250, "hybrid test cannot be performed reinstall with option --minuit=250! ({ now -$time } s)" ; 
 
-	$time = now;
-	my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit( :hybrid ).save("$workfolder/hybrid.json");
-	is "$workfolder/hybrid.json".IO.e, True, "hybrid fit finish ok! ({ now -$time } s)" ;
+$time = now;
+my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit( :hybrid ).save("$workfolder/hybrid.json");
+is "$workfolder/hybrid.json".IO.e, True, "hybrid fit finish ok! ({ now -$time } s)" ;
 
-	$time = now;
-	shell("{ ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1",:cwd("$workfolder"));
-	is "$workfolder/All.mp4".IO.e, True, "mp4 generate ok! ({ now -$time } s)" ;
-}
+$time = now;
+shell("{ ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1",:cwd("$workfolder"));
+is "$workfolder/All.mp4".IO.e, True, "mp4 generate ok! ({ now -$time } s)" ;
+
