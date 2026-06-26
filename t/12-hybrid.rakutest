@@ -1,0 +1,29 @@
+#!/usr/bin/env raku
+
+my $time = BEGIN { now }
+END { say "Total execution time (s): " , now - INIT now }
+
+say "Compile time: ", now - $time;
+
+use OneFit;
+use OneFit::Engine::Stpfiles;
+use Test;
+
+our constant OFE-PATH="%OFE-PATH%";
+
+my $workfolder="/tmp/OneFit-Engine-test";
+my $test-path=OFE-PATH ~ "/t";
+
+my class OutputCapture {
+    has @!lines;
+    
+    method print (\s) { @!lines.append(s) }
+    method captured () { @!lines.join }
+}
+
+plan 1;
+
+$time = now;
+my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit( mp4 => true).save("$workfolder/hybrid.json");
+is "$workfolder/hybrid.json".IO.e, True, "hybrid fit finish ok! ({ now -$time } s)" ;;
+
