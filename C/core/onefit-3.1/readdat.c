@@ -54,7 +54,7 @@ int read_data(char *fname)
     _T[nfile] = atof(linhas[0]);
     Ndata[nfile]   = nlinhas;
     VData[nfile-1] = dmatrix(1,nlinhas,1,3);
-printf("Ndata=%lg\n",Ndata[nfile]);
+printf("Ndata=%d\n",Ndata[nfile]);
     for(i=1;i<=Ndata[nfile];i++){
       if(swc(linhas[i])!=3) {
 	printf("gfitn: warning: skipping data line %d -> %s.\nLine format doesn't match x y ey\n",i,linhas[i]); 
