@@ -17,6 +17,8 @@ int read_data(char *fname)
   linhas = lines(fin,nlinhas,nchar_linha);
 
 
+printf("nlinhas=%d\n",nlinhas);
+
   if(xy_flag) {
     if(swc(linhas[0])==1) {
 	printf("gfitn warning: Data file format doesn't agree with the xy option\n"); 
