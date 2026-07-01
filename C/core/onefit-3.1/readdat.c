@@ -65,11 +65,11 @@ printf("Ndata=%d\n",Ndata[nfile]);
 	       &VData[nfile-1][i][1],
 	       &VData[nfile-1][i][2],
 	       &VData[nfile-1][i][3]);
-	/*      printf("%g %g %g\n",
+	      printf("%g %g %g\n",
 		VData[nfile-1][i][1],
 		VData[nfile-1][i][2],
 		VData[nfile-1][i][3]);
-		*/
+		
       }
     }
   }
