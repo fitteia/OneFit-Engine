@@ -39,7 +39,7 @@ GCC_MAJOR := $(shell gcc -dumpversion | cut -d. -f1)
 endif
 
 ifeq ($(shell [ $(GCC_MAJOR) -ge 15 ] && echo yes),yes)
-GCC_STD := --std=gnu17
+GCC_STD := -std=gnu17
 else
 GCC_STD :=
 endif
@@ -77,8 +77,7 @@ module: AuxCode.c AuxCode.i
 ifeq ($(UNAME_S),Darwin)
 else
 	swig -perl AuxCode.i
-	$(CC) $(CCFLAGS) -c AuxCode.c -I$(INCLUDEDIR)
-	$(CC) $(CCFLAGS) -c AuxCode_wrap.c -I$(INCLUDEDIR)
+	gcc -c  $(CCFLAGS) -c AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
 	gcc  $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
 	rm AuxCode_wrap.o AuxCode_wrap.c
 endif
