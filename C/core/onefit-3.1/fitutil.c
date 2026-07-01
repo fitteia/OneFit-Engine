@@ -489,6 +489,7 @@ int *Flc(FILE *file, int *nlines)
   while(1){
     str = (char *) Malloc((unsigned) sizeof(char));
     nchar=0;
+	str[0]=0;
     while(1){
       c = fgetc(file);
 	  if (c == EOF ){ 
