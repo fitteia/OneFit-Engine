@@ -481,7 +481,8 @@ int *Flc(FILE *file, int *nlines)
 // FILE *file;
 // int *nlines;
 {
-  int c,*str;
+  int c;
+  char *str;
   int lc=0,*char_count,nchar=0;
 
   char_count = (int *) Malloc((unsigned) sizeof(int));
