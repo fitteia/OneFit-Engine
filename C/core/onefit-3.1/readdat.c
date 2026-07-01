@@ -17,9 +17,11 @@ int read_data(char *fname)
   linhas = lines(fin,nlinhas,nchar_linha);
 
 
+  /* printf("nlinhas=%d\n",nlinhas); */
+
   if(xy_flag) {
     if(swc(linhas[0])==1) {
-	printf("gfitn warning: Data file format dosen't agree with the xy option\n"); 
+	printf("gfitn warning: Data file format doesn't agree with the xy option\n"); 
 	printf("gfitn run-time error: Impossible to continue...check data file and xyt option in setup file\n");
 	exit(1);
     }
@@ -28,7 +30,7 @@ int read_data(char *fname)
     VData[nfile-1] = dmatrix(1,nlinhas,1,3);
     for(i=1;i<=Ndata[nfile];i++) {
       if(swc(linhas[i-1])!=3) {
-	printf("gfitn: warning: skipping data line %d -> %s.\nLine format dosen't match x y ey\n",i,linhas[i-1]); 
+	printf("gfitn: warning: skipping data line %d -> %s.\nLine format doesn't match x y ey\n",i,linhas[i-1]); 
 	Ndata[nfile]--;
       }
       else {
@@ -46,7 +48,7 @@ int read_data(char *fname)
   }
   else if(xyt_flag) {
     if(swc(linhas[0])!=1) {
-	printf("gfitn warning: Data file format dosen't agree with the xyt option\n"); 
+	printf("gfitn warning: Data file format doesn't agree with the xyt option\n"); 
 	printf("gfitn run-time error: Impossible to continue...check data file and xyt option in setup file\n");
 	exit(1);
     }
@@ -55,9 +57,11 @@ int read_data(char *fname)
     Ndata[nfile]   = nlinhas;
     VData[nfile-1] = dmatrix(1,nlinhas,1,3);
 
-    for(i=1;i<=Ndata[nfile];i++){
+    /* printf("Ndata=%d\n",Ndata[nfile]); */
+    
+	for(i=1;i<=Ndata[nfile];i++){
       if(swc(linhas[i])!=3) {
-	printf("gfitn: warning: skipping data line %d -> %s.\nLine format dosen't match x y ey\n",i,linhas[i]); 
+	printf("gfitn: warning: skipping data line %d -> %s.\nLine format doesn't match x y ey\n",i,linhas[i]); 
 	Ndata[nfile]--;
       }
       else {
@@ -65,17 +69,17 @@ int read_data(char *fname)
 	       &VData[nfile-1][i][1],
 	       &VData[nfile-1][i][2],
 	       &VData[nfile-1][i][3]);
-	/*      printf("%g %g %g\n",
+	/* printf("%g %g %g\n",
 		VData[nfile-1][i][1],
 		VData[nfile-1][i][2],
 		VData[nfile-1][i][3]);
-		*/
+	*/	
       }
     }
   }
   else if(xyz_flag) { 
     if(swc(linhas[0])==1) {
-	printf("gfitn: warning: Data file format dosen't agree with the xyz option\n"); 
+	printf("gfitn: warning: Data file format doesn't agree with the xyz option\n"); 
 	printf("gfitn run-time error: Impossible to continue...check data file and xyz option in setup file\n");
 	exit(1);
     }
@@ -84,7 +88,7 @@ int read_data(char *fname)
     VData[nfile-1] = dmatrix(1,nlinhas,1,4);
     for(i=1;i<=Ndata[nfile];i++){
       if(swc(linhas[i])!=4) {
-	printf("gfitn: warning: skipping data line %d -> %s.\nLine format dosen't match x y z ez\n",i,linhas[i]); 
+	printf("gfitn: warning: skipping data line %d -> %s.\nLine format doesn't match x y z ez\n",i,linhas[i]); 
 	Ndata[nfile]--;
       }
       else {

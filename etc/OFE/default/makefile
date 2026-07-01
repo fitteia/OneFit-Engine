@@ -32,22 +32,34 @@ CERNLIB= -L$(CERNLIBPATH)  $(CERNMATH) $(CERNPACK) $(F2C)
 #MINUIT=$(CERNLIB)
 MINUIT= -lminuit -lgfortran
 
+GCC_MAJOR := $(shell gcc -dumpfullversion 2>/dev/null | cut -d. -f1)
+
+ifeq ($(GCC_MAJOR),)
+GCC_MAJOR := $(shell gcc -dumpversion | cut -d. -f1)
+endif
+
+ifeq ($(shell [ $(GCC_MAJOR) -ge 15 ] && echo yes),yes)
+GCC_STD := -std=gnu17
+else
+GCC_STD :=
+endif
+
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	GCCPATH := $(shell brew --prefix gcc)
 	LIBGFORTRAN = -L$(GCCPATH)/lib/gcc/current
-	CC = gcc -std=c99  $(FLAGS)
 else
 	LIBGFORTRAN=
-	CC = gcc $(FLAGS)
 endif
+
+CC = gcc $(FLAGS)
 
 # versao linux
 LIB= $(LIBGFORTRAN) -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm 
 
-FLAGS= -D__GNU_LIBRARY__ -D$(OS) -fPIC -pthread -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I$(INCLUDEDIR)
+FLAGS= $(GCC_STD) -D__GNU_LIBRARY__ -D$(OS) -fPIC -pthread -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I$(INCLUDEDIR)
 
-CCFLAGS= -D__GNU_LIBRARY__ -D__GNU_LIBRARY__  -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE)  -I$(INCLUDEDIR) 
+CCFLAGS= $(GCC_STD) -D__GNU_LIBRARY__ -D__GNU_LIBRARY__  -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE)  -I$(INCLUDEDIR) 
 LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
 
 LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER) -I$(ROOT)$(PREFIX)/include
@@ -63,8 +75,8 @@ module: AuxCode.c AuxCode.i
 ifeq ($(UNAME_S),Darwin)
 else
 	swig -perl AuxCode.i
-	gcc -c $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
-	gcc $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
+	gcc -c  $(CCFLAGS) -c AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
+	gcc  $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
 	rm AuxCode_wrap.o AuxCode_wrap.c
 endif
 

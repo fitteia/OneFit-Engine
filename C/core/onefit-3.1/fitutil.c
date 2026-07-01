@@ -481,20 +481,25 @@ int *Flc(FILE *file, int *nlines)
 // FILE *file;
 // int *nlines;
 {
-  char c,*str;
+  int c;
+  char *str;
   int lc=0,*char_count,nchar=0;
 
   char_count = (int *) Malloc((unsigned) sizeof(int));
   while(1){
     str = (char *) Malloc((unsigned) sizeof(char));
     nchar=0;
+	str[0]=0;
     while(1){
       c = fgetc(file);
-      str[nchar++]=c;
+	  if (c == EOF ){ 
+		  break;
+	  }
+	  str[nchar++] = (char)c;
       str = (char *) Realloc(str,(unsigned) (nchar+1)*sizeof(char));
       str[nchar]=0;
-      if(c=='\n' || feof(file)){
-	break;
+      if(c=='\n'){
+	    break;
       }
     }
     if(swc(str) && str[0] != '#') {
