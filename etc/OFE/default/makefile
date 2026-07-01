@@ -77,8 +77,9 @@ module: AuxCode.c AuxCode.i
 ifeq ($(UNAME_S),Darwin)
 else
 	swig -perl AuxCode.i
-	$(CC) $(CCFLAGS) AuxCode.c AuxCode_wrap.c -I$(INCLUDEDIR)
-	$(CC)  $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
+	$(CC) $(CCFLAGS) AuxCode.c -I$(INCLUDEDIR)
+	gcc  $(CCFLAGS) AuxCode_wrap.c -I$(INCLUDEDIR)
+	gcc  $(LDFLAGS)  AuxCode.o AuxCode_wrap.o -o AuxCode.so $(LIBS)
 	rm AuxCode_wrap.o AuxCode_wrap.c
 endif
 
