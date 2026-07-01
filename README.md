@@ -204,7 +204,7 @@ Create a user account, ex: ofe
 	INSTALL raku from debian/Ubuntu repositories
 	
 	```bash
-	apt install raku && exit
+	apt install raku 
 	```
 
 	Aternatively: install raku from source in case of Debian 11 (build instructions: https://rakudo.org/downloads/rakudo/source)
@@ -252,21 +252,21 @@ Create a user account, ex: ofe
 	script onefite-install.log 
 	```
 
-	(it will record the session until you exit) 
+	(it will record the session until you exit). remove the --no-test if you wnat all tests to be performed during installation. Otherwise consider running "onefite test" after installation. 
 
 	```bash
 	mkdir $HOME/.local && cd $HOME/.local 
-	git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && git branch site && ./INSTALL && onefite service start
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && git branch site && ./INSTALL --no-test && onefite service start
 	```
 
 	Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
 	```bash
-	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon --no-test && onefite service start
 	```
 
 	Alternative: install also a web shell access (linuxinabox) and start the onefite daemon that starts the onefite service after system boot and keeps it running
 	```bash
-	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon --shell && sudo service onefite start
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon --shell --no-test && onefite service start
 	```
 
 	***CERN Lib Minuit***
