@@ -343,7 +343,7 @@ ofe_install() {
 
 	sudo -u "$OFE_USER" -H bash -lc '
     	set -e
-		mkdir $HOME/public_html
+		mkdir -p $HOME/public_html
 		cd "$HOME/.local/OneFit-Engine"
     	./INSTALL -d --ip=0.0.0.0 -/w --/dpkg --/test
 	'
