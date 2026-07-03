@@ -331,6 +331,23 @@ open_ports() {
 #	firewall-cmd --list-ports
 }
 
+ofe_install() {
+	echo "=== Install OFE as normal user ==="
+
+	OFE_USER="${SUDO_USER:-$USER}"
+
+	if [[ "$OFE_USER" == "root" ]]; then
+    	echo "ERROR: run this script with sudo from a normal user, not as root directly"
+    	exit 1
+	fi
+
+	sudo -u "$OFE_USER" -H bash -lc '
+    	set -e
+    	./INSTALL -d --ip=0.0.0.0 -/w --/dpkg --/test
+	'
+}
+
+
 setup_paths
 install_repositories
 install_packages
@@ -339,6 +356,7 @@ install_grace
 create_links
 final_checks
 open_ports
+ofe_install
 
 echo
 echo "Done."
