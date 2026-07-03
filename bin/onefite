@@ -868,12 +868,16 @@ HTML
 		$zip-file = $zip-file;
 		my $txt;
 		if so $function {
-		   $txt = "echo " ~ '\$' ~ "PATH &&" ~ "onefite fit $function $filename $mp4 $global $hybrid $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
+		   $txt = "onefite fit $function $filename $mp4 $global $hybrid $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
 		   #		   my $log="/tmp/ofe.log".IO.slurp if "/tmp/ofe.log".IO.e;
 		   #		   "/tmp/ofe.log".IO.spurt: $log ~ "\n$txt\n";
 
 		   my $proc = shell($txt,:out);
 		   $txt ~= $proc.out.slurp(:close);
+		   
+		   $proc = shell('echo $PATH',:out);
+		   $txt ~= $proc.out.slurp(:close);
+
 		   # $txt ~= shell($txt,:out).out.slurp(:close);
 
 		   #		   "/tmp/run.log".IO.spurt: $txt;
