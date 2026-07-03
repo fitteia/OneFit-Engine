@@ -874,9 +874,6 @@ HTML
 
 		   my $proc = shell($txt,:out);
 		   $txt ~= $proc.out.slurp(:close);
-		   
-		   $proc = shell('echo $PATH',:out);
-		   $txt ~= $proc.out.slurp(:close);
 
 		   # $txt ~= shell($txt,:out).out.slurp(:close);
 
