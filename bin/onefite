@@ -872,13 +872,19 @@ HTML
 		   #		   my $log="/tmp/ofe.log".IO.slurp if "/tmp/ofe.log".IO.e;
 		   #		   "/tmp/ofe.log".IO.spurt: $log ~ "\n$txt\n";
 
-		   $txt ~= shell($txt,:out).out.slurp(:close);
+		   my $proc = shell($txt,:out);
+		   $txt ~= $proc.out.slurp(:close);
+		   $proc.wait;
+		   # $txt ~= shell($txt,:out).out.slurp(:close);
 
 		   #		   "/tmp/run.log".IO.spurt: $txt;
 		}
 		 else {
 		    $txt = "onefite fit $filename $mp4 $global $hybrid $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
-		    $txt ~= shell($txt,:out).out.slurp(:close);
+		   my $proc = shell($txt,:out);
+		   $txt ~= $proc.out.slurp(:close);
+		   $proc.wait;
+		   # $txt ~= shell($txt,:out).out.slurp(:close);
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
