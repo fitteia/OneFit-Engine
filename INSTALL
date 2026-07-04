@@ -674,10 +674,10 @@ sub os-family() {
             return 'arch';
         }
 
-        when 'alpine'   { return 'alpine'; }
-        when 'gentoo'   { return 'gentoo'; }
-        when 'void'     { return 'void'; }
-        when 'slackware'{ return 'slackware'; }
+        when 'alpine'    { return 'alpine'; }
+        when 'gentoo'    { return 'gentoo'; }
+        when 'void'      { return 'void'; }
+        when 'slackware' { return 'slackware'; }
     }
 
     return 'debian' if $id-like.contains('debian');
