@@ -284,8 +284,8 @@ create_links() {
         raku:/opt/rakudo-pkg/bin/raku
         rakudo:/opt/rakudo-pkg/bin/rakudo
         zef
-        grace:../grace/bin/grace
-        gracebat:../grace/bin/gracebat
+        grace:/usr/local/grace/bin/grace
+        gracebat:/usr/local/grace/bin/gracebat
     )
 
     local item cmd path
