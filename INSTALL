@@ -107,7 +107,7 @@ multi MAIN (
 		for @brew-packages {
 			shell("brew install $_") unless $brew-installed.contains($_);
 		}
-		shell "zef install App::Prove6" if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
+		shell "$SUDO zef install App::Prove6 --install-to=site" if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
 		$DOCKER = True;
 		$web-server = False;
 		$test = False;
@@ -623,6 +623,73 @@ sub in-path(Str $cmd) {
     False
 }
 
+# ---------- Linux detection ----------
+sub os-release() {
+    my $osr = slurp-or-empty('/etc/os-release');
+    return {} unless $osr.chars;
+
+    $osr.lines
+        .grep(*.contains('='))
+        .map({
+            my ($k, $v) = .split('=', 2);
+            $v .= trim;
+            $v ~~ s/^ '"' //;
+            $v ~~ s/ '"' $//;
+            $k => $v;
+        })
+        .hash;
+}
+
+sub os-id() {
+    (os-release()<ID> // '').lc;
+}
+
+sub os-id-like() {
+    (os-release()<ID_LIKE> // '').lc;
+}
+
+sub os-family() {
+    my $id      = os-id();
+    my $id-like = os-id-like();
+
+    given $id {
+
+        when any <debian ubuntu linuxmint pop elementary raspbian> {
+            return 'debian';
+        }
+
+        when 'fedora' {
+            return 'fedora';
+        }
+
+        when any <centos centos-stream rocky almalinux rhel ol oracle> {
+            return 'centos';
+        }
+
+        when any <opensuse-leap opensuse-tumbleweed sles> {
+            return 'suse';
+        }
+
+        when any <arch manjaro endeavouros> {
+            return 'arch';
+        }
+
+        when 'alpine'   { return 'alpine'; }
+        when 'gentoo'   { return 'gentoo'; }
+        when 'void'     { return 'void'; }
+        when 'slackware'{ return 'slackware'; }
+    }
+
+    return 'debian' if $id-like.contains('debian');
+    return 'centos' if $id-like.contains('rhel');
+    return 'fedora' if $id-like.contains('fedora');
+    return 'suse'   if $id-like.contains('suse');
+    return 'arch'   if $id-like.contains('arch');
+
+    'unknown';
+}
+
+
 # ---------- Debian/Linux detection ----------
 sub is-debian() {
     my $osr = slurp-or-empty('/etc/os-release');
@@ -729,7 +796,7 @@ sub is-sys-summary() {
         return "macos-colima$brew" if has-colima();
         return "macos-docker-desktop$brew" if has-docker-desktop();
         return "macos-lima$brew" if has-lima();
-        return  "macos-bare$brew";
+        return "macos-bare$brew";
     }
 
     # Second branch: Linux/Debian environments
@@ -747,7 +814,10 @@ sub is-sys-summary() {
         return "debian-pure (virtualized: $hv)" if $hv.defined;
         return "debian-pure";
     }
-    return "Not Debian or macOS (no classification).";
+
+	return os-family() unless os-family,contains('unknown'); 
+    
+	return "Not Debian or macOS (no classification).";
 }
 
 sub create-alias ($alias) {
