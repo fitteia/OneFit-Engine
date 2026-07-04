@@ -72,7 +72,6 @@ multi MAIN (
 	given os-family() {
     	when 'centos' | 'fedora' {
         	$web-server = False;
-        	$test       = False;
         	$dpkg       = False;
         	$ip         = "0.0.0.0"i unless $ip;
     	}
