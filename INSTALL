@@ -815,7 +815,7 @@ sub is-sys-summary() {
         return "debian-pure";
     }
 
-	return os-family() unless os-family,contains('unknown'); 
+	return os-family() unless (os-family() //'').contains('unknown'); 
     
 	return "Not Debian or macOS (no classification).";
 }
