@@ -164,6 +164,7 @@ install_packages() {
         texlive-epstopdf
         ffmpeg
         ffmpeg-devel
+		rakudo
     )
 
     for pkg in "${packages[@]}"; do
