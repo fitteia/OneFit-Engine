@@ -69,6 +69,12 @@ multi MAIN (
    
    	$SUDO = "" unless $to-site;
 
+	if $system.contains("centos") {
+		$web-server = False;
+		$test = False;
+		$dpkg = False;
+	}
+
 	if $docker {
 		$DOCKER = $docker;
 		$web-server = False;
