@@ -164,6 +164,7 @@ install_packages() {
         texlive-epstopdf
         ffmpeg
         ffmpeg-devel
+		grace
 		rakudo
     )
 
