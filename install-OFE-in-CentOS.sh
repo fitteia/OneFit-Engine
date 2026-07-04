@@ -345,7 +345,7 @@ ofe_install() {
     	set -e
 		mkdir -p $HOME/public_html
 		cd "$HOME/.local/OneFit-Engine"
-    	./INSTALL -d --ip=0.0.0.0 -/w --/dpkg --/test
+    	./INSTALL -d 
 	'
 }
 
