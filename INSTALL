@@ -69,11 +69,13 @@ multi MAIN (
    
    	$SUDO = "" unless $to-site;
 
-	if $system.contains("centos") {
-		$web-server = False;
-		$test = False;
-		$dpkg = False;
-		$ip = "0.0.0.0" unless $ip;
+	given os-family() {
+    	when 'centos' | 'fedora' {
+        	$web-server = False;
+        	$test       = False;
+        	$dpkg       = False;
+        	$ip         = "0.0.0.0"i unless $ip;
+    	}
 	}
 
 	if $docker {
