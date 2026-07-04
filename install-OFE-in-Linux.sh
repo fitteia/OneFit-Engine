@@ -494,7 +494,7 @@ create_links() {
         prove6
         xmgrace
         gracebat
-        grace
+        grace:/usr/bin/xmgrace
     )
 
     if [[ "$OS_FAMILY" == "fedora" ]]; then
