@@ -371,7 +371,7 @@ install_packages_fedora() {
 
     install_first_available_pkg texlive-epstopdf texlive-epstopdf-bin || true
     install_first_available_pkg pdftk-java pdftk || true
-    install_first_available_pkg ffmpeg-free ffmpeg || true
+    install_first_available_pkg ffmpeg || true
 
     # Use distribution zef package if one exists.
     install_first_available_pkg perl6-zef raku-zef zef || true
