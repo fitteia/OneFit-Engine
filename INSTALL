@@ -73,7 +73,7 @@ multi MAIN (
 		$web-server = False;
 		$test = False;
 		$dpkg = False;
-
+		$ip = "0.0.0.0" unless $ip;
 	}
 
 	if $docker {
@@ -114,7 +114,7 @@ multi MAIN (
 		for @brew-packages {
 			shell("brew install $_") unless $brew-installed.contains($_);
 		}
-		shell "$SUDO zef install App::Prove6 --install-to=site" if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
+		shell "zef install App::Prove6 --install-to=site" if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
 		$DOCKER = True;
 		$web-server = False;
 		$test = False;
@@ -276,9 +276,19 @@ sub install-web-server () {
 sub install-p6-modules ($to-site,:$test) {
 	shell("$SUDO apt install perl6-zef") unless shell("command -v zef").so;
 	say "Install raku modules. This may take some time....";
-   	shell("$SUDO zef install Inline::Perl5 --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
-   	shell("$SUDO zef install cro --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
- 	shell("$SUDO zef install Pod::To::Man --force-test { '--/test' unless $test }  { '--install-to=site ' if $to-site } ");
+	for <App::Prove6 Inline::Perl5 Readline Cro::HTTP::Router Pod::To::Man> -> $mod {
+    	my $proc = shell("zef locate $mod", :out);
+    	next if $proc.exitcode == 0;
+    	my $cmd = "$SUDO zef install "
+        	    ~ ($to-site ?? "--install-to=site " !! "")
+            	~ ($test    ?? "--force-test "      !! "--/test ")
+            	~ $mod;
+    	shell($cmd);
+	}
+	#x 	shell("$SUDO zef install App::Prove6 --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
+	#	shell("$SUDO zef install Inline::Perl5 --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
+	#   shell("$SUDO zef install cro --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
+	#   shell("$SUDO zef install Pod::To::Man --force-test { '--/test' unless $test }  { '--install-to=site ' if $to-site } ");
 }
 
 sub enable-ghostscript-in-ImageMagick-policy () {
