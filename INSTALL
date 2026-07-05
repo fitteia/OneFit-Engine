@@ -70,7 +70,7 @@ multi MAIN (
    	$SUDO = "" unless $to-site;
 
 	given os-family() {
-    	when 'centos' | 'fedora' {
+    	when 'centos' | 'fedora' | 'arch' {
         	$web-server = False;
         	$dpkg       = False;
         	$ip         = "0.0.0.0"i unless $ip;
