@@ -389,6 +389,33 @@ install_packages() {
     esac
 }
 
+setup_zef_with_rakubrew_only() {
+    log "Install zef with Rakubrew helper"
+
+    export RAKUBREW_HOME=/opt/rakubrew
+    export PATH=/opt/rakubrew/bin:/opt/rakubrew/shims:/usr/local/bin:/usr/bin:$PATH
+
+    if [[ ! -x /opt/rakubrew/bin/rakubrew ]]; then
+        mkdir -p /opt
+        curl -fsSL https://rakubrew.org/install-on-perl.sh | RAKUBREW_HOME=/opt/rakubrew sh
+    fi
+
+    link_cmd rakubrew /opt/rakubrew/bin/rakubrew
+
+    # Use system raku/rakudo if already installed
+    link_cmd raku
+    link_cmd rakudo
+
+    # Build only zef, not another Rakudo
+    rakubrew build-zef || {
+ 	   warn "rakubrew build-zef failed; falling back to full Rakubrew Rakudo + zef"
+    	setup_raku_with_rakubrew
+    	return
+	}
+
+    link_cmd zef /opt/rakubrew/shims/zef
+}
+
 setup_rakubrew_systemwide() {
     log "Install Rakubrew system-wide"
     setup_paths
@@ -447,14 +474,20 @@ setup_raku_debian() {
 setup_raku_fedora_or_suse() {
     log "Fedora/openSUSE Raku / zef"
 
-    if command -v raku >/dev/null 2>&1 && command -v zef >/dev/null 2>&1 && zef --version >/dev/null 2>&1; then
+    if command -v raku >/dev/null 2>&1; then
         echo "✓ raku found: $(command -v raku)"
-        echo "✓ zef found:  $(command -v zef)"
         link_cmd raku
         link_cmd rakudo
-        link_cmd zef
+
+        if command -v zef >/dev/null 2>&1 && zef --version >/dev/null 2>&1; then
+            echo "✓ zef found: $(command -v zef)"
+            link_cmd zef
+        else
+            warn "System Rakudo found but zef missing; installing zef only."
+            setup_zef_with_rakubrew_only
+        fi
     else
-        warn "system Raku/zef incomplete; using Rakubrew fallback"
+        warn "Raku not found; installing Rakudo and zef with Rakubrew."
         setup_raku_with_rakubrew
     fi
 }
@@ -590,8 +623,8 @@ install_grace_from_source() {
         die "Grace installation failed"
     fi
 
-    link_cmd xmgrace /usr/local/bin/xmgrace
-    link_cmd gracebat /usr/local/bin/gracebat
+    link_cmd xmgrace 
+    link_cmd gracebat
     link_grace_to_xmgrace
 
     echo "✓ Grace/xmgrace installed from source"
