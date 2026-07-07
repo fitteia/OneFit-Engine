@@ -346,7 +346,9 @@ install_packages_debian() {
 
 install_packages_fedora() {
     log "Fedora/RHEL packages"
-    local packages=(
+    dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
+
+	local packages=(
         perl perl-devel perl-CGI git openssh-server httpd swig gcc gcc-gfortran
         make tar wget curl jq zip unzip sudo vim-enhanced man-db gnuplot openssl-devel
         hdf5 hdf5-devel poppler-utils ghostscript ImageMagick java-21-openjdk
