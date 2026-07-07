@@ -356,7 +356,7 @@ install_packages_fedora() {
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
     install_first_available_pkg texlive-epstopdf texlive-epstopdf-bin || true
     install_first_available_pkg pdftk-java pdftk || true
-    install_first_available_pkg ffmpeg || true
+    install_first_available_pkg ffmpeg ffmpeg_free || true
     install_first_available_pkg perl6-zef raku-zef zef || true
 }
 
