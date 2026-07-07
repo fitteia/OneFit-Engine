@@ -375,7 +375,7 @@ install_packages_suse() {
     # Package names vary between Leap/Tumbleweed and enabled repositories.
     install_first_available_pkg xmgrace grace || true
     install_first_available_pkg pdftk-java pdftk || true
-    install_first_available_pkg ffmpeg || true
+    install_first_available_pkg ffmpeg ffmpeg-7 ffmpeg-6|| true
     install_first_available_pkg texlive-epstopdf-bin texlive-epstopdf texlive || true
     install_first_available_pkg firewalld SuSEfirewall2 || true
     install_first_available_pkg rakudo raku || true
