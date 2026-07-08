@@ -866,6 +866,33 @@ uninstall_ofe() {
     echo "OFE files and links removed. Packages installed by this script were not removed."
 }
 
+cleanup_packages() {
+    log "Clean package caches"
+
+    case "$PM" in
+        apt)
+            apt-get autoremove -y || true
+            apt-get clean || true
+            rm -rf /var/lib/apt/lists/*
+            ;;
+        dnf)
+            dnf autoremove -y || true
+            dnf clean all || true
+            rm -rf /var/cache/dnf
+            ;;
+        pacman)
+            pacman -Scc --noconfirm || true
+            rm -rf /var/cache/pacman/pkg/*
+            ;;
+        zypper)
+            zypper --non-interactive clean --all || true
+            rm -rf /var/cache/zypp
+            ;;
+    esac
+
+    rm -rf /tmp/*
+}
+
 final_checks() {
     log "Final checks"
     local cmds=(
@@ -919,6 +946,7 @@ main() {
             create_links
             open_ports
             ofe_install
+			cleanup_packages
             final_checks
             echo
             echo "Done."
