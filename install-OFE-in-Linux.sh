@@ -659,15 +659,32 @@ install_grace_from_source() {
     echo "✓ Grace/xmgrace installed from source"
 }
 
+is_rhel_like_id() {
+    [[ "$OS_ID" =~ ^(centos|centos-stream|rocky|almalinux|rhel|redhat|ol)$ ]]
+}
+
 setup_grace() {
     log "Grace / xmgrace"
 
-    if [[ "$OS_FAMILY" == "arch" ]] && ! command -v xmgrace >/dev/null 2>&1; then
-        # No reliable Arch package; build from source instead of just warning.
+    # Debian/Fedora/openSUSE usually install xmgrace/grace from packages.
+    # If it is already present, just normalize the command links.
+    if command -v xmgrace >/dev/null 2>&1; then
+        echo "✓ xmgrace found: $(command -v xmgrace)"
+        link_cmd xmgrace
+        link_cmd gracebat
+        link_grace_to_xmgrace
+        return 0
+    fi
+
+    # Arch and RHEL-like systems often lack a usable xmgrace package.
+    # Build from source only when the package path failed there.
+    if [[ "$OS_FAMILY" == "arch" ]] || is_rhel_like_id; then
+        warn "xmgrace package not available; building Grace from source"
         install_grace_from_source
         return 0
     fi
 
+    warn "xmgrace not found; package installation may have failed"
     link_cmd xmgrace
     link_cmd gracebat
     link_grace_to_xmgrace
