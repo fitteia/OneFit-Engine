@@ -77,6 +77,13 @@ multi MAIN (
     	}
 	}
 
+	if os-family().contains("suse") {
+		$web-server = False;
+       	$dpkg       = False;
+       	$ip         = "0.0.0.0"i unless $ip;
+        $enable-gs  = False;	
+	}
+
 	if $docker {
 		$DOCKER = $docker;
 		$web-server = False;
