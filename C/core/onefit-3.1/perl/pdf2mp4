@@ -62,11 +62,22 @@ for pdf in "$@"; do
     fi
 done
 
+# Choose the best available H.264/MPEG-4 encoder.
+if ffmpeg -hide_banner -encoders 2>/dev/null | grep -q '\<libx264\>'; then
+    CODEC="libx264"
+elif ffmpeg -hide_banner -encoders 2>/dev/null | grep -q '\<libopenh264\>'; then
+    CODEC="libopenh264"
+else
+    CODEC="mpeg4"
+fi
+
+echo "Using FFmpeg encoder: $CODEC"
+
 ffmpeg -y \
   -framerate "$FPS" \
   -i "$IMG/%06d.png" \
   -vf "pad=ceil(iw/2)*2:ceil(ih/2)*2" \
-  -c:v libx264 \
+  -c:v "$CODEC" \
   -pix_fmt yuv420p \
   -movflags +faststart \
   "$OUT"
