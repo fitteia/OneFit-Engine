@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# install-OFE-in-Linux-Debian-Fedora-Arch-SUSE.sh
+# install-OFE-in-Linux.sh
 #
 # Single OneFit-Engine installer for:
 #   - Debian / Ubuntu / Linux Mint / Raspberry Pi OS: apt
@@ -9,8 +9,8 @@
 #   - openSUSE Leap / Tumbleweed: zypper
 #
 # Run:
-#   sudo ./install-OFE-in-Linux-Debian-Fedora-Arch-SUSE.sh install
-#   sudo ./install-OFE-in-Linux-Debian-Fedora-Arch-SUSE.sh uninstall
+#   sudo ./install-OFE-in-Linux.sh install
+#   sudo ./install-OFE-in-Linux.sh uninstall
 #
 # OFE is installed as the normal sudo user, not as root.
 
@@ -344,15 +344,47 @@ install_packages_debian() {
     install_first_available_pkg ufw firewalld || true
 }
 
+enable_rpmfusion_free() {
+    # Best-effort multimedia repository enablement for Fedora/RHEL-like systems.
+    # Fedora uses /free/fedora/ and EL/CentOS/Rocky/Alma use /free/el/.
+    if rpm -q rpmfusion-free-release >/dev/null 2>&1; then
+        echo "✓ package installed: rpmfusion-free-release"
+        return 0
+    fi
+
+    local fedora_version el_version url
+    fedora_version="$(rpm -E %fedora 2>/dev/null || true)"
+
+    if [[ -n "$fedora_version" && "$fedora_version" != "%fedora" ]]; then
+        url="https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-${fedora_version}.noarch.rpm"
+    else
+        el_version="${OS_VERSION_ID%%.*}"
+        [[ -z "$el_version" || "$el_version" == "unknown" ]] && el_version="10"
+        url="https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${el_version}.noarch.rpm"
+    fi
+
+    dnf install -y "$url" || warn "could not install RPM Fusion free release"
+}
+
 install_packages_fedora() {
     log "Fedora/RHEL packages"
-    dnf install https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm
 
-	local packages=(
+    install_pkg dnf-plugins-core || true
+
+    # CRB/PowerTools and EPEL are useful on RHEL-like systems. Harmless if absent.
+    if [[ "$OS_ID" =~ ^(centos|centos-stream|rocky|almalinux|rhel|redhat|ol)$ ]]; then
+        install_pkg epel-release || true
+        dnf config-manager --set-enabled crb 2>/dev/null || true
+        dnf config-manager --set-enabled powertools 2>/dev/null || true
+    fi
+
+    enable_rpmfusion_free || true
+
+    local packages=(
         perl perl-devel perl-CGI git openssh-server httpd swig gcc gcc-gfortran
         make tar wget curl jq zip unzip sudo vim-enhanced man-db gnuplot openssl-devel
         hdf5 hdf5-devel poppler-utils ghostscript ImageMagick java-21-openjdk
-        firewalld rakudo xmgrace
+        firewalld rakudo xmgrace diffutils
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
@@ -365,7 +397,7 @@ install_packages_fedora() {
 install_packages_suse() {
     log "openSUSE packages"
     local packages=(
-        perl perl-devel perl-CGI git openssh apache2 swig gcc gcc-fortran make tar
+        perl perl-CGI git openssh apache2 swig gcc gcc-fortran make tar
         wget curl jq zip unzip sudo vim man gnuplot openssl-devel hdf5 hdf5-devel
         poppler-tools ghostscript ImageMagick java-21-openjdk which gzip xz texlive-epstopdf-bin diffutils
     )
@@ -374,8 +406,8 @@ install_packages_suse() {
 
     # Package names vary between Leap/Tumbleweed and enabled repositories.
     install_first_available_pkg xmgrace grace || true
-    install_first_available_pkg pdftk-java pdftk || true
-    install_first_available_pkg ffmpeg ffmpeg-7 ffmpeg-6|| true
+    install_first_available_pkg pdftk pdftk-java || true
+    install_first_available_pkg ffmpeg ffmpeg-8 ffmpeg-7 ffmpeg-6 || true
     install_first_available_pkg texlive-epstopdf-bin texlive-epstopdf texlive || true
     install_first_available_pkg firewalld SuSEfirewall2 || true
     install_first_available_pkg rakudo raku || true
@@ -403,6 +435,7 @@ setup_zef_with_rakubrew_only() {
     fi
 
     link_cmd rakubrew /opt/rakubrew/bin/rakubrew
+    rakubrew mode shim || true
 
     # Use system raku/rakudo if already installed
     link_cmd raku
@@ -476,20 +509,14 @@ setup_raku_debian() {
 setup_raku_fedora_or_suse() {
     log "Fedora/openSUSE Raku / zef"
 
-    if command -v raku >/dev/null 2>&1; then
+    if command -v raku >/dev/null 2>&1 && command -v zef >/dev/null 2>&1 && zef --version >/dev/null 2>&1; then
         echo "✓ raku found: $(command -v raku)"
+        echo "✓ zef found:  $(command -v zef)"
         link_cmd raku
         link_cmd rakudo
-
-        if command -v zef >/dev/null 2>&1 && zef --version >/dev/null 2>&1; then
-            echo "✓ zef found: $(command -v zef)"
-            link_cmd zef
-        else
-            warn "System Rakudo found but zef missing; installing zef only."
-            setup_zef_with_rakubrew_only
-        fi
+        link_cmd zef
     else
-        warn "Raku not found; installing Rakudo and zef with Rakubrew."
+        warn "system Raku/zef incomplete; using full Rakubrew fallback"
         setup_raku_with_rakubrew
     fi
 }
@@ -733,35 +760,53 @@ ofe_install() {
     '
 }
 
+run_ldconfig() {
+    if command -v ldconfig >/dev/null 2>&1; then
+        ldconfig "$@"
+    elif [[ -x /sbin/ldconfig ]]; then
+        /sbin/ldconfig "$@"
+    elif [[ -x /usr/sbin/ldconfig ]]; then
+        /usr/sbin/ldconfig "$@"
+    else
+        return 127
+    fi
+}
+
 fix_libperl() {
-    local lib
-    lib="$(find /usr -name libperl.so 2>/dev/null | head -n1)"
+    log "libperl dynamic-linker setup"
+
+    local lib linkdir link
+    lib="$(find /usr /opt -name libperl.so 2>/dev/null | head -n1)"
 
     [[ -z "$lib" ]] && {
         warn "libperl.so not found"
         return 1
     }
 
-    # Is libperl already known by the dynamic linker?
-    if command -v ldconfig >/dev/null 2>&1; then
-        if ldconfig -p 2>/dev/null | grep -qF "$lib"; then
-            echo "✓ libperl.so already in ldconfig cache"
-            return 0
-        fi
-    elif [[ -x /sbin/ldconfig ]]; then
-        if /sbin/ldconfig -p 2>/dev/null | grep -qF "$lib"; then
-            echo "✓ libperl.so already in ldconfig cache"
-            return 0
-        fi
-    elif [[ -x /usr/sbin/ldconfig ]]; then
-        if /usr/sbin/ldconfig -p 2>/dev/null | grep -qF "$lib"; then
-            echo "✓ libperl.so already in ldconfig cache"
+    if run_ldconfig -p 2>/dev/null | grep -q 'libperl\.so'; then
+        echo "✓ libperl.so already visible to dynamic linker"
+        return 0
+    fi
+
+    # Prefer registering the native Perl CORE directory. If ldconfig is absent,
+    # fall back to a conventional lib64 symlink.
+    local libdir
+    libdir="$(dirname "$lib")"
+    if [[ -d /etc/ld.so.conf.d ]] && run_ldconfig -p >/dev/null 2>&1; then
+        echo "$libdir" >/etc/ld.so.conf.d/perl.conf
+        run_ldconfig || true
+        if run_ldconfig -p 2>/dev/null | grep -q 'libperl\.so'; then
+            echo "✓ added $libdir to ldconfig path"
             return 0
         fi
     fi
 
-    # Fallback: create a symlink in the standard library directory.
-    local link=/usr/lib64/libperl.so
+    if [[ -d /usr/lib64 ]]; then
+        linkdir=/usr/lib64
+    else
+        linkdir=/usr/lib
+    fi
+    link="$linkdir/libperl.so"
 
     if [[ ! -e "$link" ]]; then
         ln -s "$lib" "$link"
@@ -770,9 +815,7 @@ fix_libperl() {
         echo "✓ $link already exists"
     fi
 
-    command -v ldconfig >/dev/null 2>&1 && ldconfig || true
-    [[ -x /sbin/ldconfig ]] && /sbin/ldconfig || true
-    [[ -x /usr/sbin/ldconfig ]] && /usr/sbin/ldconfig || true
+    run_ldconfig >/dev/null 2>&1 || true
 }
 
 uninstall_ofe() {
