@@ -367,7 +367,7 @@ install_packages_suse() {
     local packages=(
         perl perl-devel perl-CGI git openssh apache2 swig gcc gcc-fortran make tar
         wget curl jq zip unzip sudo vim man gnuplot openssl-devel hdf5 hdf5-devel
-        poppler-tools ghostscript ImageMagick java-21-openjdk which gzip xz
+        poppler-tools ghostscript ImageMagick java-21-openjdk which gzip xz texlive-epstopdf-bin diffutils
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
@@ -733,6 +733,48 @@ ofe_install() {
     '
 }
 
+fix_libperl() {
+    local lib
+    lib="$(find /usr -name libperl.so 2>/dev/null | head -n1)"
+
+    [[ -z "$lib" ]] && {
+        warn "libperl.so not found"
+        return 1
+    }
+
+    # Is libperl already known by the dynamic linker?
+    if command -v ldconfig >/dev/null 2>&1; then
+        if ldconfig -p 2>/dev/null | grep -qF "$lib"; then
+            echo "✓ libperl.so already in ldconfig cache"
+            return 0
+        fi
+    elif [[ -x /sbin/ldconfig ]]; then
+        if /sbin/ldconfig -p 2>/dev/null | grep -qF "$lib"; then
+            echo "✓ libperl.so already in ldconfig cache"
+            return 0
+        fi
+    elif [[ -x /usr/sbin/ldconfig ]]; then
+        if /usr/sbin/ldconfig -p 2>/dev/null | grep -qF "$lib"; then
+            echo "✓ libperl.so already in ldconfig cache"
+            return 0
+        fi
+    fi
+
+    # Fallback: create a symlink in the standard library directory.
+    local link=/usr/lib64/libperl.so
+
+    if [[ ! -e "$link" ]]; then
+        ln -s "$lib" "$link"
+        echo "✓ $link -> $lib"
+    else
+        echo "✓ $link already exists"
+    fi
+
+    command -v ldconfig >/dev/null 2>&1 && ldconfig || true
+    [[ -x /sbin/ldconfig ]] && /sbin/ldconfig || true
+    [[ -x /usr/sbin/ldconfig ]] && /usr/sbin/ldconfig || true
+}
+
 uninstall_ofe() {
     log "Uninstall OFE links and user tree"
     local ofe_user="${SUDO_USER:-$USER}"
@@ -810,6 +852,7 @@ main() {
             setup_paths
             install_repositories
             install_packages
+			fix_libperl
             setup_raku_and_zef
             setup_services
             setup_grace
