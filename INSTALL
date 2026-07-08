@@ -458,9 +458,11 @@ WantedBy=multi-user.target
 }
 
 sub add-show-ip-in-issue() {
+	return 1 unless "/etc/issue".IO.e;
     my $issue = "/etc/issue".IO.slurp.subst(/'\l'\s*'\4'*/,'\l \4');
     "/tmp/issue".IO.spurt: $issue ~ "\n\n";
     shell("sudo cp issue /etc && sudo rm issue",:cwd("/tmp"))  unless "/etc/issue".IO.slurp(:close).contains('\4'); 
+	return 0;
 }
 
 sub shellinabox(Bool $shell, $shell-port) {
