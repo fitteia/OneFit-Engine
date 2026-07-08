@@ -2,6 +2,7 @@
 #
 # create by chatGPT on my request
 # 2026/03/13
+# modified in 2026/07/07
 
 set -euo pipefail
 
