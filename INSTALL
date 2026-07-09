@@ -402,7 +402,7 @@ sub install (:$test,:$to-site, :$bindir) {
 	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
 			$onefite-bin = "$location/bin/onefite" unless $onefite-bin.IO.e;
 			$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-
+ say "$location/bin/onefite"; 
 	    	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
 		}
 		else {
