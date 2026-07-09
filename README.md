@@ -33,7 +33,10 @@ wsl --set-default-version 2
 
 Install Colima and Docker with brew
 ```bash
-brew install colima docker
+brew install colima docker docker-buildx
+mkdir -p ~/.docker/cli-plugins
+ln -sf "$(brew --prefix)/opt/docker-buildx/bin/docker-buildx" \
+  ~/.docker/cli-plugins/docker-buildx
 ```
 Start Colima with 4GB or RAM (less will not work)
 ```bash
@@ -48,6 +51,17 @@ brew install rakudo gcc
 A litle bit of hacking might be necessary. Install raku zef module.
 ```bash
 mkdir ~/.raku $$ cd $_ && git clone https://github.com/ugexe/zef.git && cd zef && raku -I. bin/zef install . && ln -s /opt/homebrew/share/perl6/site/bin/zef /usr/local/bin/zef
+```
+
+ ** Fedora/CentOS/Suse/Arch
+```bash
+which git
+```
+Install git in your system and then
+```bash
+mkdir -p $HOME/.local && cd $_
+git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
+./pre-install-ofe-in-Linux.sh && ./INSTALL --no-test && ./post-install
 ```
 
 ### Full features OneFit Engine Server
