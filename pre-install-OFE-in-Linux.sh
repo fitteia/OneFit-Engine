@@ -1,25 +1,35 @@
 #!/usr/bin/env bash
 #
-# install-OFE-in-Linux.sh
+# pre-install-OFE-in-Linux.sh
 #
-# Single OneFit-Engine installer for:
+# Pre-installer for OneFit-Engine system dependencies on:
 #   - Debian / Ubuntu / Linux Mint / Raspberry Pi OS: apt
 #   - Fedora / CentOS Stream / Rocky / Alma / RHEL: dnf
 #   - Arch / Manjaro / EndeavourOS: pacman
 #   - openSUSE Leap / Tumbleweed: zypper
 #
 # Run:
-#   sudo ./install-OFE-in-Linux.sh install
-#   sudo ./install-OFE-in-Linux.sh uninstall
+#   ./pre-install-OFE-in-Linux.sh
 #
-# OFE is installed as the normal sudo user, not as root.
+# The script may be launched as a normal user. It asks for sudo when
+# administrative privileges are required. It prepares the operating system
+# only; run ./INSTALL -d afterwards to install OFE itself.
 
 set -u
 
+# Keep the original invoking user even after sudo re-executes the script.
+OFE_INVOKING_USER="${OFE_INVOKING_USER:-${SUDO_USER:-${USER:-}}}"
+
 if [[ "${EUID}" -ne 0 ]]; then
-    echo "Run as root:"
-    echo "  sudo $0 [install|uninstall]"
-    exit 1
+    if ! command -v sudo >/dev/null 2>&1; then
+        echo "ERROR: sudo is required to install system packages and links." >&2
+        echo "Install sudo first, or run this script as root from a normal sudo-capable user." >&2
+        exit 1
+    fi
+
+    echo "Administrative privileges are required for package installation and /usr/local setup."
+    echo "Requesting sudo..."
+    exec sudo -E OFE_INVOKING_USER="$OFE_INVOKING_USER" bash "$0" "$@"
 fi
 
 log()  { echo; echo "=== $* ==="; }
@@ -149,15 +159,6 @@ install_first_available_pkg() {
     warn "none of these packages are available: $*"
     return 1
 }
-
-normal_user() {
-    local u="${SUDO_USER:-$USER}"
-    if [[ "$u" == "root" || -z "$u" ]]; then
-        die "run this script with sudo from a normal user, not as root directly"
-    fi
-    echo "$u"
-}
-
 inside_container() {
     [[ -f /.dockerenv ]] && return 0
     [[ -r /proc/1/cgroup ]] && grep -qaE '(docker|podman|containerd|kubepods|libpod)' /proc/1/cgroup && return 0
@@ -166,19 +167,6 @@ inside_container() {
     fi
     return 1
 }
-
-script_source_dir() {
-    local src="${BASH_SOURCE[0]}"
-    while [[ -L "$src" ]]; do
-        local dir
-        dir="$(cd -P "$(dirname "$src")" >/dev/null 2>&1 && pwd)"
-        src="$(readlink "$src")"
-        [[ "$src" != /* ]] && src="$dir/$src"
-    done
-    cd -P "$(dirname "$src")" >/dev/null 2>&1 && pwd
-}
-
-
 link_cmd() {
     local cmd="$1"
     local explicit_path="${2:-}"
@@ -727,56 +715,6 @@ open_ports() {
 
     warn "no supported firewall tool found; skipping firewall configuration"
 }
-
-ofe_install() {
-    log "Install OFE as normal user"
-    local ofe_user
-    ofe_user="$(normal_user)"
-
-    local src_dir
-    src_dir="$(script_source_dir)"
-
-    # Development/source-tree mode: when this installer is inside an OFE tree,
-    # install that exact local tree instead of cloning GitHub. This is important
-    # for Docker/VM regression tests of uncommitted changes.
-    if [[ -x "$src_dir/INSTALL" || -f "$src_dir/INSTALL" ]]; then
-        log "Using local OFE source tree"
-        echo "Source: $src_dir"
-        chmod +x "$src_dir/INSTALL" 2>/dev/null || true
-        sudo -u "$ofe_user" -H bash -lc "
-            set -euo pipefail
-            export RAKUBREW_HOME=/opt/rakubrew
-            export PATH=/usr/local/bin:/usr/bin:/opt/rakubrew/bin:/opt/rakubrew/shims:\$PATH
-            mkdir -p \"\$HOME/public_html\" \"\$HOME/.local\"
-            cd '$src_dir'
-            ./INSTALL -d
-        "
-        return 0
-    fi
-
-    # End-user mode: if the script is not being run from an OFE source tree,
-    # clone/update the official repository under the normal user's home.
-    sudo -u "$ofe_user" -H bash -lc '
-        set -euo pipefail
-        export RAKUBREW_HOME=/opt/rakubrew
-        export PATH=/usr/local/bin:/usr/bin:/opt/rakubrew/bin:/opt/rakubrew/shims:$PATH
-
-        mkdir -p "$HOME/public_html" "$HOME/.local"
-
-        if [[ ! -d "$HOME/.local/OneFit-Engine/.git" ]]; then
-            rm -rf "$HOME/.local/OneFit-Engine"
-            git clone https://github.com/fitteia/OneFit-Engine.git "$HOME/.local/OneFit-Engine"
-        else
-            cd "$HOME/.local/OneFit-Engine"
-            git pull --ff-only || true
-        fi
-
-        cd "$HOME/.local/OneFit-Engine"
-        chmod +x ./INSTALL 2>/dev/null || true
-        ./INSTALL -d
-    '
-}
-
 run_ldconfig() {
     if command -v ldconfig >/dev/null 2>&1; then
         ldconfig "$@"
@@ -834,38 +772,6 @@ fix_libperl() {
 
     run_ldconfig >/dev/null 2>&1 || true
 }
-
-uninstall_ofe() {
-    log "Uninstall OFE links and user tree"
-    local ofe_user="${SUDO_USER:-$USER}"
-
-    if [[ "$ofe_user" != "root" && -n "$ofe_user" ]]; then
-        sudo -u "$ofe_user" -H bash -lc '
-            rm -rf "$HOME/.local/OneFit-Engine"
-            rm -f "$HOME/.local/bin/onefite" "$HOME/.local/bin/ofe" "$HOME/.local/bin/onefit" "$HOME/.local/bin/of"
-        '
-    fi
-
-    rm -f /usr/local/bin/onefite /usr/local/bin/ofe /usr/local/bin/onefit /usr/local/bin/of
-    rm -f /usr/local/bin/rakubrew /usr/local/bin/raku /usr/local/bin/rakudo /usr/local/bin/zef /usr/local/bin/prove6
-    rm -f /usr/local/bin/xmgrace /usr/local/bin/gracebat /usr/local/bin/grace
-    rm -f /etc/profile.d/ofe-path.sh /etc/sudoers.d/90-ofe-secure-path
-
-    # arch always uses /opt/rakubrew; fedora/suse may have populated it via
-    # the Rakubrew fallback path in setup_raku_fedora_or_suse.
-    rm -rf /opt/rakubrew
-
-    if command -v ufw >/dev/null 2>&1 && ufw status 2>/dev/null | grep -q "Status: active"; then
-        ufw delete allow 8142/tcp >/dev/null 2>&1 || true
-    fi
-    if command -v firewall-cmd >/dev/null 2>&1; then
-        firewall-cmd --permanent --remove-port=8142/tcp >/dev/null 2>&1 || true
-        firewall-cmd --reload >/dev/null 2>&1 || true
-    fi
-
-    echo "OFE files and links removed. Packages installed by this script were not removed."
-}
-
 cleanup_packages() {
     log "Clean package caches"
 
@@ -933,33 +839,38 @@ final_checks() {
 }
 
 main() {
-    case "${1:-install}" in
-        install)
+    case "${1:-}" in
+        ""|install)
             detect_os
             setup_paths
             install_repositories
             install_packages
-			fix_libperl
+            fix_libperl || true
             setup_raku_and_zef
             setup_services
             setup_grace
             create_links
             open_ports
-            ofe_install
-			cleanup_packages
+            cleanup_packages
             final_checks
             echo
-            echo "Done."
+            echo "Pre-installation done."
+            echo "Now run as the normal user:"
+            echo "  ./INSTALL -d"
             ;;
-        uninstall|remove)
-            detect_os
-            uninstall_ofe
+        -h|--help|help)
+            echo "Usage: $0"
+            echo
+            echo "Prepares Linux system dependencies for OneFit-Engine."
+            echo "After this finishes, run: ./INSTALL [options]"
             ;;
         *)
-            echo "Usage: sudo $0 [install|uninstall]"
+            echo "Usage: $0"
+            echo "This is a pre-installer; it has no uninstall action."
             exit 1
             ;;
     esac
 }
+
 
 main "$@"
