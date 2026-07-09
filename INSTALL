@@ -394,12 +394,11 @@ sub install (:$test,:$to-site, :$bindir) {
 		shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
     else {
-		my $proc = shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./", :out, :err);
-		my $stdout = $proc.out.slurp(:close);
-		my $stderr = $proc.err.slurp(:close);
+		shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./");
+		my $proc = shell("zef locate Inline::Perl5", :out);
+		my $location = $proc.out.slurp(:close).trim;
 
-		say "out:" ~ $stdout;
-		say $stderr if $stderr.chars;
+		say $location;
 #        my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 		if $to-site {
 	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
