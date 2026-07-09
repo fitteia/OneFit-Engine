@@ -395,8 +395,8 @@ sub install (:$test,:$to-site, :$bindir) {
     }
     else {
 		shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./");
-		my $proc = shell("zef locate onefite", :out);
-		my $location = $proc.out.slurp(:close).trim;
+		my $proc = shell("zef list --installed", :out);
+		my $location = $proc.out.lines(:close).grep(/site$/).subst("inst#",'');
 
 		say $location;
 #        my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
