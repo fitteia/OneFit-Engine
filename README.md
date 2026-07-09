@@ -7,6 +7,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 - [Prerequisites](#Prerequisites)
 - [Installation](#Installation)
+- [Testing](#Testing)
 - [Performance](#Performance)
 - [Upgrades](#Upgrades)
 - [WebService](#WebService)
@@ -304,6 +305,26 @@ Create a user account, ex: ofe
 	```
 	(to remove shellinabox from the system)
 
+
+## Testing
+
+You can test OFE usind docker containers for debian/ubuntu/fedora/centos/arch/suse
+```bash
+tmpdir=$(mktemp -d)
+cd $tmpdir && git clone http://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
+./test-ofe-in-docker-sandbox build debian
+./test-ofe-in-docker-sandbox run debian
+```
+
+In the guest OS
+```bash
+cd $HOME/.local && clone http://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
+./pre-install-in-Linux.sh && ./INSTALL --no-test && ./post-install
+```
+
+After you can remove both containers and images. Check Docker info
+
+
 ## Performance
 
 OFE provides a reasonable level of parallelization, particularly when performing individual fits.
@@ -370,7 +391,7 @@ cd $HOME/public_html && nohup onefite start-web-engine &
 onefite service stop
 ```
 or
-```bash
+zR```bash
 onefite stop-web-engine
 ```
 or
