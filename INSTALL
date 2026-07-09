@@ -395,7 +395,7 @@ sub install (:$test,:$to-site, :$bindir) {
     }
     else {
 		shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./");
-		my $proc = shell("zef locate Inline::Perl5", :out);
+		my $proc = shell("zef locate onefite", :out);
 		my $location = $proc.out.slurp(:close).trim;
 
 		say $location;
