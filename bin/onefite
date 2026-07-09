@@ -635,7 +635,7 @@ multi MAIN ('service','start',
 	  	my $proc = shell("ps aux", :out).out(:close).lines.grep(/start\-web\-engine/).words[1];
 	  	shell "kill -9 $proc" if so $proc;
 	  	say "starting onefite service on $*HOME/public_html and go in the backgound";
-	  	shell "cd $*HOME/public_html; nohup onefite start-web-engine --ip=$ip --port=$port &";
+	  	shell "mkdir -p $*HOME/public_html && cd $*HOME/public_html; nohup onefite start-web-engine --ip=$ip --port=$port &";
 	  }
       exit
 }
