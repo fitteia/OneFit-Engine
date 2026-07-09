@@ -17,20 +17,20 @@
 
 set -u
 
-# Keep the original invoking user even after sudo re-executes the script.
-OFE_INVOKING_USER="${OFE_INVOKING_USER:-${SUDO_USER:-${USER:-}}}"
-
+# This script must run entirely as root.
+# Do not re-exec with sudo and do not mix root/user Rakubrew state.
 if [[ "${EUID}" -ne 0 ]]; then
-    if ! command -v sudo >/dev/null 2>&1; then
-        echo "ERROR: sudo is required to install system packages and links." >&2
-        echo "Install sudo first, or run this script as root from a normal sudo-capable user." >&2
-        exit 1
-    fi
-
-    echo "Administrative privileges are required for package installation and /usr/local setup."
-    echo "Requesting sudo..."
-    exec sudo -E OFE_INVOKING_USER="$OFE_INVOKING_USER" bash "$0" "$@"
+    echo "ERROR: this pre-install script must be run as root." >&2
+    echo "Run one of:" >&2
+    echo "  sudo bash $0" >&2
+    echo "  sudo -H bash $0" >&2
+    echo "  su -c 'bash $0'" >&2
+    exit 1
 fi
+
+# Force a root-owned, system-wide Rakubrew environment.
+export HOME=/root
+export RAKUBREW_HOME=/opt/rakubrew
 
 log()  { echo; echo "=== $* ==="; }
 warn() { echo "WARNING: $*" >&2; }
@@ -485,6 +485,8 @@ setup_raku_with_rakubrew() {
     fi
 
     chmod -R a+rX /opt/rakubrew 2>/dev/null || true
+    chmod 755 /opt /opt/rakubrew /opt/rakubrew/bin /opt/rakubrew/shims 2>/dev/null || true
+
     link_cmd raku /opt/rakubrew/shims/raku
     link_cmd rakudo /opt/rakubrew/shims/rakudo
     link_cmd zef /opt/rakubrew/shims/zef
