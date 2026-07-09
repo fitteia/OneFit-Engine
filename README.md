@@ -57,7 +57,7 @@ As an alternative
 ```bash
 mkdir -p $HOME/.local && cd $_
 git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
-./pre-install-ofe-in-MacOS.sh && ./INSTALL --no-test && ./post-install
+./pre-install-ofe-in-MacOS.sh && ./INSTALL --no-test --no-post-test && ./post-install
 ```
 
  ** Fedora/CentOS/Suse/Arch
@@ -319,7 +319,7 @@ cd $tmpdir && git clone http://github.com/fitteia/OneFit-Engine.git && cd OneFit
 In the guest OS
 ```bash
 cd $HOME/.local && clone http://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
-./pre-install-in-Linux.sh && ./INSTALL --no-test && ./post-install
+./pre-install-in-Linux.sh && ./INSTALL --no-test --no-post-test && ./post-install
 ```
 
 After you can remove both containers and images. Check Docker info

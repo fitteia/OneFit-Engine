@@ -139,9 +139,15 @@ install_pkg() {
         apt)
             DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg" || { warn "could not install package: $pkg"; return 1; }
             ;;
-        dnf)
-            dnf install -y "$pkg" || { warn "could not install package: $pkg"; return 1; }
-            ;;
+		dnf)
+    		if ! dnf install -y "$pkg"; then
+        		echo "Retrying with --allowerasing..."
+        		dnf install -y --allowerasing "$pkg" || {
+            		warn "could not install package: $pkg"
+            		return 1
+        		}
+    		fi
+    		;;
         zypper)
             zypper --non-interactive install --auto-agree-with-licenses --no-recommends "$pkg" || { warn "could not install package: $pkg"; return 1; }
             ;;
