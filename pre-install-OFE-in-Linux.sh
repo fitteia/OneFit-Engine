@@ -385,7 +385,7 @@ install_packages_fedora() {
     install_first_available_pkg texlive-epstopdf texlive-epstopdf-bin || true
     install_first_available_pkg pdftk-java pdftk || true
     install_first_available_pkg ffmpeg ffmpeg-free || true
-    install_first_available_pkg perl6-zef raku-zef zef || true
+    # Raku/zef are installed consistently via Rakubrew in setup_raku_and_zef.
 }
 
 install_packages_suse() {
@@ -404,8 +404,7 @@ install_packages_suse() {
     install_first_available_pkg ffmpeg ffmpeg-8 ffmpeg-7 ffmpeg-6 || true
     install_first_available_pkg texlive-epstopdf-bin texlive-epstopdf texlive || true
     install_first_available_pkg firewalld SuSEfirewall2 || true
-    install_first_available_pkg rakudo raku || true
-    install_first_available_pkg zef perl6-zef raku-zef || true
+    # Raku/zef are installed consistently via Rakubrew in setup_raku_and_zef.
 }
 
 install_packages() {
@@ -533,10 +532,15 @@ install_raku_modules() {
 
 setup_raku_and_zef() {
     case "$OS_FAMILY" in
-        arch)   setup_raku_with_rakubrew ;;
-        debian) setup_raku_debian ;;
-        fedora) setup_raku_fedora_or_suse ;;
-        suse)   setup_raku_fedora_or_suse ;;
+        debian)
+            # Debian/Ubuntu provide a coherent packaged Rakudo + zef stack.
+            setup_raku_debian
+            ;;
+        arch|fedora|suse)
+            # Keep Raku/zef consistent. Do not mix system Rakudo with Rakubrew zef.
+            # Use Rakubrew for the full Raku stack on Fedora/RHEL, Arch and openSUSE.
+            setup_raku_with_rakubrew
+            ;;
     esac
     install_raku_modules
 }
@@ -686,13 +690,23 @@ setup_grace() {
 
 create_links() {
     log "Create /usr/local/bin links"
-    local cmds=(raku rakudo zef prove6 xmgrace gracebat grace)
-    [[ "$OS_FAMILY" == "arch" || -x /opt/rakubrew/bin/rakubrew ]] && cmds+=(rakubrew)
 
-    local cmd
-    for cmd in "${cmds[@]}"; do
-        link_cmd "$cmd"
-    done
+    if [[ -x /opt/rakubrew/bin/rakubrew ]]; then
+        link_cmd rakubrew /opt/rakubrew/bin/rakubrew
+        link_cmd raku     /opt/rakubrew/shims/raku
+        link_cmd rakudo   /opt/rakubrew/shims/rakudo
+        link_cmd zef      /opt/rakubrew/shims/zef
+        link_cmd prove6   /opt/rakubrew/shims/prove6
+    else
+        link_cmd raku
+        link_cmd rakudo
+        link_cmd zef
+        link_cmd prove6
+    fi
+
+    link_cmd xmgrace
+    link_cmd gracebat
+    link_cmd grace
     link_grace_to_xmgrace
 }
 
