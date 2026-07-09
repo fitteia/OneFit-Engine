@@ -1,4 +1,4 @@
-#!/usr/bin/env raku
+!/usr/bin/env raku
 
 use v6.d;
 
@@ -398,7 +398,7 @@ sub install (:$test,:$to-site, :$bindir) {
 		#        my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 		my $proc = shell("zef list --installed", :out,:err);
 		my $location = $proc.err.lines(:close).grep(/'site'$/).split('#').tail;
-    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
+		my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
 		$onefite-bin = "$location/bin/onefite" unless $onefite-bin.IO.e;
 		$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 		if $to-site {
