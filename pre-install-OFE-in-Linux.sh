@@ -500,8 +500,8 @@ setup_raku_fedora_or_suse() {
     if command -v raku >/dev/null 2>&1 && command -v zef >/dev/null 2>&1 && zef --version >/dev/null 2>&1; then
         echo "✓ raku found: $(command -v raku)"
         echo "✓ zef found:  $(command -v zef)"
-        link_cmd raku
-        link_cmd rakudo
+        link_cmd raku /usr/bin/raku
+        link_cmd rakudo /usr/bin/rakudo
         link_cmd zef
     else
         warn "system Raku/zef incomplete; using full Rakubrew fallback"
