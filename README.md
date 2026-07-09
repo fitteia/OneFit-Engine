@@ -52,6 +52,12 @@ A litle bit of hacking might be necessary. Install raku zef module.
 ```bash
 mkdir ~/.raku $$ cd $_ && git clone https://github.com/ugexe/zef.git && cd zef && raku -I. bin/zef install . && ln -s /opt/homebrew/share/perl6/site/bin/zef /usr/local/bin/zef
 ```
+As an alternative
+```bash
+mkdir -p $HOME/.local && cd $_
+git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
+./pre-install-ofe-in-MacOS.sh && ./INSTALL --no-test && ./post-install
+```
 
  ** Fedora/CentOS/Suse/Arch
 ```bash
