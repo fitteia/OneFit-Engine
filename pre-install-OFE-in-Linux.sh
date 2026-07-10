@@ -572,6 +572,7 @@ setup_raku_fedora_or_suse() {
     fi
 
     [[ -x /usr/bin/zef ]] && system_zef=/usr/bin/zef
+    [[ -x /usr/local/bin/zef ]] && system_zef=/usr/local/bin/zef
 
     if [[ -n "$system_zef" ]]         && "$system_raku" --version >/dev/null 2>&1         && "$system_zef" --version >/dev/null 2>&1
     then
