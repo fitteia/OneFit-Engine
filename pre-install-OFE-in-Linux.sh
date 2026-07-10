@@ -513,6 +513,10 @@ setup_raku_debian() {
 setup_raku_fedora_or_suse() {
     log "Fedora/openSUSE Raku / zef"
 
+    # Install only the missing pieces from the distribution.
+    [[ -x /usr/bin/raku ]]   || install_first_available_pkg rakudo raku || true
+    [[ -x /usr/bin/zef ]]    || install_first_available_pkg zef raku-zef perl6-zef || true
+
     local system_raku=""
     local system_rakudo=""
     local system_zef=""
@@ -521,14 +525,20 @@ setup_raku_fedora_or_suse() {
     [[ -x /usr/bin/rakudo ]] && system_rakudo=/usr/bin/rakudo
     [[ -x /usr/bin/zef ]]    && system_zef=/usr/bin/zef
 
-    if [[ -n "$system_raku" && -n "$system_zef" ]] &&        "$system_raku" --version >/dev/null 2>&1 &&        "$system_zef" --version >/dev/null 2>&1; then
-
+    if [[ -n "$system_raku" && -n "$system_zef" ]] \
+        && "$system_raku" --version >/dev/null 2>&1 \
+        && "$system_zef" --version >/dev/null 2>&1
+    then
         RAKU_PROVIDER="system"
+
         echo "✓ using packaged raku: $system_raku"
         echo "✓ using packaged zef:  $system_zef"
 
         link_cmd raku "$system_raku"
-        [[ -n "$system_rakudo" ]] && link_cmd rakudo "$system_rakudo"
+
+        [[ -n "$system_rakudo" ]] && \
+            link_cmd rakudo "$system_rakudo"
+
         link_cmd zef "$system_zef"
     else
         warn "complete packaged Raku/zef stack not available; using Rakubrew fallback"
