@@ -657,7 +657,7 @@ sub in-path(Str $cmd) {
 # ---------- Linux detection ----------
 sub os-release() {
     my $osr = slurp-or-empty('/etc/os-release');
-
+say $osr ~ ":";
 	unless $osr {
     	my $macos = is-macos() // '';
 
