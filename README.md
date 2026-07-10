@@ -58,7 +58,7 @@ As an alternative
 mkdir -p $HOME/.local && cd $_
 git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
 sudo ./pre-install-ofe-in-MacOS.sh 
-bash -lc "./INSTALL --no-test --no-post-test && onefite service start && ./post-install"
+bash -lc "./INSTALL --no-test --no-post-test && onefite service start && ./post-install.sh"
 ```
 
  ** Fedora/CentOS/Suse/Arch
@@ -69,7 +69,8 @@ Install git in your system and then
 ```bash
 mkdir -p $HOME/.local && cd $_
 git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
-./pre-install-ofe-in-Linux.sh && ./INSTALL --no-test && ./post-install
+sudo ./pre-install-ofe-in-Linux.sh
+bash -lc "./INSTALL --no-test --no-post-test && onefite service start && ./post-install.sh"
 ```
 
 ### Full features OneFit Engine Server
