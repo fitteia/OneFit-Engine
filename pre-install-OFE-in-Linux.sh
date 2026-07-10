@@ -43,6 +43,7 @@ OS_CODENAME="unknown"
 OS_FAMILY="unknown"
 PM="unknown"
 WEB_SERVER_CMD="unknown"
+RAKU_PROVIDER="unknown"
 
 is_arch_like() {
     [[ "$OS_ID" == "arch" || " $OS_ID_LIKE " == *" arch "* ]]
@@ -385,7 +386,10 @@ install_packages_fedora() {
     install_first_available_pkg texlive-epstopdf texlive-epstopdf-bin || true
     install_first_available_pkg pdftk-java pdftk || true
     install_first_available_pkg ffmpeg ffmpeg-free || true
-    # Raku/zef are installed consistently via Rakubrew in setup_raku_and_zef.
+
+    # Prefer distribution packages when both Rakudo and zef are available.
+    install_first_available_pkg rakudo raku || true
+    install_first_available_pkg zef raku-zef perl6-zef || true
 }
 
 install_packages_suse() {
@@ -393,7 +397,7 @@ install_packages_suse() {
     local packages=(
         perl perl-CGI git openssh apache2 swig gcc gcc-fortran make tar
         wget curl jq zip unzip sudo vim man gnuplot openssl-devel hdf5 hdf5-devel
-        poppler-tools ghostscript ImageMagick java-21-openjdk which gzip xz texlive-epstopdf-bin diffutils
+        poppler-tools ghostscript ImageMagick java-21-openjdk which gzip xz texlive-epstopdf-bin diffutils rakudo
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
@@ -404,7 +408,10 @@ install_packages_suse() {
     install_first_available_pkg ffmpeg ffmpeg-8 ffmpeg-7 ffmpeg-6 || true
     install_first_available_pkg texlive-epstopdf-bin texlive-epstopdf texlive || true
     install_first_available_pkg firewalld SuSEfirewall2 || true
-    # Raku/zef are installed consistently via Rakubrew in setup_raku_and_zef.
+
+    # Prefer distribution packages when both Rakudo and zef are available.
+    install_first_available_pkg rakudo raku || true
+    install_first_available_pkg zef raku-zef perl6-zef || true
 }
 
 install_packages() {
@@ -465,6 +472,7 @@ setup_rakubrew_systemwide() {
 
 setup_raku_with_rakubrew() {
     log "Raku / zef via system-wide Rakubrew"
+    RAKU_PROVIDER="rakubrew"
     setup_rakubrew_systemwide
 
     export RAKUBREW_HOME=/opt/rakubrew
@@ -494,6 +502,7 @@ setup_raku_with_rakubrew() {
 
 setup_raku_debian() {
     log "Debian Raku / zef"
+    RAKU_PROVIDER="system"
     command -v raku >/dev/null 2>&1 || die "rakudo package did not provide raku"
     command -v zef  >/dev/null 2>&1 || die "perl6-zef package did not provide zef"
     link_cmd raku /usr/bin/raku
@@ -504,14 +513,25 @@ setup_raku_debian() {
 setup_raku_fedora_or_suse() {
     log "Fedora/openSUSE Raku / zef"
 
-    if command -v raku >/dev/null 2>&1 && command -v zef >/dev/null 2>&1 && zef --version >/dev/null 2>&1; then
-        echo "✓ raku found: $(command -v raku)"
-        echo "✓ zef found:  $(command -v zef)"
-        link_cmd raku /usr/bin/raku
-        link_cmd rakudo /usr/bin/rakudo
-        link_cmd zef
+    local system_raku=""
+    local system_rakudo=""
+    local system_zef=""
+
+    [[ -x /usr/bin/raku ]]   && system_raku=/usr/bin/raku
+    [[ -x /usr/bin/rakudo ]] && system_rakudo=/usr/bin/rakudo
+    [[ -x /usr/bin/zef ]]    && system_zef=/usr/bin/zef
+
+    if [[ -n "$system_raku" && -n "$system_zef" ]] &&        "$system_raku" --version >/dev/null 2>&1 &&        "$system_zef" --version >/dev/null 2>&1; then
+
+        RAKU_PROVIDER="system"
+        echo "✓ using packaged raku: $system_raku"
+        echo "✓ using packaged zef:  $system_zef"
+
+        link_cmd raku "$system_raku"
+        [[ -n "$system_rakudo" ]] && link_cmd rakudo "$system_rakudo"
+        link_cmd zef "$system_zef"
     else
-        warn "system Raku/zef incomplete; using full Rakubrew fallback"
+        warn "complete packaged Raku/zef stack not available; using Rakubrew fallback"
         setup_raku_with_rakubrew
     fi
 }
@@ -535,12 +555,14 @@ install_raku_modules() {
 setup_raku_and_zef() {
     case "$OS_FAMILY" in
         debian)
-            # Debian/Ubuntu provide a coherent packaged Rakudo + zef stack.
             setup_raku_debian
             ;;
-        arch|fedora|suse)
-            # Keep Raku/zef consistent. Do not mix system Rakudo with Rakubrew zef.
-            # Use Rakubrew for the full Raku stack on Fedora/RHEL, Arch and openSUSE.
+        fedora|suse)
+            # Prefer packaged Rakudo + zef when both are available and working.
+            # Otherwise fall back to a complete Rakubrew stack.
+            setup_raku_fedora_or_suse
+            ;;
+        arch)
             setup_raku_with_rakubrew
             ;;
     esac
@@ -693,18 +715,27 @@ setup_grace() {
 create_links() {
     log "Create /usr/local/bin links"
 
-    if [[ -x /opt/rakubrew/bin/rakubrew ]]; then
-        link_cmd rakubrew /opt/rakubrew/bin/rakubrew
-        link_cmd raku     /opt/rakubrew/shims/raku
-        link_cmd rakudo   /opt/rakubrew/shims/rakudo
-        link_cmd zef      /opt/rakubrew/shims/zef
-        link_cmd prove6   /opt/rakubrew/shims/prove6
-    else
-        link_cmd raku
-        link_cmd rakudo
-        link_cmd zef
-        link_cmd prove6
-    fi
+    case "$RAKU_PROVIDER" in
+        rakubrew)
+            link_cmd rakubrew /opt/rakubrew/bin/rakubrew
+            link_cmd raku     /opt/rakubrew/shims/raku
+            link_cmd rakudo   /opt/rakubrew/shims/rakudo
+            link_cmd zef      /opt/rakubrew/shims/zef
+            link_cmd prove6   /opt/rakubrew/shims/prove6
+            ;;
+        system)
+            [[ -x /usr/bin/raku ]]   && link_cmd raku /usr/bin/raku
+            [[ -x /usr/bin/rakudo ]] && link_cmd rakudo /usr/bin/rakudo
+            [[ -x /usr/bin/zef ]]    && link_cmd zef /usr/bin/zef
+            link_cmd prove6
+            ;;
+        *)
+            link_cmd raku
+            link_cmd rakudo
+            link_cmd zef
+            link_cmd prove6
+            ;;
+    esac
 
     link_cmd xmgrace
     link_cmd gracebat
