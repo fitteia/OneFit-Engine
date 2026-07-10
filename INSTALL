@@ -42,7 +42,7 @@ multi MAIN (
 	){
  
 	my $system = is-sys-summary();
-	note "Install OneFit-Engine for: $system {os-system()}";
+	note "Install OneFit-Engine for: $system {os-family()}";
 
 	$docker = $system.contains("docker") unless $docker;
 	$wsl = $system.contains("wsl") unless $wsl;
