@@ -658,12 +658,8 @@ sub in-path(Str $cmd) {
 sub os-release() {
     my $osr = slurp-or-empty('/etc/os-release');
 	
-	unless $osr.chars {
-    	my $macos = is-macos() // '';
-
-    	if $macos.contains('macos') {
-        	$osr = "ID=macos\nID_LIKE=colima-homebrew";
-    	}
+	if is-macos() {
+       	$osr = "ID=macos\nID_LIKE=colima-homebrew";
 	}
 
     return {} unless $osr.chars;
