@@ -799,7 +799,12 @@ is_rhel_like_id() {
     [[ "$OS_ID" =~ ^(centos|centos-stream|rocky|almalinux|rhel|redhat|ol)$ ]]
 }
 
-setup_grace() {
+is_suse_like_id() {
+    [[ "$OS_ID" =~ ^(opensuse|opensuse-leap|opensuse-tumbleweed|sles|sled)$ ]]
+}
+
+	
+	setup_grace() {
     log "Grace / xmgrace"
 
     # Debian/Fedora/openSUSE usually install xmgrace/grace from packages.
@@ -814,7 +819,7 @@ setup_grace() {
 
     # Arch and RHEL-like systems often lack a usable xmgrace package.
     # Build from source only when the package path failed there.
-    if [[ "$OS_FAMILY" == "arch" ]] || is_rhel_like_id; then
+	if [[ "$OS_FAMILY" =~ ^(arch|suse)$ ]] || is_rhel_like_id || is_suse_like_id; then
         warn "xmgrace package not available; building Grace from source"
         install_grace_from_source
         return 0
