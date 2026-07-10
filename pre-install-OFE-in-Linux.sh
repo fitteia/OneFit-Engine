@@ -397,7 +397,7 @@ install_packages_suse() {
     local packages=(
         perl perl-CGI git openssh apache2 swig gcc gcc-fortran make tar
         wget curl jq zip unzip sudo vim man gnuplot openssl-devel hdf5 hdf5-devel
-        poppler-tools ghostscript ImageMagick java-21-openjdk which gzip xz texlive-epstopdf-bin diffutils rakudo
+        poppler-tools ghostscript ImageMagick java-21-openjdk which gzip xz texlive-epstopdf-bin diffutils
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
