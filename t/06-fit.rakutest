@@ -52,6 +52,7 @@ $test-log=$test-log.subst("NDIM=  50","NDIM= $val");
 "/tmp/test-log.log".IO.spurt: $test-log, :enc<utf8-c8>;
 
 is "$workfolder/fit1.log".IO.slurp(enc => 'utf8-c8'), "/tmp/test-log.log".IO.slurp(enc => 'utf8-c8'), "individual fit 1: OK! ({ now -$time } s)";
+shell("rm -f test-log.log",:cwd("/tmp")) if "/tmp/test-log.log".IO.e;
 
 $time = now;
 $eng.parameters(:r,:from-output).agr;
@@ -68,6 +69,7 @@ $test-log=$test-log.subst("NDIM=  50","NDIM= $val");
 "/tmp/test-log.log".IO.spurt: $test-log, :enc<utf8-c8>;
 
 is "$workfolder/fit40.log".IO.slurp(enc => 'utf8-c8'),"/tmp/test-log.log".IO.slurp(enc => 'utf8-c8'), "individual plot 40: OK! ({ now -$time } s)" ;
+shell("rm -f test-log.log",:cwd("/tmp")) if "/tmp/test-log.log".IO.e;
 
 is "$workfolder/fit19.out".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit19.out".IO.slurp(enc => 'utf8-c8'), "individual plot 19 output: OK! ({ now -$time } s)" ;
 

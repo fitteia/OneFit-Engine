@@ -7,6 +7,7 @@ The copyright will be defined at the end of the devolopment process. For now the
 
 - [Prerequisites](#Prerequisites)
 - [Installation](#Installation)
+- [Testing](#Testing)
 - [Performance](#Performance)
 - [Upgrades](#Upgrades)
 - [WebService](#WebService)
@@ -33,7 +34,10 @@ wsl --set-default-version 2
 
 Install Colima and Docker with brew
 ```bash
-brew install colima docker
+brew install colima docker docker-buildx
+mkdir -p ~/.docker/cli-plugins
+ln -sf "$(brew --prefix)/opt/docker-buildx/bin/docker-buildx" \
+  ~/.docker/cli-plugins/docker-buildx
 ```
 Start Colima with 4GB or RAM (less will not work)
 ```bash
@@ -48,6 +52,24 @@ brew install rakudo gcc
 A litle bit of hacking might be necessary. Install raku zef module.
 ```bash
 mkdir ~/.raku $$ cd $_ && git clone https://github.com/ugexe/zef.git && cd zef && raku -I. bin/zef install . && ln -s /opt/homebrew/share/perl6/site/bin/zef /usr/local/bin/zef
+```
+As an alternative
+```bash
+mkdir -p $HOME/.local && cd $_
+git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
+sudo ./pre-install-ofe-in-MacOS.sh 
+bash -lc "./INSTALL --no-test --no-post-test && onefite service start && ./post-install"
+```
+
+ ** Fedora/CentOS/Suse/Arch
+```bash
+which git
+```
+Install git in your system and then
+```bash
+mkdir -p $HOME/.local && cd $_
+git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
+./pre-install-ofe-in-Linux.sh && ./INSTALL --no-test && ./post-install
 ```
 
 ### Full features OneFit Engine Server
@@ -204,7 +226,7 @@ Create a user account, ex: ofe
 	INSTALL raku from debian/Ubuntu repositories
 	
 	```bash
-	apt install raku && exit
+	apt install raku 
 	```
 
 	Aternatively: install raku from source in case of Debian 11 (build instructions: https://rakudo.org/downloads/rakudo/source)
@@ -252,21 +274,21 @@ Create a user account, ex: ofe
 	script onefite-install.log 
 	```
 
-	(it will record the session until you exit) 
+	(it will record the session until you exit). remove the --no-test if you wnat all tests to be performed during installation. Otherwise consider running "onefite test" after installation. 
 
 	```bash
 	mkdir $HOME/.local && cd $HOME/.local 
-	git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && git branch site && ./INSTALL && onefite service start
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine && git branch site && ./INSTALL --no-test && onefite service start
 	```
 
 	Alternative: start the onefite daemon that starts the onefite service after system boot and keeps it running
 	```bash
-	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon && sudo service onefite start
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon --no-test && onefite service start
 	```
 
 	Alternative: install also a web shell access (linuxinabox) and start the onefite daemon that starts the onefite service after system boot and keeps it running
 	```bash
-	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon --shell && sudo service onefite start
+	git clone https://github.com/fitteia/OneFit-Engine.git && cd $HOME/.local/OneFit-Engine && ./INSTALL  --systemd-daemon --shell --no-test && onefite service start
 	```
 
 	***CERN Lib Minuit***
@@ -283,6 +305,27 @@ Create a user account, ex: ofe
 	sudo apt purge shelloinabox 
 	```
 	(to remove shellinabox from the system)
+
+
+## Testing
+
+You can test OFE usind docker containers for debian/ubuntu/fedora/centos/arch/suse
+```bash
+tmpdir=$(mktemp -d)
+cd $tmpdir && git clone http://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
+./test-ofe-in-docker-sandbox build debian
+./test-ofe-in-docker-sandbox run debian
+```
+
+In the guest OS
+```bash
+cd $HOME/.local && clone http://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
+sudo ./pre-install-in-Linux.sh
+bash -lc "./INSTALL --no-test --no-post-test && onefite service start && ./post-install"
+```
+
+After you can remove both containers and images. Check the Docker info
+
 
 ## Performance
 
@@ -350,7 +393,7 @@ cd $HOME/public_html && nohup onefite start-web-engine &
 onefite service stop
 ```
 or
-```bash
+zR```bash
 onefite stop-web-engine
 ```
 or
