@@ -166,6 +166,30 @@ install_first_available_pkg() {
     warn "none of these packages are available: $*"
     return 1
 }
+
+find_system_raku() {
+    if [[ -x /usr/local/bin/raku ]]; then
+        printf '%s\n' /usr/local/bin/raku
+    elif [[ -x /usr/bin/raku ]]; then
+        printf '%s\n' /usr/bin/raku
+    fi
+}
+
+find_system_rakudo() {
+    if [[ -x /usr/local/bin/rakudo ]]; then
+        printf '%s\n' /usr/local/bin/rakudo
+    elif [[ -x /usr/bin/rakudo ]]; then
+        printf '%s\n' /usr/bin/rakudo
+    fi
+}
+
+find_system_zef() {
+    if [[ -x /usr/local/bin/zef ]]; then
+        printf '%s\n' /usr/local/bin/zef
+    elif [[ -x /usr/bin/zef ]]; then
+        printf '%s\n' /usr/bin/zef
+    fi
+}
 inside_container() {
     [[ -f /.dockerenv ]] && return 0
     [[ -r /proc/1/cgroup ]] && grep -qaE '(docker|podman|containerd|kubepods|libpod)' /proc/1/cgroup && return 0
@@ -502,12 +526,19 @@ setup_raku_with_rakubrew() {
 
 setup_raku_debian() {
     log "Debian Raku / zef"
+
+    local system_raku system_rakudo system_zef
+    system_raku="$(find_system_raku)"
+    system_rakudo="$(find_system_rakudo)"
+    system_zef="$(find_system_zef)"
+
+    [[ -n "$system_raku" ]] || die "rakudo package did not provide raku"
+    [[ -n "$system_zef"  ]] || die "perl6-zef package did not provide zef"
+
     RAKU_PROVIDER="system"
-    command -v raku >/dev/null 2>&1 || die "rakudo package did not provide raku"
-    command -v zef  >/dev/null 2>&1 || die "perl6-zef package did not provide zef"
-    link_cmd raku /usr/bin/raku
-    link_cmd rakudo /usr/bin/rakudo
-    link_cmd zef /usr/bin/zef
+    link_cmd raku "$system_raku"
+    [[ -n "$system_rakudo" ]] && link_cmd rakudo "$system_rakudo"
+    link_cmd zef "$system_zef"
 }
 
 setup_zef_with_system_raku() {
@@ -540,21 +571,25 @@ setup_zef_with_system_raku() {
     cd "$oldpwd" || true
     rm -rf "$tmpdir"
 
-    [[ -x /usr/bin/zef ]] && link_cmd zef /usr/bin/zef || link_cmd zef
+    local installed_zef
+    installed_zef="$(find_system_zef)"
+    [[ -n "$installed_zef" ]] && link_cmd zef "$installed_zef" || link_cmd zef
 }
 
 setup_raku_fedora_or_suse() {
     log "Fedora/openSUSE Raku / zef"
 
-    # Install packaged Rakudo only when system Raku does not exist.
-    [[ -x /usr/bin/raku ]] || install_first_available_pkg rakudo raku || true
-
     local system_raku=""
     local system_rakudo=""
     local system_zef=""
 
-    [[ -x /usr/bin/raku ]]   && system_raku=/usr/bin/raku
-    [[ -x /usr/bin/rakudo ]] && system_rakudo=/usr/bin/rakudo
+    system_raku="$(find_system_raku)"
+
+    # Install packaged Rakudo only when neither supported system path has Raku.
+    if [[ -z "$system_raku" ]]; then
+        install_first_available_pkg rakudo raku || true
+        system_raku="$(find_system_raku)"
+    fi
 
     if [[ -z "$system_raku" ]]; then
         warn "packaged Raku is unavailable; using full Rakubrew fallback"
@@ -562,20 +597,24 @@ setup_raku_fedora_or_suse() {
         return
     fi
 
-    # Prefer packaged zef; otherwise install zef with the same system Raku.
-    if [[ ! -x /usr/bin/zef && ! -x /usr/local/bin/zef ]]; then
+    system_rakudo="$(find_system_rakudo)"
+    system_zef="$(find_system_zef)"
+
+    # Prefer a packaged zef. Try a source installation with the same system
+    # Raku only when zef is absent from both supported locations.
+    if [[ -z "$system_zef" ]]; then
         install_first_available_pkg zef raku-zef perl6-zef || true
+        system_zef="$(find_system_zef)"
     fi
 
-    if [[ ! -x /usr/bin/zef && ! -x /usr/local/bin/zef ]]; then
+    if [[ -z "$system_zef" ]]; then
         setup_zef_with_system_raku "$system_raku"
+        system_zef="$(find_system_zef)"
     fi
 
-    [[ -x /usr/bin/zef ]] && system_zef=/usr/bin/zef
-    [[ -x /usr/local/bin/zef ]] && system_zef=/usr/local/bin/zef
-
-    if [[ -n "$system_zef" ]]         && "$system_raku" --version >/dev/null 2>&1         && "$system_zef" --version >/dev/null 2>&1
-    then
+    if [[ -n "$system_zef" ]] \
+       && "$system_raku" --version >/dev/null 2>&1 \
+       && "$system_zef" --version >/dev/null 2>&1; then
         RAKU_PROVIDER="system"
 
         echo "✓ using system raku: $system_raku"
@@ -777,9 +816,13 @@ create_links() {
             link_cmd prove6   /opt/rakubrew/shims/prove6
             ;;
         system)
-            [[ -x /usr/bin/raku ]]   && link_cmd raku /usr/bin/raku
-            [[ -x /usr/bin/rakudo ]] && link_cmd rakudo /usr/bin/rakudo
-            [[ -x /usr/bin/zef ]]    && link_cmd zef /usr/bin/zef
+            local system_raku system_rakudo system_zef
+            system_raku="$(find_system_raku)"
+            system_rakudo="$(find_system_rakudo)"
+            system_zef="$(find_system_zef)"
+            [[ -n "$system_raku" ]]   && link_cmd raku "$system_raku"
+            [[ -n "$system_rakudo" ]] && link_cmd rakudo "$system_rakudo"
+            [[ -n "$system_zef" ]]    && link_cmd zef "$system_zef"
             link_cmd prove6
             ;;
         *)
