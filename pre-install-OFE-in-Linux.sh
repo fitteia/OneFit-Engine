@@ -157,13 +157,23 @@ install_pkg() {
 
 install_first_available_pkg() {
     local pkg
+    local found=0
+
     for pkg in "$@"; do
         if package_exists "$pkg"; then
-            install_pkg "$pkg"
-            return 0
+            found=1
+            if install_pkg "$pkg"; then
+                return 0
+            fi
+            warn "installation of $pkg failed; trying the next candidate"
         fi
     done
-    warn "none of these packages are available: $*"
+
+    if [[ "$found" -eq 1 ]]; then
+        warn "none of these available packages could be installed: $*"
+    else
+        warn "none of these packages are available: $*"
+    fi
     return 1
 }
 
