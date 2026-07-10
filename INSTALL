@@ -657,6 +657,7 @@ sub in-path(Str $cmd) {
 # ---------- Linux detection ----------
 sub os-release() {
     my $osr = slurp-or-empty('/etc/os-release');
+	do { $osr = "ID=macos\nID_LIKE=colima-homebrew" if is-macos().contains("macos"); } unless $osr;
     return {} unless $osr.chars;
 
     $osr.lines
@@ -672,9 +673,7 @@ sub os-release() {
 }
 
 sub os-id() {
-	my $id = (os-release()<ID> // '').lc;
-	do { $id = "macos" if is-macos().contains("macos"); } unless $id;
-	return $id;
+	(os-release()<ID> // '').lc;
 }
 
 sub os-id-like() {
