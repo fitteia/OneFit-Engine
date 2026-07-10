@@ -510,12 +510,44 @@ setup_raku_debian() {
     link_cmd zef /usr/bin/zef
 }
 
+setup_zef_with_system_raku() {
+    log "Install zef using the system Raku"
+
+    local system_raku="${1:-/usr/bin/raku}"
+    local tmpdir oldpwd
+
+    [[ -x "$system_raku" ]] || die "system Raku not found: $system_raku"
+
+    tmpdir="$(mktemp -d)"
+    oldpwd="$PWD"
+
+    git clone --depth 1 https://github.com/ugexe/zef.git "$tmpdir/zef" || {
+        rm -rf "$tmpdir"
+        die "could not clone zef"
+    }
+
+    cd "$tmpdir/zef" || {
+        rm -rf "$tmpdir"
+        die "could not enter zef source directory"
+    }
+
+    "$system_raku" -I. bin/zef install . --/test --install-to=site || {
+        cd "$oldpwd" || true
+        rm -rf "$tmpdir"
+        die "zef installation with system Raku failed"
+    }
+
+    cd "$oldpwd" || true
+    rm -rf "$tmpdir"
+
+    [[ -x /usr/bin/zef ]] && link_cmd zef /usr/bin/zef || link_cmd zef
+}
+
 setup_raku_fedora_or_suse() {
     log "Fedora/openSUSE Raku / zef"
 
-    # Install only the missing pieces from the distribution.
-    [[ -x /usr/bin/raku ]]   || install_first_available_pkg rakudo raku || true
-    [[ -x /usr/bin/zef ]]    || install_first_available_pkg zef raku-zef perl6-zef || true
+    # Install packaged Rakudo only when system Raku does not exist.
+    [[ -x /usr/bin/raku ]] || install_first_available_pkg rakudo raku || true
 
     local system_raku=""
     local system_rakudo=""
@@ -523,26 +555,36 @@ setup_raku_fedora_or_suse() {
 
     [[ -x /usr/bin/raku ]]   && system_raku=/usr/bin/raku
     [[ -x /usr/bin/rakudo ]] && system_rakudo=/usr/bin/rakudo
-    [[ -x /usr/bin/zef ]]    && system_zef=/usr/bin/zef
 
-    if [[ -n "$system_raku" && -n "$system_zef" ]] \
-        && "$system_raku" --version >/dev/null 2>&1 \
-        && "$system_zef" --version >/dev/null 2>&1
+    if [[ -z "$system_raku" ]]; then
+        warn "packaged Raku is unavailable; using full Rakubrew fallback"
+        setup_raku_with_rakubrew
+        return
+    fi
+
+    # Prefer packaged zef; otherwise install zef with the same system Raku.
+    if [[ ! -x /usr/bin/zef ]]; then
+        install_first_available_pkg zef raku-zef perl6-zef || true
+    fi
+
+    if [[ ! -x /usr/bin/zef ]]; then
+        setup_zef_with_system_raku "$system_raku"
+    fi
+
+    [[ -x /usr/bin/zef ]] && system_zef=/usr/bin/zef
+
+    if [[ -n "$system_zef" ]]         && "$system_raku" --version >/dev/null 2>&1         && "$system_zef" --version >/dev/null 2>&1
     then
         RAKU_PROVIDER="system"
 
-        echo "✓ using packaged raku: $system_raku"
-        echo "✓ using packaged zef:  $system_zef"
+        echo "✓ using system raku: $system_raku"
+        echo "✓ using system zef:  $system_zef"
 
         link_cmd raku "$system_raku"
-
-        [[ -n "$system_rakudo" ]] && \
-            link_cmd rakudo "$system_rakudo"
-
+        [[ -n "$system_rakudo" ]] && link_cmd rakudo "$system_rakudo"
         link_cmd zef "$system_zef"
     else
-        warn "complete packaged Raku/zef stack not available; using Rakubrew fallback"
-        setup_raku_with_rakubrew
+        die "system Raku exists, but zef could not be installed for it"
     fi
 }
 
