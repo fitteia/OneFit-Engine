@@ -440,6 +440,18 @@ install_packages_suse() {
     install_first_available_pkg xmgrace grace || true
     install_first_available_pkg pdftk pdftk-java || true
     install_first_available_pkg ffmpeg ffmpeg-8 ffmpeg-7 ffmpeg-6 || true
+
+    # Some openSUSE packages expose a versioned command. Normalize it to ffmpeg.
+    if ! command -v ffmpeg >/dev/null 2>&1; then
+        local ffmpeg_cmd=""
+        for ffmpeg_cmd in ffmpeg-8 ffmpeg-7 ffmpeg-6; do
+            if command -v "$ffmpeg_cmd" >/dev/null 2>&1; then
+                link_cmd ffmpeg "$(command -v "$ffmpeg_cmd")"
+                break
+            fi
+        done
+    fi
+
     install_first_available_pkg texlive-epstopdf-bin texlive-epstopdf texlive || true
     install_first_available_pkg firewalld SuSEfirewall2 || true
 
