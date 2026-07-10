@@ -451,6 +451,9 @@ install_packages_suse() {
             fi
         done
     fi
+	
+	curl -L https://ctan.net/support/epstopdf/epstopdf.pl -o /usr/local/bin/epstopdf
+	chmod +x /usr/local/bin/epstopdf
 
     install_first_available_pkg texlive-epstopdf-bin texlive-epstopdf texlive || true
     install_first_available_pkg firewalld SuSEfirewall2 || true
