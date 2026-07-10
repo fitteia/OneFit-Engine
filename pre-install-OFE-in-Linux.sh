@@ -563,11 +563,11 @@ setup_raku_fedora_or_suse() {
     fi
 
     # Prefer packaged zef; otherwise install zef with the same system Raku.
-    if [[ ! -x /usr/bin/zef ]]; then
+    if [[ ! -x /usr/bin/zef | /usr/local/bin/zef ]]; then
         install_first_available_pkg zef raku-zef perl6-zef || true
     fi
 
-    if [[ ! -x /usr/bin/zef ]]; then
+    if [[ ! -x /usr/bin/zef | /usr/local/bin/zef ]]; then
         setup_zef_with_system_raku "$system_raku"
     fi
 
