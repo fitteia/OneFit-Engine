@@ -460,7 +460,7 @@ WantedBy=multi-user.target
 
 sub add-show-ip-in-issue() {
 	do {
-		note("===> /etc/issue desn't exist! No worries, continue...");
+		note("===> /etc/issue doesn't exist! No worries, continue...");
 		return 1;
 	} unless "/etc/issue".IO.e;
     my $issue = "/etc/issue".IO.slurp.subst(/'\l'\s*'\4'*/,'\l \4');
