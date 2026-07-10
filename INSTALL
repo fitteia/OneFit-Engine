@@ -683,6 +683,8 @@ sub os-family() {
     my $id      = os-id();
     my $id-like = os-id-like();
 
+	do { $id = "macos" if is-macos().contains("macos"); } unless $id;
+
     given $id {
 
         when any <debian ubuntu linuxmint pop elementary raspbian> {
@@ -709,6 +711,7 @@ sub os-family() {
         when 'gentoo'    { return 'gentoo'; }
         when 'void'      { return 'void'; }
         when 'slackware' { return 'slackware'; }
+		when 'macos'	 { return 'macos'; }
     }
 
     return 'debian' if $id-like.contains('debian');
