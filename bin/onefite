@@ -1115,21 +1115,21 @@ multi MAIN  ('create',
 multi MAIN  ('random',
 	     Str  $function, 
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-	     Str  :dl(:data-label(:$data-labels)),
-	     Str  :t(:$tags),
-	     Str  :zt(:$zip-to), #= zip work-folder to zipfile
-	     Bool :inp(:$no-plot), #= no plot in onefit random ...
 		 Bool :ax(:auto-x(:$autox)),#= auto scale x
    		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
+	     Str  :dl(:data-label(:$data-labels)),
+	     Bool :g(:$global),
+	     Bool :inp(:$no-plot), #= no plot in onefit random ...
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	     Bool :g(:$global),
-	     Str  :st(:to(:$save-to)), # write fit settings to json or sav file 
-	     Str  :wf(:$work-folder) = '.',
+	     Str  :o(:st(:to(:$save-to))), # write fit settings to json or sav file 
 	     Int  :n(:Num(:$npts)) = +100,
 		 Bool :q(:$quiet) = False,
+	     Str  :t(:$tags),
+	     Str  :wf(:$work-folder) = '.',
+	     Str  :z(:zt(:$zip-to)), #= zip work-folder to zipfile
 	    ){
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitType>="Global" if $global;
