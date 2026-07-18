@@ -572,22 +572,22 @@ multi MAIN ('path',
 
 #|(onefite upgrade)
 multi MAIN ('upgrade',
-      Bool :u(:$to-user) = False, #= install to user
+	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
       Bool :c(:$compile) = True, #= compile before install
       Bool :d(:$systemd-daemon) = False, #= create a sysmtemd-daemon service
       Bool :$cernlib = False, #= install cern lib instead of just minuit.a from src
-      Bool :$shell = False, #= install shellinabox
-	  Bool :$git = True, #= By default it runs git to pull the package for remote repository
-      Int  :$shell-port = 8100, #= shellinabox port
-      Str  :$ip = '0.0.0.0', #= set IP
-	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
-	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
 	  Bool :$docker = False, #= subset of options for a MacOS colima/docker install
-      Int  :p(:$port) = 8142, #= onefite web service port
-      Int  :$minuit is copy, #= onefite web service port
-      Bool :$test = False, #= perform tests
-	  Bool :apt(:apt-get(:$dpkg)) = True, #= run apt update/upgrade
+	  Bool :$git = True, #= By default it runs git to pull the package for remote repository
+      Str  :$ip = '0.0.0.0', #= set IP
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with local branch
+	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
+      Int  :$minuit is copy, #= onefite web service port
+      Int  :p(:$port) = 8142, #= onefite web service port
+      Int  :$shell-port = 8100, #= shellinabox port
+      Bool :$shell = False, #= install shellinabox
+      Bool :$test = False, #= perform tests
+      Bool :u(:$to-user) = False, #= install to user
+	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
 ){
   "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni>= \d+ /);
   $minuit = $<mni>.Int unless $minuit.defined and $minuit > 0;
@@ -609,9 +609,9 @@ multi MAIN ('uninstall'){
 #|(onefite web service start)
 multi MAIN ('service','start',	
       Bool :d(:$systemd-daemon) = False, #= start systemd-daemon
-	  Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
       Str  :$ip = '0.0.0.0', #= accept access from IP
       Int  :p(:$port) = 8142, #= onefite werbservice port
+	  Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
       ) {
 	  if $use-ramdisk {
 		"$*HOME/public_html_bak".IO.mkdir unless "$*HOME/public_html_bak".IO.d;
@@ -1038,9 +1038,9 @@ multi MAIN  ('create',
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
 	     Str  :dl(:data-label(:$data-labels)), #= data labels and values
 	     Bool :g(:$global) = False, #= global/individual 
+		 Int  :$gfilt, #= used a Gaussian filter to smooth data
 		 Str  :fi(:$fit-if) = "", #= include fit if condition when fitting data
          Str  :fm(:$fit-methods) = "simp scan min minos", #= minuit fit methods
-		 Int  :$gfilt, #= used a Gaussian filter to smooth data
 	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False, #= import Mz data from ist-ffc 
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
@@ -1051,10 +1051,10 @@ multi MAIN  ('create',
 		 Bool :q(:$quiet) = False, #= reduce log output
 		 Str  :r(:$range) = "", #= define range when importing data zones form Stelar data
 		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc and Stelar sdf files
-	     Str  :t(:$tags), #= Data blocks TAGS
 		 Str  :se(:set-err(:$err))="", #= set err in data files doesn't apply to ist-ffc, sef, hdf5 data files 
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
 		 Str  :sf(:$sef-R1-file) = "", #= use file to get freqs when importing data from Stelar sef files
+	     Str  :t(:$tags), #= Data blocks TAGS
 	     Str  :wf(:$work-folder) = '.', #= set a different work folder
 		 *%_
 	    ){
@@ -1527,8 +1527,8 @@ multi MAIN  ('plot',
 		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
     	 Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	     Str  :wf(:$work-folder) = '.',
 	     Int  :n(:N(:Num(:$npts)))
+	     Str  :wf(:$work-folder) = '.',
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
