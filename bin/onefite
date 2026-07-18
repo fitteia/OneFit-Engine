@@ -1527,8 +1527,8 @@ multi MAIN  ('plot',
 		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
     	 Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	     Int  :n(:N(:Num(:$npts)))
-	     Str  :wf(:$work-folder) = '.',
+	     Int  :n(:N(:Num(:$npts))),
+	     Str  :wf(:$work-folder) = '.'
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
