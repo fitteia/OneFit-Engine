@@ -1032,30 +1032,30 @@ multi MAIN ('start-engine',
 multi MAIN  ('create',
 	     Str  $function is copy, #= fitting function
 	     *@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) }, 
-	     Str  :dl(:data-label(:$data-labels)), #= data labels and values
-         Str  :fm(:$fit-methods) = "simp scan min minos", #= minuit fit methods
-	     Str  :t(:$tags), #= Data blocks TAGS
+		 Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "", #= additional auxiliar code
 		 Bool :ax(:auto-x(:$autox)),#= auto scale x
    		 Bool :ay(:auto-y(:$autoy)),#= auto scale y
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
+	     Str  :dl(:data-label(:$data-labels)), #= data labels and values
+	     Bool :g(:$global) = False, #= global/individual 
+		 Str  :fi(:$fit-if) = "", #= include fit if condition when fitting data
+         Str  :fm(:$fit-methods) = "simp scan min minos", #= minuit fit methods
+		 Int  :$gfilt, #= used a Gaussian filter to smooth data
+	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False, #= import Mz data from ist-ffc 
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	     Bool :g(:$global) = False, #= global/individual 
-	 	 Bool :ist-ffc-Mz(:$ist-ffc) = False, #= import Mz data from ist-ffc 
-		 Str  :fi(:$fit-if) = "", #= include fit if condition when fitting data
+         Int  :n(:Num(:$npts)) = +100, #= number of points in the theoretical curves
+	     Str  :o(:st(:save-to(:$to))), #= write fit settings and results to json or sav file
 		 Str  :pi(:$plot-if) = "", #= include plot if tag condition when plotting data and fitting curves
-		 Str  :sf(:$sef-R1-file) = "", #= use file to get freqs when importing data from Stelar sef files
+		 Bool :q(:$quiet) = False, #= reduce log output
 		 Str  :r(:$range) = "", #= define range when importing data zones form Stelar data
 		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc and Stelar sdf files
-		 Int  :$gfilt, #= used a Gaussian filter to smooth data
+	     Str  :t(:$tags), #= Data blocks TAGS
 		 Str  :se(:set-err(:$err))="", #= set err in data files doesn't apply to ist-ffc, sef, hdf5 data files 
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
-	     Str  :st(:save-to(:$to)), #= write fit settings and results to json or sav file
+		 Str  :sf(:$sef-R1-file) = "", #= use file to get freqs when importing data from Stelar sef files
 	     Str  :wf(:$work-folder) = '.', #= set a different work folder
-         Int  :n(:Num(:$npts)) = +100, #= number of points in the theoretical curves
-		 Bool :q(:$quiet) = False, #= reduce log output
-		 Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "", #= additional auxiliar code
 		 *%_
 	    ){
 	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
@@ -1166,43 +1166,43 @@ multi MAIN  ('random',
 multi MAIN  ('fit',
 	Str  $function is copy, 
    	*@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
-   	Str  :data-label(:$data-labels),
-   	Str  :fm(:$fit-methods) = "simp scan min minos",
-   	Str  :t(:$tags),
-   	Str  :zt(:$zip-to),
-   	Bool :np(:$no-plot),
+	Str  :a(:da(:define-alias(:alias(:$dali))))="",
+	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
+	Bool :ar(:$archive) = False, #= add log entry and archive data
    	Bool :ax(:auto-x(:$autox)),
    	Bool :ay(:auto-y(:$autoy)),
    	Bool :axy(:auto-xy(:$autoxy)),
+   	Str  :data-label(:$data-labels),
+	Bool :eb(:error-bars(:$errorbars)) = False, #= set errorbars
+   	Str  :fm(:$fit-methods) = "simp scan min minos",
+	Str  :fi(:$fit-if) = "",
+   	Bool :g(:$global) is copy,
+	Int  :$gfilt,
+   	Bool :$hybrid = False, #= hybrid fit
    	Bool :lx(:logx(:log-x(:xlog(:$loglin)))),
    	Bool :ly(:logy(:log-y(:ylog(:$linlog)))),
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
-   	Bool :g(:$global) is copy,
-   	Bool :$hybrid = False, #= hybrid fit
-	Str  :fi(:$fit-if) = "",
+   	Bool :np(:$no-plot),
+    Int  :n(:num(:N(:Num(:$npts)))) = +100,
+	Bool :mp4(:$mpeg4) = False, #= create a mpeg4 video with All.pdf
+    Str  :o(:st(:$save-to)), # write fit settings to json or sav file 
+	Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
 	Str  :pi(:$plot-if) = "",
-	Str  :sf(:$sef-R1-file) = "",
+	Str	 :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", #= select fit-results columns by number or name or name+1 or name-1
+	Bool :pco(:peco(:pearson-correlation(:$R2))) = False, #= Pearson correlation coefficient (quality coefficient)
+	Bool :q(:$quiet) = False,
  	Str  :r(:$range) = "",
 	Bool :$R1 = False,
 	Bool :rc(:rchi2(:$reduced-chi2)) = False, #= recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom 
-	Int  :$gfilt,
+	Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
+	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
 	Str  :se(:set-err(:$err)) ="",
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
-    Str  :st(:$save-to), # write fit settings to json or sav file 
+	Str  :sf(:$sef-R1-file) = "",
+   	Str  :t(:$tags),
     Str  :wf(:$work-folder) is copy = '.',
-    Int  :n(:num(:N(:Num(:$npts)))) = +100,
-	Bool :ar(:$archive) = False, #= add log entry and archive data
-	Bool :eb(:error-bars(:$errorbars)) = False, #= set errorbars
-	Bool :q(:$quiet) = False,
-	Bool :mp4(:$mpeg4) = False, #= create a mpeg4 video with All.pdf
-	Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
-	Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
 	Int	 :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
-	Str  :da(:define-alias(:$dali))="",
-	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
-	Str  :ro(:$remove-outliers) = "", #= remove outliers (ex: --ro=2 or --ro=2..5, or --ro=1,3,5)
-	Str	 :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", #= select fit-results columns by number or name or name+1 or name-1
-	Bool :pco(:peco(:pearson-correlation(:$R2))) = False, #= Pearson correlation coefficient (quality coefficient)
+   	Str  :z(:zt(:$zip-to)),
 	*%_
     ){
 
@@ -1354,34 +1354,34 @@ MSG
 
 multi MAIN  ('fit',
      Str  $input-file, # name of the (sav or json) to compile
-     Str  :fm(:$fit-methods),
-     Bool :np(:$no-plot),
+	 Str  :a(:da(:define-alias(:$dali))) ="",
+	 Bool :ar(:$archive) = False,
    	 Bool :ax(:auto-x(:$autox)),#= auto scale x
    	 Bool :ay(:auto-y(:$autoy)),#= auto scale y
    	 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
-	 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
-     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
-  	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	 Str  :st(:save-to(:$to)), # write fit settings to .json or .sav file 	     
-	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
-     Str  :zt(:$zip-to) = $input-file.IO.extension('').Str,
-     Str  :wf(:$work-folder) is copy = '.',
-     Int  :n(:num(:N(:Num(:$npts)))),
 	 Bool :e(:$export) = False, #= extract data from json file and create alias for the json fitting function
 	 Bool :eb(:error-bars(:$errorbars)) = False,
-	 Bool :q(:$quiet) = False,
-	 Bool :mp4(:$mpeg4) = False,
-	 Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
-	 Str  :ro(:$remove-outliers) = "",
-	 Str  :da(:define-alias(:$dali)) ="",
-	 Bool :ar(:$archive) = False,
-	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
-	 Bool :pco(:peco(:pearson-correlation(:$R2))) = False, 
+     Str  :fm(:$fit-methods),
 	 Bool :g(:$global) is copy = False,
 	 Bool :$hybrid = False,
 	 Bool :i(:$individual) = False, #= forces fit to be individual
+	 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
+     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
+  	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
+	 Bool :mp4(:$mpeg4) = False,
+     Bool :np(:$no-plot),
+     Int  :n(:num(:N(:Num(:$npts)))),
+	 Str  :o(:st(:save-to(:$to))), # write fit settings to .json or .sav file 	     
+	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
+	 Bool :pco(:peco(:pearson-correlation(:$R2))) = False, 
      Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
+	 Bool :q(:$quiet) = False,
+	 Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
+	 Str  :ro(:$remove-outliers) = "",
+	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
+     Str  :wf(:$work-folder) is copy = '.',
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
+     Str  :z(:zt(:$zip-to)) = $input-file.IO.extension('').Str,
 	 *%_
     ){
 	$global = True if $hybrid;
