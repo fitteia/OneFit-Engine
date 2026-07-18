@@ -10,6 +10,16 @@ our $DOCKER = False;
 
 our $OS = "LINUX";
 
+#|(onefite INSTALL help)
+multi MAIN ('help') { MAIN :h }
+
+#|(onefite INSTALL help)
+multi MAIN ( 
+	Bool :h(:help($help)), #= help
+) { 
+	say $*USAGE; 
+}
+
 #|(onefite INSTALL script)
 multi MAIN (
 	Str  :a(:$alias) = "", #= create onefite alias. ex: onefit, ofe, of ...
@@ -167,16 +177,6 @@ multi MAIN (
 	install-manpage(macos => $macos) if $man-page;
 
 	create-alias( $alias );
-}
-
-#|(onefite INSTALL help)
-multi MAIN ('help') { MAIN :h }
-
-#|(onefite INSTALL help)
-multi MAIN ( 
-	Bool :h(:help($help)), #= help
-) { 
-	say $*USAGE; 
 }
 
 sub cernpkgs ($cpu) {
