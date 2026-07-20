@@ -817,9 +817,9 @@ EOT
 							$ndf = @b[1] - @!blocks[$i].parameters.free; 
 							$chi2= @b[2+$off-set];
 						}
-						@b[2+$off-set] = (@b[2+$off-set]/($chi2/$ndf)).Num.fmt("%.6g");
+						@b[2+$off-set] = (parse-number(@b[2+$off-set])/($chi2/$ndf)).Num.fmt("%.6g");
 						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
-							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (@b[$_]*sqrt($chi2/$ndf)).Num.fmt("%.6g");
+							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (parse-number(@b[$_]=*sqrt($chi2/$ndf)).Num.fmt("%.6g");
 						}
 						@b.join(', ')
 					}).join("\n")
@@ -870,6 +870,10 @@ EOT
 		my $size = $TXT.lines>>.chars.max;
    		$size = 40 if $size < 40;
 		$size =  $size %% 2 ?? $size/2  !! ($size+1)/2;  
+	}
+	
+	sub parse-number($value) {
+    	$value.Str.trim.subst(/ '.' $ /, '').Numeric
 	}
 }
 
