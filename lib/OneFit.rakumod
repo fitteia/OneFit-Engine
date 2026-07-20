@@ -819,7 +819,7 @@ EOT
 						}
 						@b[2+$off-set] = (parse-number(@b[2+$off-set])/($chi2/$ndf)).Num.fmt("%.6g");
 						for @a.head.split(', ').pairs.grep(/ \x[0B1] 'err'/).map({ .keys.Slip }) {
-							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (parse-number(@b[$_]) =* sqrt($chi2/$ndf)).Num.fmt("%.6g");
+							@b[$_] = @b[$_].contains(/'constant' | 'fixed'/) ?? @b[$_] !! (parse-number(@b[$_]) * sqrt($chi2/$ndf)).fmt("%.6g");
 						}
 						@b.join(', ')
 					}).join("\n")
