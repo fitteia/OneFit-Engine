@@ -9,6 +9,7 @@
 #endif
 #include "gfitn.h"
 #include <stdlib.h>
+#include <sys/wait.h> :
 #include "readdat.h"
 #include "xmgr.h"
 #include "gfit_out.h"
@@ -224,12 +225,14 @@ int main(int argc, char **argv,char **env)
 	int err;
 
 	err = system("xmgrace -version >/dev/null 2>&1");
-
-	if (err == 0) {
-    	printf("xmgrace is available\n");
+	if (err == -1) {
+    	perror("system");
+    	xmgrace_flag = 0;
+	} else if (WIFEXITED(err) && WEXITSTATUS(err) == 0) {
+    	printf("xmgrace can open the display\n");
 	} else {
-		xmgrace_flag=0;
-    	printf("===> xmgrace cannot be run. Continue with gnuplot...\n");
+    	xmgrace_flag = 0;
+    	printf("===> xmgrace cannot open the display. Continue with gnuplot...\n");
 	}
 
   	if(graphic_flag && xmgr_flag == 0 && grbatch_flag == 0 && xmgrace_flag == 0) mygnus();
