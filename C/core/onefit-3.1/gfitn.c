@@ -183,7 +183,6 @@ int main(int argc, char **argv,char **env)
       }      
   }
 
-    printf("plot_flag=%d xmgr_flag =%d xmgrace_flag =%d graphic_flag=%d grbatch_flag=%d GRAPH_TYPE=%s\n",plot_flag,xmgr_flag,xmgrace_flag,graphic_flag,grbatch_flag,GRAPH_TYPE);
   	if(fit_flag){
       	if(nolinpar_flag){
 			if(parfile == NULL) usage();
@@ -228,10 +227,12 @@ int main(int argc, char **argv,char **env)
 	if (err == -1) {
     	perror("system");
     	xmgrace_flag = 0;
+		grbatch_flag = 0;
 	} else if (WIFEXITED(err) && WEXITSTATUS(err) == 0) {
     	printf("xmgrace can open the display\n");
 	} else {
     	xmgrace_flag = 0;
+		grbatch_flag = 0;
     	printf("===> xmgrace cannot open the display. Continue with gnuplot...\n");
 	}
 
