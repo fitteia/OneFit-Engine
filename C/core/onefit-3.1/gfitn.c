@@ -223,18 +223,12 @@ int main(int argc, char **argv,char **env)
 
 	int err;
 
-	err = system("xmgrace -version >/dev/null 2>&1");
+	err = system("grace -version >/dev/null 2>&1");
 	if (err == -1) {
-    	perror("system");
+    	perror("===> xmgrace cannot open the display. Continue with gnuplot...");
     	xmgrace_flag = 0;
 		grbatch_flag = 0;
-	} else if (WIFEXITED(err) && WEXITSTATUS(err) == 0) {
-    	printf("xmgrace can open the display\n");
-	} else {
-    	xmgrace_flag = 0;
-		grbatch_flag = 0;
-    	printf("===> xmgrace cannot open the display. Continue with gnuplot...\n");
-	}
+	} 
 
   	if(graphic_flag && xmgr_flag == 0 && grbatch_flag == 0 && xmgrace_flag == 0) mygnus();
   	else if(graphic_flag && xmgr_flag == 1 && grbatch_flag == 0) xmgr("xmgr","");
