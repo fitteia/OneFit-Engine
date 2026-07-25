@@ -9,7 +9,7 @@
 #endif
 #include "gfitn.h"
 #include <stdlib.h>
-#include <sys/wait.h> :
+#include <sys/wait.h> 
 #include "readdat.h"
 #include "xmgr.h"
 #include "gfit_out.h"
