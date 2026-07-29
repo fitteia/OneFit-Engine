@@ -80,7 +80,7 @@ void mygnus()
       xM[i]=pow(10,xM[i]);
     }
    
-
+	if( yM[i] == ym[i] ) { yM[i]=10*ym[i]; }
 
     if(point_type) {
       strcpy(pt,point_type[i]);
