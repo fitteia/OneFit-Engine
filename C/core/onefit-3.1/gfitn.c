@@ -221,9 +221,9 @@ int main(int argc, char **argv,char **env)
 
     // printf("plot_flag=%d xmgr_flag =%d xmgrace_flag =%d graphic_flag=%d grbatch_flag=%d GRAPH_TYPE=%s\n",plot_flag,xmgr_flag,xmgrace_flag,graphic_flag,grbatch_flag,GRAPH_TYPE);
 
-	int err;
-
+//	int err;
 //	err = system("grace -version >/dev/null 2>&1");
+
 	if (system("grace -version >/dev/null 2>&1") != 0 && system("xmgrace -version >/dev/null 2>&1") != 0) {
     	perror("===> xmgrace not available. Continue with gnuplot...");
     	xmgrace_flag = 0;
