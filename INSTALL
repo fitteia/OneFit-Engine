@@ -133,6 +133,7 @@ multi MAIN (
 			shell("brew install $_") unless $brew-installed.contains($_);
 		}
 		shell "zef install App::Prove6 --install-to=site" if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
+		shell("sudo ln -s /opt/homebrew/bin/xmgrace /usr/local/bin/grace") unless "/usr/local/bin/grace".IO.e;
 		$DOCKER = True;
 		$web-server = False;
 		$test = False;
