@@ -223,9 +223,9 @@ int main(int argc, char **argv,char **env)
 
 	int err;
 
-	err = system("grace -version >/dev/null 2>&1");
-	if (err != 0) {
-    	perror("===> xmgrace cannot open the display. Continue with gnuplot...");
+//	err = system("grace -version >/dev/null 2>&1");
+	if (system("grace -version >/dev/null 2>&1") != 0 && system("xmgrace -version >/dev/null 2>&1") != 0) {
+    	perror("===> xmgrace not available. Continue with gnuplot...");
     	xmgrace_flag = 0;
 		grbatch_flag = 0;
 	} 
