@@ -9,6 +9,7 @@
 #endif
 #include "gfitn.h"
 #include <stdlib.h>
+#include <sys/wait.h> 
 #include "readdat.h"
 #include "xmgr.h"
 #include "gfit_out.h"
@@ -218,7 +219,16 @@ int main(int argc, char **argv,char **env)
 /**/  
   	if(plot_flag) plotfitn();
 
-    printf("plot_flag=%d xmgr_flag =%d xmgrace_flag =%d graphic_flag=%d grbatch_flag=%d GRAPH_TYPE=%s\n",plot_flag,xmgr_flag,xmgrace_flag,graphic_flag,grbatch_flag,GRAPH_TYPE);
+    // printf("plot_flag=%d xmgr_flag =%d xmgrace_flag =%d graphic_flag=%d grbatch_flag=%d GRAPH_TYPE=%s\n",plot_flag,xmgr_flag,xmgrace_flag,graphic_flag,grbatch_flag,GRAPH_TYPE);
+
+	int err;
+
+	err = system("grace -version >/dev/null 2>&1");
+	if (err != 0) {
+    	perror("===> xmgrace cannot open the display. Continue with gnuplot...");
+    	xmgrace_flag = 0;
+		grbatch_flag = 0;
+	} 
 
   	if(graphic_flag && xmgr_flag == 0 && grbatch_flag == 0 && xmgrace_flag == 0) mygnus();
   	else if(graphic_flag && xmgr_flag == 1 && grbatch_flag == 0) xmgr("xmgr","");

@@ -2,12 +2,12 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include "globals.h"
 #include "readdat.h"
 
-#define GNUPLOT_3_5_beta_328 1
 
-int v_flag;
+int v_flag=0;
 
 char set[]="set";
 char term[]="terminal";
@@ -58,7 +58,9 @@ void mygnus()
     if(v_flag) printf("set nolabel\n");
     fprintf(f,"set nolabel\n");
   }
-  
+ 
+  fprintf(f,"set terminal pdfcairo enhanced color\n");
+
   for(i=0;i<NT;i++){
     if(xlabel != NULL) {
       if(v_flag) printf("set xlabel %s\n",xlabel[i]);
@@ -70,6 +72,8 @@ void mygnus()
     }
     typex = xscale[i];
     typey = yscale[i];
+
+	fprintf(f,"set output \"fit-curves-%d.pdf\"\n",i+1);
 
     if(!strcmp(xscale[i],"log")) {
       xm[i]=pow(10,xm[i]);
@@ -165,23 +169,27 @@ void mygnus()
     nchar=strlen(gnu);
     gnu[nchar-1]='_';   /* PC version */
 
-#ifdef GNUPLOT_3_5_beta_328
-
     if(v_flag==1) {
       printf("!cop 3 %s %s %s\n",dlixo1,gnu,dlixo);
-      if(pt[0]=='p') printf("plot [%e:%e] [%e:%e] \"%s\" %s \"%%lf%%lf\" with points,",xm[i],xM[i],ym[i],yM[i],gnu,us);
+      if(pt[0]=='p') printf("plot [%e:%e] [%e:%e] \"%s\" %s \"1:2\" with points,",xm[i],xM[i],ym[i],yM[i],gnu,us);
       else printf("plot [%e:%e] [%e:%e] \"%s\" with errorbars,",xm[i],xM[i],ym[i],yM[i],gnu);
     }
     fprintf(f,"!cop 3 %s %s %s\n",dlixo1,gnu,dlixo);
-    if(pt[0]=='p') fprintf(f,"plot [%e:%e] [%e:%e] \"%s\" %s \"%%lf%%lf\" with points,",xm[i],xM[i],ym[i],yM[i],gnu,us);
+    if(pt[0]=='p') fprintf(f,"plot [%e:%e] [%e:%e] \"%s\" %s \"1:2\" with points,",xm[i],xM[i],ym[i],yM[i],gnu,us);
     else fprintf(f,"plot [%e:%e] [%e:%e] \"%s\"  with errorbars,",xm[i],xM[i],ym[i],yM[i],gnu);
 
     for(k=1;k<=Ma+1;k++) {
-      for(j=0;j<100;j++) ins[j]=lixo[i]=0;
-      strcpy(lixo,"\"%lf");
-      for(j=0;j<k-1;j++) strcat(lixo,"%*lf");
-      strcat(lixo,"%lf\"");
-      sprintf(ins,"\"%s\" %s %s %s %d",lixo1,us,lixo,wl,Ma+2-k);
+	  int col = k+1;
+	  int linetype = Ma + 2 - k;
+      sprintf(
+			  ins,
+			  "\"%s\" %s 1:%d %s ls %d",
+			  lixo1,
+			  us,
+			  linetype,
+			  wl,
+			  col
+	  );
 
       if(v_flag==1) printf("%s",ins);
       fprintf(f,"%s",ins);
@@ -194,43 +202,9 @@ void mygnus()
         fprintf(f,"\n");
       }
     }
-
-#endif
-
-#ifndef GNUPLOT_3_5_beta_328
-
-    if(v_flag==1) {
-      printf("!cop 3 %s %s %s\n",dlixo1,gnu,dlixo);
-      if(pt[0]=='p') printf("plot [%e:%e] [%e:%e] \"%s\" %s \"%%f%%f\" with points,",xm[i],xM[i],ym[i],yM[i],gnu,us);
-      else printf("plot [%e:%e] [%e:%e] \"%s\" with errorbars,",xm[i],xM[i],ym[i],yM[i],gnu);
-    }
-    fprintf(f,"!cop 3 %s %s %s\n",dlixo1,gnu,dlixo);
-    if(pt[0]=='p') fprintf(f,"plot [%e:%e] [%e:%e] \"%s\" %s \"%%f%%f\" with points,",xm[i],xM[i],ym[i],yM[i],gnu,us);
-    else fprintf(f,"plot [%e:%e] [%e:%e] \"%s\"  with errorbars,",xm[i],xM[i],ym[i],yM[i],gnu);
-
-    for(k=1;k<=Ma+1;k++) {
-      for(j=0;j<100;j++) ins[j]=lixo[i]=0;
-      strcpy(lixo,"\"%f");
-      for(j=0;j<k-1;j++) strcat(lixo,"%*f");
-      strcat(lixo,"%f\"");
-      sprintf(ins,"\"%s\" %s %s %s %d",lixo1,us,lixo,wl,Ma+2-k);
-
-      if(v_flag==1) printf("%s",ins);
-      fprintf(f,"%s",ins);
-      if(k<Ma+1) {
-        if(v_flag==1) printf(",");
-        fprintf(f,",");
-      }
-      else {
-        if(v_flag==1) printf("\n");
-        fprintf(f,"\n");
-      }
-    }
-
-#endif
 
     if(v_flag==1) printf("%s -1\n#\n",pausa);
-    fprintf(f,"%s -1\n#\n",pausa);
+//    fprintf(f,"%s -1\n#\n",pausa);
   }
   fclose(f);
   if(Gnuplot == NULL) err = system("gnuplot gfitn.gnu");
@@ -238,7 +212,17 @@ void mygnus()
     sprintf(lixo,"gnuplot %s",Gnuplot);
     err = system(lixo);
   }
-  if (!err) printf("system() call returned: %d\n",err);
+
+  if (err == -1) {
+      perror("system");
+  } else if (WIFEXITED(err)) {
+      int status = WEXITSTATUS(err);
+      if (status != 0)
+          fprintf(stderr, "gnuplot exited with status %d\n", status);
+  } else {
+      fprintf(stderr, "gnuplot terminated abnormally\n");
+  }
+  //  if (err) printf("system() call returned: %d\n",err);
 }
 
 
