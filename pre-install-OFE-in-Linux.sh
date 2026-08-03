@@ -54,7 +54,7 @@ is_debian_like() {
 }
 
 is_fedora_like() {
-    [[ "$OS_ID" =~ ^(fedora|centos|centos-stream|rocky|almalinux|rhel|redhat|ol)$ || \
+    [[ "$OS_ID" =~ ^(fedora|centos|centos-stream|rocky|alma|almalinux|rhel|redhat|ol)$ || \
        " $OS_ID_LIKE " == *" rhel "* || " $OS_ID_LIKE " == *" fedora "* ]]
 }
 
@@ -333,6 +333,7 @@ install_repositories() {
             ;;
         fedora)
             install_pkg dnf-plugins-core || true
+            enable_rhel_like_repositories || true
             dnf makecache || true
             ;;
         suse)
@@ -395,31 +396,59 @@ enable_rpmfusion_free() {
     dnf install -y "$url" || warn "could not install RPM Fusion free release"
 }
 
+enable_rhel_like_repositories() {
+    # AlmaLinux/Rocky/CentOS/RHEL-like systems need CRB/PowerTools plus EPEL
+    # for several OFE dependencies that are not in the minimal base repos.
+    [[ "$OS_ID" =~ ^(centos|centos-stream|rocky|alma|almalinux|rhel|redhat|ol)$ ]] || return 0
+
+    local el_version
+    el_version="${OS_VERSION_ID%%.*}"
+    [[ -z "$el_version" || "$el_version" == "unknown" ]] && el_version="9"
+
+    install_pkg dnf-plugins-core || true
+
+    case "$OS_ID" in
+        rhel|redhat)
+            if command -v subscription-manager >/dev/null 2>&1; then
+                subscription-manager repos --enable "codeready-builder-for-rhel-${el_version}-$(arch)-rpms" 2>/dev/null || true
+            fi
+            ;;
+        *)
+            dnf config-manager --set-enabled crb 2>/dev/null || \
+                dnf config-manager --set-enabled powertools 2>/dev/null || true
+            ;;
+    esac
+
+    if ! rpm -q epel-release >/dev/null 2>&1; then
+        dnf install -y epel-release || \
+            dnf install -y "https://dl.fedoraproject.org/pub/epel/epel-release-latest-${el_version}.noarch.rpm" || \
+            warn "could not install EPEL release for EL ${el_version}"
+    else
+        echo "✓ package installed: epel-release"
+    fi
+}
+
 install_packages_fedora() {
     log "Fedora/RHEL packages"
 
     install_pkg dnf-plugins-core || true
-
-    # CRB/PowerTools and EPEL are useful on RHEL-like systems. Harmless if absent.
-    if [[ "$OS_ID" =~ ^(centos|centos-stream|rocky|almalinux|rhel|redhat|ol)$ ]]; then
-        install_pkg epel-release || true
-        dnf config-manager --set-enabled crb 2>/dev/null || true
-        dnf config-manager --set-enabled powertools 2>/dev/null || true
-    fi
 
     enable_rpmfusion_free || true
 
     local packages=(
         perl perl-devel perl-CGI git openssh-server httpd swig gcc gcc-gfortran
         make tar wget curl jq zip unzip sudo vim-enhanced man-db gnuplot openssl-devel
-        hdf5 hdf5-devel poppler-utils ghostscript ImageMagick java-21-openjdk
-        firewalld xmgrace diffutils
+        hdf5 hdf5-devel poppler-utils ghostscript ImageMagick firewalld xmgrace
+        diffutils
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
     install_first_available_pkg texlive-epstopdf texlive-epstopdf-bin || true
     install_first_available_pkg pdftk-java pdftk || true
     install_first_available_pkg ffmpeg ffmpeg-free || true
+    install_first_available_pkg java-21-openjdk-headless java-21-openjdk \
+        java-17-openjdk-headless java-17-openjdk java-11-openjdk-headless \
+        java-11-openjdk || true
 
     # Prefer distribution packages when both Rakudo and zef are available.
     install_first_available_pkg rakudo raku || true
@@ -799,7 +828,7 @@ install_grace_from_source() {
 }
 
 is_rhel_like_id() {
-    [[ "$OS_ID" =~ ^(centos|centos-stream|rocky|almalinux|rhel|redhat|ol)$ ]]
+    [[ "$OS_ID" =~ ^(centos|centos-stream|rocky|alma|almalinux|rhel|redhat|ol)$ ]]
 }
 
 is_suse_like_id() {
