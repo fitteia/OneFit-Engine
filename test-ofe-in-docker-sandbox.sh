@@ -4,9 +4,9 @@ set -euo pipefail
 usage() {
 cat <<EOF
 Usage:
-  $0 build debian|ubuntu|fedora|arch|suse|centos|all
-  $0 run   debian|ubuntu|fedora|arch|suse|centos
-  $0 shell debian|ubuntu|fedora|arch|suse|centos
+  $0 build debian|ubuntu|fedora|arch|suse|centos|alma|all
+  $0 run   debian|ubuntu|fedora|arch|suse|centos|alma
+  $0 shell debian|ubuntu|fedora|arch|suse|centos|alma
 
 Dockerfile lookup order:
   ./<distro>.dockerfile
@@ -33,7 +33,7 @@ distro=${2:-}
 [[ -n "$cmd" && -n "$distro" ]] || usage
 
 case "$distro" in
-  debian|ubuntu|fedora|arch|suse|centos|all) ;;
+  debian|ubuntu|fedora|arch|suse|centos|alma|all) ;;
   *) echo "Unknown distro: $distro" >&2; usage ;;
 esac
 
@@ -50,11 +50,17 @@ image_for() {
 
 dockerfile_for() {
     local d="$1"
+    local fallback_d="$d"
+    [[ "$d" == "alma" ]] && fallback_d="centos"
     local candidates=(
         "$script_dir/$d.dockerfile"
         "$script_dir/$d.Dockerfile"
         "$script_dir/Dockerfiles/$d.dockerfile"
         "$script_dir/Dockerfiles/$d.Dockerfile"
+        "$script_dir/$fallback_d.dockerfile"
+        "$script_dir/$fallback_d.Dockerfile"
+        "$script_dir/Dockerfiles/$fallback_d.dockerfile"
+        "$script_dir/Dockerfiles/$fallback_d.Dockerfile"
     )
 
     local f
@@ -77,6 +83,12 @@ print_missing_dockerfile() {
     echo "  $script_dir/$d.Dockerfile" >&2
     echo "  $script_dir/Dockerfiles/$d.dockerfile" >&2
     echo "  $script_dir/Dockerfiles/$d.Dockerfile" >&2
+    if [[ "$d" == "alma" ]]; then
+        echo "  $script_dir/centos.dockerfile" >&2
+        echo "  $script_dir/centos.Dockerfile" >&2
+        echo "  $script_dir/Dockerfiles/centos.dockerfile" >&2
+        echo "  $script_dir/Dockerfiles/centos.Dockerfile" >&2
+    fi
 }
 
 build_one() {
@@ -161,7 +173,7 @@ shell_one() {
 case "$cmd" in
     build)
         if [[ "$distro" == all ]]; then
-            for d in debian ubuntu fedora arch suse centos; do
+            for d in debian ubuntu fedora arch suse centos alma; do
                 build_one "$d"
             done
         else
