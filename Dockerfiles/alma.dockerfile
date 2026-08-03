@@ -6,7 +6,7 @@ ARG HOST_GID=1000
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
-RUN dnf -y update && \
+RUN dnf -y upgrade && \
     dnf -y install dnf-plugins-core && \
     dnf config-manager --set-enabled crb && \
     (dnf -y install epel-release || \
