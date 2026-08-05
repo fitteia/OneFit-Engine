@@ -683,7 +683,7 @@ firewall.
 C<onefite --help>, C<onefite man>, C<onefite list models>,
 C<onefite help MODEL>, L<https://github.com/fitteia/OneFit-Engine>
 
-=
+=end pod
 
 my $time = BEGIN { now }
 END { note "===> Total execution time (s): " , now - INIT now }
