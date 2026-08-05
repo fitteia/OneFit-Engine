@@ -265,6 +265,13 @@ C/local/userlib-old.h
 C/makefile
 C/META-C.json
 Dockerfile
+Dockerfiles/alma.dockerfile
+Dockerfiles/arch.dockerfile
+Dockerfiles/centos.dockerfile
+Dockerfiles/debian.dockerfile
+Dockerfiles/fedora.dockerfile
+Dockerfiles/suse.dockerfile
+Dockerfiles/ubuntu.dockerfile
 doc/onefit-cmd-options.htm
 doc/onefit-FAQ.htm
 doc/onefit-fitmenu.htm
@@ -439,6 +446,9 @@ MANIFEST
 META6.json
 onefite.1
 onefite.1.gz
+post-install.sh
+pre-install-OFE-in-Linux.sh
+pre-install-OFE-in-MacOS.sh
 README.md
 t/00-use.rakutest
 t/01-agr.rakutest
@@ -506,3 +516,4 @@ t/8/fit.out
 t/8/test8.sav
 t/9/Master-MIXED.sav
 t/9/res.txt
+test-ofe-in-docker-sandbox.sh
