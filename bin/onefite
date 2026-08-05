@@ -2,396 +2,688 @@
 
 =begin pod
 
+=comment This manual was remastered by merging independent draft proposals
+=comment written by Claude and Codex, each checked against the bin/onefite
+=comment source and the live `onefite --help` usage output, then reconciled
+=comment into this single version.
+
 =NAME
-    onefite - Raku script interface to the OneFit-Engine (OFE)
+
+onefite - Create, fit, plot, convert, archive, and serve OneFit-Engine models
 
 =SYNOPSIS
-    onefite stands for OneFit Engine, OFE for short. It helps users to perform model fits to data.
-    It aims at obtaining the "best fit with just one go" keeping true to the fitteia motto:
-
-    "Keeping the simple easy, making the complex feasible, and getting the impossible within reach."
-
-=NOTE
-	This man page is intended to help you take full advantage of onefite on both the server and client sides.
-	
-	During installation, users can set the maximum number of fitting parameters with:
-
-	INSTALL ... --minuit=###
-
-	The default value is 250.
-
-	Aliases for the default onefite program name can be defined during installation with:
-
-	INSTALL ... --alias "ofe onefit of"
-
-	or any other list of aliases.
-	
-	After installation, users can create additional shell commands at any time to simplify repetitive or routine tasks.
-
-=begin code 
-	
-	which ofe 
-	unset -f ofe 
-	ofe() { command onefite "$@"; }
-
-=end code
-=begin code 
-
-	which iofe 
-	unset -f iofe 
-	onefiteSrcPath="$(onefite path --src 2>/dev/null)"
-	iofe() {
-    	cd "$onefiteSrcPath" 
-    	./INSTALL --no-test
-    	cd - 
-	}
-
-=end code
-=begin code 
-
-	which ofeh 2>/dev/null
-	unset -f ofeh 2>/dev/null || true
-	ofeh() { history 0 | grep -E 'onefite|ofe' || return }
-
-=end code
-
-
-
-=DESCRIPTION
-	Not yet!
-
-=USAGE
-
-=head2 Basic commands
-
-=item onefite
 
 =begin code :lang<bash>
 onefite [-h|--help]
-=end code
+onefite [-v|--version]
+onefite man [-m|--man]
 
-    Options
+onefite create FUNCTION [DATA-FILE ...] [OPTIONS]
+onefite fit FUNCTION [DATA-FILE ...] [OPTIONS]
+onefite fit INPUT-FILE [OPTIONS]
+onefite random FUNCTION [DATA-FILE ...] [OPTIONS]
+onefite plot INPUT-FILE [OPTIONS]
 
-    [-h|--help] Basic help
+onefite list [models|aliases] [--quiet]
+onefite help MODEL [KEY] [--quiet]
+onefite convert INPUT-FILE OUTPUT-FILE [--work-folder=DIR]
 
-=item Uninstall
+onefite archive [--fit=ENTRY] [EXTRA-OPTION ...]
+onefite ar      [--fit=ENTRY] [EXTRA-OPTION ...]
+onefite log     [--fit=ENTRY] [EXTRA-OPTION ...]
+onefite path [PATH-OPTION ...]
 
-=begin code :lang<bash>
+onefite service start [OPTIONS]
+onefite service stop
+onefite service log
+onefite service PID
+onefite start-web-engine [OPTIONS]
+onefite stop-web-engine
+
+onefite test list
+onefite test [TEST ...] [OPTIONS]
+onefite upgrade [OPTIONS]
 onefite uninstall
 =end code
 
-=item Help on models
+=DESCRIPTION
+
+C<onefite> is both the command-line interface and a small HTTP micro-service
+for OneFit-Engine (OFE). It imports experimental data, creates engine
+descriptions, compiles user-defined model functions, performs individual,
+global, or hybrid/mixed nonlinear least-squares fits using CERNLIB MINUIT,
+produces plots (via Grace/xmgrace, as PDF, optionally animated to MPEG4), and
+optionally archives or packages the results.
+
+A fit can be started from a model expression and one or more data files:
 
 =begin code :lang<bash>
-onefite help <model> [-q|--quiet]
-onefite help <model> <key> [-q|--quiet]
+onefite fit 'y(x,a,b)=a+b*x' data.dat
 =end code
 
-    Provides information on the <model> equation included in the models fitting library.
-    Sub-option <key> provides just the specific information on the key.
-
-    Options
-
-    [-q|--quiet] No screen print of log information
-
-=item List models
+It can also be started from an existing OneFit-Engine C<.json> or C<.sav>
+description:
 
 =begin code :lang<bash>
-onefite list [-q|--quiet]
-onefite list models [-q|--quiet]
-onefite list aliases [-q|--quiet]
+onefite fit experiment.json
 =end code
 
-    Lists models included in the models fitting library and aliases defined in $HOME/.local/etc/aliases.json
-    Lists just the models
-    Lists just the aliases
+Unless another directory is selected, temporary fit files are written beneath
+the current directory. Informational messages are normally written to standard
+error; command results are written to standard output. Successful fits can
+optionally be recorded to a local archive/log for later lookup (see
+C<archive>/C<ar>/C<log> below).
 
-    Options
+=COMMANDS
 
-    [-q|--quiet] No screen print of log information
-
-=item Paths finder
+=head2 create
 
 =begin code :lang<bash>
-onefite path [-s|--src] [-t] [-exa|--examples] [-b|--bin] [-l|--lib] [-c|-C] [--log] [-a|--aliases]
+onefite create FUNCTION [DATA-FILE ...] [OPTIONS]
 =end code
 
-    Paths to OneFit-Engine folders installed.
-    Combined use with "cd" and "awk" in the examples below
+Parse a model expression and its data files, compile the generated model code,
+and emit or save an OFE description I<without running a fit>. If
+C<--save-to> is omitted, the generated JSON is written to standard output.
+C<create> is the only command that understands C<--ist-ffc-Mz>; it has no
+C<--no-plot>, C<--archive>, C<--zip-to>, or fit-quality options (C<--hybrid>,
+C<--mp4>, C<--print-cols>, C<--R2>, C<--reduced-chi2>, C<--error-bars>,
+C<--parallel>, C<--workers>, C<--remove-outliers>, C<--ramdisk>) since no fit
+is actually performed.
 
-    Options
-
-    [-s|--src]       Source
-    [-t]             Raku test folder
-    [-exa|--examples]  Examples folder
-    [-b|--bin]       Binaries folder
-    [-l|--lib]       Libraries folder
-    [-c|-C]          C code/F code folders
-    [--log]          Log folder
-    [-a|--aliases]   Aliases folder
-
-    Examples
-
-    cd $(onefite path -s)
-    vi $(onefite path -a)/aliases.json
-
-=head2 Files conversion
-
-
-=item sav <--> json files conversion
+=head2 fit
 
 =begin code :lang<bash>
-onefite convert <input-filename> <output-filename> [--work-folder=<Str>]
+onefite fit FUNCTION [DATA-FILE ...] [OPTIONS]
+onefite fit INPUT-FILE [OPTIONS]
 =end code
 
-    Converts fitteia's sav files to OFE json files
+Run a fit from either a model expression or an existing C<.json>/C<.sav>
+engine file. Most options below are shared between the two forms - see
+"COMMON OPTIONS" for exactly which ones apply to which form.
 
-    Options
+The expression form imports the supplied data, resolves model aliases,
+compiles generated code, runs the selected MINUIT methods, and optionally
+saves, archives, or packages the result. If the expression contains a
+parameter declaration ending in C<.MIXED=1>, global mode is turned on
+automatically (this automatic detection applies only to the expression form,
+not to the input-file form below).
 
-    [--work-folder] Folder where the conversion will be performed
+The input-file form reloads an existing engine description; it understands
+C<--export> and C<--individual>, which the expression form does not, but does
+I<not> understand the data-import options (C<--data-label>, C<--gfilt>,
+C<--fit-if>, C<--plot-if>, C<--range>, C<--R1>, C<--set-err>, C<--SymbSize>,
+C<--sef-R1-file>, C<--tags>, C<--aux-code>) since the definition already has
+them baked in. By default, it also creates a ZIP archive whose name is
+derived from INPUT-FILE. Use C<--zip-to> to select another archive name.
 
-    Examples
-
-    onefite convert some-fitteia-fit.sav ofe-version.json
-
-=head2 OFE service commands
-
-
-=item Systemd service
+=head2 random
 
 =begin code :lang<bash>
-onefite service start [--ip=<Str>] [-d|--systemd-daemon] [-p|--port=<Int>] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
+onefite random FUNCTION [DATA-FILE ...] [OPTIONS]
+=end code
+
+Assign random initial values within each bounded parameter range, mark those
+parameters fixed, and run the resulting model. C<random> has no
+C<--fit-methods>, C<--aux-code>, C<--archive>, or C<#>-prefixed dynamic
+override support, and its "skip plotting" flag is spelled C<--inp>/
+C<--no-plot> rather than the C<-np>/C<--no-plot> used by C<fit>.
+
+=head2 plot
+
+=begin code :lang<bash>
+onefite plot INPUT-FILE [OPTIONS]
+=end code
+
+Render plots from an existing C<.json> or C<.sav> file without fitting. The
+command creates a work directory named after INPUT-FILE and packages the plot
+results. C<plot> only understands the auto-scale/log-scale flags,
+C<--Num>/C<--npts>, and C<--work-folder> - it has no C<--quiet>,
+C<--save-to>, or any fit-quality option.
+
+=head2 convert
+
+=begin code :lang<bash>
+onefite convert INPUT-FILE OUTPUT-FILE [--wf|--work-folder=DIR]
+=end code
+
+Convert between OneFit-Engine C<.json> files and fitteia C<.sav> files
+(direction is inferred from the two file extensions given). The default
+working directory is C</tmp>.
+
+=head2 list
+
+=begin code :lang<bash>
+onefite list [--quiet]
+onefite list models [--quiet]
+onefite list aliases [--quiet]
+=end code
+
+With no selector, print both installed model metadata and aliases. C<models>
+prints C<C/META-C.json>. C<aliases> merges the installed C<aliases.json> with
+a local C<./aliases.json>; local entries take precedence.
+
+=head2 help
+
+=begin code :lang<bash>
+onefite help MODEL [--quiet]
+onefite help MODEL KEY [--quiet]
+=end code
+
+Print all metadata for MODEL, or only the value associated with KEY. If MODEL
+is not found the command still exits successfully and reports a "not found"
+message instead.
+
+=head2 archive, ar, and log
+
+=begin code :lang<bash>
+onefite archive
+onefite archive --fit=ENTRY [EXTRA-OPTION ...]
+=end code
+
+C<archive>, C<ar>, and C<log> are three names for the same command. Without
+C<--fit>, they print the fit history: one 0-indexed line per entry (index,
+timestamp, archive filename and size, and the original command). With
+C<--fit=ENTRY>, they unzip that entry's archived data and re-run the exact
+original command against it. ENTRY may be that printed index, or C<last-N>
+to count back N entries from the most recent; any other value (including the
+literal word C<last>) falls back to the most recent entry. Any additional,
+otherwise-unrecognised named option is appended verbatim to the re-run
+command, which lets you replay a stored fit with extra flags applied:
+
+=begin code :lang<bash>
+onefite archive --fit=last
+onefite ar -f last-1 --rchi2
+onefite log -f 2 --ro=1
+=end code
+
+=head2 path
+
+=begin code :lang<bash>
+onefite path [-s|--src] [-t] [--exa|--examples] [-b|--bin] [-l|--lib]
+             [-c|-C] [--log] [-a|--aliases] [--ar|--archive]
+=end code
+
+Print installed paths. With no selector, print all known paths.
+
+=item C<-s>, C<--src> - OneFit-Engine source directory.
+=item C<-t> - Raku test directory (F<t/>). Short option only; there is no C<--t> long form.
+=item C<--exa>, C<--examples> - Examples directory.
+=item C<-b>, C<--bin> - Installed executable directory.
+=item C<-l>, C<--lib> - Raku/C library directory (holds the compiled C/Fortran static libs).
+=item C<-c>, C<-C> - C and Fortran source directory. Both are short options; there is no C<--C> long form.
+=item C<--log> - Log directory (holds the running service's log file).
+=item C<-a>, C<--aliases> - Configuration directory containing installed C<aliases.json>.
+=item C<--ar>, C<--archive> - Fit archive-log directory.
+
+Examples
+
+=begin code :lang<bash>
+cd $(onefite path -s)
+vi $(onefite path -a)/aliases.json
+cat $(onefite path --log)/onefite
+=end code
+
+=head2 service
+
+=begin code :lang<bash>
+onefite service start [--ip=ADDRESS] [-p|--port=PORT] [-d|--systemd-daemon]
+                      [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]
 onefite service stop
-=end code
-
-    [start] Is: sudo systemctl daemon-reload; systemctl enable onefite.service; service onefite start
-    [stop]  Is: kill -9 <start-web-engine>
-    [--ip=<Str>]      Default '*'. For [--macos] or [--wsl] use --ip=127.0.0.1
-    [-p|--port=<Int>] Default 8142. Check your Firewall just in case
-    [-d|--systemd-daemon] Default False. For [--docker], [--macos], or [--wsl] keep the default.
-	[--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk]. Create and run on a ramdisk.
-
-=item LOG and PID services
-
-=begin code :lang<bash>
 onefite service log
 onefite service PID
 =end code
 
-    Shows OFE service log file
-    Prints OFE Process Identifier
+Start or manage the OFE HTTP service. The default bind address is C<0.0.0.0>
+and the default port is C<8142>. Bind to C<127.0.0.1> when the service should
+only be reachable from the local machine (see SECURITY below).
 
-=item OFE manual web service
+C<--systemd-daemon> reloads systemd, enables C<onefite.service>, and starts
+the service. Without it, the service is started in the background (from
+C<$HOME/public_html>) by killing any already-running instance and relaunching
+C<start-web-engine> under C<nohup>. C<--use-ramdisk> copies
+C<$HOME/public_html> onto a fresh RAM disk (backing the original up to
+C<$HOME/public_html_bak> first) before starting the service.
+
+C<service log> shows the service log file; C<service PID> prints its process
+id (found via C<ps aux | grep start-web-engine>).
+
+=head2 start-web-engine and stop-web-engine
 
 =begin code :lang<bash>
-onefite start-web-engine [--ip[=Any]] [-p|--port[=Any]]
+onefite start-web-engine [--ip[=ADDRESS]] [-p|--port[=PORT]]
 onefite stop-web-engine
-(OBSOLETE) onefite start-engine [--no-plot] [-q|--quiet] [--work-folder=<Str>]
+(OBSOLETE) onefite start-engine [--np|--no-plot] [-q|--quiet] [--wf|--work-folder=DIR]
 =end code
 
-    User command line to start/stop OFE web service
+Run the HTTP engine directly, in the foreground - what C<service start>/
+C<stop> ultimately drive. If C<--ip> is omitted it is auto-detected from the
+machine's first IPv4 address (falling back to C<127.0.0.1>). See "HTTP API"
+below for the routes it serves. C<stop-web-engine> stops the process matching
+C<start-web-engine>.
 
-=head2 Create command
+C<start-engine> is an older, obsolete alternative: instead of an HTTP server
+it watches the current directory for C<.sav>/C<.json> files (optionally
+prefixed C<__fit__>/C<__plot__>/C<__fit-only__> to pick the action) and
+fits/plots each as it appears, in an infinite loop. Prefer the HTTP service
+or the plain C<fit>/C<plot> commands instead.
 
-=begin code :lang<bash>
-onefite create <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to|--to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet]
-=end code
+=head2 HTTP API
 
-    Creates a json file with the function and datafiles provided.
+C<start-web-engine> (and therefore C<service start>) serves a small Cro-based
+HTTP application on C<--ip>:C<--port>. Every request is appended to the
+service log together with the requesting host and, for C</fit> and
+C</convert>, the time taken.
 
-    Function
+=item C<GET /> - a minimal HTML upload form (useful for smoke-testing the
+service from a browser); it posts to C</fit> or C</convert>.
+=item C<GET>/C<POST> C</list>, C</list/models>, C</list/aliases> -
+C<text/plain> output identical to C<onefite list [models|aliases] --quiet>.
+=item C<GET>/C<POST> C</help/MODEL[/KEY]> - C<text/plain> output identical to
+C<onefite help MODEL [KEY] --quiet>. The C<POST> form takes multipart fields
+C<model> (required) and, optionally, one further field whose I<value> is
+used as KEY (any field name works; only its value is inspected).
+=item C<GET>/C<POST> C</man> - C<text/plain> body containing the troff/groff
+rendering of this manual (what C<Pod::To::Man> produces), not plain text.
+=item C<POST /fit> - multipart upload. Required field C<file> (a C<.dat>/
+C<.txt>/C<.zip>/C<.hdf5>/... data file). All other fields are optional and
+mirror the C<fit FUNCTION ...> command-line options under the same short or
+long names, including C<function>, C<fit-methods>/C<fm>, C<Num>/C<npts>,
+C<SymbSize>/C<ssz>, C<global>/C<g>, C<hybrid>/C<mixed>, C<mpeg4>/C<mp4>,
+C<autox>/C<autoy>/C<autoxy>, C<logx>/C<logy>/C<logxy> (and their aliases),
+C<reduced-chi2>/C<rchi2>, C<R1>, C<R2>/C<pearson-correlation>,
+C<sef-R1-file>, C<print-cols>, C<err>/C<set-err>, C<range>, C<remove-outliers>,
+C<fit-if>, C<plot-if>, C<gfilt>, C<username> (per-user work folder), and any
+C<#...>-prefixed field for a dynamic parameter override. Boolean-style
+fields are truthy on C<"yes"> or C<1>. A C<download> field selects the
+response: C<"zip"> streams back the whole work folder as a zip
+(C<application/octet-stream>); C<"json"> streams back the saved fit
+definition (C<FOLDER/BASENAME.json>, where FOLDER and BASENAME derive from
+the uploaded file's own name); any other non-empty value is treated as a
+path relative to that same per-upload folder and streamed back verbatim;
+when C<download> is absent, the response is the C<text/plain> fit log
+instead. The temporary per-request work folder is deleted once the response
+has been sent.
+=item C<POST /convert> - multipart upload, required field C<file> (a
+C<.sav> or C<.json> file). Converts it to the other format and streams the
+result back as C<application/octet-stream>.
 
-    The function syntax has the following rules:
-        [ x < y ] Defines a range of values [ x ; y ], that is between x and y, inclusive. Spaces can be removed.
-                  '<' and ';' can be used as limit separators but '<' presents fewer escape issues in argument passing
-        ':'  Initializing symbol
-        '='  Fix a value
-
-    Example
-
-        "Mz [-1 < 1] ( t[1e-3 < 10], M0:0.5[-1<1], Mi=1[-2<2], T1:0.5[1e-3 < 10]) = Mi \+ (M0-Mi)*exp(-t/T1)"
-        Mz is the dependent variable with a plot range from -1 to 1. Mz is a function with arguments: t, M0, Mi, and T1
-        t  is the independent variable with a plot range between 1e-3 and 10
-        M0 is a model parameter initialized to 0.5 and the non-linear Least-Squares minimization performed by CERN lib MINUIT will be restricted to the range [-1;1]
-        Mi is a model parameter with a fixed value 1 but a possible range [-2;2]
-        T1 is a model parameter initialized to 0.5 in a range [1e-3; 10]
-
-        The expression "Mi \+ (M0-Mi)*exp(-t/T1)" contains '\+' which sets plotting of individual model contributions to True
-
-    Options
-
-=head2 Fit commands
-
-=begin code :lang<bash>
-onefitr random <function> <data-files> ... [--data-label|--data-labels=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]]
-
-onefite fit <function> <data-files> ... [--data-label|--data-labels=<Str>] [--fit-methods=<Str>] [--tags=<Str>] [--zip-to=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--global] [--R1] [--sef-R1-file=<Str>] [--fit-if=<Str>] [--plot-if=<Str>] [--set-err|--err=<Str>] [--gfilt=<Int>] [--range=<Str>] [--SymbSize|--ssz=<Str>] [--save-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [--aux-code=<Str>] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid] [--mp4|mpeg4]
-
-onefite fit <input-file> [--fit-methods=<Str>] [--no-plot] [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--save-to|--to=<Str>] [--zip-to=<Str>] [--work-folder=<Str>] [--Num|--npts[=Int]] [-q|--quiet] [--define-alias|--dali=<Str>] [-e|--export] [--ro|--remove-outliers=<Str>] [--rchi2|--reduced-chi2] [--cols|--prco|--pc|--print-cols|--print-columns=<Str>] [--eb|--error-bars|--errorbars] [--R2|--pco|--peco|--pearson-correlation] [--#....] [-i|--individual] [-g|--global] [--parallel] [--workers=Int] [--rd|--ram|--ramdisk|--RAMDisk|--use-ramdisk] [--hybrid] [--mp4|mpeg4]
-
-onefite plot <input-file> [--autox] [--autoy] [--autoxy] [--logy|--linlog] [--logx|--loglin] [--logxy|--loglog] [--work-folder=<Str>] [--Num|--npts[=Int]]
-
-onefite archive [-f||--fit=<Str>]
-=end code
-
-    Options
-
-    [--define-alias|--dali=<Str>] adds alias Str to the function used to fit the data in the ./aliases.json file (overwrites existing alias)
-    [-e|--export] writes data and AuxCode to files for later use with: onefite fit <function>
-    [--aux-code] accepts the name of the file with the AuxCode and the new fitting functions declarations
-	[--#....] after '#' model equations variables, '=',':', [...<...]
-
-    Examples
-
-    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy
-    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --autox --logx --autoy --define-alias=1exp
-    onefite fit "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)" file.hdf5 --logx  "--#Mz[-2<2]" --#T1:0.1...
-
-    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --individual
-    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --global
-    onefite fit "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_[1e-3<3],T12_[1e-3<3])=Mi_\\+c*(M0_-Mi_)*exp(-t/T11_)+(1-c)*(M0_-Mi_)*exp(-t/T12_)" file.hdf5 --autox --logx --autoy --hybrid --mp4 --fit-methods="simp scan min"
-	onefite fit "#2exp" file.hdf5 --autox --logx --autoy --hybrid --fit-methods="simp scan min" --mp4 --save-to=file.json
-	onefite fit file.json --autox --logx --autoy --hybrid --mp4 --fit-methods="simp scan min" --save-to=file.json
-
-    onefite fit "alias: 1exp" file.hdf5 --autox --logx --autoy
-    onefite fit "a: 1exp" file.hdf5 --autox --logx --autoy
-    onefite fit "a: 1exp" file.txt --autox --logx --autoy
-    onefite fit "a: 2BPP" *.dat --autox --logx --autoy --logy
-    onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy
-    onefite fit "a: 1BPP" file.zip --autox --logx --autoy --logy --define-alias=1BPP
-	onefite fit "#1exp" file.txt --autox --logx --autoy
-    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat 
-	onefite fit "y[0<1](x[-1<1],a:1,b=2) = a \+ b*x" file.dat 
-	onefite fit "y[0<1](x[-1<1],a:1[-1<1],b:0.1[-2<2]) = a \+ b*x" file.dat "--#a=0.0..." --#x"[0<2]" 
-	onefite fit "y[0<1](x[-1<1],a:1[-1<1],b:0.1[-2<2]) = a \+ b*x" file.dat "--#a=0.0[0<2]" "--#y[0<2]" 
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1.0"
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="x10/100"
-	onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10x"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1%"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="standard deviation"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="std split at 5"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% avg"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="1% average"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --cols="a,b,b+1"
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1
-    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --reduced-chi2
-    onefite fit \\#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
-    onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global \+ individual_*x" files*.dat --no-parallel
-    onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global \+ individual_*x" files*.dat 
-    onefite fit "y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1) = global \+ individual_*x" files*.dat --workers=2 
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
-	onefite archive --fit last
-	onefite archive -f last-1 --rchi2
-	onefite log -f 2 --ro 1
-	onefite log --fit=5 --save-to=trash.json
-
-=head2 Trim fit-results to slected columns
-=item by order
-=begin code
-	onefite fit ... --print-cols="2,3,5"
-=end code
-	from fit-results it printis columns 2, 3 and 5
-=item by name
-=begin code
-	onefite fit "y(x,a,b) = a \+ b*x" .. --print-cols="2,a,a+1"
-=end code
-	from fit-results it prints column 2 and those of parameter a and its error
-=begin code
-	onefite fit "y(x,a,b) = a \+ b*x" .. --print-cols="2,a,b-1"
-=end code
-	from fit-results it prints column 2 and those of parameter a and its error
-
-
-=head2 Using awk to clean std output
-=item just awk
-=begin code
-	onefite fit .... | awk '!/^-/ {print}'
-=end code
-=item combine with --quiet
-=begin code
-	onefite .... --quiet | awk '!/^-/ {print}'
-=end code
-=item combine with "2>/dev/null"
-=begin code
-	onefite .... 2>/dev/null | awk '!/^-/ {print}'
-=end code
-=item combine with tee
-=begin code
-	onefite .... | tee filename; awk '!/^-/ {print}' filename
-=end code
-
-=head2 Built-in archiving
-=item add to achive
-=begin code
-    onefite fit \#1BPP file.zip --autox --logx --autoy --logy --define-alias=1BPP --archive
-    onefite fit "y(x,a,b) = a \+ b*x" file.dat --set-err="10% avg split at 10.5" --remove-outliers=1 --ar
-=end code
-=item Show archive log
-=begin code
-	onefite archive || onefite ar || onefite log
-	onefite archive -f last
-	onefite log -f 2
-	onefite ar --fit last-3
-=end code
-
-=head2 Version upgrade
-
-=begin code
-
-onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon] [--test=<Str>] [--ip=<Str>] [-p|--port[=Int]] [-m|--merge-site=<Str>] [--cernlib] [--shell] [--shell-port=<Int>] [--wsl] [--macos] [--docker] [--dpkg] [--git] [--minuit=<Int>]
-
-=end code
-
-    At the host prompt run I<onefite update -d --shell --test>
-
-    This will upgrade the current (main or dev) version of the OneFit-Engine. github.com/fitteia/OneFit-Engine.git
-    is downloaded and expanded. OneFit-Engine/INSTALL is called with options --systemd-daemon and --shell and --test.
-    Port 8142 will be open to onefite requests.
-    Port 8100 will be open to shell command access via a web browser.
-
-    Options
-
-    [-c|--compile] Compile the OneFit-Engine C and Fortran sources. Default True
-    [--ip]          IP range access to the OneFit-Engine web service. Default '*'
-    [-p]            Port number for the OneFit-Engine web service. Default 8142
-    [-m|--merge-site=<Str>] Merge remote with local site <Str> sources. Default ''
-
-    [-u|--to-user] Install OneFit-Engine in the user space. Default False
-    [-d|--systemd-daemon] Create a systemd service and install it. Default False
-    [--test]       Run install tests. Default False
-    [--cernlib]    Use Debian cernlib package or compile from source. Default False
-    [--shell]      Install a web shell service (default port 8100 or --shell-port). Default False
-    [--shell-port] Port number for the web shell service. Default 8100
-    [--dpkg]       Run apt update by default. Use --no-dpkg otherwise
-	[--minuit=<Int>] set <Int> as the maximum number of parameters for minuit
-
-    Use --/<option> or --no-<option> to negate defaults (e.g., --no-test or --/test)
-
-=head2 Test commands
+=head2 test
 
 =begin code :lang<bash>
 onefite test list
-onefite test [<arr> ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install]
+onefite test [TEST ...] [--verbose|-v] [-d|--systemd-daemon] [-p|--post-install]
 =end code
 
-=PARAMETERS
+C<test list> lists the available C<.rakutest> files by name, without running
+them. C<test> with no file arguments runs the full suite via C<prove6 --lib
+t/>; given one or more TEST names (with or without the C<.rakutest> suffix),
+only those are run and their combined output is captured and printed.
+Systemd-daemon and post-install checks are enabled by default; disable them
+with C<--no-systemd-daemon>/C<--no-post-install> when inappropriate for the
+current platform. C<--post-install> always fits a small built-in dataset via
+the plain command line and checks the result. If C<--systemd-daemon> is set
+and C<systemctl status onefite> reports it active, it also fits the same
+dataset by C<curl>-ing the running HTTP service on C<127.0.0.1:8142>;
+otherwise, if a background service process is found (C<onefite service
+PID>), it curls that instead; if neither is running, the HTTP check is
+skipped with a note that the service is off, and only the command-line check
+runs.
 
-=head2 File parameters
+=head2 upgrade
 
-=item input-file - name of the file to be converted (file extensions: .sav or .json)
+=begin code :lang<bash>
+onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon]
+                [--cernlib] [--shell] [--shell-port=PORT]
+                [--ip=ADDRESS] [-p|--port=PORT] [--test]
+                [-m|--merge-site=BRANCH] [--minuit=COUNT]
+                [--wsl|--macos|--docker] [--apt|--apt-get|--dpkg] [--git]
+=end code
 
-=item output-file - name of the converted file (file extensions: .sav or .json)
+Update the current checkout (C<git stash && git pull>, unless C<--no-git>)
+and invoke C<INSTALL> with the corresponding options, then restart the
+service. C<--minuit> defaults to whatever the currently-built MINUIT already
+supports (read back from its own compiled-in F<d506cm.inc>) rather than a
+fixed number. Git update, compilation, and package update are enabled by
+default. Boolean options can be negated with C<--no-NAME> or C<--/NAME>.
 
-=item data files - one or more files including plain text ASCII (.dat, .txt). Zip files are accepted.
-      Special cases: Stelar S.R.l files (.sdf, .hdf5, .sef).
+=head2 uninstall
 
-=head2 Fit methods
+Stop the web engine, update the source checkout, and run C<INSTALL -U>. This
+removes the installed OneFit-Engine components and may require elevated
+privileges.
 
-=item fit-methods - simp scan min minos
-=end pod
+=MODEL EXPRESSIONS
+
+A model expression has this general form:
+
+=begin code
+OUTPUT[OUTPUT-RANGE](X[X-RANGE], PARAMETER, ...) = EXPRESSION
+=end code
+
+Parameters may be written as follows:
+
+=item C<a> - free parameter with engine-selected initialization
+=item C<a:1.0> - free parameter initialized to 1.0
+=item C<< a[0<10] >> - free parameter bounded to the inclusive range 0 through 10
+=item C<< a:1.0[0<10] >> - initialized and bounded parameter
+=item C<a=1.0> - fixed parameter
+=item C<< a=1.0[0<10] >> - fixed parameter that still carries an allowed range
+=item C<< a=1.0[0<10].MIXED=1 >> - per-block parameter in a C<--hybrid> fit (see FITTING MODES)
+
+Both C<< '<' >> and C<';'> are accepted as range separators, though
+C<< '<' >> usually requires less escaping inside a quoted shell argument.
+
+A backslash before C<+> marks separately-plotted model contributions:
+
+=begin code :lang<bash>
+onefite fit 'y(x,a,b,c)=a\+b*x+c*x*x' data.dat
+=end code
+
+Quote the complete expression to prevent the shell from interpreting spaces,
+C<< '<' >>, C<#>, C<*>, parentheses, or backslashes.
+
+=ALIASES
+
+Installed aliases are read from the installation C<aliases.json>. A local
+C<./aliases.json> is merged over the installed file, with local entries
+taking precedence. Aliases can be selected in several equivalent forms:
+
+=begin code :lang<bash>
+onefite fit 'alias: one exponential' data.dat
+onefite fit 'a: one exponential' data.dat
+onefite fit '#one-exponential' data.dat
+=end code
+
+Use C<--define-alias=NAME> (C<-a>/C<--da>/C<--dali>; also C<--alias> on the
+expression form of C<fit>) after fitting to create or replace a local alias
+with the fitted function.
+
+=FITTING MODES
+
+=item Individual - fit each data set independently. This is the default
+unless the engine file or command selects another mode; C<-i>/C<--individual>
+forces this mode, and is only available when loading an existing engine file
+(C<fit INPUT-FILE>).
+=item Global - C<-g>/C<--global> minimizes a shared objective across all
+supplied data sets. Available on C<create>, C<random>, and both forms of
+C<fit>.
+=item Hybrid or MIXED - C<--hybrid> enables mixed fitting and also implies
+global mode. It is only available on C<fit> (either form); C<create> and
+C<random> do not support it. A function expression containing a C<.MIXED=1>
+parameter declaration automatically activates global mode too, but only when
+fitting from a function expression directly (C<fit FUNCTION ...>), not when
+re-fitting a saved C<INPUT-FILE>. Parameters tagged C<.MIXED=1> are fitted
+per data set while the remaining (untagged) parameters participate in the
+shared global fit.
+
+=INPUT FILES
+
+=item C<.dat>, C<.txt> - plain-text experimental data
+=item C<.zip> - archive containing input data
+=item C<.sdf>, C<.hdf5> - Stelar data
+=item C<.sef> - Stelar field-cycling data
+=item C<.sav> - fitteia/OneFit-Engine description
+=item C<.json> - OneFit-Engine description
+
+The import options C<--R1>, C<--sef-R1-file>, C<--range>, C<--gfilt>,
+C<--fit-if>, C<--plot-if>, C<--ist-ffc-Mz>, and C<--set-err> customize
+conversion of supported experimental formats; all of them apply only when
+building a definition from raw data (C<create> and C<fit FUNCTION ...>), not
+when re-fitting or re-plotting a saved C<INPUT-FILE>.
+
+=COMMON OPTIONS
+
+Each item below notes, in parentheses, which commands accept it: C<create>,
+C<random>, C<fit-expr> (C<fit FUNCTION ...>), C<fit-file> (C<fit INPUT-FILE>),
+and C<plot>.
+
+=head2 Data import and model creation
+
+=item C<--dl>, C<--data-label>, C<--data-labels=TEXT> - supply labels and
+values used while importing data blocks. I<(create, random; fit-expr also
+has this option, but without the C<-dl> short alias)>
+=item C<-t>, C<--tags=TEXT> - assign data-block tags. I<(create, random, fit-expr)>
+=item C<--R1> - import R1 rather than Mz data from supported IST-FFC and
+Stelar files. I<(create, fit-expr)>
+=item C<--ist-ffc-Mz>, C<--ist-ffc> - import Mz (rather than R1) data from an
+IST-FFC file. I<(create only)>
+=item C<--sf>, C<--sef-R1-file=FILE> - read frequencies from FILE while
+importing Stelar SEF data. I<(create, fit-expr)>
+=item C<-r>, C<--range=TEXT> - select a range when importing Stelar data
+zones. I<(create, fit-expr)>
+=item C<--gfilt=INTEGER> - apply a Gaussian smoothing filter during import.
+I<(create, fit-expr)>
+=item C<--fi>, C<--fit-if=CONDITION> - fit only data blocks whose tags
+satisfy CONDITION. I<(create, fit-expr)>
+=item C<--pi>, C<--plot-if=CONDITION> - plot only data blocks and fitted
+curves whose tags satisfy CONDITION. I<(create, fit-expr)>
+=item C<--se>, C<--set-err>, C<--err=EXPRESSION> - set or derive errors for
+ordinary data files. Supported expressions include a constant, a percentage,
+a multiplier, standard deviation, averaging, and splitting around a value -
+for example C<1.0>, C<1%>, C<10x>, C<x10/100>, C<std>, C<std split at 5>, or
+C<10% avg split at 10.5>. Does not apply to IST-FFC, SEF, or HDF5 imports
+(their errors come from the instrument format itself). I<(create, fit-expr)>
+=item C<--ac>, C<--aux-code=SPECIFICATION> - add auxiliary C source and
+declarations. SPECIFICATION is a comma-separated string whose first value is
+the C source filename and whose remaining values are declarations, for
+example C<< --aux-code='functions.c, double custom(double x)' >>.
+I<(create, fit-expr)>
+
+=head2 Fit control
+
+These only apply once an actual MINUIT fit is performed, so I<not> to
+C<create> or C<plot>.
+
+=item C<--fm>, C<--fit-methods=METHODS> - whitespace-separated MINUIT
+methods, run in order. Default: C<simp scan min minos>. I<(create, fit-expr,
+fit-file; C<random> has no C<--fit-methods> at all - it reuses whatever the
+parsed function/definition already carries)>
+=item C<-g>, C<--global>; C<-i>, C<--individual>; C<--hybrid> - select the
+fitting mode (see FITTING MODES above for exact applicability).
+=item C<--ro>, C<--remove-outliers=SELECTION> - remove selected outliers, for
+example C<2>, C<2..5>, or C<1,3,5>. I<(fit-expr, fit-file)>
+=item C<--rc>, C<--rchi2>, C<--reduced-chi2> - recalculate parameter errors
+for a chi-square approximately equal to the number of degrees of freedom.
+I<(fit-expr, fit-file)>
+=item C<--eb>, C<--error-bars>, C<--errorbars> - include error bars in fit
+output and plots. I<(fit-expr, fit-file)>
+=item C<--pco>, C<--peco>, C<--pearson-correlation>, C<--R2> - calculate the
+Pearson correlation quality coefficient. I<(fit-expr, fit-file)>
+=item C<--parallel>, C<--no-parallel> - enable or disable parallel execution
+of hybrid/mixed fits (enabled by default). Disabling it sets
+C<ONEFITE_NO_PARALLEL=1> for the process. I<(fit-expr, fit-file)>
+=item C<--workers=INTEGER> - set the worker count for mixed-fit parallelism.
+Positive values set C<ONEFITE_WORKERS> for the process. I<(fit-expr, fit-file)>
+=item C<--ar>, C<--archive> - after a successful fit, append the exact
+command line to the local fit archive/log. I<(fit-expr, fit-file)>
+
+=head2 Plot control
+
+=item C<--ax>, C<--autox>; C<--ay>, C<--autoy>; C<--axy>, C<--autoxy> -
+auto-scale the x axis, y axis, or both. I<(all commands)>
+=item C<--lx>, C<--logx>, C<--loglin>; C<--ly>, C<--logy>, C<--linlog>;
+C<--lxy>, C<--logxy>, C<--loglog> - logarithmic x, y, or both axes.
+I<(all commands)>
+=item C<-n>, C<--Num>, C<--npts=INTEGER> - number of points in theoretical
+curves. Default: 100. I<(create, random, plot; C<fit-expr>/C<fit-file> also
+accept C<--num> and C<-N> as extra aliases for the same option)>
+=item C<--SymbSize>, C<--ssz=NUMBER> - non-negative plot-symbol size.
+Default: C<1.0>. I<(create, fit-expr)>
+=item C<--np>, C<--no-plot> - run without producing plots. I<(fit-expr,
+fit-file; C<random> has the same option spelled C<--inp>/C<--no-plot>
+instead; C<create> never plots and C<plot> always does, so neither has this
+flag)>
+=item C<--mp4>, C<--mpeg4> - create C<All.mp4> from C<All.pdf> via the
+installed C<pdf2mp4> helper. I<(fit-expr, fit-file)>
+
+=head2 Output and workspace
+
+=item C<-o>, C<--st>, C<--save-to=FILE> - save settings and fit results as a
+C<.json> or C<.sav> file. I<(create, random, fit-file - C<--to> is an extra
+alias on these three; C<fit-expr> has the same option but without the
+C<--to> alias; C<plot> has no C<--save-to>)>
+=item C<-z>, C<--zt>, C<--zip-to=FILE> - package the working result
+directory as FILE. I<(random, fit-expr, fit-file - on fit-file it defaults
+to INPUT-FILE's own basename; C<create> never zips)>
+=item C<--pc>, C<--prco>, C<--print-cols>, C<--print-columns>, C<--cols=LIST>
+- select fit-results columns by index or parameter name, after fitting. A
+suffix such as C<a+1> or C<a-1> selects a column relative to parameter C<a>.
+I<(fit-expr, fit-file)>
+=item C<-e>, C<--export> - when loading an engine file, export its data to
+C<data-BASENAME.txt> and any auxiliary source to C<AuxCode-BASENAME.c>.
+I<(fit-file only)>
+=item C<--wf>, C<--work-folder=DIR> - parent of generated work directories.
+Default is the current directory, except for C<convert>, which defaults to
+C</tmp>. I<(all commands)>
+=item C<--rd>, C<--ram>, C<--ramdisk>, C<--RAMDisk>, C<--use-ramdisk> - stage
+the work folder on a RAM disk instead of local disk. I<(fit-expr, fit-file)>
+=item C<-q>, C<--quiet> - reduce informational log output; does not suppress
+the underlying result. I<(create, random, fit-expr, fit-file; C<plot> has no
+C<--quiet>)>
+
+=head2 Dynamic model overrides
+
+Named options beginning with C<#> update parts of the model expression (or a
+saved definition) before fitting. Quote these arguments to prevent shell
+comment and glob processing. I<(create, fit-expr, fit-file; not available on
+C<random> or C<plot>)>
+
+=begin code :lang<bash>
+onefite fit 'y(x,a,b)=a+b*x' data.dat '--#a=0.0[0<2]' '--#x[0<10]'
+=end code
+
+Option names not recognised as either a declared parameter/axis or one of
+the flags above print a warning ("...not defined...continue...") and are
+otherwise ignored, rather than aborting the run.
+
+=FILES
+
+Use C<onefite path> to discover installation-dependent paths. Important
+files include the installed C<C/META-C.json>, the installed C<aliases.json>,
+an optional local C<./aliases.json>, the service log (C<onefite path --log>),
+and the fit archive directory (C<onefite path --archive>).
+
+=ENVIRONMENT
+
+=item C<ONEFITE_NO_PARALLEL> - set to C<1> internally by C<--no-parallel> on
+C<onefite fit>. Read by the compiled C fitting core to disable parallel
+(OpenMP) fitting of hybrid/mixed data blocks.
+=item C<ONEFITE_WORKERS> - set internally by a positive C<--workers=N> on
+C<onefite fit>. Read by the same C fitting core to cap the number of
+parallel fitting workers used for hybrid/mixed fits.
+
+=EXIT STATUS
+
+The command returns zero after successful completion. Invalid input, missing
+files or aliases, generated-code compilation errors, and fitting errors
+return a nonzero status. Some administrative commands delegate their status
+to external programs (C<git>, C<systemctl>, C<zef>, ...).
+
+=SECURITY
+
+C<start-web-engine> accepts uploaded model and data files and compiles and
+executes the resulting generated C code. Bind it to C<127.0.0.1> unless
+remote access is deliberately required and protected by appropriate firewall
+and access controls.
+
+C<upgrade>, C<uninstall>, and systemd service management invoke C<git>,
+installation scripts, and other external commands, and in some modes
+C<sudo>. Review their effects before using them on production systems.
+
+Fit, plot, service, and RAM-disk operations remove and recreate working
+directories (C<rm -fr> the target folder before writing to it). Do not point
+C<--work-folder> at a directory containing unrelated files under a name that
+a generated result would reuse.
+
+=EXAMPLES
+
+=head2 Fit a straight line
+
+=begin code :lang<bash>
+onefite fit 'y(x,a:0,b:1)=a+b*x' data.dat
+=end code
+
+=head2 Use bounded and fixed parameters
+
+=begin code :lang<bash>
+onefite fit 'y[0<10](x[0<5],a:1[0<10],b=2)=a+b*x' data.dat
+=end code
+
+=head2 Save results and create an archive
+
+=begin code :lang<bash>
+onefite fit '#1exp' data.txt --save-to=fit.json --zip-to=fit.zip --archive
+=end code
+
+=head2 Refit an existing description
+
+=begin code :lang<bash>
+onefite fit fit.json --fit-methods='simp scan min' --autoxy
+=end code
+
+=head2 Run a global or hybrid fit
+
+=begin code :lang<bash>
+onefite fit 'y(x,a,b)=a+b*x' sample-*.dat --global --workers=2
+onefite fit '#2exp' sample.hdf5 --hybrid --workers=2
+=end code
+
+=head2 Set errors and remove outliers
+
+=begin code :lang<bash>
+onefite fit 'y(x,a,b)=a+b*x' data.dat \
+    --set-err='10% avg split at 10.5' --remove-outliers='1,3,5'
+=end code
+
+=head2 Select result columns
+
+=begin code :lang<bash>
+onefite fit 'y(x,a,b)=a+b*x' data.dat --print-columns='2,a,a+1'
+=end code
+
+=head2 Create a definition once, fit it later
+
+=begin code :lang<bash>
+onefite create 'y(x,a,b) = a + b*x' data.dat --save-to=fit-def.json
+onefite fit fit-def.json --export
+onefite fit fit-def.json --individual --fit-methods='simp scan min'
+=end code
+
+=head2 Inspect a model and installed paths
+
+=begin code :lang<bash>
+onefite list models
+onefite help BPP
+onefite path --aliases
+=end code
+
+=head2 Start a local-only HTTP service
+
+=begin code :lang<bash>
+onefite service start --ip=127.0.0.1 --port=8142
+=end code
+
+=DIAGNOSTICS
+
+If an alias is not found, C<onefite> prints the installed and local alias
+locations and the available keys. Use C<onefite list aliases> to inspect
+them.
+
+If generated C code fails to compile, inspect C<compile.log> in the
+generated work directory. For undeclared helper functions, provide their
+implementation and declarations with C<--aux-code>.
+
+If service startup fails, inspect C<onefite service log>, verify the bind
+address exists, and check whether the port is already in use or blocked by a
+firewall.
+
+=SEE ALSO
+
+C<onefite --help>, C<onefite man>, C<onefite list models>,
+C<onefite help MODEL>, L<https://github.com/fitteia/OneFit-Engine>
+
+=
 
 my $time = BEGIN { now }
 END { note "===> Total execution time (s): " , now - INIT now }
