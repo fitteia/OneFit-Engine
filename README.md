@@ -8,8 +8,10 @@ plots and portable JSON/SAV fit descriptions, and is intended to run in a VM
 or container - locally or remotely - so fitteia's fitting core can be
 embedded in user-defined environments and behind custom front-ends.
 
+<!--
 The current project version is **0.9.165**. The repository is distributed
 under the [Artistic License 2.0](LICENSE).
+-->
 
 > [!WARNING]
 > The optional HTTP service has no authentication, authorization, or
