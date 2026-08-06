@@ -8,7 +8,7 @@
   "depends": [
   ],
   "description": "fitteia's OneFit Engine",
-  "license": "GPL-3.0",
+  "license": "Artistic License 2.0",
   "meta-version": 0,
   "name": "OneFit-Engine",
   "provides": {
