@@ -361,6 +361,18 @@ A model expression has this general form:
 OUTPUT[OUTPUT-RANGE](X[X-RANGE], PARAMETER, ...) = EXPRESSION
 =end code
 
+C<OUTPUT-RANGE> is accepted in either position - attached directly to
+C<OUTPUT> as shown above, or placed after the closing parenthesis instead,
+right before the C<=>:
+
+=begin code
+OUTPUT(X[X-RANGE], PARAMETER, ...)[OUTPUT-RANGE] = EXPRESSION
+=end code
+
+Both forms are equivalent; the grammar (F<lib/OneFit/Engine/Grammars.rakumod>)
+checks for the range attached to C<OUTPUT> first and falls back to the
+trailing form if that's absent.
+
 Parameters may be written as follows:
 
 =item C<a> - free parameter with engine-selected initialization
@@ -546,8 +558,7 @@ C<--quiet>)>
 
 Named options beginning with C<#> update parts of the model expression (or a
 saved definition) before fitting. Quote these arguments to prevent shell
-comment and glob processing. I<(create, fit-expr, fit-file; not available on
-C<random> or C<plot>)>
+comment and glob processing. I<(fit-expr, fit-file only)>
 
 =begin code :lang<bash>
 onefite fit 'y(x,a,b)=a+b*x' data.dat '--#a=0.0[0<2]' '--#x[0<10]'
@@ -555,7 +566,13 @@ onefite fit 'y(x,a,b)=a+b*x' data.dat '--#a=0.0[0<2]' '--#x[0<10]'
 
 Option names not recognised as either a declared parameter/axis or one of
 the flags above print a warning ("...not defined...continue...") and are
-otherwise ignored, rather than aborting the run.
+otherwise ignored, rather than aborting the run. C<create> also accepts
+arbitrary C<#>-prefixed (or any other unrecognised) named options without
+error, but - unlike both forms of C<fit> - never applies them: they only
+trigger the same "not defined" warning. C<random> and C<plot> have no such
+catch-all in their signatures, so passing an unrecognised option to either
+one fails to dispatch at all (Raku falls back to printing usage) rather
+than being silently accepted.
 
 =FILES
 
@@ -619,7 +636,7 @@ onefite fit '#1exp' data.txt --save-to=fit.json --zip-to=fit.zip --archive
 =head2 Refit an existing description
 
 =begin code :lang<bash>
-onefite fit fit.json --fit-methods='simp scan min' --autoxy
+onefite fit fit.json --fit-methods='simp scan min minos' --autoxy
 =end code
 
 =head2 Run a global or hybrid fit
@@ -647,7 +664,7 @@ onefite fit 'y(x,a,b)=a+b*x' data.dat --print-columns='2,a,a+1'
 =begin code :lang<bash>
 onefite create 'y(x,a,b) = a + b*x' data.dat --save-to=fit-def.json
 onefite fit fit-def.json --export
-onefite fit fit-def.json --individual --fit-methods='simp scan min'
+onefite fit fit-def.json --individual --fit-methods='simp scan min minos'
 =end code
 
 =head2 Inspect a model and installed paths
