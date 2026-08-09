@@ -36,7 +36,7 @@ onefite fit 'y(x[0<5],a:1[0<10],b=2)[0<10]=a+b*x' data.dat
 | `a:1.0[0<10]` | Initialized and bounded parameter |
 | `a=1.0` | Fixed parameter |
 | `a=1.0[0<10]` | Fixed value carrying an allowed range |
-| `a=1.0[0<10].MIXED=1` | Per-data-set parameter in a `--hybrid` fit (see [fitting](fitting.md)) |
+| `a_` | A per-data-set parameter in a `--hybrid` fit - see [Individual, global, and mixed parameters](#individual-global-and-mixed-parameters) below |
 
 The parser accepts `<` or `;` as range separators. The `<` form is used most
 often in this project's examples, but it must remain inside quotes so the
@@ -99,18 +99,42 @@ global fit. `--hybrid` enables mixed fitting and implies global mode -
 `--hybrid` is only available on `fit` (either form), not on `create` or
 `random`.
 
-A mixed parameter is marked with `.MIXED=1`:
+Parameters aren't individually tagged as "global" or "individual" -
+whether one varies per data set or stays shared is decided by its
+**name**, not a per-parameter flag: any parameter whose name ends in an
+underscore (`Minf_`, `T11_`, `individual_`, ...) is a per-data-set
+candidate; every other parameter is shared across all data sets.
+
+For that naming convention to actually take effect, pass `--hybrid`:
 
 ```bash
 onefite fit \
-  'y(x,global:1[-1<1],individual_=1[-2<2].MIXED=1)=global+individual_*x' \
+  'y(x,global:1[-1<1],individual_:1[-2<2])=global+individual_*x' \
   sample-*.dat --hybrid --workers=2
 ```
 
-The expression form of `fit` also detects `.MIXED=1` and activates global
-mode automatically - but only that form; re-fitting a saved `INPUT-FILE`
-does not re-scan its function text for `.MIXED=1`. Read
-[fitting](fitting.md) before using mixed fits.
+Without `--hybrid`, underscore-suffixed parameters are fitted as ordinary
+*shared* parameters instead - every data set ends up with the identical
+value. The project's own `t/12/p96.json` test fixture (`Parameters =
+M0_,Mi_,c,T11_,T12_`) demonstrates this directly: `onefite fit p96.json
+--hybrid` fits `M0_`/`Mi_`/`T11_`/`T12_` independently per data set; the
+same file without `--hybrid` gives every data set identical values for
+those parameters and a dramatically worse chi-square.
+
+### Advanced: driving a mixed fit from custom C code
+
+If you write your own auxiliary C code (`--aux-code`) and
+`#include "mixed.h"` (see `include/mixed.h` in the repository), that
+header implements a separate, lower-level mechanism: at runtime it reads
+the fitting function's *last* parameter, and if it is a parameter
+literally named `MIXED`, fixed to a nonzero value (`MIXED=1`), switches to
+a per-data-set parameter array via its `PAR()` macro. This works with
+plain `--global` alone, without `--hybrid`, because the check happens
+inside your compiled C code rather than in `onefite` itself. It's only
+relevant if you're hand-writing AuxCode against `mixed.h`'s own
+conventions - ordinary model expressions should use the `--hybrid` plus
+trailing-underscore approach above instead. See
+[fitting](fitting.md) before using either form of mixed fit.
 
 ## Auxiliary C code
 
