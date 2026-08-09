@@ -725,6 +725,7 @@ EOT
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
+		$MIXED = False if $MIXED && $hybrid;
 		#		say %last<name value>;
 	 	my @fields = ("# TAG");
 	 	@fields.push: "Npts";
