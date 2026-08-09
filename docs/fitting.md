@@ -104,18 +104,33 @@ onefite fit MODEL sample-*.dat --hybrid --workers=2 --fit-methods='simp scan min
 ```
 
 Hybrid/MIXED fits re-run the full method sequence per data set for the
-per-block (`.MIXED=1`) parameters on top of the shared global fit, so
-`minos`'s extra per-parameter re-minimization pass adds up fastest here -
-dropping it (as above) is a reasonable way to keep exploratory hybrid runs
-fast. Add it back (`--fit-methods='simp scan min minos'`, the default) once
-you need real error estimates, e.g. for a final result.
+per-block (trailing-underscore-named) parameters on top of the shared
+global fit, so `minos`'s extra per-parameter re-minimization pass adds up
+fastest here - dropping it (as above) is a reasonable way to keep
+exploratory hybrid runs fast. Add it back (`--fit-methods='simp scan min
+minos'`, the default) once you need real error estimates, e.g. for a final
+result.
 
-Hybrid mode implies global fitting, while parameters marked `.MIXED=1` are
-handled per data set. Only available on `fit` (either form) - `create` and
-`random` don't support it. The expression form of `fit` also detects
-`.MIXED=1` in the function text and turns on global mode by itself.
-Validate a mixed model against a known result before increasing
-parallelism. See [model expressions](model-expressions.md).
+Hybrid mode implies global fitting. Parameters aren't tagged
+global/individual/hybrid individually - which ones vary per data set is
+decided by their **name ending in an underscore** (`Minf_`, `T11_`, ...);
+everything else stays shared. That naming convention only takes effect
+with `--hybrid`, though: the project's own `t/12/p96.json` test fixture
+fits its underscore-named parameters independently per data set with
+`--hybrid`, but gives every data set the identical value (and a much worse
+chi-square) for the same file without it. `--hybrid` is only available on
+`fit` (either form) - `create` and `random` don't support it.
+
+Separately, if a model's auxiliary C code (`--aux-code`) includes the
+project's `mixed.h` helper and follows its convention (a parameter
+literally named `MIXED`, fixed to 1, as the function's *last* parameter),
+that per-data-set behavior can also happen under plain `--global`, without
+`--hybrid` - `mixed.h` checks that last parameter's value inside your
+compiled C code, independently of `onefite`'s own `--hybrid` handling.
+That's only relevant for hand-written AuxCode; ordinary model expressions
+should use `--hybrid` plus the naming convention above. Validate a mixed
+model against a known result before increasing parallelism. See
+[model expressions](model-expressions.md#individual-global-and-mixed-parameters).
 
 ## Parallel execution
 

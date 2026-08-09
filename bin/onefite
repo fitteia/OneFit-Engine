@@ -104,10 +104,11 @@ engine file. Most options below are shared between the two forms - see
 
 The expression form imports the supplied data, resolves model aliases,
 compiles generated code, runs the selected MINUIT methods, and optionally
-saves, archives, or packages the result. If the expression contains a
-parameter declaration ending in C<.MIXED=1>, global mode is turned on
-automatically (this automatic detection applies only to the expression form,
-not to the input-file form below).
+saves, archives, or packages the result. If the expression's I<last>
+parameter is literally named C<MIXED> and fixed to 1 (e.g. C<...,MIXED=1>),
+global mode is turned on automatically (this automatic detection applies
+only to the expression form, not to the input-file form below) - see
+FITTING MODES.
 
 The input-file form reloads an existing engine description; it understands
 C<--export> and C<--individual>, which the expression form does not, but does
@@ -381,7 +382,8 @@ Parameters may be written as follows:
 =item C<< a:1.0[0<10] >> - initialized and bounded parameter
 =item C<a=1.0> - fixed parameter
 =item C<< a=1.0[0<10] >> - fixed parameter that still carries an allowed range
-=item C<< a=1.0[0<10].MIXED=1 >> - per-block parameter in a C<--hybrid> fit (see FITTING MODES)
+=item C<a_> - a parameter I<name> ending in an underscore is fitted
+per-block in a C<--hybrid> fit, rather than shared (see FITTING MODES)
 
 Both C<< '<' >> and C<';'> are accepted as range separators, though
 C<< '<' >> usually requires less escaping inside a quoted shell argument.
@@ -422,12 +424,29 @@ supplied data sets. Available on C<create>, C<random>, and both forms of
 C<fit>.
 =item Hybrid or MIXED - C<--hybrid> enables mixed fitting and also implies
 global mode. It is only available on C<fit> (either form); C<create> and
-C<random> do not support it. A function expression containing a C<.MIXED=1>
-parameter declaration automatically activates global mode too, but only when
-fitting from a function expression directly (C<fit FUNCTION ...>), not when
-re-fitting a saved C<INPUT-FILE>. Parameters tagged C<.MIXED=1> are fitted
-per data set while the remaining (untagged) parameters participate in the
-shared global fit.
+C<random> do not support it. Parameters are not individually tagged
+global/individual/hybrid - a parameter whose I<name> ends in an underscore
+(C<Minf_>, C<T11_>, ...) is a per-data-set candidate, while every other
+parameter stays shared across all of them. That naming convention only
+takes effect together with C<--hybrid>, though: without it, underscore-named
+parameters are fitted as ordinary I<shared> parameters, ending up with the
+same value for every data set (confirmed against the project's own
+F<t/12/p96.json> test fixture, whose C<Minf_>/C<T11_>/etc. only diverge
+per data set when C<--hybrid> is given). A function expression whose I<last>
+parameter is literally C<MIXED=1> automatically activates global mode too,
+but only when fitting from a function expression directly
+(C<fit FUNCTION ...>), not when re-fitting a saved C<INPUT-FILE>.
+
+Separately, hand-written auxiliary C code (C<--aux-code>) that
+C<#include>s the project's F<mixed.h> helper can drive the same
+per-data-set behaviour under plain C<--global>, without C<--hybrid> at
+all: F<mixed.h> reads the function's I<last> parameter at runtime, and if
+it is literally named C<MIXED> and fixed to a nonzero value, switches to a
+per-data-set parameter array via its own C<PAR()> macro - a check that
+happens inside the compiled C code, independently of C<onefite>'s own
+C<--hybrid> handling. This only matters if you are hand-writing AuxCode
+against F<mixed.h>'s conventions; ordinary model expressions should use
+C<--hybrid> with the naming convention above instead.
 
 =INPUT FILES
 
@@ -643,8 +662,14 @@ onefite fit fit.json --fit-methods='simp scan min minos' --autoxy
 
 =begin code :lang<bash>
 onefite fit 'y(x,a,b)=a+b*x' sample-*.dat --global --workers=2
-onefite fit '#2exp' sample.hdf5 --hybrid --workers=2
+onefite fit '#2exp' sample.hdf5 --hybrid --workers=2 --fit-methods='simp scan min'
 =end code
+
+C<--fit-methods> above drops the default C<minos> pass - hybrid/MIXED fits
+re-run the method sequence per data set for the per-block parameters, so
+C<minos>'s extra per-parameter re-minimization adds up fastest there. It's
+a reasonable trade for a quick exploratory run; add C<minos> back for a
+final result that needs real error estimates.
 
 =head2 Set errors and remove outliers
 
