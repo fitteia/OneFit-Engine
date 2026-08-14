@@ -80,7 +80,7 @@ multi MAIN (
    	$SUDO = "" unless $to-site;
 
 	given os-family() {
-    	when 'centos' | 'fedora' | 'arch' {
+    	when 'rhel' | 'centos' | 'alma' | 'fedora' | 'arch' {
         	$web-server = False;
         	$dpkg       = False;
         	$ip         = "0.0.0.0"i unless $ip;
@@ -700,8 +700,16 @@ sub os-family() {
             return 'fedora';
         }
 
-        when any <centos centos-stream rocky almalinux rhel ol oracle> {
+        when any <centos centos-stream> {
             return 'centos';
+        }
+
+        when any <alma almalinux> {
+            return 'alma';
+        }
+
+        when any <rocky rhel redhat ol oracle> {
+            return 'rhel';
         }
 
         when any <opensuse-leap opensuse-tumbleweed sles> {
@@ -720,7 +728,7 @@ sub os-family() {
     }
 
     return 'debian' if $id-like.contains('debian');
-    return 'centos' if $id-like.contains('rhel');
+    return 'rhel' if $id-like.contains('rhel');
     return 'fedora' if $id-like.contains('fedora');
     return 'suse'   if $id-like.contains('suse');
     return 'arch'   if $id-like.contains('arch');
