@@ -4,7 +4,8 @@
 # 
 #ROOT=/user/home/OneFit
 
-OS=LINUX
+UNAME_S := $(shell uname -s)
+OS := $(if $(filter Darwin,$(UNAME_S)),MacOSX,LINUX)
 ARCH=x86_64
 ROOT=/home/fitteia
 PREFIX=
@@ -44,7 +45,6 @@ else
 GCC_STD :=
 endif
 
-UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
 	GCCPATH := $(shell brew --prefix gcc)
 	LIBGFORTRAN = -L$(GCCPATH)/lib/gcc/current
@@ -54,10 +54,22 @@ endif
 
 CC = gcc $(FLAGS)
 
-# versao linux
-LIB= $(LIBGFORTRAN) -L$(PERLCORE) -L$(DESTDIR)/lib -lperl -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm 
+# gfitn itself never calls into Perl: libonefit's own PerlLF/PerlNLF/
+# perl_func_call (the only Perl-embedding entry points anywhere in the
+# onefit/modelos/util/minuit/userlib static libraries) are built without
+# WITH_PERL, so they're no-op stubs - `nm -u` on all five confirms there
+# is no undefined Perl_* symbol anywhere. -lperl/PERLCORE were never
+# actually required here (confirmed by linking and running a real
+# multi-block fit without them: byte-identical fit.out/fit.log/residues
+# against a build that still links -lperl). Dropping them also fixes
+# gfitn's own link on macOS, where PERLCORE is a Linux-only path and the
+# `module` target below already skips building the Perl-XS AuxCode.so
+# entirely on Darwin. PERLCORE/-lperl remain required by `module` on
+# Linux (CCFLAGS/LDFLAGS/LIBS below) - only gfitn's own compile+link
+# stop needing them.
+LIB= $(LIBGFORTRAN) -L$(DESTDIR)/lib -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm
 
-FLAGS= $(GCC_STD) -D__GNU_LIBRARY__ -D$(OS) -fPIC -pthread -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(PERLCORE) -I$(INCLUDEDIR)
+FLAGS= $(GCC_STD) -D__GNU_LIBRARY__ -D$(OS) -fPIC -pthread -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(INCLUDEDIR)
 
 CCFLAGS= $(GCC_STD) -D__GNU_LIBRARY__ -D__GNU_LIBRARY__  -D_REENTRANT -D_GNU_SOURCE -DDEBIAN -fstack-protector -fno-strict-aliasing -pipe -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -O3 -g -fPIC -I$(PERLCORE)  -I$(INCLUDEDIR) 
 LDFLAGS= -L$(PERLCORE) -shared -L/usr/local/lib -fstack-protector -O2 -g 
