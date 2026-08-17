@@ -1,7 +1,8 @@
 MROOT=./
 RAKU=/usr/bin
 ARCH=x86_64
-OS=LINUX
+UNAME_S := $(shell uname -s)
+OS := $(if $(filter Darwin,$(UNAME_S)),MacOSX,LINUX)
 PERLVERSION=5.36
 ROOT=$(MROOT)
 BINDIR=$(HOME)/bin
