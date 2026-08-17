@@ -80,7 +80,9 @@ LIBS= -lperl -L$(ROOT)$(PREFIX)/lib/ -lonefit-modelos-$(LIBNUMBER) -lonefit-util
 
 objects := $(patsubst %.c,%.o,$(wildcard *.c))
 
-gfitn : clean module $(objects)
+#gfitn : clean module $(objects)
+
+gfitn : clean $(objects)
 	$(CC) $(objects) $(LIB) -o $(NAME) 
 
 module: AuxCode.c AuxCode.i
