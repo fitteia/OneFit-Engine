@@ -22,8 +22,8 @@ set:
 #    sed -i'' -e "/OS=/ s@.*@OS=$(OS)@" $(MROOT)/etc/OFE/default/makefile
 
 install: set
-	make -C $(ROOT)/C  OS=$(OS) ROOT=$(ROOT) PERLCORE=$(PERLCORE) BINDIR=$(BINDIR) install
-	make -C $(ROOT)/C  OS=$(OS) ROOT=$(ROOT) BINDIR=$(BINDIR) clean
+	make -C $(ROOT)/../C  OS=$(OS) ROOT=$(ROOT) PERLCORE=$(PERLCORE) BINDIR=$(BINDIR) install
+	make -C $(ROOT)/../C  OS=$(OS) ROOT=$(ROOT) BINDIR=$(BINDIR) clean
 
 clean:
-	make -C $(ROOT)/C ROOT=$(ROOT) clean
+	make -C $(ROOT)/../C ROOT=$(ROOT) clean

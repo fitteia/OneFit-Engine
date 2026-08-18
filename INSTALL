@@ -315,6 +315,10 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
 		shell "cd $*CWD/../minuit && git pull ";
+   		
+		say "download  onefite-C-code $*CWD/../C, compile and install libs in $*CWD/lib";
+   		shell "git clone https://github.com/fitteia/onefite-c-code.git $*CWD/../C" unless "$*CWD/../C/".IO.d(:e);
+		shell "cd $*CWD/../C && git pull ";
 	}
 	note "===> Installing Minuit for a maximum number of parameters: $minuit";
 	my @d506cm-inc="$*CWD/../minuit/minuit/d506cm.inc".IO.lines.map(
