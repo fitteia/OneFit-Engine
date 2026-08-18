@@ -17,10 +17,11 @@ ICONS=$(DESTDIR)/images
 clean:
 	rm -f *~ *.flc
 
-install-pcop: 
+install-pcop:
 	install -d $(BINDIR)
 	install -m 0755 pcop $(BINDIR)
 	install -m 0755 pdf2mp4 $(BINDIR)
+	install -m 0755 epstopdf $(BINDIR)
 
 install: 
 	rm -f *~ *.flc
