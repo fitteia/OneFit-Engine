@@ -830,7 +830,7 @@ multi MAIN ('list',
 multi MAIN ('list','models',
       	   Bool :q(:$quiet) = False
 	   ){
-     my $txt = "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp;
+     my $txt = "{ ::('OFE-PATH') }/../C/META-C.json".IO.slurp;
      say $txt unless $quiet;
      $txt;
 }
@@ -1280,8 +1280,8 @@ multi MAIN ('help',
 	    Str $model, #= model name
 	    Bool :q(:$quiet), #= quiet for reduced log info
 	   ){
-    my @list = dir(::('OFE-PATH') ~ "/C/local");
-    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
+    my @list = dir(::('OFE-PATH') ~ "/../C/local");
+    @list.push: dir(::('OFE-PATH') ~ "/../C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
 	#my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str // $model };
@@ -1299,8 +1299,8 @@ multi MAIN ('help',
             Str $key, #= model key info
 	    Bool :q(:$quiet), #= quite for reduced log info
 	   ){
-    my @list = dir(::('OFE-PATH') ~ "/C/local");
-    @list.push: dir(::('OFE-PATH') ~ "/C/core/onefit-3.1/modelos").Slip;
+    my @list = dir(::('OFE-PATH') ~ "/../C/local");
+    @list.push: dir(::('OFE-PATH') ~ "/../C/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
     my %meta-c = from-json( "{ ::('OFE-PATH') }/C/META-C.json".IO.slurp );	
     my %info;
