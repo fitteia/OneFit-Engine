@@ -350,7 +350,7 @@ sub uninstall () {
 
 	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
-   	my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
+   	my @binaries = "$*CWD/../C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
    	for @binaries.splice(1,@binaries.elems-2).push('pcop') {
 		shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } ";
    	}
@@ -414,7 +414,7 @@ sub install (:$test,:$to-site, :$bindir) {
 		}
     }
 
-    my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
+    my @binaries = "$*CWD/../C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
     if $to-site {
 		for @binaries.splice(1,@binaries.elems-2).push('pcop') {
 	    	shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
