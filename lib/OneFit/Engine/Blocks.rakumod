@@ -314,7 +314,9 @@ class Block is export {
 	}
 	for (0..^@!Data.elems).hyper -> $b {
 #	    for (0 ..^ @!X.elems) -> $i { @!Data[$b] = "@!X[$i] @!Y[$i] @!E[$i]" }
-	    @!Data[$b]=([Z] @!X,@!Y,@!E)[$b;*].join: " "
+#       @!Data[$b]=([Z] @!X,@!Y,@!E)[$b;*].join: " "  there was a precison bug caused by this (Claude found it)
+		my @orig-xy = @!Data[$b].words[0,1];
+  		@!Data[$b]=(@orig-xy, @!E[$b]).join: " "	
 	}
 #	@!Data>>.say;
 	self;
