@@ -192,7 +192,8 @@ class Import is export {
 		my %options=%!options;
 		my $Re = %options<Re>.so ?? %options<Re> !! False;
 		my $Im = %options<Im>.so ?? %options<Im> !! False;
-		my @window-range = %options<range>.so ?? %options<range>.split(/\D+/) !! <0 end>;
+		#	my @window-range = %options<range>.so ?? %options<range>.split(/\D+/) !! <0 end>;
+		my @window-range = %options<range>.so ?? %options<range>.split(/<[.\-:,\s]>+/) !! <0 end>;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
