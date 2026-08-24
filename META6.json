@@ -13,6 +13,7 @@
   "name": "OneFit-Engine",
   "provides": {
     "OneFit": "lib/OneFit.rakumod",
+    "OneFit::SAV": "lib/OneFit/SAV.rakumod",
     "OneFit::Engine::Agrs": "lib/OneFit/Engine/Agrs.rakumod",
     "OneFit::Engine::Axes": "lib/OneFit/Engine/Axes.rakumod",
     "OneFit::Engine::Blocks": "lib/OneFit/Engine/Blocks.rakumod",

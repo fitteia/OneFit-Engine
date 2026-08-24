@@ -1,6 +1,7 @@
 unit module OneFit::Engine::Import;
 
 use JSON::Fast;
+use OneFit::SAV;
 
 class Import is export {
 	has @!Input-files;
@@ -37,11 +38,8 @@ class Import is export {
 			given self.is-type($file) {
 				note "===> File $file is type: ", $_ unless $quiet;
 				when 'sav' {
-					use Inline::Perl5;
-	    			use CGI:from<Perl5>;
 					my %json;
-	    			my $sav = CGI.new( $file.IO.open );
-	    			for $sav.param { %json{$_} = $sav.param($_) }	 
+					%json = read-sav($file);
 					my $name = "ofe-tmp-json.txt";
 					$name.IO.spurt: %json<Dados>;
 					return  self.import( infiles => [$name] );
@@ -581,6 +579,5 @@ class Import is export {
 
 
 }
-
 
 
