@@ -40,8 +40,8 @@ The current installer's defaults include:
 
 - compile and install the engine;
 - install to the Raku site repository;
-- install missing Raku dependencies (`App::Prove6`, `Inline::Perl5`,
-  `Readline`, `Cro::HTTP::Router`, `Pod::To::Man`);
+- install missing Raku dependencies (`App::Prove6`, `Readline`,
+  `Cro::HTTP::Router`, `Pod::To::Man`);
 - run the Raku test suite and post-install tests;
 - update Debian-family packages when `--dpkg` applies;
 - install/configure an SSH+web-server task on eligible site installs;
