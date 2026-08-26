@@ -283,4 +283,3 @@ sub compile-condition(Str:D $source --> CompiledCondition:D) is export {
     X::OneFit::Condition.new(:$condition).throw unless $match;
     CompiledCondition.new(:source($condition), :evaluator($match.made));
 }
-
