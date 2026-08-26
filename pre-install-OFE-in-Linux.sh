@@ -691,7 +691,7 @@ install_raku_modules() {
 
     zef update || true
     local mod
-    for mod in App::Prove6 Inline::Perl5 Readline Cro::HTTP::Router Pod::To::Man; do
+    for mod in App::Prove6 Readline Cro::HTTP::Router Pod::To::Man; do
         echo "Installing Raku module: $mod"
         zef install --/test "$mod" || warn "could not install Raku module: $mod"
     done

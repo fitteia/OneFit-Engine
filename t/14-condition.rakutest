@@ -1,0 +1,62 @@
+use Test;
+use OneFit::Condition;
+
+plan 34;
+
+sub evaluates(Str:D $source, *@values --> Bool:D) {
+    compile-condition($source).evaluate(
+        c1 => @values[0] // 0,
+        c2 => @values[1] // 0,
+        c3 => @values[2] // 0,
+    )
+}
+
+ok evaluates('c1 > 0', 1), 'greater than';
+nok evaluates('c1 > 0', -1), 'false comparison';
+ok evaluates('c1 >= 1 and c1 <= 1', 1), 'inclusive comparisons and and';
+ok evaluates('c1 < 0 or c2 != 3', 1, 2), 'or and inequality';
+nok evaluates('c1 == 1 and c2 == 3', 1, 2), 'equality';
+ok evaluates('not c1 < 0', 1), 'textual not';
+ok evaluates('!(c1 < 0)', 1), 'symbolic not and parentheses';
+ok evaluates('c1 > 0 && (c2 < 3 || c3 == 7)', 1, 2, 0), 'symbolic boolean operators';
+ok evaluates('c1 > -1.1 and c1 < 1.5', 0), 'signed decimal bounds';
+ok evaluates('c1 >= 1e-5 and c1 < 2E+2', 0.5), 'scientific notation';
+ok evaluates('c1', 2), 'numeric variable has boolean meaning';
+nok evaluates('c1', 0), 'zero is false';
+
+throws-like { compile-condition('c4 > 0') }, X::OneFit::Condition,
+    'unknown columns are rejected';
+throws-like { compile-condition('c1 >') }, X::OneFit::Condition,
+    'incomplete comparisons are rejected';
+throws-like { compile-condition('c1 > 0; say "unsafe"') }, X::OneFit::Condition,
+    'arbitrary code is rejected';
+
+ok evaluates('1 + 2 * 3 == 7'), 'multiplication binds tighter than addition';
+ok evaluates('(1 + 2) * 3 == 9'), 'parentheses override arithmetic precedence';
+ok evaluates('8 / 2 + 1 == 5'), 'division and addition';
+ok evaluates('7 % 3 == 1'), 'modulo';
+ok evaluates('-2**2 == -4'), 'exponentiation binds tighter than unary minus';
+ok evaluates('(-2)**2 == 4'), 'parenthesized negative base';
+ok evaluates('2**3**2 == 512'), 'exponentiation is right-associative';
+ok evaluates('--c1 == 4', 4), 'repeated unary signs';
+ok evaluates('abs(c1-c2) == 3', 4, 1), 'absolute value function';
+ok evaluates('(c1 + 1) == 5', 4), 'parenthesized arithmetic remains numeric';
+ok evaluates('not not c1', 1), 'repeated textual negation';
+nok evaluates('!!c1', 0), 'repeated symbolic negation';
+
+lives-ok {
+    nok evaluates('c1 != 0 and 1/c1 > 2', 0),
+        'and stops after its first false operand';
+}, 'and short-circuits before division by zero';
+
+lives-ok {
+    ok evaluates('c1 == 0 or 1/c1 > 2', 0),
+        'or stops after its first true operand';
+}, 'or short-circuits before division by zero';
+
+throws-like { evaluates('1 / c1 > 2', 0) }, Exception,
+    'evaluated division by zero is reported';
+throws-like { compile-condition('sqrt(c1) > 0') }, X::OneFit::Condition,
+    'unsupported function names are rejected';
+throws-like { compile-condition('c1 < c2 < c3') }, X::OneFit::Condition,
+    'chained comparisons are rejected';
