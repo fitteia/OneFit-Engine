@@ -105,6 +105,7 @@ t/12-hybrid.rakutest
 t/12/p96.json
 t/13-sav.rakutest
 t/14-condition.rakutest
+t/15-build-manifest.rakutest
 t/2/fitenv.stp
 t/2/test2-fixed-all.par
 t/2/test2-fixed-none.par
