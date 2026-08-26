@@ -339,7 +339,7 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 	# regenerated from a dirty post-build tree.  Record locally installed
 	# Minuit/OneFit C artifacts in the separate MANIFEST.site instead.
 	my $build-type = EVALFILE("$root/Build.rakumod");
-	$build-type.new.write-site-manifest($root, :strict);
+	$build-type.new.write-site-manifest($root, :$bindir, :strict);
 }
 
 sub uninstall () {
