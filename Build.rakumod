@@ -1,15 +1,14 @@
 class Build {
-    my constant @SITE-ROOTS = <C include lib src>;
+    my constant @SITE-ROOTS = <include lib src>;
+    my constant @REQUIRED-TOOLS = <
+        afactors-xyz fft cop gfilt ccat pcop pdf2mp4 epstopdf
+    >;
     my constant @REQUIRED-NATIVE = (
         'lib/libminuit.a',
         'lib/libuserlib.a',
         'include/globals.h',
         'include/mixed.h',
         'include/userlib.h',
-        'C/core/onefit-3.1/afactors-xyz',
-        'C/core/onefit-3.1/fft',
-        'C/core/onefit-3.1/gfilt',
-        'C/local/libuserlib.a',
     );
 
     # zef calls this hook in its build work directory.  Native compilation is
@@ -22,6 +21,7 @@ class Build {
 
     method write-site-manifest(
         IO() $workdir,
+        IO() :$bindir,
         Str :$output = 'MANIFEST.site',
         Bool :$strict = False,
         --> IO::Path:D
@@ -36,12 +36,27 @@ class Build {
             });
         }
 
+        my $bin-directory = $bindir.defined ?? $bindir.IO.absolute.IO !! Nil;
+        if $bin-directory.defined && $bin-directory.d {
+            @site-files.append: @REQUIRED-TOOLS.map({ $bin-directory.add($_) })
+                .grep({ .f || .l }).map(*.absolute);
+        }
+
         @site-files = @site-files.grep({
-            self!is-native-site-file($_)
+            self!is-native-site-file($_, :has-bindir($bin-directory.defined))
                 && $_ ne $output
-                && $_ !~~ / [ '.precomp' | '/.' <-[/]>+ ] /
-                && $_ !~~ / [ '-e' | '.bak' | '~' ] $/
-                && $_ !~~ / [ '.o' | '.obj' ] $/
+                # Externally-installed tool entries are absolute paths of exact,
+                # already-known-good names from @REQUIRED-TOOLS - never a
+                # .precomp/backup/object artifact, so these exclusions (aimed at
+                # the relative in-tree walk above) must not run against them. An
+                # unanchored '/.'-anywhere check would otherwise reject any tool
+                # whose install root happens to sit under a dotted directory
+                # (e.g. ~/.local/...), found live.
+                && ( $_.IO.is-absolute || (
+                    $_ !~~ / [ '.precomp' | '/.' <-[/]>+ ] /
+                    && $_ !~~ / [ '-e' | '.bak' | '~' ] $/
+                    && $_ !~~ / [ '.o' | '.obj' ] $/
+                ) )
         }).unique.sort;
 
         if $strict {
@@ -55,6 +70,13 @@ class Build {
                 unless @library-names.grep(/^ 'libonefit-modelos-' .* '.a' $/);
             @missing.push: 'lib/libonefit-util-VERSION.a'
                 unless @library-names.grep(/^ 'libonefit-util-' .* '.a' $/);
+            if $bin-directory.defined {
+                @missing.append: @REQUIRED-TOOLS.map({ $bin-directory.add($_) })
+                    .grep({ !(.f || .l) }).map(*.absolute);
+            }
+            else {
+                @missing.push: 'BINDIR (required to validate installed C tools)';
+            }
 
             die "Native OneFit installation is incomplete; missing:\n  "
                 ~ @missing.join("\n  ") ~ "\n"
@@ -67,8 +89,9 @@ class Build {
         $manifest;
     }
 
-    method !is-native-site-file(Str:D $path --> Bool:D) {
-        return True if $path.starts-with(any(<C/ include/ src/>));
+    method !is-native-site-file(Str:D $path, Bool :$has-bindir --> Bool:D) {
+        return True if $has-bindir && $path.IO.is-absolute;
+        return True if $path.starts-with(any(<include/ src/>));
         return False unless $path.starts-with('lib/');
         so $path.ends-with(any(<.a .so .dylib .h .dat>));
     }

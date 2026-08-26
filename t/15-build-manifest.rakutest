@@ -6,7 +6,7 @@ plan 12;
 
 my $root = $*TMPDIR.add("onefit-build-manifest-$*PID");
 $root.mkdir;
-for <C C/core C/core/onefit-3.1 C/local include lib src> -> $directory {
+for <include lib src site-bin> -> $directory {
     $root.add($directory).mkdir;
 }
 
@@ -20,17 +20,18 @@ $root.add('lib/libuserlib.a').spurt('userlib');
 $root.add('include/globals.h').spurt('globals');
 $root.add('include/mixed.h').spurt('mixed');
 $root.add('include/userlib.h').spurt('userlib');
-$root.add('C/core/onefit-3.1/afactors-xyz').spurt('tool');
-$root.add('C/core/onefit-3.1/fft').spurt('tool');
-$root.add('C/core/onefit-3.1/gfilt').spurt('tool');
-$root.add('C/local/libuserlib.a').spurt('userlib');
+for <afactors-xyz fft cop gfilt ccat pcop pdf2mp4 epstopdf> -> $tool {
+    $root.add("site-bin/$tool").spurt('tool');
+}
 $root.add('lib/generated.o').spurt('object');
 $root.add('lib/header.h-e').spurt('backup');
 
 my $builder = $build-type.new;
 my $site-manifest;
 lives-ok {
-    $site-manifest = $builder.write-site-manifest($root, :strict);
+    $site-manifest = $builder.write-site-manifest(
+        $root, bindir => $root.add('site-bin'), :strict
+    );
 }, 'complete native installation passes strict validation';
 
 ok $site-manifest.f, 'site manifest is created';
@@ -40,14 +41,17 @@ ok @site.grep('lib/libonefit-4.0.4.a'), 'OneFit library is recorded';
 ok @site.grep('lib/libonefit-modelos-4.0.4.a'), 'model library is recorded';
 ok @site.grep('lib/libonefit-util-4.0.4.a'), 'utility library is recorded';
 ok @site.grep('include/mixed.h'), 'installed headers are recorded';
-ok @site.grep('C/core/onefit-3.1/fft'), 'installed C tools are recorded';
+ok @site.grep($root.add('site-bin/fft').absolute),
+    'externally installed C tools are recorded';
 nok @site.grep('lib/OneFit.rakumod'), 'Raku source files are excluded';
 nok @site.grep('lib/generated.o'), 'intermediate objects are excluded';
 nok @site.grep('lib/header.h-e'), 'sed backup files are excluded';
 
 $root.add('lib/libminuit.a').unlink;
 throws-like {
-    $builder.write-site-manifest($root, :strict);
+    $builder.write-site-manifest(
+        $root, bindir => $root.add('site-bin'), :strict
+    );
 }, Exception, 'strict validation rejects an incomplete native installation';
 
 END {

@@ -53,7 +53,9 @@ The current installer's defaults include:
 After native compilation, `INSTALL` writes `MANIFEST.site`. Unlike the
 committed source `MANIFEST`, this generated file inventories the Minuit and
 OneFit C libraries, headers, data tables, and helper programs installed in the
-current checkout. It is machine-specific and intentionally ignored by Git.
+current checkout. Helper programs installed outside the checkout are recorded
+with absolute paths. The file is machine-specific and intentionally ignored by
+Git.
 
 ## Important side effects
 
