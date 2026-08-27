@@ -294,7 +294,8 @@ C<SymbSize>/C<ssz>, C<global>/C<g>, C<hybrid>/C<mixed>, C<mpeg4>/C<mp4>,
 C<autox>/C<autoy>/C<autoxy>, C<logx>/C<logy>/C<logxy> (and their aliases),
 C<reduced-chi2>/C<rchi2>, C<R1>, C<R2>/C<pearson-correlation>,
 C<sef-R1-file>, C<print-cols>, C<err>/C<set-err>, C<range>, C<remove-outliers>,
-C<fit-if>, C<plot-if>, C<gfilt>, C<username> (per-user work folder), and any
+C<fit-if>, C<plot-if>, C<gfilt>, C<username> (persistent per-user job
+folder), and any
 C<#...>-prefixed field for a dynamic parameter override. Boolean-style
 fields are truthy on C<"yes"> or C<1>. A C<download> field selects the
 response: C<"zip"> streams back the whole work folder as a zip
@@ -303,8 +304,9 @@ definition (C<FOLDER/BASENAME.json>, where FOLDER and BASENAME derive from
 the uploaded file's own name); any other non-empty value is treated as a
 path relative to that same per-upload folder and streamed back verbatim;
 when C<download> is absent, the response is the C<text/plain> fit log
-instead. The temporary per-request work folder is deleted once the response
-has been sent.
+instead. Anonymous requests use a temporary per-request work folder which is
+deleted once the response has been sent. A valid C<username> selects an
+existing directory and retains each request in a unique child directory.
 =item C<POST /convert> - multipart upload, required field C<file> (a
 C<.sav> or C<.json> file). Converts it to the other format and streams the
 result back as C<application/octet-stream>.
@@ -989,6 +991,24 @@ multi MAIN ('stop-web-engine'){
       shell "kill -9 $proc" if so $proc;
 }
 
+# Atomically reserve a private directory for one HTTP request.  Retry only
+# when another request won the same candidate name; permissions and other
+# filesystem failures must be reported instead of spinning forever.
+sub create-web-request-directory(
+	IO::Path:D $parent = $*CWD,
+	Int:D :$attempts = 32,
+	--> IO::Path:D
+) {
+	for ^$attempts {
+		my $directory = $parent.add("onefite-" ~ (^2**64).rand.Int.base(36));
+		my $created = try { mkdir($directory); True };
+		return $directory if $created;
+		next if $directory.e;
+		die "Cannot create a OneFit web-request directory under $parent: $!";
+	}
+	die "Cannot allocate a unique OneFit web-request directory under $parent after $attempts attempts";
+}
+
 #|(onefite web engine)
 multi MAIN ('start-web-engine',
 #		:$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
@@ -1122,7 +1142,7 @@ HTML
             request-body -> (:$file,*%rest) {
 	        my $username = "";
 	        my $time = now;
-    		my $filename = $file.filename;
+		my $filename = $file.filename.IO.basename;
 		my $folder = $filename.IO.extension('').Str;
 		my $zip-file = $filename.IO.extension('zip').Str;		
 		my $file-to-download = ""; 
@@ -1148,26 +1168,14 @@ HTML
 		my $print-cols = "";
 		my $num   = "--Num=100";
 		my $ssz   = "--SymbSize=1.0";
-		my $fit-methods = "--fit-methods=\"simp scan min minos\"";
+		my $fit-methods = "--fit-methods=simp scan min minos";
 		my $file-content = $file.body-blob;
-		my $tmp-folder;
 		my @ht-args=();
-		loop {
-		    $tmp-folder = (^2**64).rand.Int.base(36);
-		    last if try { mkdir("./$tmp-folder"); True };
-		}
-		my $work-folder = "./$tmp-folder";
-		LEAVE {
-		    my Bool $tmp-folder-was-created = "./$tmp-folder".IO.e;
-		    shell("rm -fr ./$tmp-folder") if $tmp-folder-was-created;
-		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $tmp-folder ~ ' removed.' if $tmp-folder-was-created }");
-		    $log-fh.flush;
-		}
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
-		       $fit-methods	      = "--fit-methods=\"{$v.Str}\" " if $k eq any(<fit-methods fm>);
-		       $function      	      = "\"{$v.Str}\""     if $k.contains("function");
+		       $fit-methods	      = "--fit-methods={$v.Str}" if $k eq any(<fit-methods fm>);
+		       $function      	      = $v.Str if $k.contains("function");
 		       $num        	      = "--Num={+$v.Str} " if $k eq any(<Num n npts>);
 		       $ssz		      = "--SymbSize={$v.Str} " if $k eq any(<SymbSize ssz>);
 		       $username   	      = $v.Str     if $k eq "username";
@@ -1190,7 +1198,7 @@ HTML
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.Str.Bool;
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.Str.Bool;
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.Str.Bool;
-			   @ht-args.push: $k ~~ /^'#'/ ?? qq{"--$v"} !! "";
+			   @ht-args.push: $k ~~ /^'#'/ ?? "--$v" !! "";
 
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
@@ -1199,59 +1207,100 @@ HTML
 		       }
 		   }
 		}
+		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
+		my $persistent-parent;
+		if $username.so {
+		    my $candidate = $*CWD.add($username);
+		    $persistent-parent = $candidate
+		        if $username.IO.basename eq $username && $candidate.d;
+		}
+		my $request-folder = create-web-request-directory;
+		LEAVE {
+		    my Bool $request-folder-was-created = $request-folder.e;
+		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder-was-created;
+		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename } concluded in { now - $time } s. { 'Temporary folder:' ~ $request-folder.basename ~ ' removed.' if $request-folder-was-created }");
+		    $log-fh.flush;
+		}
+		my $input-folder = $request-folder.add('input');
+		mkdir $input-folder;
+		my $input-file = $input-folder.add($filename);
+		# username selects persistent storage.  Give every request a unique
+		# retained child so concurrent jobs never share output paths.
+		my $work-folder = $persistent-parent.defined
+		    ?? create-web-request-directory($persistent-parent)
+		    !! $request-folder;
 		if any($filename.IO.extension.contains("zip"),$filename.IO.extension.contains("hdf5")) {
-		   $filename.IO(:bin).spurt: $file-content			
+		   $input-file.IO(:bin).spurt: $file-content
 		}
 		else {		 
-		    $filename.IO.spurt: $file-content.decode('UTF-8')
+		    $input-file.IO.spurt: $file-content.decode('UTF-8')
 		}	   
-		$username = @args.head ~~ /username/ ?? @args.tail !! @args.head if @args.so;
-		$work-folder = "./$username" if $username.so and "./$username".IO.e;
-		$file-to-download = "$work-folder/$file-to-download" if $file-to-download.Bool;
-		$zip-file = $zip-file;
-		my $txt;
+		$file-to-download = $work-folder.add($file-to-download)
+		    if $file-to-download.Bool;
+
+		# Pass request values as literal process arguments.  No shell parses
+		# filenames, model expressions, fit methods, or dynamic overrides.
+		my @onefite-args = 'fit';
 		if so $function {
-		   $txt = "onefite fit $function $filename $mp4 $global $hybrid $autox $autoy $autoxy $logx $logy $R1 $sef-R1-file $err $plot-if $fit-if $range $gfilt $fit-methods $num $ssz $remove-outliers $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --zip-to=$zip-file --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
-		   #		   my $log="/tmp/ofe.log".IO.slurp if "/tmp/ofe.log".IO.e;
-		   #		   "/tmp/ofe.log".IO.spurt: $log ~ "\n$txt\n";
-
-		   my $proc = shell($txt,:out);
-		   $txt ~= $proc.out.slurp(:close);
-
-		   # $txt ~= shell($txt,:out).out.slurp(:close);
-
-		   #		   "/tmp/run.log".IO.spurt: $txt;
+		    @onefite-args.push($function);
+		    @onefite-args.push($filename);
+		    for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx,
+		        $logy, $R1, $sef-R1-file, $err, $plot-if, $fit-if,
+		        $range, $gfilt, $fit-methods, $num, $ssz,
+		        $remove-outliers, $reduced-chi2, $R2, $print-cols -> $flag {
+		        @onefite-args.push($flag.trim) if $flag.trim.chars;
+		    }
+		    @onefite-args.append: @ht-args.grep(*.chars);
+		    @onefite-args.push: "--work-folder={$work-folder.Str}";
+		    @onefite-args.push: "--zip-to=$zip-file";
+		    @onefite-args.push:
+		        "--save-to={$work-folder.add("$folder/$folder.json").Str}";
 		}
-		 else {
-		    $txt = "onefite fit $filename $mp4 $global $hybrid $autox $autoy $autoxy $logx $logy $fit-methods $num $reduced-chi2 $R2 $print-cols {@ht-args.join(' ')} --work-folder=$work-folder --save-to=$work-folder/$folder/$folder.json".subst(/\s+/," ",:g);
-		   my $proc = shell($txt,:out);
-		   $txt ~= $proc.out.slurp(:close);
-		   # $txt ~= shell($txt,:out).out.slurp(:close);
+		else {
+		    @onefite-args.push($filename);
+		    for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx,
+		        $logy, $fit-methods, $num, $reduced-chi2, $R2,
+		        $print-cols -> $flag {
+		        @onefite-args.push($flag.trim) if $flag.trim.chars;
+		    }
+		    @onefite-args.append: @ht-args.grep(*.chars);
+		    @onefite-args.push: "--work-folder={$work-folder.Str}";
+		    @onefite-args.push:
+		        "--save-to={$work-folder.add("$folder/$folder.json").Str}";
 		}
+		my $proc = run 'onefite', |@onefite-args,
+		    :cwd($input-folder.Str), :out;
+		my $txt = $proc.out.slurp(:close);
+		die "onefite fit failed with exit code {$proc.exitcode}\n$txt"
+		    if $proc.exitcode != 0;
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
 	    }
 	 }
 	 post -> 'convert' {
             request-body -> (:$file, *%rest) {
-    		my $filename = $file.filename;
+		my $filename = $file.filename.IO.basename;
 		my $file-content = $file.body-blob;
-		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $tmp-folder;
-		loop {
-		    $tmp-folder = (^2**64).rand.Int.base(36);
-		    last if try { mkdir("./$tmp-folder"); True };
-		}
-		my $work-folder = "./$tmp-folder";
+		my $request-folder = create-web-request-directory;
+		my $work-folder = $request-folder;
 		LEAVE {
-		    shell "rm -fr $work-folder";
+		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder.e;
 		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $work-folder ~ ' removed.' }");
 		    $log-fh.flush;
 		}
-		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str;
-		my $txt = shell("onefite convert $filename $file-to-download --work-folder=$work-folder", :out).out(:close).slurp;
+		my $input-file = $request-folder.add($filename);
+		$input-file.IO(:bin).spurt: $file-content;
+		my $file-to-download = $filename.IO.extension.Str ~~ /sav/
+		    ?? $request-folder.add($filename.IO.extension('json').Str)
+		    !! $request-folder.add($filename.IO.extension('sav').Str);
+		my $proc = run 'onefite', 'convert', $filename,
+		    $file-to-download.basename, "--work-folder={$work-folder.Str}",
+		    :cwd($request-folder.Str), :out;
+		my $txt = $proc.out.slurp(:close);
+		die "onefite convert failed with exit code {$proc.exitcode}\n$txt"
+		    if $proc.exitcode != 0;
 #		content 'text/plain', "$txt\n";
-		content 'application/octet-stream', "$file-to-download".IO.slurp(:bin);
+		content 'application/octet-stream', $file-to-download.IO.slurp(:bin);
 	     }
 	}
     }
@@ -1907,6 +1956,7 @@ multi MAIN ('test',
 	    Bool :verbose(:$v) = False
 	   ){
     my $test-path=OFE-PATH ~ "/t";
+    my $test-exitcode = 0;
 #    my $test-path=OFE-PATH.subst("rakumod/OFE","t");
 
     "/tmp/OneFit-Engine-test".IO.mkdir unless "/tmp/OneFit-Engine-test".IO.d(:e);
@@ -1921,10 +1971,13 @@ multi MAIN ('test',
 		"/tmp/tests.log".IO.slurp.say;
     }
     else {
-		my $proc = run "prove6", "--lib", "$test-path","--err=ignore";
+		my @tests = dir($test-path).grep(*.f).grep(*.extension eq 'rakutest')
+		    .sort(*.basename).map(*.Str);
+		my $proc = run 'prove6', "-I{OFE-PATH}/lib", |@tests;
+		$test-exitcode = $proc.exitcode;
     }
     run-post-install-tests(:daemon($systemd-daemon), :verbose($v)) if $post-install;
-    exit;
+    exit $test-exitcode;
 }
 
 multi MAIN (Bool :v(:$version))

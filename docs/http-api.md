@@ -106,8 +106,9 @@ curl -F 'file=@line.dat' -F 'function=y(x,a:0,b:1)=a+b*x' -F 'autoxy=yes' \
   -F 'download=All.pdf' http://127.0.0.1:8142/fit -s --output All.pdf
 ```
 
-...or the re-saved JSON, under a chosen work folder (two equivalent forms -
-a `username` field, or an extra URL path segment):
+...or the re-saved JSON, under a chosen persistent work-folder parent (two
+equivalent forms - a `username` field, or an extra URL path segment). Each
+request is retained in a unique child directory:
 
 ```bash
 curl -F 'file=@line.dat' -F 'function=y(x,a:0,b:1)=a+b*x' \
@@ -146,7 +147,7 @@ curl http://127.0.0.1:8142/fit \
 | `remove-outliers` | Outlier selection |
 | `reduced-chi2` | Error rescaling when `yes` or `1` |
 | `print-cols` | Selected result columns |
-| `username` | Existing work-directory selector; not authentication |
+| `username` | Existing persistent work-directory parent; each request gets a unique retained child; not authentication |
 | `download` | Select response artifact |
 
 Other CLI aliases (e.g. `pi` for `plot-if`, `sf` for `sef-R1-file`) are
