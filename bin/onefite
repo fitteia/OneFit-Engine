@@ -1150,10 +1150,19 @@ HTML
 		my $ssz   = "--SymbSize=1.0";
 		my $fit-methods = "--fit-methods=\"simp scan min minos\"";
 		my $file-content = $file.body-blob;
-		my $tmp-folder=10000;
+		my $tmp-folder;
 		my @ht-args=();
-		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
+		loop {
+		    $tmp-folder = (^2**64).rand.Int.base(36);
+		    last if try { mkdir("./$tmp-folder"); True };
+		}
 		my $work-folder = "./$tmp-folder";
+		LEAVE {
+		    my Bool $tmp-folder-was-created = "./$tmp-folder".IO.e;
+		    shell("rm -fr ./$tmp-folder") if $tmp-folder-was-created;
+		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $tmp-folder ~ ' removed.' if $tmp-folder-was-created }");
+		    $log-fh.flush;
+		}
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
@@ -1221,10 +1230,6 @@ HTML
 		}
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
-		my Bool $tmp-folder-was-created = "./$tmp-folder".IO.e;
-   		shell("rm -fr ./$tmp-folder") if "./$tmp-folder".IO.e;		
- 		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $tmp-folder ~ ' removed.' if $tmp-folder-was-created }");
-		$log-fh.flush;
 	    }
 	 }
 	 post -> 'convert' {
@@ -1232,17 +1237,21 @@ HTML
     		my $filename = $file.filename;
 		my $file-content = $file.body-blob;
 		$filename.IO.spurt: $file-content.decode('UTF-8');
-		my $tmp-folder=10000;
-		loop { $tmp-folder = 10000.rand.Int; last unless "./$tmp-folder".so.IO.e }
+		my $tmp-folder;
+		loop {
+		    $tmp-folder = (^2**64).rand.Int.base(36);
+		    last if try { mkdir("./$tmp-folder"); True };
+		}
 		my $work-folder = "./$tmp-folder";
-		shell "mkdir $work-folder";
-		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str; 
+		LEAVE {
+		    shell "rm -fr $work-folder";
+		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $work-folder ~ ' removed.' }");
+		    $log-fh.flush;
+		}
+		my $file-to-download = $filename.IO.extension.Str ~~ /sav/ ?? $filename.IO.extension('json').Str !! $filename.IO.extension('sav').Str;
 		my $txt = shell("onefite convert $filename $file-to-download --work-folder=$work-folder", :out).out(:close).slurp;
 #		content 'text/plain', "$txt\n";
 		content 'application/octet-stream', "$file-to-download".IO.slurp(:bin);
-		shell "rm -fr $work-folder";
- 		$log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $work-folder ~ ' removed.' }");
-		$log-fh.flush;
 	     }
 	}
     }
