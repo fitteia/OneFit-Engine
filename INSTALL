@@ -329,7 +329,10 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 	);
 	"$*CWD/../minuit/minuit/d506cm.inc".IO.spurt(@d506cm-inc.join("\n") ~ "\n");
 
-	shell "cd $*CWD/../minuit && make install && make clean";
+	# minuit's Makefile defaults PATHLIB to ../OneFit-Engine/lib, which is
+	# wrong for renamed, parallel, packaging, and fresh test checkouts.
+	# Command-line make variables override that legacy default.
+	shell "cd $*CWD/../minuit && make install PATHLIB={$root.IO.add('lib').Str.raku} && make clean";
 
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;

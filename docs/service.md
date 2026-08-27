@@ -90,8 +90,9 @@ itself provides none of these. See [security](security.md) before doing
 this at all.
 
 Don't rely on the form's `username` field for identity - it only selects an
-existing directory relative to the service's working directory; it is not
-a login.
+existing persistent directory relative to the service's working directory.
+Each request gets a unique retained child there; it is not a login, and the
+operator must manage retention and disk usage.
 
 ## Health checking
 

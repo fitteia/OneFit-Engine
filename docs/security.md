@@ -15,7 +15,9 @@ The implementation currently has:
 - no sandbox boundary between uploads and the fitting/compilation tools.
 
 The `username` form field is not a login. It selects an existing directory
-relative to the service's working directory when that directory exists.
+relative to the service's working directory when that directory exists. Each
+request uses a unique child there, retained after the response; deployments
+must apply retention and disk-usage limits.
 
 ## Native code execution
 
