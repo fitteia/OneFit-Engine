@@ -39,7 +39,7 @@ multi MAIN (
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
    	Int  :$minuit = 250, #= Minuit maximum number of parameters: default=250
 	Bool :$post-test is copy = True; #= Run post install tests
-   	Bool :p(:$p6-modules) = True, #= attempt to install raku module Inline::Perl5
+	Bool :p(:$p6-modules) = True, #= attempt to install required Raku modules
    	Int  :$port = 8142, #= onefite service port
    	Int  :$shell-port = 8100, #= shellinabox service port
    	Bool :s(:$to-site) is copy = True, #= install raku module to site (use --/to-site to install-to user)
@@ -80,7 +80,7 @@ multi MAIN (
    	$SUDO = "" unless $to-site;
 
 	given os-family() {
-    	when 'centos' | 'fedora' | 'arch' {
+    	when 'rhel' | 'centos' | 'alma' | 'fedora' | 'arch' {
         	$web-server = False;
         	$dpkg       = False;
         	$ip         = "0.0.0.0"i unless $ip;
@@ -285,7 +285,7 @@ sub install-web-server () {
 sub install-p6-modules ($to-site,:$test) {
 	shell("$SUDO apt install perl6-zef") unless shell("command -v zef").so;
 	say "Install raku modules. This may take some time....";
-	for <App::Prove6 Inline::Perl5 Readline Cro::HTTP::Router Pod::To::Man> -> $mod {
+	for <App::Prove6 Readline Cro::HTTP::Router Pod::To::Man> -> $mod {
     	my $proc = shell("zef locate $mod", :out);
     	next if $proc.exitcode == 0;
     	my $cmd = "$SUDO zef install "
@@ -295,7 +295,6 @@ sub install-p6-modules ($to-site,:$test) {
     	shell($cmd);
 	}
 	#x 	shell("$SUDO zef install App::Prove6 --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
-	#	shell("$SUDO zef install Inline::Perl5 --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Inline::Perl5",:out).out.slurp(:close).contains("Nothing located");
 	#   shell("$SUDO zef install cro --force-test { '--/test' unless $test } { '--install-to=site ' if $to-site } ") if shell("zef locate Cro::HTTP:Router",:out).out.slurp(:close).contains("Nothing located");
 	#   shell("$SUDO zef install Pod::To::Man --force-test { '--/test' unless $test }  { '--install-to=site ' if $to-site } ");
 }
@@ -315,6 +314,10 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
 		shell "cd $*CWD/../minuit && git pull ";
+   		
+		say "download  onefite-C-code $*CWD/../C, compile and install libs in $*CWD/lib";
+   		shell "git clone https://github.com/fitteia/onefite-c-code.git $*CWD/../C" unless "$*CWD/../C/".IO.d(:e);
+		shell "cd $*CWD/../C && git pull ";
 	}
 	note "===> Installing Minuit for a maximum number of parameters: $minuit";
 	my @d506cm-inc="$*CWD/../minuit/minuit/d506cm.inc".IO.lines.map(
@@ -326,12 +329,20 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 	);
 	"$*CWD/../minuit/minuit/d506cm.inc".IO.spurt(@d506cm-inc.join("\n") ~ "\n");
 
-	shell "cd $*CWD/../minuit && make install && make clean";
+	# minuit's Makefile defaults PATHLIB to ../OneFit-Engine/lib, which is
+	# wrong for renamed, parallel, packaging, and fresh test checkouts.
+	# Command-line make variables override that legacy default.
+	shell "cd $*CWD/../minuit && make install PATHLIB={$root.IO.add('lib').Str.raku} && make clean";
 
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
-  	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
-   	shell "find . -name .precomp -prune -o -name .git -prune -o -name .gitignore -prune -o -name .prove -prune -o -name .travis.yml -prune -o -name Makefile -prune -o -name \"*~\" -prune -o -name bugs -prune -o -type f -print | sort | cut -c 3- > MANIFEST";
+	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
+
+	# MANIFEST describes the committed source distribution and must never be
+	# regenerated from a dirty post-build tree.  Record locally installed
+	# Minuit/OneFit C artifacts in the separate MANIFEST.site instead.
+	my $build-type = EVALFILE("$root/Build.rakumod");
+	$build-type.new.write-site-manifest($root, :$bindir, :strict);
 }
 
 sub uninstall () {
@@ -346,8 +357,8 @@ sub uninstall () {
 
 	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
-   	my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
-   	for @binaries.splice(1,@binaries.elems-2).push('pcop') {
+   	my @binaries = "$*CWD/../C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
+   	for @binaries.splice(1,@binaries.elems-2).push('pcop', 'epstopdf') {
 		shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } ";
    	}
    	shell "$SUDO zef uninstall OneFit-Engine";
@@ -410,9 +421,9 @@ sub install (:$test,:$to-site, :$bindir) {
 		}
     }
 
-    my @binaries = "$*CWD/C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
+    my @binaries = "$*CWD/../C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
     if $to-site {
-		for @binaries.splice(1,@binaries.elems-2).push('pcop') {
+		for @binaries.splice(1,@binaries.elems-2).push('pcop','epstopdf') {
 	    	shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
 		}
     }
@@ -700,8 +711,16 @@ sub os-family() {
             return 'fedora';
         }
 
-        when any <centos centos-stream rocky almalinux rhel ol oracle> {
+        when any <centos centos-stream> {
             return 'centos';
+        }
+
+        when any <alma almalinux> {
+            return 'alma';
+        }
+
+        when any <rocky rhel redhat ol oracle> {
+            return 'rhel';
         }
 
         when any <opensuse-leap opensuse-tumbleweed sles> {
@@ -720,7 +739,7 @@ sub os-family() {
     }
 
     return 'debian' if $id-like.contains('debian');
-    return 'centos' if $id-like.contains('rhel');
+    return 'rhel' if $id-like.contains('rhel');
     return 'fedora' if $id-like.contains('fedora');
     return 'suse'   if $id-like.contains('suse');
     return 'arch'   if $id-like.contains('arch');

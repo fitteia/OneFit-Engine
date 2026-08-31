@@ -7,6 +7,7 @@ use OneFit::Engine::Blocks;
 use OneFit::Engine::Functions;
 use OneFit::Engine::CodeC;
 use OneFit::Engine::Stpfiles;
+use OneFit::SAV;
 
 class Engine is export {
     has %!engine;
@@ -28,15 +29,7 @@ class Engine is export {
 	    	%!engine = from-json($file.IO.slurp) ;
 		}
 		else {
-			use Inline::Perl5;
-	    	use CGI:from<Perl5>;
-
-			try {
-    			my $sav = CGI.new( $file.IO.open );
-    			for $sav.param { %!engine{$_} = $sav.param($_) }	 
-
-				CATCH { default { note "===> $_" } }
-			}
+			%!engine = read-sav($file);
 		}
 		%!engine<FitType> = "Global" unless %!engine<FitType>;
 		($h.Bool) ?? %!engine !! self;
@@ -49,15 +42,7 @@ class Engine is export {
 	    	spurt( $file, to-json(%e, :sorted-keys) );
 		}
 		else {
-	    	use Inline::Perl5;
-	    	use CGI:from<Perl5>;
-
-	    	my $sav = CGI.new;
-	    	for %!engine.keys -> $key { $sav.param($key,%e{$key})  }	 
-
-	    	unless my $fh = open $file.subst("json","sav"), :w { say "dammed!"; };
-	    	$sav.save($fh);
-	    	$fh.close;
+			write-sav($file.subst("json", "sav"), %e);
 		}
 		self
     }
@@ -725,6 +710,7 @@ EOT
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
+		$MIXED = False if $MIXED && $hybrid;
 		#		say %last<name value>;
 	 	my @fields = ("# TAG");
 	 	@fields.push: "Npts";
@@ -876,4 +862,3 @@ EOT
     	$value.Str.trim.subst(/ '.' $ /, '').Numeric
 	}
 }
-

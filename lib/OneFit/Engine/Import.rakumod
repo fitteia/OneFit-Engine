@@ -1,6 +1,7 @@
 unit module OneFit::Engine::Import;
 
 use JSON::Fast;
+use OneFit::SAV;
 
 class Import is export {
 	has @!Input-files;
@@ -37,11 +38,8 @@ class Import is export {
 			given self.is-type($file) {
 				note "===> File $file is type: ", $_ unless $quiet;
 				when 'sav' {
-					use Inline::Perl5;
-	    			use CGI:from<Perl5>;
 					my %json;
-	    			my $sav = CGI.new( $file.IO.open );
-	    			for $sav.param { %json{$_} = $sav.param($_) }	 
+					%json = read-sav($file);
 					my $name = "ofe-tmp-json.txt";
 					$name.IO.spurt: %json<Dados>;
 					return  self.import( infiles => [$name] );
@@ -192,7 +190,7 @@ class Import is export {
 		my %options=%!options;
 		my $Re = %options<Re>.so ?? %options<Re> !! False;
 		my $Im = %options<Im>.so ?? %options<Im> !! False;
-		my @window-range = %options<range>.so ?? %options<range>.split(/\D+/) !! <0 end>;
+		my @window-range = %options<range>.so ?? %options<range>.split(/<[.\-:,\s]>+/) !! <0 end>;
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
@@ -282,21 +280,31 @@ class Import is export {
 		my $stelar-sef = self.filename();
 		$stelar-sef = $file if $file.so;
 		my $path = self.path();
-		$stelar-sef.IO.copy: "$path/$stelar-sef";
-		my @zones = gather for $stelar-sef.IO.split(/:i MAGNITUDES\n/)[1..*] -> $zone { take gather for $zone.lines { take $_ if $_.contains(/^\s*\d+/) } .join("\n"); }
+		# was `$stelar-sef.IO.copy: "$path/$stelar-sef"` - a real bug for
+		# an ABSOLUTE $file: string-interpolating the full path into
+		# "$path/$stelar-sef" doubles it. Fixed the same way as
+		# stelar-sdf-Mz's own known path-joining issue: strip to just
+		# the basename before joining, via .IO.add (never plain string
+		# interpolation) (Claude found it, reviewed and applied here).
+		my $source = $stelar-sef.IO.absolute.IO;
+		my $local-name = $source.basename;
+		my $stem = $local-name.IO.extension('');
+		my $local-file = $path.IO.add($local-name);
+		$source.copy: $local-file;
+		my @zones = gather for $source.split(/:i MAGNITUDES\n/)[1..*] -> $zone { take gather for $zone.lines { take $_ if $_.contains(/^\s*\d+/) } .join("\n"); }
 
 		my @files;
-		for 0 ..^ @zones.elems { 
+		for 0 ..^ @zones.elems {
 			my (@tau,@Mz);
 			for @zones[$_].lines {
 				@tau.push: $_.words[0].Num;
 				@Mz.push: $_.words[1].Num;
-			}	
+			}
 			my $max = @Mz.max;
 			if @tau.max > 1000.0 { @tau .= map({ $_ / 1e6 })  }
-			my $datafile = "{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat";  
+			my $datafile = "{$stem}-z{sprintf('%03d',$_+1)}.dat";
 			@zones[$_] = (@tau Z @Mz.map({ $_/$max}))>>.join(" ").join("\n");
-			"{self.path}/{$stelar-sef.IO.extension('').Str}-z{sprintf('%03d',$_+1)}.dat".IO.spurt: "# DATA dum = {$_+1} \n# TAG = { $datafile.IO.extension('').Str }\n" ~ @zones[$_].join("\n");
+			self.path.IO.add($datafile).spurt: "# DATA dum = {$_+1} \n# TAG = { $datafile.IO.extension('').Str }\n" ~ @zones[$_].join("\n");
 			@files.push: $datafile;
 			LAST { note "===> processed zones: { @zones.elems }" }
 		}
@@ -412,15 +420,49 @@ class Import is export {
 
 
 	sub merge ($path, $R1-file, @files is copy) {
-		my @BR = gather for $R1-file.IO.lines(:close) { take $_.words.head if $_.contains(/^\s*\d/) }
-		for 0 ..^ @files.elems {
-		   	my $file = @files[$_];	
-			$file = $file.subst(/z\d+/,sprintf("%09d-z%03d",(@BR[$_]*1e6).Int,$_+1));
-			shell("sed -E -i.bak -e 's/dum = [0-9]+/dum = { @BR[$_]*1e6 }/' -e 's/TAG = .*/TAG = { $file.IO.extension('').Str }/' $path/@files[$_]");
-			"$path/@files[$_].bak".IO.unlink;
-		   	"$path/@files[$_]".IO.rename: "$path/$file";
-			@files[$_]= $file
+		# was a `shell("sed -E -i.bak ...")` call interpolating $file/
+		# $path straight into a shell command string - both a real
+		# shell-injection surface (any metacharacter in a filename would
+		# be interpreted by the shell) and a real `sed` dependency
+		# (GNU-flag-specific). Replaced with plain Raku slurp/subst/
+		# spurt - no shell, no external dependency - plus a real
+		# integrity check this never had: a zone-count/R1-record-count
+		# mismatch used to silently misalign data instead of failing
+		# (Claude found it, reviewed and applied here).
+		my @BR = gather for $R1-file.IO.lines(:close) {
+			take $_.words.head if $_.contains(/^\s*\d/)
 		}
+
+		die "SEF merge error: {@files.elems} zones but {@BR.elems} R1 records"
+			unless @files.elems == @BR.elems;
+
+		for ^@files.elems -> $i {
+			my $old-name = @files[$i].IO.basename;
+			my $field = (@BR[$i] * 1e6).Int;
+			my $new-name = $old-name.subst(
+				/z\d+/,
+				sprintf("%09d-z%03d", $field, $i + 1)
+			);
+
+			my $source = $path.IO.add($old-name);
+			my $target = $path.IO.add($new-name);
+			my $tag = $new-name.IO.extension('');
+			my $content = $source.slurp;
+
+			$content = $content.subst(
+				/'dum' \s* '=' \s* \d+/,
+				"dum = $field"
+			);
+			$content = $content.subst(
+				/'TAG' \s* '=' \s* \N*/,
+				"TAG = $tag"
+			);
+
+			$source.spurt: $content;
+			$source.rename: $target;
+			@files[$i] = $new-name;
+		}
+
 		return @files.sort.reverse;
 	}
 		
@@ -537,6 +579,5 @@ class Import is export {
 
 
 }
-
 
 

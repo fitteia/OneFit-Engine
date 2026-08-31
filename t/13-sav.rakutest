@@ -1,0 +1,54 @@
+use Test;
+use OneFit::SAV;
+
+plan 19;
+
+is sav-escape('abc123_.~-'), 'abc123_.~-', 'CGI unreserved bytes remain literal';
+is sav-escape('a b'), 'a%20b', 'space is %20, not plus';
+is sav-escape('a+b'), 'a%2Bb', 'literal plus is escaped';
+is sav-escape('#include <math.h>'), '%23include%20%3Cmath.h%3E', 'symbols are escaped';
+is sav-escape('café'), 'caf%C3%A9', 'UTF-8 is escaped byte by byte';
+
+is sav-unescape('a+b%20c'), 'a b c', 'plus and %20 decode as spaces';
+is sav-unescape('caf%C3%A9'), 'café', 'UTF-8 bytes decode correctly';
+is sav-unescape('bad%2Gvalue%'), 'bad%2Gvalue%', 'malformed escapes stay literal';
+
+my %parsed = from-sav("a=0\nb=\nTags=one\nTags=two\n.cgifields=Tags\n=\nignored=yes\n");
+is %parsed<a>, '0', 'zero remains a scalar string';
+is %parsed<b>, '', 'empty values are preserved';
+is-deeply %parsed<Tags>, ['one', 'two'], 'repeated names become ordered values';
+nok %parsed{'.cgifields'}:exists, '.cgifields bookkeeping is dropped';
+nok %parsed<ignored>:exists, 'bare equals marker terminates the record';
+
+my %engine = (
+    Function  => 'y = a+b*x',
+    Tags      => ['lin', 'lin2'],
+    Dados     => "\n# DATA dum = 1\n1 2.1 0.1\n",
+    Num       => 100,
+    Empty     => '',
+    HasSymbol => '100% + a#b',
+);
+my $encoded = to-sav(%engine);
+ok $encoded.ends-with("=\n"), 'writer emits CGI end marker';
+is-deeply from-sav($encoded), %(
+    Function  => 'y = a+b*x',
+    Tags      => ['lin', 'lin2'],
+    Dados     => "\n# DATA dum = 1\n1 2.1 0.1\n",
+    Num       => '100',
+    Empty     => '',
+    HasSymbol => '100% + a#b',
+), 'representative engine data round-trips';
+
+my $tmp = $*TMPDIR.add("onefit-sav-test-$*PID.sav");
+write-sav($tmp, %engine);
+is-deeply read-sav($tmp), from-sav($encoded), 'file API round-trips';
+$tmp.unlink;
+
+my %real = read-sav('t/5/test5.sav');
+is-deeply %real<Tags>, ['15kHz_1', '300MHz'], 'real repeated Tags decode correctly';
+ok %real<Dados>.contains("# DATA dum=1.5e4 \n# TAG = 15kHz_1\n"), 'real large Dados field decodes';
+
+my $real-roundtrip = $*TMPDIR.add("onefit-sav-real-roundtrip-$*PID.sav");
+write-sav($real-roundtrip, %real);
+is-deeply read-sav($real-roundtrip), %real, 'complete real SAV file round-trips unchanged';
+$real-roundtrip.unlink;
