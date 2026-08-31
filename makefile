@@ -1,7 +1,8 @@
 MROOT=./
 RAKU=/usr/bin
 ARCH=x86_64
-OS=LINUX
+UNAME_S := $(shell uname -s)
+OS := $(if $(filter Darwin,$(UNAME_S)),MacOSX,LINUX)
 PERLVERSION=5.36
 ROOT=$(MROOT)
 BINDIR=$(HOME)/bin
@@ -18,11 +19,11 @@ set:
 	sed -i'' -e "/x86_64/ s@x86_64@$(ARCH)@" $(MROOT)/etc/OFE/default/makefile
 	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" $(MROOT)/etc/OFE/default/makefile
 	sed -i'' -e "/PERLCORE=/ s@.*@PERLCORE=$(PERLCORE)@" $(MROOT)/etc/OFE/default/makefile
-	sed -i'' -e "/OS=/ s@.*@OS=$(OS)@" $(MROOT)/etc/OFE/default/makefile
+#    sed -i'' -e "/OS=/ s@.*@OS=$(OS)@" $(MROOT)/etc/OFE/default/makefile
 
 install: set
-	make -C $(ROOT)/C  OS=$(OS) ROOT=$(ROOT) PERLCORE=$(PERLCORE) BINDIR=$(BINDIR) install
-	make -C $(ROOT)/C  OS=$(OS) ROOT=$(ROOT) BINDIR=$(BINDIR) clean
+	make -C $(ROOT)/../C  OS=$(OS) ROOT=$(ROOT) PERLCORE=$(PERLCORE) BINDIR=$(BINDIR) install
+	make -C $(ROOT)/../C  OS=$(OS) ROOT=$(ROOT) BINDIR=$(BINDIR) clean
 
 clean:
-	make -C $(ROOT)/C ROOT=$(ROOT) clean
+	make -C $(ROOT)/../C ROOT=$(ROOT) clean

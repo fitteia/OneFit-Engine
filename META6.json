@@ -8,11 +8,13 @@
   "depends": [
   ],
   "description": "fitteia's OneFit Engine",
-  "license": "GPL-3.0",
+  "license": "Artistic License 2.0",
   "meta-version": 0,
   "name": "OneFit-Engine",
   "provides": {
     "OneFit": "lib/OneFit.rakumod",
+    "OneFit::Condition": "lib/OneFit/Condition.rakumod",
+    "OneFit::SAV": "lib/OneFit/SAV.rakumod",
     "OneFit::Engine::Agrs": "lib/OneFit/Engine/Agrs.rakumod",
     "OneFit::Engine::Axes": "lib/OneFit/Engine/Axes.rakumod",
     "OneFit::Engine::Blocks": "lib/OneFit/Engine/Blocks.rakumod",
@@ -33,5 +35,5 @@
   "source-url": "git://github.com/fitteia/OneFit-Engine.git",
   "test-depends": [
   ],
-    "version": "0.9.164"
+    "version": "0.9.166"
 }

@@ -4,6 +4,7 @@ use OneFit::Engine::Graphs;
 use OneFit::Engine::Titles;
 use OneFit::Engine::Axes;
 use OneFit::Engine::Agrs;
+use OneFit::Condition;
 
 
 class Block is export {
@@ -20,8 +21,10 @@ class Block is export {
     has @!E;
     has $!pstep=1;
     has $!pcond=1; # must return .Bool = True by default
+    has $!pcondition;
     has $!fstep=1;
     has $!fcond=1; # must return .Bool = True by default
+    has $!fcondition;
     has $!path = '.';
     has $.chi2 is rw;
     
@@ -69,14 +72,14 @@ class Block is export {
 	    elsif $line.contains(/fit <ws> if/) {
 			$line ~~ /'#' <ws> fit <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;
 			$!fstep = $<s>;
-			$!fcond = $<c>;
-			$!fcond ~~ s:g/c(\d+)/ \(\$c->\{$0\}\) /;
+			$!fcond = $<c>.Str.trim;
+			$!fcondition = compile-condition($!fcond);
 	    }
 	    elsif $line.contains(/plot <ws> if/) {
 			$line ~~ /'#' <ws> plot <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;
 			$!pstep = $<s>;
-			$!pcond = $<c>;
-			$!pcond ~~ s:g/c(\d+)/ \(\$c->\{$0\}\) /;
+			$!pcond = $<c>.Str.trim;
+			$!pcondition = compile-condition($!pcond);
 	    }
 	    else {
 			if $line {
@@ -194,24 +197,18 @@ class Block is export {
 	method Graph () { $!Graph }
 
     method select (Bool :$fit, Bool :$plot) {
-	use Inline::Perl5;
-	my $p5 = Inline::Perl5.new;
-	$p5.run(q:to/EOP/);
-	sub myeval {
-	    my ($c,$out)=@_;
-	    eval($out)
-	}	    
-	EOP
-
-    	if ($fit and $!fcond.Bool) or ($plot and $!pcond.Bool) {
+	if ($fit and $!fcond.Bool) or ($plot and $!pcond.Bool) {
+	    my $condition = $fit ?? $!fcondition !! $!pcondition;
 	    my @selection = gather {
 		my $i=0;
-		my %c;
 #		say self.No;
 		repeat while $i < @!Data.elems {
-		    %c<1 2 3> = @!Data[$i].words;
-		    my $condition = $fit ??  $!fcond !! $!pcond;
-		    take $i if  $p5.call('myeval',%c,$condition).Bool;
+		    my @columns = @!Data[$i].words;
+		    take $i if !$condition.defined || $condition.evaluate(
+			c1 => @columns[0],
+			c2 => @columns[1],
+			c3 => @columns[2],
+		    );
 		    $i += ($fit and $!fcond.Bool) ?? $!fstep !! $!pstep;
 		}
 	    }
@@ -314,7 +311,9 @@ class Block is export {
 	}
 	for (0..^@!Data.elems).hyper -> $b {
 #	    for (0 ..^ @!X.elems) -> $i { @!Data[$b] = "@!X[$i] @!Y[$i] @!E[$i]" }
-	    @!Data[$b]=([Z] @!X,@!Y,@!E)[$b;*].join: " "
+#       @!Data[$b]=([Z] @!X,@!Y,@!E)[$b;*].join: " "  there was a precison bug caused by this (Claude found it)
+		my @orig-xy = @!Data[$b].words[0,1];
+  		@!Data[$b]=(@orig-xy, @!E[$b]).join: " "	
 	}
 #	@!Data>>.say;
 	self;
