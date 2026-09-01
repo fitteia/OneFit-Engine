@@ -766,7 +766,7 @@ proto MAIN(|) { * };
 sub c-code-root() {
     my $sibling = ::('OFE-PATH') ~ "/../C";
     return $sibling if $sibling.IO.d;
-    return ::('OFE-PATH') ~ "/src/c-code";
+    return ::('OFE-PATH') ~ "/C";
 }
 
 #| Get onefite usage help
