@@ -382,11 +382,13 @@ sub install (:$test,:$to-site, :$bindir) {
 				$yesno = prompt "$_ located, do you wish to remove it [y|n]?";
 				shell "$SUDO zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
 				shell "$SUDO rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
+				shell "$SUDO rm /usr/local/bin/onefite-raku" if '/usr/local/bin/onefite-raku'.IO.l;
 	   		} unless $_.contains("Nothing located");
 		}
    	}
 
    	shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.l;
+   	shell("cd /usr/local/bin && sudo rm onefite-raku") if '/usr/local/bin/onefite-raku'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
 
     if $test.Bool {
@@ -396,7 +398,8 @@ sub install (:$test,:$to-site, :$bindir) {
 		if $to-site {
 	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
 	    	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
+	    	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
+	    	shell("cd /usr/local/bin && sudo ln -s $onefite-bin onefite-raku") if $onefite-bin.IO.e
 		}
 		else {
 	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("home") ~ "/bin/onefite";
@@ -414,7 +417,8 @@ sub install (:$test,:$to-site, :$bindir) {
 		$onefite-bin = "$location/bin/onefite" unless $onefite-bin.IO.e;
 		$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 		if $to-site {
-   		 	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e
+   		 	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
+   		 	shell("cd /usr/local/bin && sudo ln -s $onefite-bin onefite-raku") if $onefite-bin.IO.e
 		}
 		else {
 	    	shell("cd $*CWD/../bin && ln -s  $onefite-bin") if $onefite-bin.IO.e
