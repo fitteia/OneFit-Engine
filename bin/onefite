@@ -756,16 +756,21 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
-# Resolves the C-code root: the real INSTALL script's own sibling "../C"
-# convention (the only one that ever existed until the C sources were
-# split into their own onefite-c-code repo - a real, currently-deployed
-# layout) if present, else falling back to "src/c-code" (the layout
-# onefite-go's own doctor --install builds for a from-source checkout).
-# Both are real, both are in active use - not a version boundary where
-# picking one side broke the other (found the hard way).
+# Resolves the C-code root, checked in order:
+#   1. OFE-PATH/../C - the real INSTALL script's own sibling convention,
+#      confirmed unchanged since before the C sources were split into
+#      their own onefite-c-code repo. What every real install actually has.
+#   2. OFE-PATH/C
+#   3. OFE-PATH/src/c-code - NOT a real raku/INSTALL convention at all;
+#      this is onefite-go's own doctor --install dev-build layout. Kept
+#      only so this command still works against a doctor --install tree
+#      (e.g. this project's own dev sandbox) without extra scaffolding -
+#      never reached on a real install, where #1 always resolves first.
 sub c-code-root() {
-    my $sibling = ::('OFE-PATH') ~ "/../C";
-    return $sibling if $sibling.IO.d;
+    for "/../C", "/C", "/src/c-code" -> $candidate {
+        my $path = ::('OFE-PATH') ~ $candidate;
+        return $path if $path.IO.d;
+    }
     return ::('OFE-PATH') ~ "/C";
 }
 
