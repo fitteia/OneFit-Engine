@@ -756,6 +756,19 @@ my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
 
 proto MAIN(|) { * };
 
+# Resolves the C-code root: the real INSTALL script's own sibling "../C"
+# convention (the only one that ever existed until the C sources were
+# split into their own onefite-c-code repo - a real, currently-deployed
+# layout) if present, else falling back to "src/c-code" (the layout
+# onefite-go's own doctor --install builds for a from-source checkout).
+# Both are real, both are in active use - not a version boundary where
+# picking one side broke the other (found the hard way).
+sub c-code-root() {
+    my $sibling = ::('OFE-PATH') ~ "/../C";
+    return $sibling if $sibling.IO.d;
+    return ::('OFE-PATH') ~ "/src/c-code";
+}
+
 #| Get onefite usage help
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
@@ -832,7 +845,7 @@ multi MAIN ('list',
 multi MAIN ('list','models',
       	   Bool :q(:$quiet) = False
 	   ){
-     my $txt = "{ ::('OFE-PATH') }/src/c-code/META-C.json".IO.slurp;
+     my $txt = "{ c-code-root() }/META-C.json".IO.slurp;
      say $txt unless $quiet;
      $txt;
 }
@@ -889,7 +902,7 @@ multi MAIN ('path',
 		 say ::('OFE-PATH') ~ "/bin";
 		 say ::('OFE-PATH') ~ "/../bin";
 		 say ::('OFE-PATH') ~ "/../log";
-	 	 say ::('OFE-PATH') ~ "/src/c-code";
+	 	 say c-code-root();
 	 	 say ::('OFE-PATH') ~ "/../etc";
 	 	 say ::('OFE-PATH') ~ "/../log/arc";
       }
@@ -900,7 +913,7 @@ multi MAIN ('path',
 		 say ::('OFE-PATH') ~ "/lib" if $lib;
 		 say ::('OFE-PATH') ~ "/../bin" if $bin;
 		 say ::('OFE-PATH') ~ "/../log" if $log;
-		 say ::('OFE-PATH') ~ "/src/c-code" if $C;
+		 say c-code-root() if $C;
 		 say ::('OFE-PATH') ~ "/../etc" if $aliases;
 		 say ::('OFE-PATH') ~ "/../log/arc" if $archive;
       }
@@ -1338,10 +1351,10 @@ multi MAIN ('help',
 	    Str $model, #= model name
 	    Bool :q(:$quiet), #= quiet for reduced log info
 	   ){
-    my @list = dir(::('OFE-PATH') ~ "/src/c-code/local");
-    @list.push: dir(::('OFE-PATH') ~ "/src/c-code/core/onefit-3.1/modelos").Slip;
+    my @list = dir(c-code-root() ~ "/local");
+    @list.push: dir(c-code-root() ~ "/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    my %meta-c = from-json( "{ ::('OFE-PATH') }/src/c-code/META-C.json".IO.slurp );
+    my %meta-c = from-json( "{ c-code-root() }/META-C.json".IO.slurp );
 	#my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str // $model };
     my %info;
    	try {	%info = %meta-c{ $model }; }
@@ -1357,10 +1370,10 @@ multi MAIN ('help',
             Str $key, #= model key info
 	    Bool :q(:$quiet), #= quite for reduced log info
 	   ){
-    my @list = dir(::('OFE-PATH') ~ "/src/c-code/local");
-    @list.push: dir(::('OFE-PATH') ~ "/src/c-code/core/onefit-3.1/modelos").Slip;
+    my @list = dir(c-code-root() ~ "/local");
+    @list.push: dir(c-code-root() ~ "/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    my %meta-c = from-json( "{ ::('OFE-PATH') }/src/c-code/META-C.json".IO.slurp );
+    my %meta-c = from-json( "{ c-code-root() }/META-C.json".IO.slurp );
     my %info;
    	try {	%info = %meta-c{ $model }; }
 	if $! { %info<error> = "===> $model not found in the library's' list"; }
