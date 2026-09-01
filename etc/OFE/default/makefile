@@ -33,10 +33,35 @@ CERNLIB= -L$(CERNLIBPATH)  $(CERNMATH) $(CERNPACK) $(F2C)
 #MINUIT=$(CERNLIB)
 MINUIT= -lminuit -lgfortran
 
-GCC_MAJOR := $(shell gcc -dumpfullversion 2>/dev/null | cut -d. -f1)
+ifeq ($(UNAME_S),Darwin)
+	# macOS's own /usr/bin/gcc is Apple's clang wearing a gcc name (real,
+	# confirmed live: `gcc --version` there prints "Apple clang version
+	# ..."), not GNU GCC - using it silently instead of a real, Homebrew-
+	# installed gcc (already discovered below for LIBGFORTRAN, but never
+	# actually used to pick the compiler before this) compiles every
+	# fit's generated C code with a different compiler than intended,
+	# with a real, measured cost on this numerically-heavy code
+	# (confirmed live: a real fit ran noticeably slower on a Mac with
+	# only Apple's clang effectively in use than on a Linux VM with real
+	# GCC). Homebrew's own gcc formula installs a versioned binary
+	# (gcc-15, gcc-14, ...), deliberately not plain "gcc", specifically
+	# so it doesn't clobber the system one - so finding it needs an
+	# explicit search rather than just trusting $(CC)/PATH.
+	GCCPATH := $(shell brew --prefix gcc 2>/dev/null)
+	REAL_GCC := $(shell ls $(GCCPATH)/bin/gcc-[0-9]* 2>/dev/null | sort -t- -k2 -n | tail -1)
+	ifeq ($(REAL_GCC),)
+		REAL_GCC := gcc
+	endif
+	LIBGFORTRAN = -L$(GCCPATH)/lib/gcc/current
+else
+	REAL_GCC := gcc
+	LIBGFORTRAN=
+endif
+
+GCC_MAJOR := $(shell $(REAL_GCC) -dumpfullversion 2>/dev/null | cut -d. -f1)
 
 ifeq ($(GCC_MAJOR),)
-GCC_MAJOR := $(shell gcc -dumpversion | cut -d. -f1)
+GCC_MAJOR := $(shell $(REAL_GCC) -dumpversion | cut -d. -f1)
 endif
 
 ifeq ($(shell [ $(GCC_MAJOR) -ge 15 ] && echo yes),yes)
@@ -45,14 +70,7 @@ else
 GCC_STD :=
 endif
 
-ifeq ($(UNAME_S),Darwin)
-	GCCPATH := $(shell brew --prefix gcc)
-	LIBGFORTRAN = -L$(GCCPATH)/lib/gcc/current
-else
-	LIBGFORTRAN=
-endif
-
-CC = gcc $(FLAGS)
+CC = $(REAL_GCC) $(FLAGS)
 
 # gfitn itself never calls into Perl: libonefit's own PerlLF/PerlNLF/
 # perl_func_call (the only Perl-embedding entry points anywhere in the
