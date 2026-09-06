@@ -665,7 +665,7 @@ EOT
 		) {
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
 	 self.blocks(:read, :fit, :export, :autox($autox.Bool), :autoy($autoy.Bool), :logx($logx), :logy($logy));
-	 self.parameters(:read :fix-all);
+	 self.parameters(:read, :fix-all);
 	 self.functions(:read);
 	 self.stp;
 	 self.code(:write,:compile);
