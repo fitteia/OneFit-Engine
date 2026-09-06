@@ -48,7 +48,10 @@ ifeq ($(UNAME_S),Darwin)
 	# so it doesn't clobber the system one - so finding it needs an
 	# explicit search rather than just trusting $(CC)/PATH.
 	GCCPATH := $(shell brew --prefix gcc 2>/dev/null)
-	REAL_GCC := $(shell ls $(GCCPATH)/bin/gcc-[0-9]* 2>/dev/null | sort -t- -k2 -n | tail -1)
+	REAL_GCC :=
+	ifneq ($(GCCPATH),)
+		REAL_GCC := $(shell ls $(GCCPATH)/bin/gcc-[0-9]* 2>/dev/null | sort -t- -k2 -n | tail -1)
+	endif
 	ifeq ($(REAL_GCC),)
 		REAL_GCC := gcc
 	endif
