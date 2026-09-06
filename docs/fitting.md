@@ -36,6 +36,12 @@ default.
 onefite plot result.json --autoxy
 ```
 
+Every parameter is written to the `.par` file as fixed before this
+re-evaluates and re-plots the model, so it genuinely never optimizes
+anything - previously any parameter still marked free in the saved
+description was silently re-optimized here too, which this "without
+fitting" title never actually described.
+
 ### Randomize starting parameters
 
 ```bash
