@@ -136,11 +136,13 @@ C<--no-plot> rather than the C<-np>/C<--no-plot> used by C<fit>.
 onefite plot INPUT-FILE [OPTIONS]
 =end code
 
-Render plots from an existing C<.json> or C<.sav> file without fitting. The
-command creates a work directory named after INPUT-FILE and packages the plot
-results. C<plot> only understands the auto-scale/log-scale flags,
-C<--Num>/C<--npts>, and C<--work-folder> - it has no C<--quiet>,
-C<--save-to>, or any fit-quality option.
+Render plots from an existing C<.json> or C<.sav> file without fitting. Every
+parameter is written out as fixed before this runs, regardless of its own
+saved free/fixed state, so a still-free parameter is evaluated at its saved
+value rather than re-optimized. The command creates a work directory named
+after INPUT-FILE and packages the plot results. C<plot> only understands the
+auto-scale/log-scale flags, C<--Num>/C<--npts>, and C<--work-folder> - it has
+no C<--quiet>, C<--save-to>, or any fit-quality option.
 
 =head2 convert
 
