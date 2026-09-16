@@ -1297,6 +1297,42 @@ HTML
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
 	    }
 	 }
+	post -> 'plot' {
+	    request-body -> (:$file, *%rest) {
+		my $time = now;
+		my $filename = $file.filename.IO.basename;
+		my $request-folder = create-web-request-directory;
+		LEAVE {
+		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder.e;
+		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) plot { $filename } concluded in { now - $time } s.");
+		    $log-fh.flush;
+		}
+		my $input-folder = $request-folder.add('input');
+		mkdir $input-folder;
+		my $input-file = $input-folder.add($filename);
+		my $content = $file.body-blob;
+		if any($filename.IO.extension.contains("zip"), $filename.IO.extension.contains("hdf5")) {
+		    $input-file.IO(:bin).spurt: $content;
+		} else {
+		    $input-file.IO.spurt: $content.decode('UTF-8');
+		}
+		my @args = 'plot', $filename, "--work-folder={$request-folder.Str}";
+		for %rest.kv -> $k, $v {
+		    @args.push: "--autox" if $k eq any(<autox auto-x ax>) && $v eq any(<yes 1>);
+		    @args.push: "--autoy" if $k eq any(<autoy auto-y ay>) && $v eq any(<yes 1>);
+		    @args.push: "--autoxy" if $k eq any(<autoxy auto-xy axy>) && $v eq any(<yes 1>);
+		    @args.push: "--logx" if $k eq any(<logx log-x xlog loglin lx>) && $v eq any(<yes 1>);
+		    @args.push: "--logy" if $k eq any(<logy log-y ylog linlog ly>) && $v eq any(<yes 1>);
+		    @args.push: "--Num={+$v.Str}" if $k eq any(<Num n npts>) && $v.Str ~~ /^\d+$/;
+		}
+		my $proc = run 'onefite', |@args, :cwd($input-folder.Str), :out;
+		my $txt = $proc.out.slurp(:close);
+		die "onefite plot failed with exit code {$proc.exitcode}\n$txt" if $proc.exitcode != 0;
+		my $zip = $request-folder.add($filename.IO.extension('zip').Str);
+		unless $zip.e { die "onefite plot did not produce {$zip.basename}\n$txt" }
+		content 'application/octet-stream', $zip.IO.slurp(:bin);
+	    }
+	}
 	 post -> 'convert' {
             request-body -> (:$file, *%rest) {
 		my $filename = $file.filename.IO.basename;
