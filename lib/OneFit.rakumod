@@ -14,6 +14,8 @@ class Engine is export {
     has @!blocks;
     has @!par-tables;
     has @!Functions;
+    has @!selected-data-override;
+    has Bool $!selected-data-override-set = False;
     has $!path = '.';
     has $!fit-methods = "simp scan min minos";
     
@@ -54,6 +56,21 @@ class Engine is export {
     multi method get () { %!engine }
     multi method set (%e) { %!engine=%e; self }
     multi method Num ($npts) { %!engine<Num>=$npts }
+
+    # SelectedDataSet is metadata in saved files. Apply it only when the
+    # caller explicitly requests a runtime subset with the CLI option.
+    method selected-data-tags () {
+	my $raw = $!selected-data-override-set
+	    ?? @!selected-data-override !! %!engine<Tags>;
+	return () unless $raw.defined;
+	$raw ~~ Positional ?? $raw.List !! $raw.Str.split(/\s*','\s*/)
+    }
+
+    method selected-data-set (*@tags) {
+	@!selected-data-override = @tags.flatmap({ .Str.split(/\s*','\s*/) });
+	$!selected-data-override-set = True;
+	self
+	}
 	
 	method add-to-hash (*%h) { %!engine{ %h.keys } = %h.values } 
 
@@ -90,11 +107,14 @@ class Engine is export {
 	    	my @arr = ($data.Bool) ??  $data.split( /'#' <ws> DATA <ws>/) !! %!engine<Dados>.split( /'#' <ws> DATA <ws>/);
 	    	@!blocks = gather {
 			my $i=0;
-			for @arr[1 ..^ @arr.elems].hyper {
-		    	$_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
+			for @arr[1 ..^ @arr.elems].pairs.hyper -> $block {
+			    my $ordinal = $block.key + 1; # public selector is 1-based (#N)
+			    my $chunk = $block.value;
+			    $chunk ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
+			    my $tag = $<tag>.Str;
 		    	if $All {
 					try {
-						take Block.new.read( '# DATA ' ~ $_,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
+						take Block.new.read( '# DATA ' ~ $chunk,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
 						CATCH {
 							default {
 								die "Error reading block" ~.Str;
@@ -103,20 +123,23 @@ class Engine is export {
 					}
 		    	}
 		    	else {
-					if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
-			    		if $fit.defined {
-							take Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
-			    		}
-			    		if $plot.defined {
-							take Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
-			    		}
-			    			if none($fit,$plot) {
-								take Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+					my @selected = self.selected-data-tags;
+					if %!engine<SelectAll> || any @selected.map({
+						.Str eq $tag || (.Str ~~ /^ '#' (\d+) $/ && $0.Int == $ordinal)
+					}) {
+						if $fit.defined {
+							take Block.new.No($i++).read('# DATA ' ~ $chunk, :fit, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+						}
+						if $plot.defined {
+							take Block.new.No($i++).read('# DATA ' ~ $chunk, :plot, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+						}
+						if none($fit,$plot) {
+							take Block.new.No($i++).read('# DATA ' ~ $chunk, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
 			    			}
 					}
 					else {
 			    			if $verbose.Bool {
-								$*ERR.say($<tag>.Str, " not selected in list ", %!engine<Tags>.Slip.join(" "))
+								$*ERR.say($<tag>.Str, " not selected in list ", self.selected-data-tags.join(" "))
 			    			}
 					}
 		    	}

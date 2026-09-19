@@ -55,6 +55,11 @@ onefite fit 'y(x,a:0,b:1)=a+b*x' line.dat --autoxy --save-to=line-fit.json
 onefite fit line-fit.json --fit-methods='simp scan min minos'   # refit the saved description
 ```
 
+For multi-block files, use `--selected-dataset` (or `--sds`) when a run needs
+an explicit subset, for example `--selected-dataset='20kHz_1,#4'`. TAGs match
+exactly; `#N` selects the Nth block in source order. Saved `SelectedDataSet`
+metadata does not filter runs unless this option is supplied.
+
 Continue with the [getting-started tutorial](docs/getting-started.md).
 
 ## Documentation

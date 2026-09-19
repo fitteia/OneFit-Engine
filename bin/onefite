@@ -1069,6 +1069,7 @@ multi MAIN ('start-web-engine',
 		       Num points: <input type="text" name="Num" value="100"><br/>
 		       Symbol size: <input type="text" name="SymbSize" value="1.0"><br/>
 		       Fit methods: <input type="text" name="fit-methods" value="simp scan min minos"><br/>
+		       Selected datasets (comma-separated TAGs): <input type="text" name="selected-dataset" value=""><br/>
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
@@ -1196,12 +1197,14 @@ HTML
 		my $num   = "--Num=100";
 		my $ssz   = "--SymbSize=1.0";
 		my $fit-methods = "--fit-methods=simp scan min minos";
+		my $selected-datasets = "";
 		my $file-content = $file.body-blob;
 		my @ht-args=();
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
 		       $fit-methods	      = "--fit-methods={$v.Str}" if $k eq any(<fit-methods fm>);
+		       $selected-datasets = "--selected-dataset={$v.Str}" if $k eq any(<selected-dataset selected-datasets sds>) and $v.Str.Bool;
 		       $function      	      = $v.Str if $k.contains("function");
 		       $num        	      = "--Num={+$v.Str} " if $k eq any(<Num n npts>);
 		       $ssz		      = "--SymbSize={$v.Str} " if $k eq any(<SymbSize ssz>);
@@ -1273,7 +1276,7 @@ HTML
 		    @onefite-args.push($function);
 		    @onefite-args.push($filename);
 		    for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx,
-		        $logy, $R1, $sef-R1-file, $err, $plot-if, $fit-if,
+			    $logy, $R1, $sef-R1-file, $err, $plot-if, $fit-if, $selected-datasets,
 		        $range, $gfilt, $fit-methods, $num, $ssz,
 		        $remove-outliers, $reduced-chi2, $R2, $print-cols, $no-plot -> $flag {
 		        @onefite-args.push($flag.trim) if $flag.trim.chars;
@@ -1286,11 +1289,11 @@ HTML
 		}
 		else {
 		    @onefite-args.push($filename);
-		    for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx,
-		        $logy, $fit-methods, $num, $reduced-chi2, $R2,
-		        $print-cols, $no-plot -> $flag {
-		        @onefite-args.push($flag.trim) if $flag.trim.chars;
-		    }
+
+			for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx, $logy, $fit-methods, $num, $reduced-chi2, $R2, $print-cols, $selected-datasets, $no-plot -> $flag {
+				@onefite-args.push($flag.trim) if $flag.trim.chars;
+			}
+
 		    @onefite-args.append: @ht-args.grep(*.chars);
 		    @onefite-args.push: "--work-folder={$work-folder.Str}";
 		    @onefite-args.push:
@@ -1511,6 +1514,7 @@ multi MAIN  ('create',
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
 		 Str  :sf(:$sef-R1-file) = "", #= use file to get freqs when importing data from Stelar sef files
 	     Str  :t(:$tags), #= Data blocks TAGS
+	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values or #N 1-based block selectors to read
 	     Str  :wf(:$work-folder) = '.', #= set a different work folder
 		 *%_
 	    ){
@@ -1541,6 +1545,7 @@ multi MAIN  ('create',
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
+    %e<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
 
@@ -1552,6 +1557,7 @@ multi MAIN  ('create',
 	}
 
     my $engine = Engine.new.path("$work-folder").set(%e);
+    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
     $engine.blocks(
 	:read,
 	:fit,
@@ -1656,10 +1662,11 @@ multi MAIN  ('fit',
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
 	Str  :sf(:$sef-R1-file) = "",
    	Str  :t(:$tags),
+    Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values or #N 1-based block selectors to read
     Str  :wf(:$work-folder) is copy = '.',
 	Int	 :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
-   	Str  :z(:zt(:$zip-to)),
-	*%_
+	 Str  :z(:zt(:$zip-to)),
+	 *%_
     ){
 
 	$global = True if $hybrid;
@@ -1720,6 +1727,7 @@ MSG
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
+    %e<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
 
@@ -1836,6 +1844,7 @@ multi MAIN  ('fit',
 	 Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	 Str  :ro(:$remove-outliers) = "",
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
+	 Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values or #N 1-based block selectors to read
      Str  :wf(:$work-folder) is copy = '.',
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
      Str  :z(:zt(:$zip-to)) = $input-file.IO.extension('').Str,
@@ -1888,7 +1897,11 @@ MSG
 		exit(1)
 	}
 	$input-file.IO.copy("$work-folder/$name/$input-file");
-	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+	if $selected-datasets.so {
+	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/);
+	    $engine.selected-data-set($selected-datasets);
+	}
 
 	if %_.keys.grep(/'#'/) {
 		my %e = $engine.h;
@@ -1986,6 +1999,7 @@ multi MAIN  ('plot',
     	 Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Int  :n(:N(:Num(:$npts))),
+	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values or #N 1-based block selectors to read
 	     Str  :wf(:$work-folder) = '.'
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
@@ -1993,6 +2007,8 @@ multi MAIN  ('plot',
 	    "$work-folder/$name".IO.mkdir;
 	    $input-file.IO.copy("$work-folder/$name/$input-file");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+	    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
+	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
 	    #	    my $engine = Engine.new.path("$work-folder").read($input-file);
 	    $engine.Num($npts) if $npts.Bool;
 	    $engine.plot(
