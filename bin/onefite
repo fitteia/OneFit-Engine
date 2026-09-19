@@ -1671,7 +1671,7 @@ multi MAIN  ('fit',
 	 *%_
 	    ){
 	my $no-plot = $plot ?? False !! True;
-
+    %_<plot>:delete;
 	$global = True if $hybrid;
 
 	if ( !$parallel )  { 
@@ -1854,6 +1854,8 @@ multi MAIN  ('fit',
 	 *%_
 	    ){
 	my $no-plot = $plot ?? False !! True;
+    %_<plot>:delete;
+
 	$global = True if $hybrid;
 	if ( !$parallel ) { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
