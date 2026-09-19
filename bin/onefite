@@ -1440,10 +1440,11 @@ multi MAIN ('help',
  
 #!(onefite non-web engine service)
 multi MAIN ('start-engine',
-	    Bool :np(:$no-plot), #= no plot
+	    Bool :$plot = True, #= plotting is enabled by default; --no-plot sets it False
 	    Bool :q(:$quiet)=False, #= Don't show log messages
 	    Str  :wf(:$work-folder) = '.', #= onefite engine work folder
 	   ){
+	my $no-plot = $plot ?? False !! True;
     my $supplier = Supplier.new;
     $supplier.Supply.tap: -> $f {
 		start {
@@ -1582,7 +1583,7 @@ multi MAIN  ('random',
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
 	     Str  :dl(:data-label(:$data-labels)),
 	     Bool :g(:$global),
-	     Bool :inp(:$no-plot), #= no plot in onefit random ...
+	     Bool :$plot = True, #= plotting is enabled by default; --no-plot sets it False
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
@@ -1593,6 +1594,7 @@ multi MAIN  ('random',
 	     Str  :wf(:$work-folder) = '.',
 	     Str  :z(:zt(:$zip-to)), #= zip work-folder to zipfile
 	    ){
+	my $no-plot = $plot ?? False !! True;
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
@@ -1644,7 +1646,7 @@ multi MAIN  ('fit',
    	Bool :lx(:logx(:log-x(:xlog(:$loglin)))),
    	Bool :ly(:logy(:log-y(:ylog(:$linlog)))),
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
-   	Bool :np(:$no-plot),
+	    Bool :$plot = True, #= plotting is enabled by default; --no-plot sets it False
     Int  :n(:num(:N(:Num(:$npts)))) = +100,
 	Bool :mp4(:$mpeg4) = False, #= create a mpeg4 video with All.pdf
     Str  :o(:st(:$save-to)), # write fit settings to json or sav file 
@@ -1667,7 +1669,9 @@ multi MAIN  ('fit',
 	Int	 :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
 	 Str  :z(:zt(:$zip-to)),
 	 *%_
-    ){
+	    ){
+	my $no-plot = $plot ?? False !! True;
+	%_.delete('plot'); # --no-plot is consumed by the positive Bool option
 
 	$global = True if $hybrid;
 
@@ -1834,7 +1838,7 @@ multi MAIN  ('fit',
      Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	 Bool :mp4(:$mpeg4) = False,
-     Bool :np(:$no-plot),
+	     Bool :$plot = True, #= plotting is enabled by default; --no-plot sets it False
      Int  :n(:num(:N(:Num(:$npts)))),
 	 Str  :o(:st(:save-to(:$to))), # write fit settings to .json or .sav file 	     
 	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
@@ -1849,7 +1853,9 @@ multi MAIN  ('fit',
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
      Str  :z(:zt(:$zip-to)) = $input-file.IO.extension('').Str,
 	 *%_
-    ){
+	    ){
+	my $no-plot = $plot ?? False !! True;
+	%_.delete('plot'); # --no-plot is consumed by the positive Bool option
 	$global = True if $hybrid;
 	if ( !$parallel ) { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
