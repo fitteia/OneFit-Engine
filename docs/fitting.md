@@ -42,6 +42,23 @@ anything - previously any parameter still marked free in the saved
 description was silently re-optimized here too, which this "without
 fitting" title never actually described.
 
+## Selecting data blocks
+
+By default, a run reads the blocks selected by the file's `Tags` values.
+`SelectedDataSet` in an existing JSON or SAV file is retained as metadata and
+does not change this default. To request a temporary subset, pass
+`--selected-dataset` (also available as `--sds`):
+
+```bash
+onefite fit experiment.json --individual --selected-dataset='20kHz_1,40kHz_1'
+onefite plot experiment.json --selected-dataset='#2,#4'
+```
+
+TAG selectors match the block's `TAG` exactly. Positional selectors use `#N`
+with one-based source-file order, which avoids ambiguity when a TAG itself is
+numeric. Selectors may be mixed. The override is local to that command, so
+concurrent runs do not share selection state.
+
 ### Randomize starting parameters
 
 ```bash
