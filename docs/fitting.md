@@ -51,12 +51,13 @@ does not change this default. To request a temporary subset, pass
 
 ```bash
 onefite fit experiment.json --individual --selected-dataset='20kHz_1,40kHz_1'
-onefite plot experiment.json --selected-dataset='#2,#4'
+onefite plot experiment.json --selected-dataset='#1-#4,#7'
 ```
 
 TAG selectors match the block's `TAG` exactly. Positional selectors use `#N`
-with one-based source-file order, which avoids ambiguity when a TAG itself is
-numeric. Selectors may be mixed. The override is local to that command, so
+or `$N` with one-based source-file order; inclusive ranges such as `#1-#4`
+are supported. This avoids ambiguity when a TAG itself is numeric. Selectors
+may be mixed. The override is local to that command, so
 concurrent runs do not share selection state.
 
 ### Randomize starting parameters

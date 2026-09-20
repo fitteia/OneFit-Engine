@@ -1517,7 +1517,7 @@ multi MAIN  ('create',
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
 		 Str  :sf(:$sef-R1-file) = "", #= use file to get freqs when importing data from Stelar sef files
 	     Str  :t(:$tags), #= Data blocks TAGS
-	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values or #N 1-based block selectors to read
+	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 	     Str  :wf(:$work-folder) = '.', #= set a different work folder
 		 *%_
 	    ){
@@ -1666,7 +1666,7 @@ multi MAIN  ('fit',
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
 	Str  :sf(:$sef-R1-file) = "",
    	Str  :t(:$tags),
-    Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values or #N 1-based block selectors to read
+    Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
     Str  :wf(:$work-folder) is copy = '.',
 	Int	 :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
 	 Str  :z(:zt(:$zip-to)),
@@ -1849,7 +1849,7 @@ multi MAIN  ('fit',
 	 Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	 Str  :ro(:$remove-outliers) = "",
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
-	 Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values or #N 1-based block selectors to read
+	 Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
      Str  :wf(:$work-folder) is copy = '.',
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
      Str  :z(:zt(:$zip-to)) = $input-file.IO.extension('').Str,
@@ -2007,7 +2007,7 @@ multi MAIN  ('plot',
     	 Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Int  :n(:N(:Num(:$npts))),
-	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values or #N 1-based block selectors to read
+	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 	     Str  :wf(:$work-folder) = '.'
 	    ){
 	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);

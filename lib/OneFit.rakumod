@@ -71,6 +71,20 @@ class Engine is export {
 	$!selected-data-override-set = True;
 	self
 	}
+
+	# Accept one-based ordinal selectors (#N or $N), including inclusive
+	# ranges such as #1-#4. The dollar alias is useful in shell-oriented
+	# workflows; exact TAG matching is still checked before this parser.
+	 sub selected-ordinal-range(Str:D $selector) {
+		my $text = $selector.trim;
+		return Nil unless $text ~~ /^ <[\#\$]> \d+ ( '-' <[\#\$]>? \d+ )? $/;
+		my @parts = $text.substr(1).split('-');
+		my $first = @parts[0].Int;
+		my $last = @parts.elems == 2 ?? @parts[1].subst(/^<[\#\$]>/, '').Int !! $first;
+		return Nil unless $first > 0 && $last > 0;
+		($first, $last) = ($last, $first) if $first > $last;
+		($first, $last)
+	 }
 	
 	method add-to-hash (*%h) { %!engine{ %h.keys } = %h.values } 
 
@@ -125,7 +139,9 @@ class Engine is export {
 		    	else {
 					my @selected = self.selected-data-tags;
 					if %!engine<SelectAll> || any @selected.map({
-						.Str eq $tag || (.Str ~~ /^ '#' (\d+) $/ && $0.Int == $ordinal)
+						my $selector = .Str;
+						my $range = selected-ordinal-range($selector);
+						$selector eq $tag || ($range.defined && $ordinal >= $range[0] && $ordinal <= $range[1])
 					}) {
 						if $fit.defined {
 							take Block.new.No($i++).read('# DATA ' ~ $chunk, :fit, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);

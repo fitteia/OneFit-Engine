@@ -1310,7 +1310,7 @@ sub MAIN (
 	Str :SymbSize(:$ssz) where { \&.\&.\&. } = "1\&.0", # set size of symbols
 	Str :sf(:$sef\-R1\-file) = "", # use file to get freqs when importing data from Stelar sef files
 	Str :t(:$tags), # Data blocks TAGS
-	Str :sds(:selected\-dataset(:$selected\-datasets)) = "", # comma\-separated TAG values or #N 1\-based block selectors to read
+	Str :sds(:selected\-dataset(:$selected\-datasets)) = "", # comma\-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 	Str :wf(:$work\-folder) = "\&.", # set a different work folder
 	*%_, 
 )
@@ -1443,7 +1443,7 @@ Data blocks TAGS
 .SS class Str :sds(:selected-dataset(:$selected-datasets)) = ""
 
 .PP
-comma\-separated TAG values or #N 1\-based block selectors to read
+comma\-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 
 .SS class Str :wf(:$work-folder) = "."
 
@@ -1543,7 +1543,7 @@ remove outliers (ex: \-\-ro=2 or \-\-ro=2\&.\&.5, or \-\-ro=1,3,5)
 .SS class Mu $
 
 .PP
-comma\-separated TAG values or #N 1\-based block selectors to read
+comma\-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 
 .SS class Mu $
 
@@ -1603,7 +1603,7 @@ run service on a RAMDisk
 .SS class Mu $
 
 .PP
-comma\-separated TAG values or #N 1\-based block selectors to read
+comma\-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 
 .SS class Mu $
 
@@ -1643,7 +1643,7 @@ log log scale
 .SS class Mu $
 
 .PP
-comma\-separated TAG values or #N 1\-based block selectors to read
+comma\-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 
 .SS class Mu $
 
