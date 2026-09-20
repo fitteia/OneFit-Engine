@@ -56,8 +56,9 @@ onefite fit line-fit.json --fit-methods='simp scan min minos'   # refit the save
 ```
 
 For multi-block files, use `--selected-dataset` (or `--sds`) when a run needs
-an explicit subset, for example `--selected-dataset='20kHz_1,#4'`. TAGs match
-exactly; `#N` selects the Nth block in source order. Saved `SelectedDataSet`
+an explicit subset, for example `--selected-dataset='20kHz_1,#1-#4,#7'`. TAGs
+match exactly; `#N`/`$N` selects a block in source order and `#N-#M` is an
+inclusive range. Saved `SelectedDataSet`
 metadata does not filter runs unless this option is supplied.
 
 Continue with the [getting-started tutorial](docs/getting-started.md).
