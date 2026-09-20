@@ -37,7 +37,7 @@ multi MAIN (
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
 	Bool :$man-page = True; #= Install man page
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
-   	Int  :$minuit = 250, #= Minuit maximum number of parameters: default=250
+	Int  :$minuit = 1000, #= Minuit maximum number of parameters: default=1000
 	Bool :$post-test is copy = True; #= Run post install tests
 	Bool :p(:$p6-modules) = True, #= attempt to install required Raku modules
    	Int  :$port = 8142, #= onefite service port

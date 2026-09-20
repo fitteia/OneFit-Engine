@@ -48,7 +48,8 @@ The current installer's defaults include:
 - enable PDF-related ImageMagick policy entries;
 - fetch/update the sibling `../minuit` checkout and build it;
 - install the man page;
-- support up to 250 MINUIT parameters (`--minuit=N` to change).
+- support up to 1,000 MINUIT internal parameters and 2,000 external slots
+  (`--minuit=N` to change).
 
 After native compilation, `INSTALL` writes `MANIFEST.site`. Unlike the
 committed source `MANIFEST`, this generated file inventories the Minuit and
@@ -114,7 +115,8 @@ running in Docker and behaves as if `--docker` were passed, which sets
 ```text
 -a, --alias='ofe onefit'   install additional command aliases for onefite
 -b, --bindir=DIR           choose the binary installation directory
---minuit=COUNT             maximum MINUIT parameter count (default 250)
+--minuit=COUNT             maximum MINUIT internal parameter count (default 1000;
+                           MNE is twice this value)
 -d, --systemd-daemon       install and enable a systemd unit
 --ip=ADDRESS               service bind address used in generated setup
 --port=PORT                service port (default 8142)
@@ -132,7 +134,8 @@ Use `./INSTALL --help` for the authoritative, current list.
 Since OFE 0.9.0, Minuit is built from source (in a parallel `minuit/` folder
 next to the OFE checkout) rather than taken from the Debian `cernlib`
 package, so the maximum number of fitting parameters can be raised past the
-package's built-in limit with `./INSTALL --minuit=N` (default: 250; `onefite
+package's built-in limit with `./INSTALL --minuit=N` (default: 1000 internal,
+2,000 external; `onefite
 upgrade` re-uses whatever limit the currently-installed Minuit already has
 unless you override it). `etc/OFE/default/makefile` (used to compile
 user-defined model code) is set up to link against this from-source
