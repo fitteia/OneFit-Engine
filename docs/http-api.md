@@ -4,10 +4,10 @@ The Cro application started by `onefite start-web-engine` exposes a
 multipart HTTP interface. It is not currently declared a stable public API.
 
 > [!CAUTION]
-> All routes are unauthenticated. `/fit` writes uploads, **assembles form
-> values directly into a shell command**, compiles and runs generated
-> native code, and can return arbitrary files from its work directory. Use
-> only in a trusted, isolated deployment. See [security](security.md).
+> All routes are unauthenticated. `/fit` and `/plot` write uploads, compile
+> and run generated native code, and (for `/fit`) can return arbitrary files
+> from its work directory via the `download` field. Use only in a trusted,
+> isolated deployment. See [security](security.md).
 
 Examples use `http://127.0.0.1:8142`.
 
@@ -62,6 +62,28 @@ the embedded POD - not the normally-formatted terminal text you'd get from
 
 ```bash
 curl http://127.0.0.1:8142/man
+```
+
+## `POST /plot`
+
+Upload an existing `.json` or `.sav` engine description as multipart field
+`file` and re-render its plots without fitting - the HTTP equivalent of
+`onefite plot INPUT-FILE`. Every parameter is evaluated at its saved value
+(written out as fixed first, regardless of its own saved free/fixed state),
+so this route never re-optimizes anything.
+
+Only the auto-scale/log-scale flags and the point count are accepted: `autox`
+/`auto-x`/`ax`, `autoy`/`auto-y`/`ay`, `autoxy`/`auto-xy`/`axy`, `logx`/
+`log-x`/`xlog`/`loglin`/`lx`, `logy`/`log-y`/`ylog`/`linlog`/`ly` (truthy on
+`"yes"` or `1`), and `Num`/`n`/`npts` (digits only). There is no `function`,
+`fit-methods`, `download`, `username`, or dynamic-override support - unlike
+`/fit`, this route always returns the generated plot ZIP as
+`application/octet-stream`, or a non-2xx failure if `onefite plot` didn't
+produce one.
+
+```bash
+curl --fail --silent -F 'file=@result.json' -F 'autoxy=yes' \
+  http://127.0.0.1:8142/plot --output result-plot.zip
 ```
 
 ## `POST /convert`
@@ -146,6 +168,7 @@ curl http://127.0.0.1:8142/fit \
 | `fit-if`, `plot-if` | Tag conditions |
 | `remove-outliers` | Outlier selection |
 | `reduced-chi2` | Error rescaling when `yes` or `1` |
+| `no-plot` / `np` | Skip plot/PDF generation when `yes` or `1` |
 | `print-cols` | Selected result columns |
 | `username` | Existing persistent work-directory parent; each request gets a unique retained child; not authentication |
 | `download` | Select response artifact |
