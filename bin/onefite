@@ -1181,6 +1181,7 @@ HTML
 		my $logy= "";
 		my $global="";
 		my $hybrid="";
+		my $individual="";
 		my $mp4="";
 		my $R1 = "";
 		my $R2= "";
@@ -1211,6 +1212,7 @@ HTML
 		       $username   	      = $v.Str     if $k eq "username";
 		       $global      	      = "--global" if $k eq any(<global g>)  and $v eq any("yes",1);
 		       $hybrid      	      = "--hybrid" if $k eq any(<hybrid mixed>)  and $v eq any("yes",1);
+		       $individual  	      = "--individual" if $k eq any(<individual i>)  and $v eq any("yes",1);
 		       $mp4      	      = "--mpeg4" if $k eq any(<mpeg4 mp4>)  and $v eq any("yes",1);
 		       $autox      	      = "--autox"  if $k eq any(<autox auto-x ax>)  and $v eq any("yes",1);
 		       $autoy      	      = "--autoy"  if $k eq any(<autoy auto-y ay>)  and $v eq any("yes",1);
@@ -1290,7 +1292,7 @@ HTML
 		else {
 		    @onefite-args.push($filename);
 
-			for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx, $logy, $fit-methods, $num, $reduced-chi2, $R2, $print-cols, $selected-datasets, $no-plot -> $flag {
+			for $mp4, $global, $hybrid, $individual, $autox, $autoy, $autoxy, $logx, $logy, $fit-methods, $num, $reduced-chi2, $R2, $print-cols, $selected-datasets, $no-plot -> $flag {
 				@onefite-args.push($flag.trim) if $flag.trim.chars;
 			}
 
