@@ -38,6 +38,8 @@ multi MAIN (
 	Bool :$man-page = True; #= Install man page
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Int  :$minuit = 1000, #= Minuit maximum number of parameters: default=1000
+	Bool :$enable-extensions = False, #= build optional external model extensions
+	Str  :$extensions-ref = 'main', #= git ref for optional external model extensions
 	Bool :$post-test is copy = True; #= Run post install tests
 	Bool :p(:$p6-modules) = True, #= attempt to install required Raku modules
    	Int  :$port = 8142, #= onefite service port
@@ -158,7 +160,7 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit ) if $compile;
+	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit, enable-extensions => $enable-extensions, extensions-ref => $extensions-ref ) if $compile;
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
@@ -308,7 +310,7 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
+sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$enable-extensions = False, :$extensions-ref = 'main') {
 	if $git {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
@@ -337,6 +339,19 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
 	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
+	if $enable-extensions {
+		my $extensions = "$*CWD/../C/extensions";
+		shell "git clone https://github.com/fitteia/onefite-external-extensions.git $extensions" unless $extensions.IO.d;
+		shell "cd $extensions && git fetch origin {$extensions-ref} && git checkout --force {$extensions-ref}";
+		shell "make -C $extensions install C_ROOT=$*CWD/../C LIBDIR={$root.IO.add('lib').Str} INCLUDEDIR={$root.IO.add('include/external/florence').Str} METADIR={$root.IO.add('share/doc/onefite-raku').Str}";
+		my $fit-makefile = "$root/etc/OFE/default/makefile";
+		if $fit-makefile.IO.e {
+			my $text = $fit-makefile.IO.slurp;
+			$text = $text.subst('EXTERNAL_MODEL_LIBS ?=', 'EXTERNAL_MODEL_LIBS ?= -lonefit-external-models');
+			$text = $text.subst('EXTERNAL_MODEL_INCLUDES ?=', 'EXTERNAL_MODEL_INCLUDES ?= -I' ~ $root.IO.add('include/external').Str);
+			$fit-makefile.IO.spurt($text);
+		}
+	}
 
 	# MANIFEST describes the committed source distribution and must never be
 	# regenerated from a dirty post-build tree.  Record locally installed
