@@ -38,7 +38,7 @@ multi MAIN (
 	Bool :$man-page = True; #= Install man page
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Int  :$minuit = 1000, #= Minuit maximum number of parameters: default=1000
-	Bool :$enable-extensions = False, #= build optional external model extensions
+	Str  :$enable-extensions = '', #= build optional external model extensions using http, https, or ssh
 	Str  :$extensions-ref = 'main', #= git ref for optional external model extensions
 	Bool :$post-test is copy = True; #= Run post install tests
 	Bool :p(:$p6-modules) = True, #= attempt to install required Raku modules
@@ -310,7 +310,7 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$enable-extensions = False, :$extensions-ref = 'main') {
+sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$enable-extensions = '', :$extensions-ref = 'main') {
 	if $git {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
@@ -339,10 +339,19 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
 	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
-	if $enable-extensions {
+	if $enable-extensions && $enable-extensions ne 'false' {
 		my $extensions = "$*CWD/../C/extensions";
 		if $git {
-			shell "git clone https://github.com/fitteia/onefite-external-extensions.git $extensions" unless $extensions.IO.d;
+			my $extensions-url = $enable-extensions eq 'ssh'
+				?? 'git@github.com:fitteia/onefite-external-extensions.git'
+				!! ($enable-extensions eq 'http'
+					?? 'http://github.com/fitteia/onefite-external-extensions.git'
+					!! 'https://github.com/fitteia/onefite-external-extensions.git');
+			if $enable-extensions eq 'ssh' {
+				my $auth = run <gh auth status --hostname github.com>, :out, :err;
+				die "--enable-extensions=ssh requires `gh auth login --git-protocol ssh`\n" unless $auth.exitcode == 0;
+			}
+			shell "git clone {$extensions-url} $extensions" unless $extensions.IO.d;
 			shell "cd $extensions && git fetch origin {$extensions-ref} && git checkout --force {$extensions-ref}";
 		} elsif !$extensions.IO.d {
 			die "--enable-extensions with --no-git requires an existing checkout at $extensions";
