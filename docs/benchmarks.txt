@@ -1,0 +1,56 @@
+OneFit-Engine (Raku) performance benchmark
+===========================================
+
+Date: 2026-09-21
+
+Methodology
+-----------
+Two deployments, both updated to onefite-c-code main @ 6633911 (post
+Numerical-Recipes replacement, FFT half-length-complex-FFT rewrite,
+sqgausn quadrature-node caching, Florence removed to a separate
+extensions bundle) and minuit @ b842e5b (MNE=2000/MNI=1000):
+
+  - .105 (192.168.64.105): Go port (onefite-native + onefite-gui),
+    driven through the live onefite-gui HTTP API (port 9143,
+    POST /api/run + GET /api/sessions/<id> polling). Timed via the
+    server's own createdAt/completedAt timestamps (excludes HTTP
+    polling overhead).
+  - .73 (192.168.64.73): Raku port (OneFit-Engine), driven through the
+    live start-web-engine HTTP API (port 8142, POST /fit multipart,
+    synchronous - the response IS the result zip). Timed as full
+    client-side wall-clock HTTP round-trip (upload + fit + zip
+    download), so these numbers include real network/multipart
+    overhead the Go API's own timestamp-based numbers don't.
+
+"Raku (Mac native, s)" is the pre-existing historical baseline
+(perf-check-report-1.xlsx): the original bin/onefite, timed natively
+on a Mac, no HTTP layer at all - included for context, not a like-for-
+like comparison with the two HTTP columns.
+
+fit-methods for the three (--hybrid) rows was "simp scan min" (minos
+omitted) at the user's request - not directly comparable to the
+historical baseline's own default "simp scan min minos" for those
+three rows specifically.
+
+pre-final-C16lyo is a new fixture (RNordio_poli + Torrey1 + ODFSmA x2 +
+OPF x2, 3 data sets, 62 points, 13 params/7 free, Global) with no
+historical baseline - the only row here that actually exercises the
+OPF/sqgausn code path the quadrature-caching fix targets.
+
+Test                                                 Model                                                           Data sets  Points  Params (total)  Params (free)  Fit type             Raku (Mac native, s)  Raku (.73, HTTP API, s)
+---------------------------------------------------  --------------------------------------------------------------  ---------  ------  --------------  -------------  -------------------  --------------------  -----------------------
+test1                                                SEIRD epidemiological (NODE1 diff-eq)                           13         2116    43              0              Global               5.7                   7.149                  
+test2                                                NMR relaxation (R1C/R1Fn/R1Fe)                                  8          1216    12              1              Global               3.9                   5.172                  
+test3                                                Piecewise (linear/exp-decay/resonance/phase)                    4          85      10              8              Global               1.8                   4.324                  
+test4                                                BPP relaxation                                                  1          22      6               2              Global               1.4                   3.911                  
+test5                                                Bi-exponential magnetization decay                              2          891     5               3              Individual           2                     4.117                  
+test6                                                Sum of 4 Gaussians                                              1          329     14              9              Global               2.2                   4.351                  
+test7                                                Bi-exponential magnetization decay                              41         891     5               3              Individual           9                     9.774                  
+test8 (Master-MIXED)                                 MIXED-parameter magnetization model                             27         478     6               1              Global               17.9                  16.034                 
+p96                                                  Bi-exponential magnetization decay                              56         1792    5               5              Global               10.1                  13.133                 
+p96 (--individual)                                   Bi-exponential magnetization decay, per-block independent fit   56         1792    5               5              Individual (forced)  11.5                  12.103                 
+p96 (--hybrid)                                       Bi-exponential magnetization decay, hybrid parameter expansion  56         1792    5               5              Hybrid               48.4                  41.969                 
+pendulum                                             Damped nonlinear pendulum (NODE1 diff-eq, in Function)          4          4964    8               5              Global               8.5                   9.628                  
+p96 x2 (--hybrid, minuit rebuilt MNE=1200/MNI=600)   Bi-exponential magnetization decay, hybrid                      112        3584    5               5              Global + Hybrid      281.03                287.292                
+p96 x3 (--hybrid, minuit rebuilt MNE=2000/MNI=1000)  Bi-exponential magnetization decay, hybrid                      168        5376    5               5              Global + Hybrid      644.55                609.063                
+pre-final-C16lyo                                     RNordio_poli + Torrey1 + ODFSmA x2 + OPF x2                     3          62      13              7              Global                                     4.941                  
