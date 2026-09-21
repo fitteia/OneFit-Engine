@@ -341,8 +341,12 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :
 	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
 	if $enable-extensions {
 		my $extensions = "$*CWD/../C/extensions";
-		shell "git clone https://github.com/fitteia/onefite-external-extensions.git $extensions" unless $extensions.IO.d;
-		shell "cd $extensions && git fetch origin {$extensions-ref} && git checkout --force {$extensions-ref}";
+		if $git {
+			shell "git clone https://github.com/fitteia/onefite-external-extensions.git $extensions" unless $extensions.IO.d;
+			shell "cd $extensions && git fetch origin {$extensions-ref} && git checkout --force {$extensions-ref}";
+		} elsif !$extensions.IO.d {
+			die "--enable-extensions with --no-git requires an existing checkout at $extensions";
+		}
 		shell "make -C $extensions install C_ROOT=$*CWD/../C LIBDIR={$root.IO.add('lib').Str} INCLUDEDIR={$root.IO.add('include/external/florence').Str} METADIR={$root.IO.add('share/doc/onefite-raku').Str}";
 		my $fit-makefile = "$root/etc/OFE/default/makefile";
 		if $fit-makefile.IO.e {
