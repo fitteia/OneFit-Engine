@@ -9,6 +9,7 @@ optionally configures system services.
 - [Important side effects](#important-side-effects)
 - [Platform guides](#platform-guides)
 - [Common options](#common-options)
+- [External model extensions](#external-model-extensions)
 - [CERNLIB Minuit](#cernlib-minuit)
 - [Verify](#verify)
 - [Uninstall](#uninstall)
@@ -125,9 +126,51 @@ running in Docker and behaves as if `--docker` were passed, which sets
                             building MINUIT from source
 -u, --to-user               install into the user account instead of site-wide
 -m, --merge-site=BRANCH     merge a local model-development branch first
+--enable-extensions=MODE    fetch and build the optional external model
+                            extensions bundle: http, https, or ssh
+                            (default: disabled)
+--extensions-ref=REF        git ref to check out in the extensions bundle
+                            (default: main)
 ```
 
 Use `./INSTALL --help` for the authoritative, current list.
+
+## External model extensions
+
+Some models (e.g. Florence, which depends on NAG-licensed code) can't ship
+in the public `onefite-c-code` tree and instead live in a private
+`onefite-external-extensions` repository, cloned as a sibling `C/extensions`
+checkout alongside the main `C/` (onefite-c-code) checkout. This is a
+separate mechanism from the [site-branch approach in
+extending-models.md](extending-models.md) - it's for models the project
+can't distribute publicly, not for your own local/site-specific models.
+
+```bash
+./INSTALL --enable-extensions=https --extensions-ref=main
+```
+
+- `--enable-extensions=https` or `=http` clones over the given protocol;
+  `=ssh` clones via `git@github.com:...` and requires GitHub CLI
+  authentication first (`gh auth login --git-protocol ssh`) - `./INSTALL`
+  checks this and fails fast with a clear error if it's missing.
+- `--extensions-ref=REF` selects the branch/tag/commit to check out in the
+  extensions checkout (default `main`).
+- Requires access to the private `onefite-external-extensions` repository;
+  without it, cloning fails with a Git authentication error. Ask a project
+  maintainer for access.
+- With `--no-git`, `./INSTALL` expects `C/extensions` to already exist
+  (no cloning) and only rebuilds/reinstalls it.
+- On success, the extensions' libraries and headers install under the
+  main tree's `lib`/`include/external/florence`, and
+  `etc/OFE/default/makefile` is patched so user model compiles pick up
+  `-lonefit-external-models` and the extension headers automatically.
+- Re-running `./INSTALL --enable-extensions=... ` later re-fetches
+  `--extensions-ref` and rebuilds; omitting the flag on a later run leaves
+  an existing `C/extensions` checkout untouched (it isn't removed).
+
+The Go/Rust port (`onefite-native`) has the equivalent
+`onefite doctor --install --enable-extensions --extensions-ref=REF` - see
+that repo's `README.md`.
 
 ## CERNLIB Minuit
 

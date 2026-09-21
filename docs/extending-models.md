@@ -5,6 +5,13 @@ models under `C/core/onefit-3.1/modelos`. Keep new site-specific work
 isolated and tested, on a dedicated branch, so `onefite upgrade`'s `git
 pull` never conflicts with or discards it.
 
+This page covers your own site-specific models. For models the project
+can't distribute publicly (e.g. Florence, which depends on NAG-licensed
+code), see the separate [external model extensions
+mechanism](installation.md#external-model-extensions) instead -
+`--enable-extensions` on `./INSTALL`, backed by a private
+`onefite-external-extensions` repository.
+
 ## Create a site branch
 
 From the repository root:
