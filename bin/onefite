@@ -944,6 +944,8 @@ multi MAIN ('upgrade',
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with local branch
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
       Int  :$minuit is copy, #= onefite web service port
+      Bool :$enable-extensions = False, #= install optional external model extensions
+      Str  :$extensions-ref = 'main', #= git ref for optional external model extensions
       Int  :p(:$port) = 8142, #= onefite web service port
       Int  :$shell-port = 8100, #= shellinabox port
       Bool :$shell = False, #= install shellinabox
@@ -956,7 +958,7 @@ multi MAIN ('upgrade',
   my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
   shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-  shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit ";
+  shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit { '--enable-extensions --extensions-ref=' ~ $extensions-ref if $enable-extensions } ";
 
   MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
