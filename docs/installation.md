@@ -137,13 +137,15 @@ Use `./INSTALL --help` for the authoritative, current list.
 
 ## External model extensions
 
-Some models (e.g. Florence, which depends on NAG-licensed code) can't ship
-in the public `onefite-c-code` tree and instead live in a private
-`onefite-external-extensions` repository, cloned as a sibling `C/extensions`
-checkout alongside the main `C/` (onefite-c-code) checkout. This is a
-separate mechanism from the [site-branch approach in
-extending-models.md](extending-models.md) - it's for models the project
-can't distribute publicly, not for your own local/site-specific models.
+Some models, such as Florence, are kept outside the public
+`onefite-c-code` tree in the separate
+`fitteia/onefite-external-extensions` repository. The public Florence bundle
+uses a NAG-free clean-room eigensolver and is licensed separately under
+Artistic 2.0. The original NAG-derived implementation is retained only in a
+private, license-restricted repository for users who already hold the relevant
+NAG license. This is a separate mechanism from the [site-branch approach in
+extending-models.md](extending-models.md) - it provides optional model bundles
+instead of adding site-specific models to the core tree.
 
 ```bash
 ./INSTALL --enable-extensions=https --extensions-ref=main
@@ -155,9 +157,9 @@ can't distribute publicly, not for your own local/site-specific models.
   checks this and fails fast with a clear error if it's missing.
 - `--extensions-ref=REF` selects the branch/tag/commit to check out in the
   extensions checkout (default `main`).
-- Requires access to the private `onefite-external-extensions` repository;
-  without it, cloning fails with a Git authentication error. Ask a project
-  maintainer for access.
+- The public Florence bundle can be cloned over HTTPS without special
+  credentials. A private NAG-derived ref requires access to the separate NAG
+  repository and an appropriate NAG license.
 - With `--no-git`, `./INSTALL` expects `C/extensions` to already exist
   (no cloning) and only rebuilds/reinstalls it.
 - On success, the extensions' libraries and headers install under the

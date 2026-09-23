@@ -127,6 +127,6 @@ docs/                        this documentation
 
 ## License
 
-[Artistic License 2.0](LICENSE) (a permanent license will be settled at the
-end of the development process; `META6.json` and `LICENSE` should always
-agree with this statement).
+[Artistic License 2.0](LICENSE). The license declared in `META6.json` and
+provided in `LICENSE` applies to this repository. Third-party components,
+including Minuit and optional model extensions, retain their own licenses.
