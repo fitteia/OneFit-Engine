@@ -11,7 +11,11 @@ ROOT=/home/fitteia
 PREFIX=
 DESTDIR=$(ROOT)$(PREFIX)
 LIBDIR=$(DESTDIR)/lib
+# The installed core's version: onefite-c-code's `make install` writes it to
+# etc/engine.mk (5.0.0 on). An engine installed before that has no engine.mk
+# and still uses 4.0.4.
 LIBNUMBER=4.0.4
+-include $(DESTDIR)/etc/engine.mk
 INCLUDEDIR=$(DESTDIR)/include
 BINDIR=$(DESTDIR)/bin
 EXAMPLESDIR=$(DESTDIR)/examples
@@ -94,7 +98,10 @@ CC = $(REAL_GCC) $(FLAGS)
 -include $(DESTDIR)/etc/extensions.mk
 EXTERNAL_MODEL_LIBS ?=
 EXTERNAL_MODEL_INCLUDES ?=
-LIB= $(LIBGFORTRAN) -L$(DESTDIR)/lib -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) $(EXTERNAL_MODEL_LIBS) -lm
+# Extensions come before the core libraries: static libraries are searched left
+# to right, so an extension calling a core model (e.g. one in -lonefit-modelos)
+# would otherwise end with "undefined reference" at every fit.
+LIB= $(LIBGFORTRAN) -L$(DESTDIR)/lib $(EXTERNAL_MODEL_LIBS) -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) -lm
 
 FLAGS= $(GCC_STD) -D__GNU_LIBRARY__ -D$(OS) -fPIC -pthread -O3 -Wall -Werror=implicit-function-declaration -Dbool=char -DHAS_BOOL -I$(INCLUDEDIR) $(EXTERNAL_MODEL_INCLUDES)
 
