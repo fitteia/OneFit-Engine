@@ -32,6 +32,8 @@ onefite upgrade --no-git --no-dpkg
 onefite upgrade --systemd-daemon --test
 onefite upgrade --merge-site=site
 onefite upgrade --minuit=250
+onefite upgrade --extension=florence-nag=git@github.com:OWNER/REPO.git@main
+onefite upgrade --/default-extensions
 ```
 
 Use `onefite --help`/`onefite man` for the current signature.

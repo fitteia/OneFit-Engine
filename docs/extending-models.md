@@ -5,6 +5,14 @@ models under `C/core/onefit-3.1/modelos`. Keep new site-specific work
 isolated and tested, on a dedicated branch, so `onefite upgrade`'s `git
 pull` never conflicts with or discards it.
 
+**Prefer an extension when you can.** A model that lives in its own repository
+as an *extension* needs no site branch and never touches `META-C.json`: it is
+cloned to `../C/extensions/<name>`, built by `make extensions` and added to the
+model catalog automatically, and it survives `onefite upgrade`. See
+[Extensions](installation.md#extensions) to install one and
+`extensions/README.md` in `onefite-c-code` to write one. The site-branch
+workflow below is for changing the base library itself.
+
 ## Create a site branch
 
 From the repository root:
