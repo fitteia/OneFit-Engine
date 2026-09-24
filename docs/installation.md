@@ -148,8 +148,11 @@ model catalog `onefite list models` and `onefite help MODEL` read; the base
   own). Several may be given comma-separated. One you name that cannot be
   fetched or built fails the install.
 - Two extensions that provide the same functions (for example a public and a
-  licensed variant of one model) cannot be installed together; the build says
-  so and names both. Remove one folder from `../C/extensions/` and re-run.
+  licensed variant of one model) cannot be installed together. One you name with
+  `--extension` that declares the conflict replaces the default, so no extra flag
+  is needed. A conflicting folder left by an earlier install is refused with the
+  fix - remove that folder from `../C/extensions/` and re-run (nothing is
+  deleted for you).
 - Whatever is in `../C/extensions/` is built, so a folder you place there by
   hand is installed too.
 
