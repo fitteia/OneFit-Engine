@@ -15,6 +15,10 @@ $workfolder.IO.mkdir unless $workfolder.IO.d;
 
 my $test-path=OFE-PATH ~ "/t";
 
+# The program banner prints the current year ("Copyright (C) 1990-<year>"), so
+# compare without it - the expected logs then never need a yearly edit.
+sub without-year (Str $s) { $s.subst(/ '1990-' \d ** 4 /, '1990-YYYY') }
+
 my class OutputCapture {
     has @!lines;
     
@@ -51,7 +55,7 @@ my $test-log =  "$test-path/7/fit1.log-$cpu".IO.slurp(enc => 'utf8-c8').subst(/'
 $test-log=$test-log.subst("NDIM=  50","NDIM= $val");
 "/tmp/test-log.log".IO.spurt: $test-log, :enc<utf8-c8>;
 
-is "$workfolder/fit1.log".IO.slurp(enc => 'utf8-c8'), "/tmp/test-log.log".IO.slurp(enc => 'utf8-c8'), "individual fit 1: OK! ({ now -$time } s)";
+is without-year("$workfolder/fit1.log".IO.slurp(enc => 'utf8-c8')), without-year("/tmp/test-log.log".IO.slurp(enc => 'utf8-c8')), "individual fit 1: OK! ({ now -$time } s)";
 shell("rm -f test-log.log",:cwd("/tmp")) if "/tmp/test-log.log".IO.e;
 
 $time = now;
@@ -68,7 +72,7 @@ $test-log =  "$test-path/7/fit40.log-$cpu".IO.slurp(enc => 'utf8-c8').subst(/'DI
 $test-log=$test-log.subst("NDIM=  50","NDIM= $val");
 "/tmp/test-log.log".IO.spurt: $test-log, :enc<utf8-c8>;
 
-is "$workfolder/fit40.log".IO.slurp(enc => 'utf8-c8'),"/tmp/test-log.log".IO.slurp(enc => 'utf8-c8'), "individual plot 40: OK! ({ now -$time } s)" ;
+is without-year("$workfolder/fit40.log".IO.slurp(enc => 'utf8-c8')), without-year("/tmp/test-log.log".IO.slurp(enc => 'utf8-c8')), "individual plot 40: OK! ({ now -$time } s)" ;
 shell("rm -f test-log.log",:cwd("/tmp")) if "/tmp/test-log.log".IO.e;
 
 is "$workfolder/fit19.out".IO.slurp(enc => 'utf8-c8'), "$test-path/7/fit19.out".IO.slurp(enc => 'utf8-c8'), "individual plot 19 output: OK! ({ now -$time } s)" ;
