@@ -782,6 +782,14 @@ sub c-code-root() {
     return ::('OFE-PATH') ~ "/C";
 }
 
+# The model catalog: META-CATALOG.json (the base catalog plus every installed
+# extension's functions, written by onefite-c-code's `make extensions`) when it
+# exists, else the plain base META-C.json.
+sub catalog-file() {
+    my $generated = "{ c-code-root() }/META-CATALOG.json";
+    return $generated.IO.f ?? $generated !! "{ c-code-root() }/META-C.json";
+}
+
 #| Get onefite usage help
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
@@ -858,7 +866,7 @@ multi MAIN ('list',
 multi MAIN ('list','models',
       	   Bool :q(:$quiet) = False
 	   ){
-     my $txt = "{ c-code-root() }/META-C.json".IO.slurp;
+     my $txt = catalog-file().IO.slurp;
      say $txt unless $quiet;
      $txt;
 }
@@ -944,6 +952,10 @@ multi MAIN ('upgrade',
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with local branch
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
       Int  :$minuit is copy, #= onefite web service port
+      Str  :$extension = '', #= comma-separated extensions to install: NAME or NAME=URL[@REF] (see INSTALL --help)
+      Bool :$default-extensions = True, #= install the default extension (public Florence); --/default-extensions to skip
+      Str  :$extensions-ref = 'main', #= default git ref for extensions
+      Str  :$extensions-transport = '', #= reach registry repositories over https (default), http or ssh
       Int  :p(:$port) = 8142, #= onefite web service port
       Int  :$shell-port = 8100, #= shellinabox port
       Bool :$shell = False, #= install shellinabox
@@ -956,7 +968,7 @@ multi MAIN ('upgrade',
   my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
   shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-  shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit ";
+  shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit { "--extension='$extension'" if $extension.chars } { '--/default-extensions' unless $default-extensions } --extensions-ref='$extensions-ref' { "--extensions-transport='$extensions-transport'" if $extensions-transport.chars } ";
 
   MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
@@ -1405,7 +1417,7 @@ multi MAIN ('help',
     my @list = dir(c-code-root() ~ "/local");
     @list.push: dir(c-code-root() ~ "/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    my %meta-c = from-json( "{ c-code-root() }/META-C.json".IO.slurp );
+    my %meta-c = from-json( catalog-file().IO.slurp );
 	#my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str // $model };
     my %info;
    	try {	%info = %meta-c{ $model }; }
@@ -1424,7 +1436,7 @@ multi MAIN ('help',
     my @list = dir(c-code-root() ~ "/local");
     @list.push: dir(c-code-root() ~ "/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    my %meta-c = from-json( "{ c-code-root() }/META-C.json".IO.slurp );
+    my %meta-c = from-json( catalog-file().IO.slurp );
     my %info;
    	try {	%info = %meta-c{ $model }; }
 	if $! { %info<error> = "===> $model not found in the library's' list"; }
