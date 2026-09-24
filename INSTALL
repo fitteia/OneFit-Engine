@@ -343,10 +343,10 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :
 		my $extensions = "$*CWD/../C/extensions";
 		if $git {
 			my $extensions-url = $enable-extensions eq 'ssh'
-				?? 'git@github.com:fitteia/onefite-external-extensions.git'
+				?? 'git@github.com:fitteia/onefite-ext-florence.git'
 				!! ($enable-extensions eq 'http'
-					?? 'http://github.com/fitteia/onefite-external-extensions.git'
-					!! 'https://github.com/fitteia/onefite-external-extensions.git');
+					?? 'http://github.com/fitteia/onefite-ext-florence.git'
+					!! 'https://github.com/fitteia/onefite-ext-florence.git');
 			if $enable-extensions eq 'ssh' {
 				my $auth = run <gh auth status --hostname github.com>, :out, :err;
 				die "--enable-extensions=ssh requires `gh auth login --git-protocol ssh`\n" unless $auth.exitcode == 0;
