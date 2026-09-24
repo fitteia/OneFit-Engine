@@ -88,6 +88,10 @@ CC = $(REAL_GCC) $(FLAGS)
 # entirely on Darwin. PERLCORE/-lperl remain required by `module` on
 # Linux (CCFLAGS/LDFLAGS/LIBS below) - only gfitn's own compile+link
 # stop needing them.
+# Written by onefite-c-code's `make extensions` (run by INSTALL): the link and
+# include flags for every installed extension. Included first so the ?= defaults
+# below only apply when there are none.
+-include $(DESTDIR)/etc/extensions.mk
 EXTERNAL_MODEL_LIBS ?=
 EXTERNAL_MODEL_INCLUDES ?=
 LIB= $(LIBGFORTRAN) -L$(DESTDIR)/lib -luserlib -lonefit-$(LIBNUMBER) -lonefit-modelos-$(LIBNUMBER) -lonefit-util-$(LIBNUMBER)  $(MINUIT) $(EXTERNAL_MODEL_LIBS) -lm
