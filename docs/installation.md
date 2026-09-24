@@ -9,7 +9,7 @@ optionally configures system services.
 - [Important side effects](#important-side-effects)
 - [Platform guides](#platform-guides)
 - [Common options](#common-options)
-- [External model extensions](#external-model-extensions)
+- [Extensions](#extensions)
 - [CERNLIB Minuit](#cernlib-minuit)
 - [Verify](#verify)
 - [Uninstall](#uninstall)

@@ -958,7 +958,7 @@ multi MAIN ('upgrade',
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with local branch
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
       Int  :$minuit is copy, #= onefite web service port
-      Str  :$enable-extensions = '', #= install optional external model extensions using http, https, or ssh
+      Str  :$enable-extensions = '', #= older spelling of --extension=florence; =http or =ssh also picks how registry repos are reached
       Str  :$extension = '', #= comma-separated extensions to install: NAME or NAME=URL[@REF] (see INSTALL --help)
       Bool :$default-extensions = True, #= install the default extension (public Florence); --/default-extensions to skip
       Str  :$extensions-ref = 'main', #= default git ref for extensions
