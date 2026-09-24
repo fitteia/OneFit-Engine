@@ -318,11 +318,32 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
-		shell "cd $*CWD/../minuit && git pull ";
+		# A previous install left d506cm.inc patched: reset it so the pull
+		# can't stop on that local change.
+		shell "cd $*CWD/../minuit && git checkout -- minuit/d506cm.inc 2>/dev/null; git pull ";
    		
 		say "download  onefite-C-code $*CWD/../C, compile and install libs in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/onefite-c-code.git $*CWD/../C" unless "$*CWD/../C/".IO.d(:e);
 		shell "cd $*CWD/../C && git pull ";
+	}
+	# onefite-c-code builds and installs minuit, the core and the extensions
+	# itself - safely (a failed build or link test puts the previous engine
+	# back) and the same way onefite-go's doctor does: its README.md,
+	# "Installing the engine safely". Only an older onefite-c-code without
+	# tools/engine.pl goes through the steps below.
+	my $c = "$*CWD/../C";
+	if "$c/tools/engine.pl".IO.f {
+		shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv set" if $pv.so;
+		shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore set" if $perlcore.so;
+		my @args = 'perl', "$c/tools/engine.pl", 'install', '--c-root', $c, '--root', $root,
+			'--minuit-dir', "$*CWD/../minuit", '--minuit-max-params', ~$minuit,
+			'--os', $OS, '--arch', $arch, '--bindir', $bindir,
+			'--perlcore', ($perlcore.so ?? $perlcore !! '/nonexistent'),
+			|extension-args(:$git, :$enable-extensions, :$extension, :$default-extensions, :$extensions-ref, :$extensions-transport);
+		die "installing the engine failed - the previously installed engine, if any, is unchanged\n" if run(|@args).exitcode;
+		my $build-type = EVALFILE("$root/Build.rakumod");
+		$build-type.new.write-site-manifest($root, :$bindir, :strict);
+		return;
 	}
 	note "===> Installing Minuit for a maximum number of parameters: $minuit";
 	my @d506cm-inc="$*CWD/../minuit/minuit/d506cm.inc".IO.lines.map(
@@ -360,6 +381,32 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :
 # fit's makefile includes) and ../C/META-CATALOG.json (the model catalog).
 # A default extension that can't be fetched or built only warns; one named with
 # --extension is an error.
+# The extension options for onefite-c-code's tools/engine.pl, from INSTALL's
+# own: --extension names, the older --enable-extensions spelling (install
+# florence, optionally over http/ssh; =false for none), --no-default-
+# extensions, --extensions-ref/-transport. With none of them engine.pl
+# updates the extensions already installed.
+sub extension-args (:$git, :$enable-extensions = '', :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {
+	my @named = $extension.split(',').map(*.trim).grep(*.chars);
+	my $transport = $extensions-transport;
+	my $defaults = $default-extensions;
+	if $enable-extensions eq 'false' { $defaults = False }
+	elsif $enable-extensions.chars {
+		@named.push('florence') unless @named.first(*.starts-with('florence'));
+		$transport = $enable-extensions if $enable-extensions eq any('http', 'ssh');
+	}
+	if $transport eq 'ssh' {
+		my $auth = run <gh auth status --hostname github.com>, :out, :err;
+		die "ssh transport for extensions requires `gh auth login --git-protocol ssh`\n" unless $auth.exitcode == 0;
+	}
+	my @args = '--ref', $extensions-ref;
+	@args.append: '--transport', $transport if $transport;
+	@args.push: '--no-default-extensions' unless $defaults;
+	@args.append: '--extension', $_ for @named;
+	@args.push: '--no-fetch' unless $git;
+	return @args;
+}
+
 sub install-extensions (:$root, :$git, :$enable-extensions = '', :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {
 	my $c = "$*CWD/../C";
 	unless "$c/tools/extensions.pl".IO.f {
