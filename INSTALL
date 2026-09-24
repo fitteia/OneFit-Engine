@@ -38,8 +38,11 @@ multi MAIN (
 	Bool :$man-page = True; #= Install man page
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Int  :$minuit = 1000, #= Minuit maximum number of parameters: default=1000
-	Str  :$enable-extensions = '', #= build optional external model extensions using http, https, or ssh
-	Str  :$extensions-ref = 'main', #= git ref for optional external model extensions
+	Str  :$enable-extensions = '', #= older spelling: bare = install florence; =http|ssh also picks how registry repositories are reached; =false = --/default-extensions
+	Str  :$extension = '', #= comma-separated extensions to install: NAME (from onefite-c-code's extensions/registry.json) or NAME=URL[@REF]; see onefite-c-code's extensions/README.md
+	Bool :$default-extensions = True, #= install the registry's default extension (public Florence); use --/default-extensions to skip it
+	Str  :$extensions-ref = 'main', #= default git ref for extensions
+	Str  :$extensions-transport = '', #= reach registry repositories over https (default), http or ssh
 	Bool :$post-test is copy = True; #= Run post install tests
 	Bool :p(:$p6-modules) = True, #= attempt to install required Raku modules
    	Int  :$port = 8142, #= onefite service port
@@ -160,7 +163,7 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit, enable-extensions => $enable-extensions, extensions-ref => $extensions-ref ) if $compile;
+   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit, :$enable-extensions, :$extension, :$default-extensions, :$extensions-ref, :$extensions-transport ) if $compile;
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
@@ -310,7 +313,7 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$enable-extensions = '', :$extensions-ref = 'main') {
+sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$enable-extensions = '', :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {
 	if $git {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
@@ -339,38 +342,64 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :
    	say "install source in $*CWD and binaries with perl version: $pv";
   	shell "make OS=$OS MROOT=$root ARCH=$arch PERLVERSION=$pv BINDIR=$bindir install" if $pv.so;
 	shell "make OS=$OS MROOT=$root ARCH=$arch PERLCORE=$perlcore BINDIR=$bindir install" if $perlcore.so;
-	if $enable-extensions && $enable-extensions ne 'false' {
-		my $extensions = "$*CWD/../C/extensions";
-		if $git {
-			my $extensions-url = $enable-extensions eq 'ssh'
-				?? 'git@github.com:fitteia/onefite-ext-florence.git'
-				!! ($enable-extensions eq 'http'
-					?? 'http://github.com/fitteia/onefite-ext-florence.git'
-					!! 'https://github.com/fitteia/onefite-ext-florence.git');
-			if $enable-extensions eq 'ssh' {
-				my $auth = run <gh auth status --hostname github.com>, :out, :err;
-				die "--enable-extensions=ssh requires `gh auth login --git-protocol ssh`\n" unless $auth.exitcode == 0;
-			}
-			shell "git clone {$extensions-url} $extensions" unless $extensions.IO.d;
-			shell "cd $extensions && git fetch origin {$extensions-ref} && git checkout --force {$extensions-ref}";
-		} elsif !$extensions.IO.d {
-			die "--enable-extensions with --no-git requires an existing checkout at $extensions";
-		}
-		shell "make -C $extensions install C_ROOT=$*CWD/../C LIBDIR={$root.IO.add('lib').Str} INCLUDEDIR={$root.IO.add('include/external/florence').Str} METADIR={$root.IO.add('share/doc/onefite-raku').Str}";
-		my $fit-makefile = "$root/etc/OFE/default/makefile";
-		if $fit-makefile.IO.e {
-			my $text = $fit-makefile.IO.slurp;
-			$text = $text.subst('EXTERNAL_MODEL_LIBS ?=', 'EXTERNAL_MODEL_LIBS ?= -lonefit-external-models');
-			$text = $text.subst('EXTERNAL_MODEL_INCLUDES ?=', 'EXTERNAL_MODEL_INCLUDES ?= -I' ~ $root.IO.add('include/external').Str);
-			$fit-makefile.IO.spurt($text);
-		}
-	}
-
 	# MANIFEST describes the committed source distribution and must never be
 	# regenerated from a dirty post-build tree.  Record locally installed
 	# Minuit/OneFit C artifacts in the separate MANIFEST.site instead.
 	my $build-type = EVALFILE("$root/Build.rakumod");
 	$build-type.new.write-site-manifest($root, :$bindir, :strict);
+
+	# After the site manifest on purpose: extensions are optional, site-local
+	# additions, not part of what MANIFEST.site records for the module.
+	install-extensions(:$root, :$git, :$enable-extensions, :$extension, :$default-extensions, :$extensions-ref, :$extensions-transport);
+}
+
+# Extensions are downloaded and built by onefite-c-code itself (its
+# extensions/README.md, tools/extensions.pl, `make extensions`) - the same code
+# onefite-go's doctor uses - so nothing about how one is built is known here.
+# `make extensions` writes $root/etc/extensions.mk (link and include flags every
+# fit's makefile includes) and ../C/META-CATALOG.json (the model catalog).
+# A default extension that can't be fetched or built only warns; one named with
+# --extension is an error.
+sub install-extensions (:$root, :$git, :$enable-extensions = '', :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {
+	my $c = "$*CWD/../C";
+	unless "$c/tools/extensions.pl".IO.f {
+		note "===> this onefite-c-code has no extensions support - skipping extensions";
+		return;
+	}
+	my @named = $extension.split(',').map(*.trim).grep(*.chars);
+	my $transport = $extensions-transport;
+	my $defaults = $default-extensions;
+	# The older spelling, kept working: --enable-extensions[=http|ssh] meant
+	# "install florence over that transport"; =false meant "no extensions".
+	if $enable-extensions eq 'false' { $defaults = False }
+	elsif $enable-extensions.chars {
+		@named.push('florence') unless @named.first(*.starts-with('florence'));
+		$transport = $enable-extensions if $enable-extensions eq any('http', 'ssh');
+	}
+	if $transport eq 'ssh' {
+		my $auth = run <gh auth status --hostname github.com>, :out, :err;
+		die "ssh transport for extensions requires `gh auth login --git-protocol ssh`\n" unless $auth.exitcode == 0;
+	}
+	# Without git there is nothing to download: every named extension must
+	# already be checked out (as the older --enable-extensions --no-git required).
+	unless $git {
+		for @named -> $spec {
+			my $name = $spec.split('=').head;
+			die "--extension $name with --no-git requires an existing checkout at $c/extensions/$name" unless "$c/extensions/$name".IO.d;
+		}
+	}
+	if $git {
+		my @args = 'perl', "$c/tools/extensions.pl", 'fetch', '--c-root', $c, '--ref', $extensions-ref;
+		@args.push: '--no-default-extensions' unless $defaults;
+		@args.push: '--transport', $transport if $transport;
+		@args.push: '--extension', $_ for @named;
+		die "could not fetch the requested extensions" if run(|@args).exitcode;
+	}
+	my $make = run 'make', '-C', $c, 'extensions', "ROOT=$root";
+	if $make.exitcode {
+		die "could not build the requested extensions" if @named;
+		note "===> WARNING: extensions could not be built - continuing without them (run 'make extensions ROOT=$root' in $c to see why)";
+	}
 }
 
 sub uninstall () {
