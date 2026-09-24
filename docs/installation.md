@@ -139,7 +139,7 @@ Use `./INSTALL --help` for the authoritative, current list.
 
 Some models, such as Florence, are kept outside the public
 `onefite-c-code` tree in the separate
-`fitteia/onefite-external-extensions` repository. The public Florence bundle
+`fitteia/onefite-ext-florence` repository. The public Florence bundle
 uses a NAG-free clean-room eigensolver and is licensed separately under
 Artistic 2.0. The original NAG-derived implementation is retained only in a
 private, license-restricted repository for users who already hold the relevant
