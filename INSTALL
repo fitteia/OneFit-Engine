@@ -38,6 +38,10 @@ multi MAIN (
 	Bool :$man-page = True; #= Install man page
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
    	Int  :$minuit = 250, #= Minuit maximum number of parameters: default=250
+	Str  :$extension = '', #= comma-separated extensions to install: NAME (from onefite-c-code's extensions/registry.json) or NAME=URL[@REF]; see onefite-c-code's extensions/README.md
+	Bool :$default-extensions = True, #= install the registry's default extension (public Florence); use --/default-extensions to skip it
+	Str  :$extensions-ref = 'main', #= default git ref for extensions
+	Str  :$extensions-transport = '', #= reach registry repositories over https (default), http or ssh
 	Bool :$post-test is copy = True; #= Run post install tests
 	Bool :p(:$p6-modules) = True, #= attempt to install required Raku modules
    	Int  :$port = 8142, #= onefite service port
@@ -158,7 +162,7 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
-   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit ) if $compile;
+   	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit, :$extension, :$default-extensions, :$extensions-ref, :$extensions-transport ) if $compile;
 
    	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
 
@@ -308,7 +312,7 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
-sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
+sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {
 	if $git {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
    		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
@@ -343,6 +347,38 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit) {
 	# Minuit/OneFit C artifacts in the separate MANIFEST.site instead.
 	my $build-type = EVALFILE("$root/Build.rakumod");
 	$build-type.new.write-site-manifest($root, :$bindir, :strict);
+
+	# After the site manifest on purpose: extensions are optional, site-local
+	# additions, not part of what MANIFEST.site records for the module.
+	install-extensions(:$root, :$git, :$extension, :$default-extensions, :$extensions-ref, :$extensions-transport);
+}
+
+# Extensions are downloaded and built by onefite-c-code itself (its
+# extensions/README.md, tools/extensions.pl, `make extensions`) - the same code
+# onefite-go's doctor uses - so nothing about how one is built is known here.
+# `make extensions` writes $root/etc/extensions.mk (link and include flags every
+# fit's makefile includes) and ../C/META-CATALOG.json (the model catalog).
+# A default extension that can't be fetched or built only warns; one named with
+# --extension is an error.
+sub install-extensions (:$root, :$git, :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {
+	my $c = "$*CWD/../C";
+	unless "$c/tools/extensions.pl".IO.f {
+		note "===> this onefite-c-code has no extensions support - skipping extensions";
+		return;
+	}
+	my @named = $extension.split(',').map(*.trim).grep(*.chars);
+	if $git {
+		my @args = 'perl', "$c/tools/extensions.pl", 'fetch', '--c-root', $c, '--ref', $extensions-ref;
+		@args.push: '--no-default-extensions' unless $default-extensions;
+		@args.push: '--transport', $extensions-transport if $extensions-transport;
+		@args.push: '--extension', $_ for @named;
+		die "could not fetch the requested extensions" if run(|@args).exitcode;
+	}
+	my $make = run 'make', '-C', $c, 'extensions', "ROOT=$root";
+	if $make.exitcode {
+		die "could not build the requested extensions" if @named;
+		note "===> WARNING: extensions could not be built - continuing without them (run 'make extensions ROOT=$root' in $c to see why)";
+	}
 }
 
 sub uninstall () {
