@@ -349,6 +349,8 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon]
                 [--ip=ADDRESS] [-p|--port=PORT] [--test]
                 [-m|--merge-site=BRANCH] [--minuit=COUNT]
                 [--wsl|--macos|--docker] [--apt|--apt-get|--dpkg] [--git]
+                [--extension=SPEC[,SPEC...]] [--/default-extensions]
+                [--extensions-ref=REF] [--extensions-transport=https|http|ssh]
 =end code
 
 Update the current checkout (C<git stash && git pull>, unless C<--no-git>)
@@ -357,6 +359,10 @@ service. C<--minuit> defaults to whatever the currently-built MINUIT already
 supports (read back from its own compiled-in F<d506cm.inc>) rather than a
 fixed number. Git update, compilation, and package update are enabled by
 default. Boolean options can be negated with C<--no-NAME> or C<--/NAME>.
+Extensions (extra model functions, built by onefite-c-code's C<make extensions>)
+are fetched and built too: the default extension (public Florence) unless
+C<--/default-extensions>, plus each C<--extension> given as NAME (from the
+registry) or NAME=URL[@REF]; see F<docs/installation.md>.
 
 =head2 uninstall
 
