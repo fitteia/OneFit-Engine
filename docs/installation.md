@@ -123,40 +123,7 @@ running in Docker and behaves as if `--docker` were passed, which sets
                             building MINUIT from source
 -u, --to-user               install into the user account instead of site-wide
 -m, --merge-site=BRANCH     merge a local model-development branch first
---extension=SPEC[,SPEC...]  install extensions: NAME (from onefite-c-code's
-                            extensions/registry.json) or NAME=URL[@REF]
---/default-extensions       skip the default extension (public Florence)
---extensions-ref=REF        default git ref for extensions (default main)
---extensions-transport=T    https (default), http or ssh for registry repos
 ```
-
-## Extensions
-
-Extensions add model functions without editing the base model library. Each
-one is a git repository cloned to `../C/extensions/<name>`, built by
-`onefite-c-code`'s own `make extensions` (the same code `onefite-go`'s
-`doctor --install` uses, so both runtimes behave alike). `INSTALL` runs it
-after the engine is built; it writes `etc/extensions.mk` (link and include
-flags that every fit's makefile includes) and `../C/META-CATALOG.json` (the
-model catalog `onefite list models` and `onefite help MODEL` read; the base
-`META-C.json` is never edited).
-
-- With no options the registry's default extension (public Florence) is
-  installed. A default that cannot be fetched or built only prints a warning.
-- `--extension NAME` installs another registry entry; `--extension NAME=URL`
-  or `NAME=URL@REF` installs one from any git URL (a private repository, your
-  own). Several may be given comma-separated. One you name that cannot be
-  fetched or built fails the install.
-- Two extensions that provide the same functions (for example a public and a
-  licensed variant of one model) cannot be installed together. One you name with
-  `--extension` that declares the conflict replaces the default, so no extra flag
-  is needed. A conflicting folder left by an earlier install is refused with the
-  fix - remove that folder from `../C/extensions/` and re-run (nothing is
-  deleted for you).
-- Whatever is in `../C/extensions/` is built, so a folder you place there by
-  hand is installed too.
-
-To write your own, see `extensions/README.md` in `onefite-c-code`.
 
 Use `./INSTALL --help` for the authoritative, current list.
 
