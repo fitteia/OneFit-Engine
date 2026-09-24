@@ -1871,7 +1871,7 @@ multi MAIN  ('fit',
 	 Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
      Str  :wf(:$work-folder) is copy = '.',
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
-     Str  :z(:zt(:$zip-to)) = $input-file.IO.extension('').Str,
+     Str  :z(:zt(:$zip-to)) = $input-file.IO.basename.IO.extension('').Str,
 	 *%_
 	    ){
 	my $no-plot = $plot ?? False !! True;
@@ -1893,7 +1893,9 @@ multi MAIN  ('fit',
 		exit(1);
 	} unless $input-file.IO.e;
 	note "===> onefite options: { %_.keys.grep(/^<-[#]>/).map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
-	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
+	# Base name only: an absolute or ../ INPUT-FILE used to nest the work
+	# folder (and its zip) under --work-folder as <wf>/<full/input/path>.
+	my $name = $input-file.IO.basename.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	try {
 		"$work-folder/$name".IO.mkdir;
@@ -1923,8 +1925,8 @@ MSG
 		say $msg;
 		exit(1)
 	}
-	$input-file.IO.copy("$work-folder/$name/$input-file");
-    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+	$input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
+    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
 	if $selected-datasets.so {
 	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/);
 	    $engine.selected-data-set($selected-datasets);
@@ -2009,7 +2011,15 @@ MSG
 
 	$engine.save($to) if $to.defined;
     zip-fit($engine,$work-folder,$name);
-    shell "mv $name.zip $zip-to" unless $name eq $zip-to;
+    # zip-fit writes $work-folder/$name.zip, so the rename must look there
+    # too - a bare "$name.zip" failed whenever the shell was not in
+    # --work-folder (e.g. an agent in onefite-gui's terminal). A relative
+    # --zip-to lands next to it; an absolute one is used as given.
+    unless $name eq $zip-to {
+        my $zip-dst = $zip-to.IO.is-absolute ?? $zip-to !! "$work-folder/$zip-to";
+        shell "mv $work-folder/$name.zip $zip-dst"
+            unless "$work-folder/$name.zip".IO.absolute eq $zip-dst.IO.absolute;
+    }
 	
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
@@ -2029,11 +2039,11 @@ multi MAIN  ('plot',
 	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 	     Str  :wf(:$work-folder) = '.'
 	    ){
-	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
+	    my $name = $input-file.IO.basename.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
-	    $input-file.IO.copy("$work-folder/$name/$input-file");
-	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+	    $input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
+	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
 	    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
 	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
 	    #	    my $engine = Engine.new.path("$work-folder").read($input-file);
@@ -2133,7 +2143,9 @@ sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
 
 sub zip-fit ($engine,$work-folder,$name) {
     my $excluded =  { "$work-folder/$name/" <<~<< <AuxCode.* onefit-user *.h *.c *.o *_ gnu* *.stp> }().join(' ') ;
-    "$name.zip".IO(:e).unlink;
+    # Remove the archive about to be (re)written - not a same-named file in
+    # the current directory, which is what a bare "$name.zip" used to hit.
+    "$work-folder/$name.zip".IO.unlink;
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
 }
