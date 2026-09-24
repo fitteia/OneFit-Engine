@@ -126,53 +126,56 @@ running in Docker and behaves as if `--docker` were passed, which sets
                             building MINUIT from source
 -u, --to-user               install into the user account instead of site-wide
 -m, --merge-site=BRANCH     merge a local model-development branch first
---enable-extensions=MODE    fetch and build the optional external model
-                            extensions bundle: http, https, or ssh
-                            (default: disabled)
---extensions-ref=REF        git ref to check out in the extensions bundle
-                            (default: main)
+--extension=SPEC[,SPEC...]  install extensions: NAME (from onefite-c-code's
+                            extensions/registry.json) or NAME=URL[@REF]
+--/default-extensions       skip the default extension (public Florence)
+--extensions-ref=REF        default git ref for extensions (default main)
+--extensions-transport=T    https (default), http or ssh for registry repos
+--enable-extensions[=MODE]     the older spelling: install florence; =http or =ssh also
+                            picks how registry repositories are reached
 ```
+
+## Extensions
+
+Some models, such as Florence, are kept outside the public `onefite-c-code`
+tree in their own repositories (public Florence: `fitteia/onefite-ext-florence`).
+The public Florence uses a NAG-free clean-room eigensolver and is licensed
+separately under Artistic 2.0. The original NAG-derived implementation is kept
+only in a private, license-restricted repository for users who already hold the
+relevant NAG license; it is marked non-redistributable and needs your own
+access to that repository.
+
+Extensions add model functions without editing the base model library. Each
+one is a git repository cloned to `../C/extensions/<name>`, built by
+`onefite-c-code`'s own `make extensions` (the same code `onefite-go`'s
+`doctor --install` uses, so both runtimes behave alike). `INSTALL` runs it
+after the engine is built; it writes `etc/extensions.mk` (link and include
+flags that every fit's makefile includes) and `../C/META-CATALOG.json` (the
+model catalog `onefite list models` and `onefite help MODEL` read; the base
+`META-C.json` is never edited).
+
+- With no options the registry's default extension (public Florence) is
+  installed. A default that cannot be fetched or built only prints a warning.
+- `--extension NAME` installs another registry entry; `--extension NAME=URL`
+  or `NAME=URL@REF` installs one from any git URL (a private repository, your
+  own). Several may be given comma-separated. One you name that cannot be
+  fetched or built fails the install.
+- Two extensions that provide the same functions (for example a public and a
+  licensed variant of one model) cannot be installed together; the build says
+  so and names both. Remove one folder from `../C/extensions/` and re-run.
+- Whatever is in `../C/extensions/` is built, so a folder you place there by
+  hand is installed too.
+
+- With `--no-git` nothing is downloaded: each extension you name must already be
+  checked out in `../C/extensions/<name>`, and `./INSTALL` only rebuilds them.
+- The older `./INSTALL --enable-extensions[=http|https|ssh] --extensions-ref=REF`
+  still works and means `--extension=florence` (over that transport).
+- The Go/Rust port has the same options: `onefite doctor --install
+  --extension NAME[=URL[@REF]]` - see the `onefite-native` `README.md`.
+
+To write your own, see `extensions/README.md` in `onefite-c-code`.
 
 Use `./INSTALL --help` for the authoritative, current list.
-
-## External model extensions
-
-Some models, such as Florence, are kept outside the public
-`onefite-c-code` tree in the separate
-`fitteia/onefite-ext-florence` repository. The public Florence bundle
-uses a NAG-free clean-room eigensolver and is licensed separately under
-Artistic 2.0. The original NAG-derived implementation is retained only in a
-private, license-restricted repository for users who already hold the relevant
-NAG license. This is a separate mechanism from the [site-branch approach in
-extending-models.md](extending-models.md) - it provides optional model bundles
-instead of adding site-specific models to the core tree.
-
-```bash
-./INSTALL --enable-extensions=https --extensions-ref=main
-```
-
-- `--enable-extensions=https` or `=http` clones over the given protocol;
-  `=ssh` clones via `git@github.com:...` and requires GitHub CLI
-  authentication first (`gh auth login --git-protocol ssh`) - `./INSTALL`
-  checks this and fails fast with a clear error if it's missing.
-- `--extensions-ref=REF` selects the branch/tag/commit to check out in the
-  extensions checkout (default `main`).
-- The public Florence bundle can be cloned over HTTPS without special
-  credentials. A private NAG-derived ref requires access to the separate NAG
-  repository and an appropriate NAG license.
-- With `--no-git`, `./INSTALL` expects `C/extensions` to already exist
-  (no cloning) and only rebuilds/reinstalls it.
-- On success, the extensions' libraries and headers install under the
-  main tree's `lib`/`include/external/florence`, and
-  `etc/OFE/default/makefile` is patched so user model compiles pick up
-  `-lonefit-external-models` and the extension headers automatically.
-- Re-running `./INSTALL --enable-extensions=... ` later re-fetches
-  `--extensions-ref` and rebuilds; omitting the flag on a later run leaves
-  an existing `C/extensions` checkout untouched (it isn't removed).
-
-The Go/Rust port (`onefite-native`) has the equivalent
-`onefite doctor --install --enable-extensions --extensions-ref=REF` - see
-that repo's `README.md`.
 
 ## CERNLIB Minuit
 
