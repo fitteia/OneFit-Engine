@@ -23,7 +23,11 @@ onefite upgrade
 
 The current command can stop the service, run `git stash && git pull`,
 invoke `./INSTALL`, and restart the service. Compilation, Git update, and
-Debian package handling are all enabled by default.
+Debian package handling are all enabled by default. The engine is rebuilt
+through onefite-c-code's `tools/engine.pl` (see [installation](installation.md)):
+the extensions and the Minuit limit recorded in `etc/engine.json` are kept
+unless you pass others, and a failed build leaves the previous engine
+installed.
 
 Useful controls:
 
@@ -90,3 +94,14 @@ resolving an earlier stash keeps adding new ones on top, and it's easy to
 lose track of which one holds real work. Restore the previously-tested
 commit and installation flags, rebuild, and validate. Keep versioned fit
 descriptions so results can be reproduced across engine changes.
+
+The compiled engine has its own one-step undo: when an upgrade's engine
+build fails, the previous engine is already back; to undo an upgrade that
+built but behaves worse, run from the OneFit-Engine checkout
+
+```bash
+perl ../C/tools/engine.pl rollback --c-root ../C --root .
+```
+
+which restores the engine files (libraries, headers, `etc/engine.mk`, the
+model catalog, `etc/engine.json`) as they were before the last install.
