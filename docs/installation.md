@@ -52,6 +52,19 @@ The current installer's defaults include:
 - support up to 1,000 MINUIT internal parameters and 2,000 external slots
   (`--minuit=N` to change).
 
+The engine itself - Minuit, the OneFit C core (`../C`, onefite-c-code) and
+its extensions - is built by onefite-c-code's `tools/engine.pl`, the same
+script onefite-go's `doctor --install` uses (onefite-c-code's README,
+"Installing the engine safely"). It backs up the installed engine files
+first, builds everything, links a test program with every extension, and if
+anything fails puts the previous engine back and stops: a failed install or
+upgrade leaves a working engine. What was installed is recorded in
+`etc/engine.json` (core version and commit, Minuit's commit and parameter
+limit, every extension with its repository and commit); an upgrade with no
+extension options keeps the extensions recorded there. `perl
+../C/tools/engine.pl rollback --c-root ../C --root .` goes back one install.
+An older onefite-c-code without `tools/engine.pl` is built the previous way.
+
 After native compilation, `INSTALL` writes `MANIFEST.site`. Unlike the
 committed source `MANIFEST`, this generated file inventories the Minuit and
 OneFit C libraries, headers, data tables, and helper programs installed in the
@@ -184,8 +197,9 @@ next to the OFE checkout) rather than taken from the Debian `cernlib`
 package, so the maximum number of fitting parameters can be raised past the
 package's built-in limit with `./INSTALL --minuit=N` (default: 1000 internal,
 2,000 external; `onefite
-upgrade` re-uses whatever limit the currently-installed Minuit already has
-unless you override it). `etc/OFE/default/makefile` (used to compile
+upgrade` re-uses the limit the currently-installed Minuit was built with -
+recorded in `etc/engine.json`, or for an engine installed before
+`engine.pl`, read from `minuit/d506cm.inc` - unless you override it). `etc/OFE/default/makefile` (used to compile
 user-defined model code) is set up to link against this from-source
 `libminuit.a`; to go back to the distro package instead, pass `--cernlib` to
 `./INSTALL`/`onefite upgrade`, or edit the `MINUIT` variable in that
