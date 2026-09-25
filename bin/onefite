@@ -356,8 +356,8 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon]
 Update the current checkout (C<git stash && git pull>, unless C<--no-git>)
 and invoke C<INSTALL> with the corresponding options, then restart the
 service. C<--minuit> defaults to whatever the currently-built MINUIT already
-supports (read back from its own compiled-in F<d506cm.inc>) rather than a
-fixed number. Git update, compilation, and package update are enabled by
+supports (the limit recorded in F<etc/engine.json>, or for an engine installed
+before that, its compiled-in F<d506cm.inc>) rather than a fixed number. Git update, compilation, and package update are enabled by
 default. Boolean options can be negated with C<--no-NAME> or C<--/NAME>.
 Extensions (extra model functions, built by onefite-c-code's C<make extensions>)
 are fetched and built too: the default extension (public Florence) unless
@@ -970,8 +970,19 @@ multi MAIN ('upgrade',
       Bool :u(:$to-user) = False, #= install to user
 	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
 ){
-  "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni>= \d+ /);
-  $minuit = $<mni>.Int unless $minuit.defined and $minuit > 0;
+  # The limit the installed MINUIT was built with: onefite-c-code's engine.pl
+  # records it in etc/engine.json and restores d506cm.inc to its committed
+  # value after building, so d506cm.inc only still holds it for an engine
+  # installed before engine.pl.
+  unless $minuit.defined and $minuit > 0 {
+      my $rec = "{ ::('OFE-PATH') }/etc/engine.json".IO;
+      if $rec.e and $rec.slurp ~~ / '"max_params"' \s* ':' \s* $<n>=(\d+) / {
+          $minuit = $<n>.Int;
+      }
+      elsif "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp ~~ /'MNI=' $<mni>= \d+ / {
+          $minuit = $<mni>.Int;
+      }
+  }
   my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
   shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
