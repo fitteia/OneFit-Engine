@@ -146,7 +146,21 @@ running in Docker and behaves as if `--docker` were passed, which sets
 --extensions-transport=T    https (default), http or ssh for registry repos
 --enable-extensions[=MODE]     the older spelling: install florence; =http or =ssh also
                             picks how registry repositories are reached
+--shell-port=PORT           shellinabox port (default 8100)
+--cpu=amd64|arm64           CPU the packages are for (default: detected)
+-c, --/compile              skip compiling and installing the engine core
+-i, --/install              don't install OneFit-Engine as a Raku module
+-s, --/to-site              install the Raku module for this user, not
+                            site-wide (-u implies it)
+-p, --/p6-modules           don't install the required Raku modules
+--/man-page                 don't install the man page
+-U, --Uninstall             uninstall the OneFit-Engine Raku module
 ```
+
+`./INSTALL --help` lists every option. Boolean options that default to on
+are turned off with `--/NAME` (or `--no-NAME`); see also "Important side
+effects" above for `--/git`, `--/dpkg`, `--/web-server`, `--/enable-gs`,
+`--/test` and `--/post-test`.
 
 ## Extensions
 
