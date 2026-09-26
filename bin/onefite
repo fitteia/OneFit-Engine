@@ -557,7 +557,7 @@ curves. Default: 100. I<(create, random, plot; C<fit-expr>/C<fit-file> also
 accept C<--num> and C<-N> as extra aliases for the same option)>
 =item C<--SymbSize>, C<--ssz=NUMBER> - non-negative plot-symbol size.
 Default: C<1.0>. I<(create, fit-expr)>
-=item C<--np>, C<--no-plot> - run without producing plots. I<(fit-expr,
+=item C<--np>, C<--no-plot> (also C<--/plot>) - run without producing plots. I<(fit-expr,
 fit-file; C<random> has the same option spelled C<--inp>/C<--no-plot>
 instead; C<create> never plots and C<plot> always does, so neither has this
 flag)>
@@ -1472,11 +1472,12 @@ multi MAIN ('help',
  
 #!(onefite non-web engine service)
 multi MAIN ('start-engine',
-	    Bool :$plot = True, #= plotting is enabled by default; --no-plot sets it False
+	    Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
+	    Bool :$np = False, #= --np: no plot, the same as --no-plot
 	    Bool :q(:$quiet)=False, #= Don't show log messages
 	    Str  :wf(:$work-folder) = '.', #= onefite engine work folder
 	   ){
-	my $no-plot = $plot ?? False !! True;
+	my $no-plot = !$plot || $np;
     my $supplier = Supplier.new;
     $supplier.Supply.tap: -> $f {
 		start {
@@ -1615,7 +1616,8 @@ multi MAIN  ('random',
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
 	     Str  :dl(:data-label(:$data-labels)),
 	     Bool :g(:$global),
-	     Bool :$plot = True, #= plotting is enabled by default; --no-plot sets it False
+	     Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
+	     Bool :inp(:$np) = False, #= --inp/--np: no plot, the same as --no-plot
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
@@ -1626,7 +1628,7 @@ multi MAIN  ('random',
 	     Str  :wf(:$work-folder) = '.',
 	     Str  :z(:zt(:$zip-to)), #= zip work-folder to zipfile
 	    ){
-	my $no-plot = $plot ?? False !! True;
+	my $no-plot = !$plot || $np;
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
@@ -1678,7 +1680,8 @@ multi MAIN  ('fit',
    	Bool :lx(:logx(:log-x(:xlog(:$loglin)))),
    	Bool :ly(:logy(:log-y(:ylog(:$linlog)))),
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
-	    Bool :$plot = True, #= plotting is enabled by default; --no-plot sets it False
+	    Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
+	    Bool :$np = False, #= --np: no plot, the same as --no-plot
     Int  :n(:num(:N(:Num(:$npts)))) = +100,
 	Bool :mp4(:$mpeg4) = False, #= create a mpeg4 video with All.pdf
     Str  :o(:st(:$save-to)), # write fit settings to json or sav file 
@@ -1702,7 +1705,7 @@ multi MAIN  ('fit',
 	 Str  :z(:zt(:$zip-to)),
 	 *%_
 	    ){
-	my $no-plot = $plot ?? False !! True;
+	my $no-plot = !$plot || $np;
     %_<plot>:delete;
 	$global = True if $hybrid;
 
@@ -1869,7 +1872,8 @@ multi MAIN  ('fit',
      Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	 Bool :mp4(:$mpeg4) = False,
-	     Bool :$plot = True, #= plotting is enabled by default; --no-plot sets it False
+	     Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
+	     Bool :$np = False, #= --np: no plot, the same as --no-plot
      Int  :n(:num(:N(:Num(:$npts)))),
 	 Str  :o(:st(:save-to(:$to))), # write fit settings to .json or .sav file 	     
 	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
@@ -1885,7 +1889,7 @@ multi MAIN  ('fit',
      Str  :z(:zt(:$zip-to)) = $input-file.IO.basename.IO.extension('').Str,
 	 *%_
 	    ){
-	my $no-plot = $plot ?? False !! True;
+	my $no-plot = !$plot || $np;
     %_<plot>:delete;
 
 	$global = True if $hybrid;
