@@ -1777,6 +1777,9 @@ MSG
 	}
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
+    # Apply the selection, as create and a resumed fit do - SelectedDataSet
+    # above is only its record: without this a fresh fit fitted every block.
+    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
     try {
 		 $engine.fit(
 			:hybrid($hybrid),
