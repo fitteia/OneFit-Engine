@@ -8,9 +8,11 @@ say "Compile time: ", now - $time;
 use OneFit;
 use Test;
 
-our constant OFE-PATH="%OFE-PATH%";
+# INSTALL (makefile) puts the install path here; run from a checkout, it is the checkout itself.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
 my $test-path=OFE-PATH ~ "/t";
 my $workfolder="/tmp/OneFit-Engine-test";
+$workfolder.IO.mkdir unless $workfolder.IO.d; # INSTALL creates it; so does a run on its own
 		   
 my class OutputCapture {
     has @!lines;

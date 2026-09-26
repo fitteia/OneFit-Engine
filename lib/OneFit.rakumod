@@ -353,14 +353,19 @@ class Engine is export {
 			my $npars = @pars.elems;
 			my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
 
-			my $file = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc";
-			my $MAX=0;
-			my $m =  $file.IO.slurp.match(
-				/'MNI=' $<MNI> = [\d+]/
-			);
-			$MAX = +$m<MNI>.Num;
-		
-			if $MAX < ($nblocks - 1) * @hybrid-keys.elems + $npars {
+			# MINUIT's parameter limit: the install record (onefite-c-code's
+			# engine.pl writes etc/engine.json and puts d506cm.inc back to its
+			# committed value after building), else - an engine installed
+			# before engine.pl - the minuit checkout's d506cm.inc. Unknown
+			# (neither there): the check is skipped, with a note.
+			my $MAX = 0;
+			my $rec = "{ ::('OFE-PATH') }/etc/engine.json".IO;
+			my $inc = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO;
+			if $rec.e and $rec.slurp ~~ / '"max_params"' \s* ':' \s* (\d+) / { $MAX = +$0 }
+			elsif $inc.e and $inc.slurp ~~ / 'MNI=' (\d+) / { $MAX = +$0 }
+			else { note "===> MINUIT's parameter limit is unknown (no etc/engine.json or minuit/d506cm.inc) - not checked" }
+
+			if $MAX and $MAX < ($nblocks - 1) * @hybrid-keys.elems + $npars {
 				say "\n===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
 				say "===> Adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
 				note "\n===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
