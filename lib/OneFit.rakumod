@@ -426,6 +426,33 @@ class Engine is export {
 		self
 	 }
 
+     # onefit-user writes some files under fixed names in its working folder
+     # - fit-residues-1.res (a one-block run's residues), gnu0.dat/.da_,
+     # gfitn.ptr - so per-block runs started together by .race in $!path took
+     # each other's: a block's saved residues depended on which run wrote last
+     # (identical MIXED runs saved different fit-residues). Each block runs in
+     # its own folder, $!path/.blockN, holding links to the fit folder's files
+     # (so every relative name the run reads resolves); what the run writes
+     # comes back to $!path afterwards, its fit-residues-1.res as
+     # fit-residues-N.res.
+     my @shared-outputs = <fit-residues-1.res gnu0.dat gnu0.da_ gfitn.ptr>;
+     method !run-block(Int $i, Str $command) {
+	 my $dir = "$!path/.block$i".IO;
+	 run 'rm', '-rf', ~$dir;
+	 $dir.mkdir;
+	 for dir($!path) -> $f {
+	     next unless $f.f;
+	     next if $f.basename (elem) @shared-outputs or $f.basename.starts-with('fit-residues-');
+	     $f.absolute.IO.symlink($dir.add($f.basename).Str);
+	 }
+	 shell "cd '$dir' && $command";
+	 for dir($dir) -> $f {
+	     next if $f.l or !$f.f;
+	     $f.rename("$!path/" ~ ($f.basename eq 'fit-residues-1.res' ?? "fit-residues-$i.res" !! $f.basename));
+	 }
+	 run 'rm', '-rf', ~$dir;
+     }
+
      method fit(
 		Bool :$hybrid = False, 
 		Bool :$no-plot,
@@ -502,10 +529,7 @@ class Engine is export {
 
 	 if %!engine<FitType> ~~ /Individual/ {
  	 for (1 .. @!blocks.elems).race {
-			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-		}
-		for 1 .. @!blocks.elems -> $i {
-    		rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
+			self!run-block($_, "./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1");
 		}
 		#for (1 .. @!blocks.elems).race {
 		#	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
@@ -532,7 +556,7 @@ class Engine is export {
 					@!blocks[$_-1].set-data-err() if (@outliers.so || $reduced-chi2);
 				}
 				#say "b :\n","$!path/data{$_}.dat".IO.slurp;
-				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+				self!run-block($_, "./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1");
 		 	}
 			run 'pdftk',
     			|@pdfs,          # flatten list of PDFs into args
@@ -564,12 +588,8 @@ EOT
 	
 			for (1 .. @!blocks.elems).race -> $i {
 				$npts-removed = @!blocks[$i-1].prune( remove => @outliers );
-				shell "cd $!path; ./onefit-user -@fitenv$i.stp -f -pg -ofit{$i}.out data{$i}ro.dat <fit$i.par >fit{$i}.log 2>&1; cp fit-residues-1.res fit-residues-{$i}.res-tmp";
-    			copy "$!path/fit-residues-1.res", "$!path/fit-residues-$i.res-tmp";
+				self!run-block($i, "./onefit-user -@fitenv$i.stp -f -pg -ofit{$i}.out data{$i}ro.dat <fit$i.par >fit{$i}.log 2>&1");
 		 	}
-     	 	for 1 .. @!blocks.elems -> $i {
-    			rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
-			}
 			#for (1 .. @!blocks.elems).race {
 			#	shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
 			#}
@@ -582,7 +602,7 @@ EOT
 		 		self.agr;
 				for (1 .. @!blocks.elems).race -> $i {
 					@!blocks[$i-1].set-data-err( file => "$!path/data{$i}ro.dat", :removed-outliers );
-					shell "cd $!path; ./onefit-user -@fitenv$i.stp -nf -pg -ofit{$i}.out --grbatch=PDF data{$i}ro.dat <fit$i.par >plot{$i}.log 2>&1";
+					self!run-block($i, "./onefit-user -@fitenv$i.stp -nf -pg -ofit{$i}.out --grbatch=PDF data{$i}ro.dat <fit$i.par >plot{$i}.log 2>&1");
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsro.elems) -> $i {
@@ -715,11 +735,7 @@ EOT
 	 self.code(:write,:compile);
 	 if %!engine<FitType> ~~ /Individual/ {
 		for (1 .. @!blocks.elems).race {
-		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-	    	copy "$!path/fit-residues-1.res", "$!path/fit-residues-$_.res-tmp";
-		}
-		for 1 .. @!blocks.elems -> $i {
-		    rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
+		 	self!run-block($_, "./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1");
 		}
 		# for (1 .. @!blocks.elems).race {
 		# shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
@@ -729,7 +745,7 @@ EOT
 	    self.parameters(:read, :from-output, :from-log);
 	    self.agr;
 		for (1 .. @!blocks.elems).race {
-			shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+			self!run-block($_, "./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1");
 		}
 	 }
 	 else {
