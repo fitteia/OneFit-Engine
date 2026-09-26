@@ -1538,7 +1538,7 @@ multi MAIN  ('create',
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-         Int  :n(:Num(:$npts)) = +100, #= number of points in the theoretical curves
+         Int  :n(:num(:N(:Num(:$npts)))) = +100, #= number of points in the theoretical curves
 	     Str  :o(:st(:save-to(:$to))), #= write fit settings and results to json or sav file
 		 Str  :pi(:$plot-if) = "", #= include plot if tag condition when plotting data and fitting curves
 		 Bool :q(:$quiet) = False, #= reduce log output
@@ -1622,7 +1622,7 @@ multi MAIN  ('random',
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Str  :o(:st(:to(:$save-to))), # write fit settings to json or sav file 
-	     Int  :n(:Num(:$npts)) = +100,
+	     Int  :n(:num(:N(:Num(:$npts)))) = +100,
 		 Bool :q(:$quiet) = False,
 	     Str  :t(:$tags),
 	     Str  :wf(:$work-folder) = '.',
@@ -2050,7 +2050,7 @@ multi MAIN  ('plot',
 		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
     	 Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	     Int  :n(:N(:Num(:$npts))),
+	     Int  :n(:num(:N(:Num(:$npts)))),
 	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 	     Str  :wf(:$work-folder) = '.'
 	    ){

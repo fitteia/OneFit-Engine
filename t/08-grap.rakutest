@@ -26,6 +26,10 @@ my class OutputCapture {
 plan 1;
 $time = now;
 my $eng = Engine.new.path("$workfolder").read("$test-path/2/test2.sav");
+# .agr rewrites the fit-curves files a fit leaves (Graphs.rminf): fit this
+# engine first, instead of relying on curves an earlier test left behind -
+# from another fit, and absent when this test runs on its own.
+$eng.fit;
 $eng.blocks(:r).functions(:r).parameters(:r).code(:w,:c).agr;
 
 #$eng.blocks.a.map({ say .Tag;  say to-json( Hash.new($eng.blocks.a[0].parameters.a), :sorted-keys); say to-json(.Graph.Title.h,:sorted-keys); say to-json(.Graph.Curves,:sorted-keys) });
