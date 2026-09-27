@@ -55,6 +55,12 @@ onefite fit 'y(x,a:0,b:1)=a+b*x' line.dat --autoxy --save-to=line-fit.json
 onefite fit line-fit.json --fit-methods='simp scan min minos'   # refit the saved description
 ```
 
+For multi-block files, use `--selected-dataset` (or `--sds`) when a run needs
+an explicit subset, for example `--selected-dataset='20kHz_1,#1-#4,#7'`. TAGs
+match exactly; `#N`/`$N` selects a block in source order and `#N-#M` is an
+inclusive range. Saved `SelectedDataSet`
+metadata does not filter runs unless this option is supplied.
+
 Continue with the [getting-started tutorial](docs/getting-started.md).
 
 ## Documentation
@@ -121,6 +127,6 @@ docs/                        this documentation
 
 ## License
 
-[Artistic License 2.0](LICENSE) (a permanent license will be settled at the
-end of the development process; `META6.json` and `LICENSE` should always
-agree with this statement).
+[Artistic License 2.0](LICENSE). The license declared in `META6.json` and
+provided in `LICENSE` applies to this repository. Third-party components,
+including Minuit and optional model extensions, retain their own licenses.

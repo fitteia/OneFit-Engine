@@ -44,7 +44,7 @@ write-sav($tmp, %engine);
 is-deeply read-sav($tmp), from-sav($encoded), 'file API round-trips';
 $tmp.unlink;
 
-my %real = read-sav('t/5/test5.sav');
+my %real = read-sav($?FILE.IO.parent.add('5/test5.sav').Str); # found from this file, whatever the cwd
 is-deeply %real<Tags>, ['15kHz_1', '300MHz'], 'real repeated Tags decode correctly';
 ok %real<Dados>.contains("# DATA dum=1.5e4 \n# TAG = 15kHz_1\n"), 'real large Dados field decodes';
 

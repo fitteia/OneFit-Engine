@@ -51,6 +51,13 @@ Practical implications:
   `META-C.json`) means committing in the **`onefite-c-code` checkout**
   (`../C`), not in this repo. See `docs/extending-models.md`.
 - `git log`/`git blame` in this repo won't show C-model history.
+- Extra models can also be **extensions** (`../C/extensions/<name>`, built by
+  `make extensions` in the `onefite-c-code` checkout, written up in its
+  `extensions/README.md`): `INSTALL --extension=...` / `--/default-extensions`
+  fetch and build them, and `etc/extensions.mk` + `../C/META-CATALOG.json` are
+  the only two things this repo reads from them (`catalog-file()` in
+  `bin/onefite`, the `-include` in `etc/OFE/default/makefile`). Extension
+  logic lives in `onefite-c-code/tools/extensions.pl`, not here.
 - `jq empty C/META-C.json` and similar checks run against the sibling
   checkout's path, resolved relative to wherever `OFE-PATH` points.
 

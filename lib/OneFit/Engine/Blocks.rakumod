@@ -71,13 +71,15 @@ class Block is export {
 	    }
 	    elsif $line.contains(/fit <ws> if/) {
 			$line ~~ /'#' <ws> fit <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;
-			$!fstep = $<s>;
+			# A step of 0 never advanced select's loop (it hung): a step
+			# below 1 means every row, as 1.
+			$!fstep = (($<s> // 1).Int, 1).max;
 			$!fcond = $<c>.Str.trim;
 			$!fcondition = compile-condition($!fcond);
 	    }
 	    elsif $line.contains(/plot <ws> if/) {
 			$line ~~ /'#' <ws> plot <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;
-			$!pstep = $<s>;
+			$!pstep = (($<s> // 1).Int, 1).max; # as fstep
 			$!pcond = $<c>.Str.trim;
 			$!pcondition = compile-condition($!pcond);
 	    }

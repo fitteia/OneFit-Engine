@@ -14,6 +14,8 @@ class Engine is export {
     has @!blocks;
     has @!par-tables;
     has @!Functions;
+    has @!selected-data-override;
+    has Bool $!selected-data-override-set = False;
     has $!path = '.';
     has $!fit-methods = "simp scan min minos";
     
@@ -54,6 +56,35 @@ class Engine is export {
     multi method get () { %!engine }
     multi method set (%e) { %!engine=%e; self }
     multi method Num ($npts) { %!engine<Num>=$npts }
+
+    # SelectedDataSet is metadata in saved files. Apply it only when the
+    # caller explicitly requests a runtime subset with the CLI option.
+    method selected-data-tags () {
+	my $raw = $!selected-data-override-set
+	    ?? @!selected-data-override !! %!engine<Tags>;
+	return () unless $raw.defined;
+	$raw ~~ Positional ?? $raw.List !! $raw.Str.split(/\s*','\s*/)
+    }
+
+    method selected-data-set (*@tags) {
+	@!selected-data-override = @tags.flatmap({ .Str.split(/\s*','\s*/) });
+	$!selected-data-override-set = True;
+	self
+	}
+
+	# Accept one-based ordinal selectors (#N or $N), including inclusive
+	# ranges such as #1-#4. The dollar alias is useful in shell-oriented
+	# workflows; exact TAG matching is still checked before this parser.
+	 sub selected-ordinal-range(Str:D $selector) {
+		my $text = $selector.trim;
+		return Nil unless $text ~~ /^ <[\#\$]> \d+ ( '-' <[\#\$]>? \d+ )? $/;
+		my @parts = $text.substr(1).split('-');
+		my $first = @parts[0].Int;
+		my $last = @parts.elems == 2 ?? @parts[1].subst(/^<[\#\$]>/, '').Int !! $first;
+		return Nil unless $first > 0 && $last > 0;
+		($first, $last) = ($last, $first) if $first > $last;
+		($first, $last)
+	 }
 	
 	method add-to-hash (*%h) { %!engine{ %h.keys } = %h.values } 
 
@@ -90,11 +121,14 @@ class Engine is export {
 	    	my @arr = ($data.Bool) ??  $data.split( /'#' <ws> DATA <ws>/) !! %!engine<Dados>.split( /'#' <ws> DATA <ws>/);
 	    	@!blocks = gather {
 			my $i=0;
-			for @arr[1 ..^ @arr.elems].hyper {
-		    	$_ ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
+			for @arr[1 ..^ @arr.elems].pairs.hyper -> $block {
+			    my $ordinal = $block.key + 1; # public selector is 1-based (#N)
+			    my $chunk = $block.value;
+			    $chunk ~~ /TAG <ws> \= <ws> $<tag>=(<-[\n]>+)\n/;
+			    my $tag = $<tag>.Str;
 		    	if $All {
 					try {
-						take Block.new.read( '# DATA ' ~ $_,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
+						take Block.new.read( '# DATA ' ~ $chunk,:quiet($quiet), :ssz(%!engine<SymbSize>) ).No($i++).path($!path);
 						CATCH {
 							default {
 								die "Error reading block" ~.Str;
@@ -103,20 +137,25 @@ class Engine is export {
 					}
 		    	}
 		    	else {
-					if $<tag>.Str eq (%!engine<SelectAll> or any %!engine<Tags>.Slip) {
-			    		if $fit.defined {
-							take Block.new.No($i++).read('# DATA ' ~ $_, :fit, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
-			    		}
-			    		if $plot.defined {
-							take Block.new.No($i++).read('# DATA ' ~ $_, :plot, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
-			    		}
-			    			if none($fit,$plot) {
-								take Block.new.No($i++).read('# DATA ' ~ $_, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+					my @selected = self.selected-data-tags;
+					if %!engine<SelectAll> || any @selected.map({
+						my $selector = .Str;
+						my $range = selected-ordinal-range($selector);
+						$selector eq $tag || ($range.defined && $ordinal >= $range[0] && $ordinal <= $range[1])
+					}) {
+						if $fit.defined {
+							take Block.new.No($i++).read('# DATA ' ~ $chunk, :fit, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+						}
+						if $plot.defined {
+							take Block.new.No($i++).read('# DATA ' ~ $chunk, :plot, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
+						}
+						if none($fit,$plot) {
+							take Block.new.No($i++).read('# DATA ' ~ $chunk, :quiet($quiet), :ssz(%!engine<SymbSize>) ).path($!path);
 			    			}
 					}
 					else {
 			    			if $verbose.Bool {
-								$*ERR.say($<tag>.Str, " not selected in list ", %!engine<Tags>.Slip.join(" "))
+								$*ERR.say($<tag>.Str, " not selected in list ", self.selected-data-tags.join(" "))
 			    			}
 					}
 		    	}
@@ -314,14 +353,19 @@ class Engine is export {
 			my $npars = @pars.elems;
 			my @hybrid-keys = @pars.pairs.grep({ .value ~~ /_$/ })>>.key;
 
-			my $file = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc";
-			my $MAX=0;
-			my $m =  $file.IO.slurp.match(
-				/'MNI=' $<MNI> = [\d+]/
-			);
-			$MAX = +$m<MNI>.Num;
-		
-			if $MAX < ($nblocks - 1) * @hybrid-keys.elems + $npars {
+			# MINUIT's parameter limit: the install record (onefite-c-code's
+			# engine.pl writes etc/engine.json and puts d506cm.inc back to its
+			# committed value after building), else - an engine installed
+			# before engine.pl - the minuit checkout's d506cm.inc. Unknown
+			# (neither there): the check is skipped, with a note.
+			my $MAX = 0;
+			my $rec = "{ ::('OFE-PATH') }/etc/engine.json".IO;
+			my $inc = "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO;
+			if $rec.e and $rec.slurp ~~ / '"max_params"' \s* ':' \s* (\d+) / { $MAX = +$0 }
+			elsif $inc.e and $inc.slurp ~~ / 'MNI=' (\d+) / { $MAX = +$0 }
+			else { note "===> MINUIT's parameter limit is unknown (no etc/engine.json or minuit/d506cm.inc) - not checked" }
+
+			if $MAX and $MAX < ($nblocks - 1) * @hybrid-keys.elems + $npars {
 				say "\n===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
 				say "===> Adjust the number of data files in your hybrid fit or reinstall OFE with  MAX=Num --minuit=Num";
 				note "\n===> The number of fitting parameters exceeds the maximum in your minuit settings: $MAX";
@@ -381,6 +425,33 @@ class Engine is export {
 		}
 		self
 	 }
+
+     # onefit-user writes some files under fixed names in its working folder
+     # - fit-residues-1.res (a one-block run's residues), gnu0.dat/.da_,
+     # gfitn.ptr - so per-block runs started together by .race in $!path took
+     # each other's: a block's saved residues depended on which run wrote last
+     # (identical MIXED runs saved different fit-residues). Each block runs in
+     # its own folder, $!path/.blockN, holding links to the fit folder's files
+     # (so every relative name the run reads resolves); what the run writes
+     # comes back to $!path afterwards, its fit-residues-1.res as
+     # fit-residues-N.res.
+     my @shared-outputs = <fit-residues-1.res gnu0.dat gnu0.da_ gfitn.ptr>;
+     method !run-block(Int $i, Str $command) {
+	 my $dir = "$!path/.block$i".IO;
+	 run 'rm', '-rf', ~$dir;
+	 $dir.mkdir;
+	 for dir($!path) -> $f {
+	     next unless $f.f;
+	     next if $f.basename (elem) @shared-outputs or $f.basename.starts-with('fit-residues-');
+	     $f.absolute.IO.symlink($dir.add($f.basename).Str);
+	 }
+	 shell "cd '$dir' && $command";
+	 for dir($dir) -> $f {
+	     next if $f.l or !$f.f;
+	     $f.rename("$!path/" ~ ($f.basename eq 'fit-residues-1.res' ?? "fit-residues-$i.res" !! $f.basename));
+	 }
+	 run 'rm', '-rf', ~$dir;
+     }
 
      method fit(
 		Bool :$hybrid = False, 
@@ -458,10 +529,7 @@ class Engine is export {
 
 	 if %!engine<FitType> ~~ /Individual/ {
  	 for (1 .. @!blocks.elems).race {
-			shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-		}
-		for 1 .. @!blocks.elems -> $i {
-    		rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
+			self!run-block($_, "./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1");
 		}
 		#for (1 .. @!blocks.elems).race {
 		#	shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
@@ -488,7 +556,7 @@ class Engine is export {
 					@!blocks[$_-1].set-data-err() if (@outliers.so || $reduced-chi2);
 				}
 				#say "b :\n","$!path/data{$_}.dat".IO.slurp;
-				shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+				self!run-block($_, "./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1");
 		 	}
 			run 'pdftk',
     			|@pdfs,          # flatten list of PDFs into args
@@ -520,12 +588,8 @@ EOT
 	
 			for (1 .. @!blocks.elems).race -> $i {
 				$npts-removed = @!blocks[$i-1].prune( remove => @outliers );
-				shell "cd $!path; ./onefit-user -@fitenv$i.stp -f -pg -ofit{$i}.out data{$i}ro.dat <fit$i.par >fit{$i}.log 2>&1; cp fit-residues-1.res fit-residues-{$i}.res-tmp";
-    			copy "$!path/fit-residues-1.res", "$!path/fit-residues-$i.res-tmp";
+				self!run-block($i, "./onefit-user -@fitenv$i.stp -f -pg -ofit{$i}.out data{$i}ro.dat <fit$i.par >fit{$i}.log 2>&1");
 		 	}
-     	 	for 1 .. @!blocks.elems -> $i {
-    			rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
-			}
 			#for (1 .. @!blocks.elems).race {
 			#	shell "cd $!path; mv fit-residues-{$_}.res-tmp fit-residues-{$_}.res" ;
 			#}
@@ -538,7 +602,7 @@ EOT
 		 		self.agr;
 				for (1 .. @!blocks.elems).race -> $i {
 					@!blocks[$i-1].set-data-err( file => "$!path/data{$i}ro.dat", :removed-outliers );
-					shell "cd $!path; ./onefit-user -@fitenv$i.stp -nf -pg -ofit{$i}.out --grbatch=PDF data{$i}ro.dat <fit$i.par >plot{$i}.log 2>&1";
+					self!run-block($i, "./onefit-user -@fitenv$i.stp -nf -pg -ofit{$i}.out --grbatch=PDF data{$i}ro.dat <fit$i.par >plot{$i}.log 2>&1");
 		 		}
 				my @pdfsro = @pdfs>>.subst(/\.pdf/,"")  >>~>> 'ro.pdf';
     			for (0 ..^ @pdfsro.elems) -> $i {
@@ -671,11 +735,7 @@ EOT
 	 self.code(:write,:compile);
 	 if %!engine<FitType> ~~ /Individual/ {
 		for (1 .. @!blocks.elems).race {
-		 	shell "cd $!path; ./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1; cp fit-residues-1.res fit-residues-$_.res-tmp";
-	    	copy "$!path/fit-residues-1.res", "$!path/fit-residues-$_.res-tmp";
-		}
-		for 1 .. @!blocks.elems -> $i {
-		    rename "$!path/fit-residues-$i.res-tmp", "$!path/fit-residues-$i.res";
+		 	self!run-block($_, "./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1");
 		}
 		# for (1 .. @!blocks.elems).race {
 		# shell "cd $!path; mv fit-residues-$_.res-tmp fit-residues-$_.res" ;
@@ -685,7 +745,7 @@ EOT
 	    self.parameters(:read, :from-output, :from-log);
 	    self.agr;
 		for (1 .. @!blocks.elems).race {
-			shell "cd $!path; ./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1";
+			self!run-block($_, "./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1");
 		}
 	 }
 	 else {
