@@ -49,6 +49,7 @@ examples/command-line/09-raku2javascript.me
 examples/command-line/10-stelar-hdf5-raku.me
 examples/command-line/test-data/C12-60.zip
 lib/OneFit.rakumod
+lib/OneFit/Batch.rakumod
 lib/OneFit/Condition.rakumod
 lib/OneFit/Engine/Agrs.rakumod
 lib/OneFit/Engine/Archive.rakumod
@@ -107,6 +108,7 @@ t/12/p96.json
 t/13-sav.rakutest
 t/14-condition.rakutest
 t/15-build-manifest.rakutest
+t/16-batch.rakutest
 t/2/fitenv.stp
 t/2/test2-fixed-all.par
 t/2/test2-fixed-none.par
