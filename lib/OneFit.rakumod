@@ -283,7 +283,14 @@ class Engine is export {
 			@!blocks[$i-1].parameters=$parameters;
 			if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all, :fit-methods($!fit-methods) ) }
 			else {$parameters.parfile.write($parameters.a, No => $i, :fit-methods($!fit-methods) ) }
-			self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
+			# The scalar PvalN take one block's fitted values: with an explicit
+			# selection (--selected-dataset, e.g. #2 or #1-#2, which no Tag
+			# contains) the first selected block, as the Go port does; else the
+			# block whose Tag contains SelectedDataSet.
+			my $representative = $!selected-data-override-set
+			    ?? $i == 1
+			    !! @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>);
+			self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool) and $representative;
 			@!blocks[$i-1].chi2=$parameters.output{"chi2\[1\]"} if $parameters.output{"chi2\[1\]"};
 	    }
 	}

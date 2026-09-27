@@ -1579,7 +1579,7 @@ multi MAIN  ('create',
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
-    %e<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
+    %e<SelectedDataSet> = $selected-datasets if $selected-datasets.so; # as given - a string, as in the Go port and GUI files
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
 
@@ -1765,7 +1765,7 @@ MSG
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
-    %e<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
+    %e<SelectedDataSet> = $selected-datasets if $selected-datasets.so; # as given - a string, as in the Go port and GUI files
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
 
@@ -1946,7 +1946,7 @@ MSG
 	$input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
     my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
 	if $selected-datasets.so {
-	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/);
+	    $engine.h<SelectedDataSet> = $selected-datasets;
 	    $engine.selected-data-set($selected-datasets);
 	}
 
@@ -2063,7 +2063,7 @@ multi MAIN  ('plot',
 	    $input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
 	    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
-	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
+	    $engine.h<SelectedDataSet> = $selected-datasets if $selected-datasets.so;
 	    #	    my $engine = Engine.new.path("$work-folder").read($input-file);
 	    $engine.Num($npts) if $npts.Bool;
 	    $engine.plot(
