@@ -349,14 +349,20 @@ onefite upgrade [-u|--to-user] [-c|--compile] [-d|--systemd-daemon]
                 [--ip=ADDRESS] [-p|--port=PORT] [--test]
                 [-m|--merge-site=BRANCH] [--minuit=COUNT]
                 [--wsl|--macos|--docker] [--apt|--apt-get|--dpkg] [--git]
+                [--extension=SPEC[,SPEC...]] [--/default-extensions]
+                [--extensions-ref=REF] [--extensions-transport=https|http|ssh]
 =end code
 
 Update the current checkout (C<git stash && git pull>, unless C<--no-git>)
 and invoke C<INSTALL> with the corresponding options, then restart the
 service. C<--minuit> defaults to whatever the currently-built MINUIT already
-supports (read back from its own compiled-in F<d506cm.inc>) rather than a
-fixed number. Git update, compilation, and package update are enabled by
+supports (the limit recorded in F<etc/engine.json>, or for an engine installed
+before that, its compiled-in F<d506cm.inc>) rather than a fixed number. Git update, compilation, and package update are enabled by
 default. Boolean options can be negated with C<--no-NAME> or C<--/NAME>.
+Extensions (extra model functions, built by onefite-c-code's C<make extensions>)
+are fetched and built too: the default extension (public Florence) unless
+C<--/default-extensions>, plus each C<--extension> given as NAME (from the
+registry) or NAME=URL[@REF]; see F<docs/installation.md>.
 
 =head2 uninstall
 
@@ -551,7 +557,7 @@ curves. Default: 100. I<(create, random, plot; C<fit-expr>/C<fit-file> also
 accept C<--num> and C<-N> as extra aliases for the same option)>
 =item C<--SymbSize>, C<--ssz=NUMBER> - non-negative plot-symbol size.
 Default: C<1.0>. I<(create, fit-expr)>
-=item C<--np>, C<--no-plot> - run without producing plots. I<(fit-expr,
+=item C<--np>, C<--no-plot> (also C<--/plot>) - run without producing plots. I<(fit-expr,
 fit-file; C<random> has the same option spelled C<--inp>/C<--no-plot>
 instead; C<create> never plots and C<plot> always does, so neither has this
 flag)>
@@ -782,6 +788,14 @@ sub c-code-root() {
     return ::('OFE-PATH') ~ "/C";
 }
 
+# The model catalog: META-CATALOG.json (the base catalog plus every installed
+# extension's functions, written by onefite-c-code's `make extensions`) when it
+# exists, else the plain base META-C.json.
+sub catalog-file() {
+    my $generated = "{ c-code-root() }/META-CATALOG.json";
+    return $generated.IO.f ?? $generated !! "{ c-code-root() }/META-C.json";
+}
+
 #| Get onefite usage help
 multi MAIN (
 	Bool :h(:help($help)) #= help option true by default 
@@ -858,7 +872,7 @@ multi MAIN ('list',
 multi MAIN ('list','models',
       	   Bool :q(:$quiet) = False
 	   ){
-     my $txt = "{ c-code-root() }/META-C.json".IO.slurp;
+     my $txt = catalog-file().IO.slurp;
      say $txt unless $quiet;
      $txt;
 }
@@ -944,6 +958,11 @@ multi MAIN ('upgrade',
       Str  :m(:merge-from(:merge-with(:$merge-site))) = '', #= merge remote onefite main/dev branches with local branch
 	  Bool :$macos = False, #= subset of options for a MacOS native install with brew 
       Int  :$minuit is copy, #= onefite web service port
+      Str  :$enable-extensions = '', #= older spelling of --extension=florence; =http or =ssh also picks how registry repos are reached
+      Str  :$extension = '', #= comma-separated extensions to install: NAME or NAME=URL[@REF] (see INSTALL --help)
+      Bool :$default-extensions = True, #= install the default extension (public Florence); --/default-extensions to skip
+      Str  :$extensions-ref = 'main', #= default git ref for extensions
+      Str  :$extensions-transport = '', #= reach registry repositories over https (default), http or ssh
       Int  :p(:$port) = 8142, #= onefite web service port
       Int  :$shell-port = 8100, #= shellinabox port
       Bool :$shell = False, #= install shellinabox
@@ -951,12 +970,23 @@ multi MAIN ('upgrade',
       Bool :u(:$to-user) = False, #= install to user
 	  Bool :$wsl = False, #= subset of options for a Windows Subsystem Linux
 ){
-  "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni>= \d+ /);
-  $minuit = $<mni>.Int unless $minuit.defined and $minuit > 0;
+  # The limit the installed MINUIT was built with: onefite-c-code's engine.pl
+  # records it in etc/engine.json and restores d506cm.inc to its committed
+  # value after building, so d506cm.inc only still holds it for an engine
+  # installed before engine.pl.
+  unless $minuit.defined and $minuit > 0 {
+      my $rec = "{ ::('OFE-PATH') }/etc/engine.json".IO;
+      if $rec.e and $rec.slurp ~~ / '"max_params"' \s* ':' \s* $<n>=(\d+) / {
+          $minuit = $<n>.Int;
+      }
+      elsif "{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp ~~ /'MNI=' $<mni>= \d+ / {
+          $minuit = $<mni>.Int;
+      }
+  }
   my $p = shell("sudo systemctl list-units | awk \'/^onefite/ \{print \$1\}\'",:out,:err); 
   shell "sudo service onefite stop" if all($systemd-daemon, !$to-user, !$p.exitcode, $p.out.slurp.Bool);
       
-  shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit ";
+  shell "cd { ::('OFE-PATH') }  { '&& git stash && git pull' if $git } && ./INSTALL  { ($git) ?? '' !! '--no-git'  } { ($to-user) ?? '--to-user' !! '' } { '-/c' unless $compile } { '-d' if $systemd-daemon } { $test ?? '--test' !! '--/test' } --ip=$ip --port=$port { ($merge-site.Bool) ?? '-m=' ~ $merge-site !! '' } { '--cernlib' if $cernlib } { '--shell --shell-port=' ~ $shell-port if $shell } { '--wsl' if $wsl } { '--macos' if $macos } { '--docker' if $docker } { '--no-dpkg' unless $dpkg} --minuit=$minuit { "--extension='$extension'" if $extension.chars } { '--/default-extensions' unless $default-extensions } { '--enable-extensions=' ~ $enable-extensions if $enable-extensions } --extensions-ref='$extensions-ref' { "--extensions-transport='$extensions-transport'" if $extensions-transport.chars } ";
 
   MAIN('service','start',:systemd-daemon(all($systemd-daemon,!$to-user)),ip => $ip, port => $port)
 }
@@ -1069,6 +1099,7 @@ multi MAIN ('start-web-engine',
 		       Num points: <input type="text" name="Num" value="100"><br/>
 		       Symbol size: <input type="text" name="SymbSize" value="1.0"><br/>
 		       Fit methods: <input type="text" name="fit-methods" value="simp scan min minos"><br/>
+		       Selected datasets (comma-separated TAGs): <input type="text" name="selected-dataset" value=""><br/>
 		       Data file fitting function: <textarea rows="1" cols="100" name="function" value=""></textarea>
 		       <table>
 		       <tr><td></td><td>yes/no</td></tr>
@@ -1180,6 +1211,7 @@ HTML
 		my $logy= "";
 		my $global="";
 		my $hybrid="";
+		my $individual="";
 		my $mp4="";
 		my $R1 = "";
 		my $R2= "";
@@ -1196,18 +1228,21 @@ HTML
 		my $num   = "--Num=100";
 		my $ssz   = "--SymbSize=1.0";
 		my $fit-methods = "--fit-methods=simp scan min minos";
+		my $selected-datasets = "";
 		my $file-content = $file.body-blob;
 		my @ht-args=();
 #		$filename.IO.spurt: $file-content.decode('UTF-8');
 		if so %rest.kv {
 		   for %rest.kv -> $k, $v {
 		       $fit-methods	      = "--fit-methods={$v.Str}" if $k eq any(<fit-methods fm>);
+		       $selected-datasets = "--selected-dataset={$v.Str}" if $k eq any(<selected-dataset selected-datasets sds>) and $v.Str.Bool;
 		       $function      	      = $v.Str if $k.contains("function");
 		       $num        	      = "--Num={+$v.Str} " if $k eq any(<Num n npts>);
 		       $ssz		      = "--SymbSize={$v.Str} " if $k eq any(<SymbSize ssz>);
 		       $username   	      = $v.Str     if $k eq "username";
 		       $global      	      = "--global" if $k eq any(<global g>)  and $v eq any("yes",1);
 		       $hybrid      	      = "--hybrid" if $k eq any(<hybrid mixed>)  and $v eq any("yes",1);
+		       $individual  	      = "--individual" if $k eq any(<individual i>)  and $v eq any("yes",1);
 		       $mp4      	      = "--mpeg4" if $k eq any(<mpeg4 mp4>)  and $v eq any("yes",1);
 		       $autox      	      = "--autox"  if $k eq any(<autox auto-x ax>)  and $v eq any("yes",1);
 		       $autoy      	      = "--autoy"  if $k eq any(<autoy auto-y ay>)  and $v eq any("yes",1);
@@ -1273,7 +1308,7 @@ HTML
 		    @onefite-args.push($function);
 		    @onefite-args.push($filename);
 		    for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx,
-		        $logy, $R1, $sef-R1-file, $err, $plot-if, $fit-if,
+			    $logy, $R1, $sef-R1-file, $err, $plot-if, $fit-if, $selected-datasets,
 		        $range, $gfilt, $fit-methods, $num, $ssz,
 		        $remove-outliers, $reduced-chi2, $R2, $print-cols, $no-plot -> $flag {
 		        @onefite-args.push($flag.trim) if $flag.trim.chars;
@@ -1286,11 +1321,11 @@ HTML
 		}
 		else {
 		    @onefite-args.push($filename);
-		    for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx,
-		        $logy, $fit-methods, $num, $reduced-chi2, $R2,
-		        $print-cols, $no-plot -> $flag {
-		        @onefite-args.push($flag.trim) if $flag.trim.chars;
-		    }
+
+			for $mp4, $global, $hybrid, $individual, $autox, $autoy, $autoxy, $logx, $logy, $fit-methods, $num, $reduced-chi2, $R2, $print-cols, $selected-datasets, $no-plot -> $flag {
+				@onefite-args.push($flag.trim) if $flag.trim.chars;
+			}
+
 		    @onefite-args.append: @ht-args.grep(*.chars);
 		    @onefite-args.push: "--work-folder={$work-folder.Str}";
 		    @onefite-args.push:
@@ -1405,7 +1440,7 @@ multi MAIN ('help',
     my @list = dir(c-code-root() ~ "/local");
     @list.push: dir(c-code-root() ~ "/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    my %meta-c = from-json( "{ c-code-root() }/META-C.json".IO.slurp );
+    my %meta-c = from-json( catalog-file().IO.slurp );
 	#my %info = %meta-c{ @list.grep(/ <?wb> $model <?wb> /).Str // $model };
     my %info;
    	try {	%info = %meta-c{ $model }; }
@@ -1424,7 +1459,7 @@ multi MAIN ('help',
     my @list = dir(c-code-root() ~ "/local");
     @list.push: dir(c-code-root() ~ "/core/onefit-3.1/modelos").Slip;
     @list = @list.grep(*.f).grep(/\.c/)>>.basename>>.IO>>.extension('').sort;
-    my %meta-c = from-json( "{ c-code-root() }/META-C.json".IO.slurp );
+    my %meta-c = from-json( catalog-file().IO.slurp );
     my %info;
    	try {	%info = %meta-c{ $model }; }
 	if $! { %info<error> = "===> $model not found in the library's' list"; }
@@ -1437,10 +1472,12 @@ multi MAIN ('help',
  
 #!(onefite non-web engine service)
 multi MAIN ('start-engine',
-	    Bool :np(:$no-plot), #= no plot
+	    Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
+	    Bool :$np = False, #= --np: no plot, the same as --no-plot
 	    Bool :q(:$quiet)=False, #= Don't show log messages
 	    Str  :wf(:$work-folder) = '.', #= onefite engine work folder
 	   ){
+	my $no-plot = !$plot || $np;
     my $supplier = Supplier.new;
     $supplier.Supply.tap: -> $f {
 		start {
@@ -1501,7 +1538,7 @@ multi MAIN  ('create',
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-         Int  :n(:Num(:$npts)) = +100, #= number of points in the theoretical curves
+         Int  :n(:num(:N(:Num(:$npts)))) = +100, #= number of points in the theoretical curves
 	     Str  :o(:st(:save-to(:$to))), #= write fit settings and results to json or sav file
 		 Str  :pi(:$plot-if) = "", #= include plot if tag condition when plotting data and fitting curves
 		 Bool :q(:$quiet) = False, #= reduce log output
@@ -1511,6 +1548,7 @@ multi MAIN  ('create',
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
 		 Str  :sf(:$sef-R1-file) = "", #= use file to get freqs when importing data from Stelar sef files
 	     Str  :t(:$tags), #= Data blocks TAGS
+	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 	     Str  :wf(:$work-folder) = '.', #= set a different work folder
 		 *%_
 	    ){
@@ -1541,6 +1579,7 @@ multi MAIN  ('create',
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
+    %e<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
 
@@ -1552,6 +1591,7 @@ multi MAIN  ('create',
 	}
 
     my $engine = Engine.new.path("$work-folder").set(%e);
+    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
     $engine.blocks(
 	:read,
 	:fit,
@@ -1576,17 +1616,19 @@ multi MAIN  ('random',
    		 Bool :axy(:auto-xy(:$autoxy)),#= auto scale xy
 	     Str  :dl(:data-label(:$data-labels)),
 	     Bool :g(:$global),
-	     Bool :inp(:$no-plot), #= no plot in onefit random ...
+	     Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
+	     Bool :inp(:$np) = False, #= --inp/--np: no plot, the same as --no-plot
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Str  :o(:st(:to(:$save-to))), # write fit settings to json or sav file 
-	     Int  :n(:Num(:$npts)) = +100,
+	     Int  :n(:num(:N(:Num(:$npts)))) = +100,
 		 Bool :q(:$quiet) = False,
 	     Str  :t(:$tags),
 	     Str  :wf(:$work-folder) = '.',
 	     Str  :z(:zt(:$zip-to)), #= zip work-folder to zipfile
 	    ){
+	my $no-plot = !$plot || $np;
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels);
     %e<FitType>="Global" if $global;
     %e<Num>=$npts;
@@ -1638,7 +1680,8 @@ multi MAIN  ('fit',
    	Bool :lx(:logx(:log-x(:xlog(:$loglin)))),
    	Bool :ly(:logy(:log-y(:ylog(:$linlog)))),
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
-   	Bool :np(:$no-plot),
+	    Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
+	    Bool :$np = False, #= --np: no plot, the same as --no-plot
     Int  :n(:num(:N(:Num(:$npts)))) = +100,
 	Bool :mp4(:$mpeg4) = False, #= create a mpeg4 video with All.pdf
     Str  :o(:st(:$save-to)), # write fit settings to json or sav file 
@@ -1656,12 +1699,14 @@ multi MAIN  ('fit',
     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0',
 	Str  :sf(:$sef-R1-file) = "",
    	Str  :t(:$tags),
+    Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
     Str  :wf(:$work-folder) is copy = '.',
 	Int	 :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
-   	Str  :z(:zt(:$zip-to)),
-	*%_
-    ){
-
+	 Str  :z(:zt(:$zip-to)),
+	 *%_
+	    ){
+	my $no-plot = !$plot || $np;
+    %_<plot>:delete;
 	$global = True if $hybrid;
 
 	if ( !$parallel )  { 
@@ -1720,6 +1765,7 @@ MSG
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
+    %e<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
 
@@ -1731,6 +1777,9 @@ MSG
 	}
 
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
+    # Apply the selection, as create and a resumed fit do - SelectedDataSet
+    # above is only its record: without this a fresh fit fitted every block.
+    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
     try {
 		 $engine.fit(
 			:hybrid($hybrid),
@@ -1826,7 +1875,8 @@ multi MAIN  ('fit',
      Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   	 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	 Bool :mp4(:$mpeg4) = False,
-     Bool :np(:$no-plot),
+	     Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
+	     Bool :$np = False, #= --np: no plot, the same as --no-plot
      Int  :n(:num(:N(:Num(:$npts)))),
 	 Str  :o(:st(:save-to(:$to))), # write fit settings to .json or .sav file 	     
 	 Str  :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", 
@@ -1836,11 +1886,15 @@ multi MAIN  ('fit',
 	 Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
 	 Str  :ro(:$remove-outliers) = "",
 	 Bool :rc(:rchi2(:$reduced-chi2)) = False, 
+	 Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
      Str  :wf(:$work-folder) is copy = '.',
 	 Int  :$workers = 0, #= set ENV ONEFITE_WORKERS (default = 0)
-     Str  :z(:zt(:$zip-to)) = $input-file.IO.extension('').Str,
+     Str  :z(:zt(:$zip-to)) = $input-file.IO.basename.IO.extension('').Str,
 	 *%_
-    ){
+	    ){
+	my $no-plot = !$plot || $np;
+    %_<plot>:delete;
+
 	$global = True if $hybrid;
 	if ( !$parallel ) { 
 	  	%*ENV<ONEFITE_NO_PARALLEL> = 1  
@@ -1857,7 +1911,9 @@ multi MAIN  ('fit',
 		exit(1);
 	} unless $input-file.IO.e;
 	note "===> onefite options: { %_.keys.grep(/^<-[#]>/).map({ "--" ~ $_ }) } not defined...continue..." if %_.keys.grep(/^<-[#]>/) and !$quiet;
-	my $name = $input-file.subst(/\.sav|\.json/,'',:g);
+	# Base name only: an absolute or ../ INPUT-FILE used to nest the work
+	# folder (and its zip) under --work-folder as <wf>/<full/input/path>.
+	my $name = $input-file.IO.basename.subst(/\.sav|\.json/,'',:g);
 	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	try {
 		"$work-folder/$name".IO.mkdir;
@@ -1887,8 +1943,12 @@ MSG
 		say $msg;
 		exit(1)
 	}
-	$input-file.IO.copy("$work-folder/$name/$input-file");
-	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+	$input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
+    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
+	if $selected-datasets.so {
+	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/);
+	    $engine.selected-data-set($selected-datasets);
+	}
 
 	if %_.keys.grep(/'#'/) {
 		my %e = $engine.h;
@@ -1969,7 +2029,15 @@ MSG
 
 	$engine.save($to) if $to.defined;
     zip-fit($engine,$work-folder,$name);
-    shell "mv $name.zip $zip-to" unless $name eq $zip-to;
+    # zip-fit writes $work-folder/$name.zip, so the rename must look there
+    # too - a bare "$name.zip" failed whenever the shell was not in
+    # --work-folder (e.g. an agent in onefite-gui's terminal). A relative
+    # --zip-to lands next to it; an absolute one is used as given.
+    unless $name eq $zip-to {
+        my $zip-dst = $zip-to.IO.is-absolute ?? $zip-to !! "$work-folder/$zip-to";
+        shell "mv $work-folder/$name.zip $zip-dst"
+            unless "$work-folder/$name.zip".IO.absolute eq $zip-dst.IO.absolute;
+    }
 	
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
 
@@ -1985,14 +2053,17 @@ multi MAIN  ('plot',
 		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
     	 Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
   		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-	     Int  :n(:N(:Num(:$npts))),
+	     Int  :n(:num(:N(:Num(:$npts)))),
+	     Str  :sds(:selected-dataset(:$selected-datasets)) = "", #= comma-separated TAG values, #N/$N selectors, or inclusive #N-#M ranges to read
 	     Str  :wf(:$work-folder) = '.'
 	    ){
-	    my $name = $input-file.subst(/\.sav|\.json/,'',:g);
+	    my $name = $input-file.IO.basename.subst(/\.sav|\.json/,'',:g);
 	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
-	    $input-file.IO.copy("$work-folder/$name/$input-file");
-	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$input-file");
+	    $input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
+	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
+	    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
+	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
 	    #	    my $engine = Engine.new.path("$work-folder").read($input-file);
 	    $engine.Num($npts) if $npts.Bool;
 	    $engine.plot(
@@ -2090,7 +2161,9 @@ sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
 
 sub zip-fit ($engine,$work-folder,$name) {
     my $excluded =  { "$work-folder/$name/" <<~<< <AuxCode.* onefit-user *.h *.c *.o *_ gnu* *.stp> }().join(' ') ;
-    "$name.zip".IO(:e).unlink;
+    # Remove the archive about to be (re)written - not a same-named file in
+    # the current directory, which is what a bare "$name.zip" used to hit.
+    "$work-folder/$name.zip".IO.unlink;
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
     shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
 }

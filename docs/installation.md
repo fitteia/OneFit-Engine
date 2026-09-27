@@ -9,6 +9,7 @@ optionally configures system services.
 - [Important side effects](#important-side-effects)
 - [Platform guides](#platform-guides)
 - [Common options](#common-options)
+- [Extensions](#extensions)
 - [CERNLIB Minuit](#cernlib-minuit)
 - [Verify](#verify)
 - [Uninstall](#uninstall)
@@ -48,7 +49,21 @@ The current installer's defaults include:
 - enable PDF-related ImageMagick policy entries;
 - fetch/update the sibling `../minuit` checkout and build it;
 - install the man page;
-- support up to 250 MINUIT parameters (`--minuit=N` to change).
+- support up to 1,000 MINUIT internal parameters and 2,000 external slots
+  (`--minuit=N` to change).
+
+The engine itself - Minuit, the OneFit C core (`../C`, onefite-c-code) and
+its extensions - is built by onefite-c-code's `tools/engine.pl`, the same
+script onefite-go's `doctor --install` uses (onefite-c-code's README,
+"Installing the engine safely"). It backs up the installed engine files
+first, builds everything, links a test program with every extension, and if
+anything fails puts the previous engine back and stops: a failed install or
+upgrade leaves a working engine. What was installed is recorded in
+`etc/engine.json` (core version and commit, Minuit's commit and parameter
+limit, every extension with its repository and commit); an upgrade with no
+extension options keeps the extensions recorded there. `perl
+../C/tools/engine.pl rollback --c-root ../C --root .` goes back one install.
+An older onefite-c-code without `tools/engine.pl` is built the previous way.
 
 After native compilation, `INSTALL` writes `MANIFEST.site`. Unlike the
 committed source `MANIFEST`, this generated file inventories the Minuit and
@@ -114,7 +129,8 @@ running in Docker and behaves as if `--docker` were passed, which sets
 ```text
 -a, --alias='ofe onefit'   install additional command aliases for onefite
 -b, --bindir=DIR           choose the binary installation directory
---minuit=COUNT             maximum MINUIT parameter count (default 250)
+--minuit=COUNT             maximum MINUIT internal parameter count (default 1000;
+                           MNE is twice this value)
 -d, --systemd-daemon       install and enable a systemd unit
 --ip=ADDRESS               service bind address used in generated setup
 --port=PORT                service port (default 8142)
@@ -123,7 +139,68 @@ running in Docker and behaves as if `--docker` were passed, which sets
                             building MINUIT from source
 -u, --to-user               install into the user account instead of site-wide
 -m, --merge-site=BRANCH     merge a local model-development branch first
+--extension=SPEC[,SPEC...]  install extensions: NAME (from onefite-c-code's
+                            extensions/registry.json) or NAME=URL[@REF]
+--/default-extensions       skip the default extension (public Florence)
+--extensions-ref=REF        default git ref for extensions (default main)
+--extensions-transport=T    https (default), http or ssh for registry repos
+--enable-extensions[=MODE]     the older spelling: install florence; =http or =ssh also
+                            picks how registry repositories are reached
+--shell-port=PORT           shellinabox port (default 8100)
+--cpu=amd64|arm64           CPU the packages are for (default: detected)
+-c, --/compile              skip compiling and installing the engine core
+-i, --/install              don't install OneFit-Engine as a Raku module
+-s, --/to-site              install the Raku module for this user, not
+                            site-wide (-u implies it)
+-p, --/p6-modules           don't install the required Raku modules
+--/man-page                 don't install the man page
+-U, --Uninstall             uninstall the OneFit-Engine Raku module
 ```
+
+`./INSTALL --help` lists every option. Boolean options that default to on
+are turned off with `--/NAME` (or `--no-NAME`); see also "Important side
+effects" above for `--/git`, `--/dpkg`, `--/web-server`, `--/enable-gs`,
+`--/test` and `--/post-test`.
+
+## Extensions
+
+Some models, such as Florence, are kept outside the public `onefite-c-code`
+tree in their own repositories (public Florence: `fitteia/onefite-ext-florence`).
+The public Florence uses a NAG-free clean-room eigensolver and is licensed
+separately under Artistic 2.0. The original NAG-derived implementation is kept
+only in a private, license-restricted repository for users who already hold the
+relevant NAG license; it is marked non-redistributable and needs your own
+access to that repository.
+
+Extensions add model functions without editing the base model library. Each
+one is a git repository cloned to `../C/extensions/<name>`, built by
+`onefite-c-code`'s own `make extensions` (the same code `onefite-go`'s
+`doctor --install` uses, so both runtimes behave alike). `INSTALL` runs it
+after the engine is built; it writes `etc/extensions.mk` (link and include
+flags that every fit's makefile includes) and `../C/META-CATALOG.json` (the
+model catalog `onefite list models` and `onefite help MODEL` read; the base
+`META-C.json` is never edited).
+
+- With no options the registry's default extension (public Florence) is
+  installed. A default that cannot be fetched or built only prints a warning.
+- `--extension NAME` installs another registry entry; `--extension NAME=URL`
+  or `NAME=URL@REF` installs one from any git URL (a private repository, your
+  own). Several may be given comma-separated. One you name that cannot be
+  fetched or built fails the install.
+- Two extensions that provide the same functions (for example a public and a
+  licensed variant of one model) cannot be installed together; the build says
+  so and names both. Remove one folder from `../C/extensions/` and re-run.
+- Whatever is in `../C/extensions/` is built, so a folder you place there by
+  hand is installed too.
+
+- With `--no-git` nothing is downloaded: each extension you name must already be
+  checked out in `../C/extensions/<name>`, and `./INSTALL` only rebuilds them.
+- The older `./INSTALL --enable-extensions[=http|https|ssh] --extensions-ref=REF`
+  still works and means `--extension=florence` (over that transport).
+- The Go/Rust port has the same options: `onefite doctor --install
+  --extension NAME[=URL[@REF]]` - see the `onefite-native` `README.md`.
+
+To write your own, see `extensions/README.md` in `onefite-c-code`.
 
 Use `./INSTALL --help` for the authoritative, current list.
 
@@ -132,9 +209,11 @@ Use `./INSTALL --help` for the authoritative, current list.
 Since OFE 0.9.0, Minuit is built from source (in a parallel `minuit/` folder
 next to the OFE checkout) rather than taken from the Debian `cernlib`
 package, so the maximum number of fitting parameters can be raised past the
-package's built-in limit with `./INSTALL --minuit=N` (default: 250; `onefite
-upgrade` re-uses whatever limit the currently-installed Minuit already has
-unless you override it). `etc/OFE/default/makefile` (used to compile
+package's built-in limit with `./INSTALL --minuit=N` (default: 1000 internal,
+2,000 external; `onefite
+upgrade` re-uses the limit the currently-installed Minuit was built with -
+recorded in `etc/engine.json`, or for an engine installed before
+`engine.pl`, read from `minuit/d506cm.inc` - unless you override it). `etc/OFE/default/makefile` (used to compile
 user-defined model code) is set up to link against this from-source
 `libminuit.a`; to go back to the distro package instead, pass `--cernlib` to
 `./INSTALL`/`onefite upgrade`, or edit the `MINUIT` variable in that

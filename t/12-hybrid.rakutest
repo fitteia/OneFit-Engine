@@ -9,9 +9,11 @@ use OneFit;
 use OneFit::Engine::Stpfiles;
 use Test;
 
-our constant OFE-PATH="%OFE-PATH%";
+# INSTALL (makefile) puts the install path here; run from a checkout, it is the checkout itself.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
 
 my $workfolder="/tmp/OneFit-Engine-test";
+$workfolder.IO.mkdir unless $workfolder.IO.d; # INSTALL creates it; so does a run on its own
 my $test-path=OFE-PATH ~ "/t";
 
 my class OutputCapture {
@@ -24,8 +26,17 @@ my class OutputCapture {
 plan 3;
 
 $time = now;
-my @d506cm-inc="{ ::('OFE-PATH') }/../minuit/minuit/d506cm.inc".IO.slurp.match(/'MNI=' $<mni> = \d+/); 
-cmp-ok  $<mni> ,'>=', 225, "hybrid fit test can only be performed when INSTALL ... --minuit=225 ({ now -$time } s)" ; 
+# MINUIT's parameter limit: the install record (onefite-c-code's engine.pl
+# writes etc/engine.json and puts d506cm.inc back to its committed value),
+# else, for an engine installed before engine.pl, minuit's d506cm.inc.
+sub minuit-limit {
+    my $rec = "{ OFE-PATH }/etc/engine.json".IO;
+    return +$0 if $rec.e and $rec.slurp ~~ / '"max_params"' \s* ':' \s* (\d+) /;
+    my $inc = "{ OFE-PATH }/../minuit/minuit/d506cm.inc".IO;
+    return +$0 if $inc.e and $inc.slurp ~~ / 'MNI=' (\d+) /;
+    0
+}
+cmp-ok minuit-limit(), '>=', 225, "hybrid fit test can only be performed when INSTALL ... --minuit=225 ({ now -$time } s)" ; 
 
 $time = now;
 my $eng = Engine.new.path("$workfolder").read("$test-path/12/p96.json").fit( :hybrid ).save("$workfolder/hybrid.json");
