@@ -15,7 +15,10 @@ use OneFit::SAV;
 # passed through .Rat, whose 1e-6 simplification lost accuracy
 # (5.23831e-06 printed as 0.0000052, 4.39105e-12 as 0, 0.0434950601 as
 # 0.043495). The same total as the Go port (onefite-native).
-sub exact-decimal($v --> FatRat) {
+our sub exact-decimal($v --> FatRat) {
+    # a block with no chi2 recorded (fit.out's "0" is falsy, so it is never
+    # stored) counts 0, as the old .sum did
+    return FatRat.new(0, 1) without $v;
     my $s = (~$v).trim;
     if $s ~~ /^ (<[-+]>?) (\d*) ['.' (\d*)]? [<[eE]> (<[-+]>? \d+)]? $/ && ($1.chars || ($2 // '').chars) {
         my $frac = ~($2 // '');
@@ -23,9 +26,9 @@ sub exact-decimal($v --> FatRat) {
         $r *= FatRat.new(10, 1) ** $3.Int if $3.defined;
         return $0 eq '-' ?? -$r !! $r;
     }
-    $v.FatRat
+    (try $v.Numeric.FatRat) // FatRat.new(0, 1)
 }
-sub exact-decimal-str(FatRat $r --> Str) {
+our sub exact-decimal-str(FatRat $r --> Str) {
     my ($n, $d) = $r.nude;
     my ($t, $k) = $d, 0;
     my ($twos, $fives) = 0, 0;
