@@ -38,6 +38,89 @@ sub is-parallel-fits(@pos --> Bool) is export {
     so @pos.elems > 0 && all(@pos.map({ is-complete-fit(~$_) })) && (@pos.elems >= 2 || is-jobs-file(~@pos[0]))
 }
 
+# The canonical name of each fit option spelling (as the Go port's
+# fitFlagAliasCanonical), so a line's --fm replaces the batch's
+# --fit-methods, its --g the batch's --global, and so on.
+my constant %canonical =
+    np => 'no-plot', q => 'quiet', rc => 'reduced-chi2', rchi2 => 'reduced-chi2', eb => 'error-bars',
+    errorbars => 'error-bars', pco => 'R2', peco => 'R2', pearson-correlation => 'R2', g => 'global',
+    fm => 'fit-methods', n => 'num', N => 'num', Num => 'num', npts => 'num', SymbSize => 'symbol-size',
+    ssz => 'symbol-size', data-label => 'data-labels', fi => 'fit-if', pi => 'plot-if', ac => 'aux-code',
+    AC => 'aux-code', AuxCode => 'aux-code', auxcode => 'aux-code', se => 'set-err', err => 'set-err',
+    sf => 'sef-R1-file', r => 'range', e => 'export', i => 'individual', a => 'define-alias',
+    da => 'define-alias', alias => 'define-alias', dali => 'define-alias', o => 'save-to', st => 'save-to',
+    to => 'save-to', ro => 'remove-outliers', lx => 'logx', log-x => 'logx', xlog => 'logx', loglin => 'logx',
+    ly => 'logy', log-y => 'logy', ylog => 'logy', linlog => 'logy', lxy => 'logxy', log-xy => 'logxy',
+    xylog => 'logxy', loglog => 'logxy', ax => 'autox', auto-x => 'autox', ay => 'autoy', auto-y => 'autoy',
+    axy => 'autoxy', auto-xy => 'autoxy', z => 'zip-to', zt => 'zip-to', mpeg4 => 'mp4', pc => 'print-cols',
+    prco => 'print-cols', print-columns => 'print-cols', cols => 'print-cols', rd => 'use-ramdisk',
+    ram => 'use-ramdisk', ramdisk => 'use-ramdisk', RAMDisk => 'use-ramdisk', ar => 'archive',
+    wf => 'work-folder', sds => 'selected-dataset', selected-datasets => 'selected-dataset';
+
+#| An option's canonical name: "--g" is "global", "--/plot" "plot", "--#a=2" "#a".
+sub option-key(Str $opt) is export {
+    my $k = $opt.subst(/^ '-'+ '/'? /, '').split('=', 2)[0];
+    %canonical{$k} // $k
+}
+
+# Options a jobs-file line can't set for itself: where the fit's files go
+# and how the batch runs belong to the whole batch, and --define-alias,
+# --export and --archive aren't for parallel fits at all.
+my constant %line-refused = set <path work-folder jobs use-ramdisk save-to zip-to define-alias export archive>;
+# The three fit modes: one choice - a line naming any of them replaces all
+# three of the batch's for that fit.
+my constant %fit-modes = set <global hybrid individual>;
+
+#| One jobs-file line: TAB-separated fields, the first a saved .json/.sav
+#| or a model, the others its data files and - fields starting with "--" -
+#| its own options. Relative paths are relative to the jobs file's folder.
+sub parse-jobs-line(Str $line, Str $dir) is export {
+    my &resolve = -> $p { $p.IO.is-absolute || $dir eq '.' || $dir eq '' ?? $p !! $dir.IO.add($p).Str };
+    my ($first, @data, @opts);
+    for $line.split("\t").kv -> $i, $f is copy {
+        $f .= trim;
+        if $f eq '' { next }
+        elsif $i > 0 && $f.starts-with('--') { @opts.push($f) }
+        elsif !$first.defined { $first = $f }
+        else { @data.push(resolve($f)) }
+    }
+    my %j;
+    if $first.defined && is-saved-fit($first) {
+        die "a saved fit (.json/.sav) holds its own data - no data files after it: {$line.raku}" if @data;
+        %j = kind => 'saved', model => Str, data => [resolve($first)];
+    }
+    elsif !$first.defined || !@data {
+        die "a line is a saved fit (.json/.sav) or a model and its data files, separated by TABs, then its own --options: {$line.raku}";
+    }
+    else {
+        %j = kind => 'line', model => $first, data => [@data];
+    }
+    my %modes;
+    for @opts -> $o {
+        my $k = option-key($o);
+        die "--$k is for the whole batch, not one line: {$line.raku}" if %line-refused{$k};
+        if %fit-modes{$k} {
+            die "choose a fit mode with --$k alone: {$line.raku}" if $o.starts-with('--/') || $o ~~ / '=' [false|0] $ /;
+            %modes{$k} = True;
+        }
+    }
+    die "one fit mode per line - --global or --individual: {$line.raku}" if !%modes<hybrid> && %modes<global> && %modes<individual>;
+    %j<options> = [@opts];
+    %j<mode> = %modes<hybrid> ?? 'hybrid' !! %modes<global> ?? 'global' !! %modes<individual> ?? 'individual' !! Str;
+    %j
+}
+
+#| The options one fit runs with: the batch's, except those its line sets
+#| itself (all three fit modes when it chooses one), then the line's.
+#| --individual is left out for a model and its data: a fresh fit is
+#| individual unless global, and the fresh fit has no such option.
+sub fit-options(@batch, %j) is export {
+    my %line = (%j<options> // []).map({ option-key($_) => True });
+    my @out = @batch.grep: { my $k = option-key($_); !%line{$k} && !(%j<mode> && %fit-modes{$k}) };
+    @out.append: (%j<options> // []).grep({ %j<kind> eq 'saved' || option-key($_) ne 'individual' });
+    @out
+}
+
 sub stem(Str $p) { $p.IO.basename.subst(/ '.' <-[.]>* $/, '') }
 
 #| A saved fit's base name (run1), else the model's alias - or "fit" for a
@@ -57,6 +140,7 @@ sub name-fit-jobs(@jobs) {
             else { $model = 'fit' }
             $name = $model ~ '-' ~ stem(%j<data>[0]);
         }
+        $name ~= '-' ~ %j<mode> if %j<mode>;
         $name = $name.subst(/ <-[A..Z a..z 0..9 . _ \-]>+ /, '_', :g).subst(/ ^ '_'+ | '_'+ $ /, '', :g);
         $name = 'fit' unless $name;
         %used{$name}++;
@@ -81,17 +165,10 @@ sub parse-fit-jobs(@pos) is export {
                 my $line = $raw.subst(/ \r $ /, '');
                 next if $line.trim eq '' || $line.trim.starts-with('#!');
                 my $where = "$file:$n";
-                unless $line.contains("\t") {
-                    die "$where: a line is a saved fit (.json/.sav) or a model and its data files separated by TABs: {$line.raku}"
-                        unless is-saved-fit($line.trim);
-                    add(%( arg => $where, kind => 'saved', model => Str, data => [$line.trim] ));
-                    next;
-                }
-                my @fields = $line.split("\t");
-                my @data = @fields[1..*].map(*.trim).grep(*.chars);
-                die "$where: a model and at least one data file expected: {$line.raku}"
-                    if @fields[0].trim eq '' || !@data;
-                add(%( arg => $where, kind => 'line', model => @fields[0].trim, data => @data ));
+                my %j = parse-jobs-line($line, $file.IO.dirname);
+                CATCH { default { die "$where: { .message }" } }
+                %j<arg> = $where;
+                add(%j);
             }
         }
         elsif is-packed-job($a) {
@@ -223,6 +300,7 @@ sub run-parallel-fits(@jobs, :@opts, :$save-to, :$zip-to, Str :$base = '.', Int 
               jobs => $par, workers => $workers, options => [@opts],
               fits => [ @jobs.map: -> %j { %(
                   id => %j<id>, arg => %j<arg>, kind => %j<kind>, model => %j<model> // Any, data => [|%j<data>],
+                  options => [|(%j<options> // [])], mode => %j<mode> // Any,
                   name => %j<name>, folder => %j<name>, state => 'queued', exit => Any, error => Any,
                   started => Any, finished => Any, seconds => Any, chi2 => Any,
                   result => Any, zip => Any, pdf => Any, mp4 => Any, plots => Any,
@@ -249,7 +327,7 @@ sub run-parallel-fits(@jobs, :@opts, :$save-to, :$zip-to, Str :$base = '.', Int 
         my &set = -> &fn { $lock.protect({ fn(%man<fits>[$i]); write() }) };
         my $fit-dir = $batch.add(%j<name>);
         my $log = $fit-dir.add('onefite.log');
-        my @argv = |@command, 'fit', "--work-folder=$fit-dir.absolute()", |@opts;
+        my @argv = |@command, 'fit', "--work-folder=$fit-dir.absolute()", |fit-options(@opts, %j);
         @argv.push("--save-to=" ~ $fit-dir.add($save-to.subst('{name}', %j<name>, :g).IO.basename).absolute) if $save-to;
         @argv.push("--zip-to=" ~ $fit-dir.add($zip-to.subst('{name}', %j<name>, :g).IO.basename).absolute) if $zip-to;
         @argv.push(%j<model>) unless %j<kind> eq 'saved';
