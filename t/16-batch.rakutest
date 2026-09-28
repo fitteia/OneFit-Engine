@@ -2,7 +2,7 @@ use Test;
 use JSON::Fast;
 use OneFit::Batch;
 
-plan 12;
+plan 15;
 
 my $tmp = $*TMPDIR.add("onefit-batch-$*PID");
 $tmp.mkdir;
@@ -66,6 +66,7 @@ $fake.spurt(q:to/SH/);
     mkdir -p "$wf/ofe-tmp"
     echo pdf > "$wf/ofe-tmp/All.pdf"
     echo agr > "$wf/ofe-tmp/fit-curves-1.agr"
+    case "$zip" in ""|/*) ;; *) zip="$wf/$zip";; esac
     [ -n "$zip" ] && echo zip > "$zip"
     [ -n "$save" ] && echo '{}' > "$save"
     echo "tchi2 = 1.25e-3"
@@ -177,4 +178,25 @@ subtest 'line options reach the fit', {
     is-deeply %m<fits>[0]<options>.List, ('--individual',), 'batch.json options';
     nok %m<fits>[1]<mode>.defined, 'no mode chosen: null';
     is-deeply %m<fits>[1]<options>.List, (), 'no options: []';
+}
+
+subtest 'fit names never collide', {
+    my @jobs = parse-fit-jobs(<a.json a.json a-2.json a-2.json #2exp,d.dat #2exp,d.dat #2exp,2exp-d-2.json>);
+    is-deeply @jobs.map(*<name>).List, <a a-2 a-2-2 a-2-3 2exp-d 2exp-d-2 2exp-2exp-d-2>, 'names';
+    is @jobs.map(*<name>).unique.elems, @jobs.elems, 'all distinct';
+}
+
+subtest 'file-valued line options are relative to the jobs file', {
+    my %j = parse-jobs-line("y(x,a:0,b:1)=a+b*twice(x)\td.dat\t--aux-code=aux.c, double twice()\t--ac=/abs/x.c\t--sf=r1.sef", '/jobs');
+    is-deeply %j<options>.List, ('--aux-code=/jobs/aux.c, double twice()', '--ac=/abs/x.c', '--sf=/jobs/r1.sef'), 'options';
+    is %j<data>[0], '/jobs/d.dat', 'data';
+}
+
+subtest 'zip-to: bare name for a fresh fit, a path in its folder for a resumed one', {
+    my $base = $tmp.add('zips'); $base.mkdir;
+    run-parallel-fits(parse-fit-jobs(<r.json #2exp,d.dat>), zip-to => '{name}.zip', base => ~$base, jobs => 2, :quiet, command => [~$fake]);
+    my ($dir, %m) = manifest($base);
+    ok $dir.add('r/args').slurp.contains('--zip-to=' ~ $dir.add('r/r.zip').absolute), 'resumed: absolute';
+    ok $dir.add('2exp-d/args').slurp.contains('--zip-to=2exp-d.zip '), 'fresh: bare name';
+    is %m<fits>[1]<zip>, '2exp-d/2exp-d.zip', 'fresh fit zip in batch.json';
 }
