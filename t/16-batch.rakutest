@@ -1,0 +1,202 @@
+use Test;
+use JSON::Fast;
+use OneFit::Batch;
+
+plan 15;
+
+my $tmp = $*TMPDIR.add("onefit-batch-$*PID");
+$tmp.mkdir;
+END { run 'rm', '-rf', ~$tmp if $tmp.defined }
+
+subtest 'recognition', {
+    for (<a.json b.sav>, True), (<a.JSON #2exp,d1.dat>, True), (<#1exp,d.dat #2exp,d.dat>, True), (['@fits.txt'], True),
+        (['a.json'], False), (['#2exp,d.dat'], False), (<#2exp d1.dat>, False), (<#2exp a.json>, False),
+        (<a.json d.dat>, False), (['#2exp\,x'], False), ((), False) -> (@args, $want) {
+        is is-parallel-fits(@args), $want, "{@args.raku}";
+    }
+}
+
+subtest 'packed jobs', {
+    is-deeply split-packed('#2exp,a\,b.dat,c.dat'), ['#2exp', 'a,b.dat', 'c.dat'], 'split, \, kept in a name';
+    ok is-packed-job('#2exp,d.dat'), 'packed';
+    nok is-packed-job('#2exp'), 'an alias alone';
+}
+
+subtest 'jobs and names', {
+    my $jf = $tmp.add('fits.txt');
+    $jf.spurt("#! comment\n\n#2exp\td1.dat\td2.dat\nrun1.json\nA*exp(-x/t)\td1.dat\r\n");
+    my @jobs = parse-fit-jobs(['sub/run1.json', '#2exp,d1.dat', '@' ~ $jf]);
+    is-deeply @jobs.map(*<name>).List, <run1 2exp-d1 2exp-d1-2 run1-2 fit-d1>, 'names';
+    is @jobs[2]<kind>, 'line', 'jobs-file line';
+    is @jobs[2]<model>, '#2exp', 'its model';
+    is-deeply @jobs[2]<data>.List, ($tmp.add('d1.dat').Str, $tmp.add('d2.dat').Str), 'its data, relative to the jobs file';
+    is @jobs[2]<arg>, "$jf:3", 'its origin';
+    $jf.spurt("#2exp d1.dat\n");
+    throws-like { parse-fit-jobs(['@' ~ $jf]) }, Exception, message => /':1'/, 'a line without TABs';
+    throws-like { parse-fit-jobs(['@' ~ $tmp.add('none.txt')]) }, Exception, 'a missing jobs file';
+}
+
+subtest 'options', {
+    my %o = batch-options(%( hybrid => True, wf => 'out', jobs => 2, use-ramdisk => True, o => '{name}.json', '#a' => '2', plot => False ));
+    is-deeply %o<opts>.List, ('--hybrid', '--/plot', '--#a=2'), 'passed on';
+    is %o<save-to>, '{name}.json', 'save-to pattern';
+    nok %o<zip-to>.defined, 'no zip-to';
+    is-deeply batch-options(%( zip-to => '' ))<opts>.List, ('--zip-to=',), 'an empty --zip-to (no zip) is passed on';
+    for %( e => True ), %( archive => True ), %( define-alias => 'q' ), %( zip-to => 'all.zip' ), %( o => 'r.json' ), %( save-to => True ), %( st => '' ) -> %bad {
+        dies-ok { batch-options(%bad) }, "{%bad.raku} refused";
+    }
+}
+
+# fakefit stands in for `onefite fit`: it writes into its --work-folder what
+# a fit would, fails for data named bad*, sleeps for slow*.
+my $fake = $tmp.add('fakefit');
+$fake.spurt(q:to/SH/);
+    #!/bin/sh
+    shift
+    wf=""; zip=""; save=""
+    for a in "$@"; do
+      case "$a" in
+        --work-folder=*) wf="${a#--work-folder=}";;
+        --zip-to=*) zip="${a#--zip-to=}";;
+        --save-to=*) save="${a#--save-to=}";;
+        bad*) echo "some error"; echo "fit failed"; echo "-----"; echo "===> Total execution time (s): 0.1"; exit 3;;
+        slow*) sleep 30;;
+      esac
+    done
+    mkdir -p "$wf/ofe-tmp"
+    echo pdf > "$wf/ofe-tmp/All.pdf"
+    echo agr > "$wf/ofe-tmp/fit-curves-1.agr"
+    case "$zip" in ""|/*) ;; *) zip="$wf/$zip";; esac
+    [ -n "$zip" ] && echo zip > "$zip"
+    [ -n "$save" ] && echo '{}' > "$save"
+    echo "tchi2 = 1.25e-3"
+    echo "${ONEFITE_WORKERS:-unset}" > "$wf/w"
+    echo "$@" > "$wf/args"
+    pwd > "$wf/cwd"
+    SH
+$fake.chmod(0o755);
+
+sub manifest($base) {
+    my @dirs = $base.IO.dir.grep(*.basename.starts-with('batch-'));
+    die "batch folders: {@dirs}" unless @dirs == 1;
+    @dirs[0], from-json(@dirs[0].add('batch.json').slurp)
+}
+
+{
+    my $base = $tmp.add('b1'); $base.mkdir;
+    my @jobs = parse-fit-jobs(['good1.json', '#2exp,bad.dat', '#1exp,d1.dat']);
+    my $code = run-parallel-fits(@jobs, opts => ['--hybrid'], save-to => '{name}.json', zip-to => '{name}.zip',
+                                 base => ~$base, jobs => 2, :quiet, command => [~$fake]);
+    is $code, 1, 'a failed fit: exit 1, the others still run';
+    my ($dir, %m) = manifest($base);
+    subtest 'batch.json', {
+        is %m<version>, 1, 'version';
+        is %m<state>, 'failed', 'state';
+        is %m<jobs>, 2, 'jobs';
+        ok %m<finished>.defined, 'finished';
+        my %f = %m<fits>[0];
+        is %f<state>, 'done', 'fit 1 done';
+        is %f<chi2>, '1.25e-3', 'its chi2';
+        is %f<pdf>, 'good1/ofe-tmp/All.pdf', 'its pdf';
+        is %f<plots>, 'good1/ofe-tmp', 'its plots';
+        is %f<zip>, 'good1/good1.zip', 'its zip';
+        is %f<result>, 'good1/good1.json', 'its result';
+        nok %f<mp4>.defined, 'no mp4';
+        nok %f<model>.defined, 'no model for a saved fit';
+        is %m<fits>[1]<state>, 'failed', 'fit 2 failed';
+        is %m<fits>[1]<exit>, 3, 'its exit status';
+        is %m<fits>[1]<error>, "some error\nfit failed", 'its error, without timing notes and rules';
+        is %m<fits>[2]<name>, '1exp-d1', 'fit 3 name';
+        is %m<fits>[2]<model>, '#1exp', 'fit 3 model';
+        is $dir.add('1exp-d1/cwd').slurp.trim, $*CWD.Str, 'the fits run in the caller\'s folder';
+        is $base.dir.elems, 1, 'nothing written outside the batch folder';
+    }
+}
+
+subtest 'workers', {
+    for (False, /^\d+$/), (True, 'unset') -> ($explicit, $want) {
+        my $base = $tmp.add("w$explicit"); $base.mkdir;
+        my %env = %*ENV; %env<ONEFITE_WORKERS>:delete;
+        run-parallel-fits(parse-fit-jobs(<a.json b.json>), base => ~$base, jobs => 1000, explicit-workers => $explicit,
+                          :quiet, command => [~$fake], :%env);
+        my ($dir, %m) = manifest($base);
+        ok $dir.add('a/w').slurp.trim ~~ $want, "explicit workers $explicit";
+        is %m<jobs>, 2, 'jobs: min(--jobs, fits)';
+    }
+}
+
+{
+    my $base = $tmp.add('stop'); $base.mkdir;
+    my @jobs = parse-fit-jobs(<slow1.json slow2.json q.json>);
+    my $t0 = now;
+    my $p = start run-parallel-fits(@jobs, base => ~$base, jobs => 2, :quiet, command => [~$fake]);
+    sleep 1;
+    run 'kill', '-INT', ~$*PID;
+    my $code = await $p;
+    is $code, 130, 'stopped: exit 130';
+    ok now - $t0 < 10, 'running fits stopped at once';
+    my ($dir, %m) = manifest($base);
+    is-deeply (%m<state>, |%m<fits>.map(*<state>)).List, <stopped stopped stopped stopped>, 'every fit stopped, none started after';
+}
+
+subtest 'line options and fit modes', {
+    my $jf = $tmp.add('modes.txt');
+    $jf.spurt("#2exp\td1.dat\td2.dat\t--hybrid\n#2exp\td1.dat\td2.dat\t--g\n#2exp\td1.dat\td2.dat\n"
+        ~ "#2exp\td1.dat\t--individual\t--fit-methods=simp min\nrun1.json\t--individual\t--#T11_=1e-5\n/abs/d.json\n");
+    my @jobs = parse-fit-jobs(['@' ~ $jf]);
+    is-deeply @jobs.map(*<name>).List, <2exp-d1-hybrid 2exp-d1-global 2exp-d1 2exp-d1-individual run1-individual d>, 'names';
+    is-deeply @jobs.map({ .<mode> // '' }).List, ('hybrid', 'global', '', 'individual', 'individual', ''), 'modes';
+    is @jobs[4]<kind>, 'saved', 'a saved fit with options';
+    is @jobs[4]<data>[0], $tmp.add('run1.json').Str, 'relative to the jobs file';
+    is-deeply @jobs[4]<options>.List, ('--individual', '--#T11_=1e-5'), 'its options';
+    is @jobs[5]<data>[0], '/abs/d.json', 'absolute path kept';
+    my @batch = '--hybrid', '--fm=simp scan min minos', '--#a=1';
+    for (0, ('--fm=simp scan min minos', '--#a=1', '--hybrid')),
+        (1, ('--fm=simp scan min minos', '--#a=1', '--g')),
+        (2, ('--hybrid', '--fm=simp scan min minos', '--#a=1')),
+        (3, ('--#a=1', '--fit-methods=simp min')),
+        (4, ('--fm=simp scan min minos', '--#a=1', '--individual', '--#T11_=1e-5')) -> ($i, @want) {
+        is-deeply fit-options(@batch, @jobs[$i]).List, @want.List, "line {$i + 1} options";
+    }
+    for "#2exp\td1.dat\t--global\t--individual", "#2exp\td1.dat\t--save-to=x.json", "#2exp\td1.dat\t--wf=out",
+        "#2exp\td1.dat\t--jobs=2", "#2exp\td1.dat\t--export", "#2exp\td1.dat\t--hybrid=false", "#2exp\td1.dat\t--/hybrid",
+        "run1.json\td1.dat", "#2exp\t--hybrid" -> $bad {
+        dies-ok { parse-jobs-line($bad, '.') }, "refused: {$bad.raku}";
+    }
+}
+
+subtest 'line options reach the fit', {
+    my $base = $tmp.add('lines'); $base.mkdir;
+    my $jf = $tmp.add('lines.txt');
+    $jf.spurt("#2exp\td1.dat\t--individual\n#2exp\td1.dat\td2.dat\n");
+    run-parallel-fits(parse-fit-jobs(['@' ~ $jf]), opts => ['--hybrid'], base => ~$base, jobs => 2, :quiet, command => [~$fake]);
+    my ($dir, %m) = manifest($base);
+    my $a1 = $dir.add('2exp-d1-individual/args').slurp;
+    ok !$a1.contains('--hybrid') && !$a1.contains('--individual') && $a1.contains($tmp.add('d1.dat').Str), 'individual line: no batch mode, no --individual, its data';
+    ok $dir.add('2exp-d1/args').slurp.contains('--hybrid'), 'a line without a mode keeps the batch mode';
+    is %m<fits>[0]<mode>, 'individual', 'batch.json mode';
+    is-deeply %m<fits>[0]<options>.List, ('--individual',), 'batch.json options';
+    nok %m<fits>[1]<mode>.defined, 'no mode chosen: null';
+    is-deeply %m<fits>[1]<options>.List, (), 'no options: []';
+}
+
+subtest 'fit names never collide', {
+    my @jobs = parse-fit-jobs(<a.json a.json a-2.json a-2.json #2exp,d.dat #2exp,d.dat #2exp,2exp-d-2.json>);
+    is-deeply @jobs.map(*<name>).List, <a a-2 a-2-2 a-2-3 2exp-d 2exp-d-2 2exp-2exp-d-2>, 'names';
+    is @jobs.map(*<name>).unique.elems, @jobs.elems, 'all distinct';
+}
+
+subtest 'file-valued line options are relative to the jobs file', {
+    my %j = parse-jobs-line("y(x,a:0,b:1)=a+b*twice(x)\td.dat\t--aux-code=aux.c, double twice()\t--ac=/abs/x.c\t--sf=r1.sef", '/jobs');
+    is-deeply %j<options>.List, ('--aux-code=/jobs/aux.c, double twice()', '--ac=/abs/x.c', '--sf=/jobs/r1.sef'), 'options';
+    is %j<data>[0], '/jobs/d.dat', 'data';
+}
+
+subtest 'zip-to: bare name for a fresh fit, a path in its folder for a resumed one', {
+    my $base = $tmp.add('zips'); $base.mkdir;
+    run-parallel-fits(parse-fit-jobs(<r.json #2exp,d.dat>), zip-to => '{name}.zip', base => ~$base, jobs => 2, :quiet, command => [~$fake]);
+    my ($dir, %m) = manifest($base);
+    ok $dir.add('r/args').slurp.contains('--zip-to=' ~ $dir.add('r/r.zip').absolute), 'resumed: absolute';
+    ok $dir.add('2exp-d/args').slurp.contains('--zip-to=2exp-d.zip '), 'fresh: bare name';
+    is %m<fits>[1]<zip>, '2exp-d/2exp-d.zip', 'fresh fit zip in batch.json';
+}

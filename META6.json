@@ -13,6 +13,7 @@
   "name": "OneFit-Engine",
   "provides": {
     "OneFit": "lib/OneFit.rakumod",
+    "OneFit::Batch": "lib/OneFit/Batch.rakumod",
     "OneFit::Condition": "lib/OneFit/Condition.rakumod",
     "OneFit::SAV": "lib/OneFit/SAV.rakumod",
     "OneFit::Engine::Agrs": "lib/OneFit/Engine/Agrs.rakumod",
@@ -35,5 +36,5 @@
   "source-url": "git://github.com/fitteia/OneFit-Engine.git",
   "test-depends": [
   ],
-    "version": "0.9.169"
+    "version": "0.9.170"
 }
