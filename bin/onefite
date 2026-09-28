@@ -123,14 +123,20 @@ derived from INPUT-FILE. Use C<--zip-to> to select another archive name.
 The third form runs several independent fits in parallel. Each argument is
 one complete fit: a saved C<.json> or C<.sav> file, a packed model and data
 such as C<'#2exp,d1.dat,d2.dat'> (write a comma inside a file name as
-C<\,>), or C<@FILE>, a jobs file with one fit per line (a saved fit, or a
-model and its data files separated by TABs; blank lines and lines starting
-with C<#!> are ignored). A single packed argument is the ordinary first
-form. The fits run C<--jobs> at a time, each in its own folder F<NAME/> of a
+C<\,>), or C<@FILE>, a jobs file with one fit per line: a saved fit, or a
+model and its data files, separated by TABs, then in further TAB fields that
+fit's own options, one per field (e.g. C<--hybrid>, C<--global>,
+C<--individual>, C<--fit-methods=simp min>, C<--#a=1>). A line's options
+replace the same options of the batch for that fit, and a line that names a
+fit mode replaces the batch's fit mode (its name then ends in C<-hybrid>,
+C<-global> or C<-individual>); where the fits' files go (C<--work-folder>,
+C<--save-to>, C<--zip-to>, C<--jobs>) is for the whole batch. Relative paths
+in a jobs file are relative to its own folder. Blank lines and lines starting
+with C<#!> are ignored. A single packed argument is the ordinary first form. The fits run C<--jobs> at a time, each in its own folder F<NAME/> of a
 new F<WORK-FOLDER/batch-YYYYmmdd-HHMMSS/> (NAME is the saved fit's name, or
 the alias and first data file, e.g. C<2exp-d1>), with its output in
 F<NAME/onefite.log>. F<batch.json> in the batch folder records every fit:
-state, exit status, chi2, time and where its F<All.pdf>, F<All.mp4>, zip and
+state, exit status, chi2, time, its own options and fit mode, and where its F<All.pdf>, F<All.mp4>, zip and
 saved result are. All other options apply to every fit; C<--save-to> and
 C<--zip-to> need a C<{name}> pattern (e.g. C<--save-to={name}.json>), and
 C<--export>, C<--archive> and C<--define-alias> are refused. Unless
