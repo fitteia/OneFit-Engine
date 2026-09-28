@@ -21,6 +21,7 @@ onefite man [-m|--man]
 onefite create FUNCTION [DATA-FILE ...] [OPTIONS]
 onefite fit FUNCTION [DATA-FILE ...] [OPTIONS]
 onefite fit INPUT-FILE [OPTIONS]
+onefite fit FIT FIT ... | @JOBS-FILE [OPTIONS]
 onefite random FUNCTION [DATA-FILE ...] [OPTIONS]
 onefite plot INPUT-FILE [OPTIONS]
 
@@ -96,6 +97,7 @@ is actually performed.
 =begin code :lang<bash>
 onefite fit FUNCTION [DATA-FILE ...] [OPTIONS]
 onefite fit INPUT-FILE [OPTIONS]
+onefite fit FIT FIT ... | @JOBS-FILE [OPTIONS]
 =end code
 
 Run a fit from either a model expression or an existing C<.json>/C<.sav>
@@ -117,6 +119,35 @@ C<--fit-if>, C<--plot-if>, C<--range>, C<--R1>, C<--set-err>, C<--SymbSize>,
 C<--sef-R1-file>, C<--tags>, C<--aux-code>) since the definition already has
 them baked in. By default, it also creates a ZIP archive whose name is
 derived from INPUT-FILE. Use C<--zip-to> to select another archive name.
+
+The third form runs several independent fits in parallel. Each argument is
+one complete fit: a saved C<.json> or C<.sav> file, a packed model and data
+such as C<'#2exp,d1.dat,d2.dat'> (write a comma inside a file name as
+C<\,>), or C<@FILE>, a jobs file with one fit per line: a saved fit, or a
+model and its data files, separated by TABs, then in further TAB fields that
+fit's own options, one per field (e.g. C<--hybrid>, C<--global>,
+C<--individual>, C<--fit-methods=simp min>, C<--#a=1>). A line's options
+replace the same options of the batch for that fit, and a line that names a
+fit mode replaces the batch's fit mode (its name then ends in C<-hybrid>,
+C<-global> or C<-individual>); where the fits' files go (C<--work-folder>,
+C<--save-to>, C<--zip-to>, C<--jobs>) is for the whole batch. Relative paths
+in a jobs file are relative to its own folder. Blank lines and lines starting
+with C<#!> are ignored. A single packed argument is the ordinary first form. The fits run C<--jobs> at a time, each in its own folder F<NAME/> of a
+new F<WORK-FOLDER/batch-YYYYmmdd-HHMMSS/> (NAME is the saved fit's name, or
+the alias and first data file, e.g. C<2exp-d1>), with its output in
+F<NAME/onefite.log>. F<batch.json> in the batch folder records every fit:
+state, exit status, chi2, time, its own options and fit mode, and where its F<All.pdf>, F<All.mp4>, zip and
+saved result are. All other options apply to every fit; C<--save-to> and
+C<--zip-to> need a C<{name}> pattern (e.g. C<--save-to={name}.json>), and
+C<--export>, C<--archive> and C<--define-alias> are refused. Unless
+C<--workers> or C<--no-parallel> is given, each fit gets CPUs / (fits
+running at once) workers. A failed fit does not stop the others; Ctrl-C
+stops the running fits and starts no more.
+
+=begin code :lang<bash>
+onefite fit run1.json run2.json '#2exp,d3.dat' --hybrid --save-to={name}.json
+onefite fit @fits.txt --jobs=2
+=end code
 
 =head2 random
 
@@ -542,6 +573,8 @@ of hybrid/mixed fits (enabled by default). Disabling it sets
 C<ONEFITE_NO_PARALLEL=1> for the process. I<(fit-expr, fit-file)>
 =item C<--workers=INTEGER> - set the worker count for mixed-fit parallelism.
 Positive values set C<ONEFITE_WORKERS> for the process. I<(fit-expr, fit-file)>
+=item C<--jobs=INTEGER> - parallel fits: how many run at once (default: the
+number of CPUs). I<(parallel fits only)>
 =item C<--ar>, C<--archive> - after a successful fit, append the exact
 command line to the local fit archive/log. I<(fit-expr, fit-file)>
 
@@ -630,7 +663,8 @@ parallel fitting workers used for hybrid/mixed fits.
 The command returns zero after successful completion. Invalid input, missing
 files or aliases, generated-code compilation errors, and fitting errors
 return a nonzero status. Some administrative commands delegate their status
-to external programs (C<git>, C<systemctl>, C<zef>, ...).
+to external programs (C<git>, C<systemctl>, C<zef>, ...). Parallel fits
+return 0 when every fit succeeded, 1 when any failed and 130 when stopped.
 
 =SECURITY
 
@@ -757,6 +791,7 @@ use OneFit::Engine::Parfiles;
 use OneFit::Engine::Stpfiles;
 use OneFit::Engine::Import;
 use OneFit::Engine::Archive;
+use OneFit::Batch;
 use Pod::To::Text;
 use Pod::To::Man;
 use Test;
@@ -767,6 +802,14 @@ use Cro::HTTP::Log::File;
 use JSON::Fast;
 
 my %*SUB-MAIN-OPTS =  :named-anywhere, :allow-no, :bundling ;
+
+# `onefite fit '#alias,d1.dat,d2.dat'` - one packed fit alone - is the
+# ordinary `onefite fit '#alias' d1.dat d2.dat`; several complete fits are
+# parallel fits (the MAIN('fit', *@fits ...) below).
+if @*ARGS && @*ARGS[0] eq 'fit' {
+	my @pos = @*ARGS[1..*].grep({ !.starts-with('-') });
+	@*ARGS = @*ARGS.map({ $_ eq @pos[0] ?? |split-packed($_) !! $_ }) if @pos == 1 && is-packed-job(@pos[0]);
+}
 
 proto MAIN(|) { * };
 
@@ -1579,7 +1622,7 @@ multi MAIN  ('create',
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
-    %e<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
+    %e<SelectedDataSet> = $selected-datasets if $selected-datasets.so; # as given - a string, as in the Go port and GUI files
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
 
@@ -1662,7 +1705,7 @@ multi MAIN  ('random',
 }
 
 multi MAIN  ('fit',
-	Str  $function is copy, 
+	Str  $function is copy where { !is-complete-fit($_) }, # else parallel fits, below
    	*@data-files where { @data-files.map({ .IO.e or die("$_ doesn't exist!")}) },
 	Str  :a(:da(:define-alias(:alias(:$dali))))="",
 	Str  :ac(:AC(:AuxCode(:auxcode(:$aux-code)))) = "",
@@ -1707,6 +1750,7 @@ multi MAIN  ('fit',
 	    ){
 	my $no-plot = !$plot || $np;
     %_<plot>:delete;
+	jobs-without-parallel-fits() if %_<jobs>:exists;
 	$global = True if $hybrid;
 
 	if ( !$parallel )  { 
@@ -1765,7 +1809,7 @@ MSG
     my %e = parse-function($function.subst(/\n|\r/,'',:g), @data-files,$data-labels, path => "$work-folder/$name");
     %e<FitMethods> = $fit-methods;
     %e<FitType>="Global" if $global;
-    %e<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
+    %e<SelectedDataSet> = $selected-datasets if $selected-datasets.so; # as given - a string, as in the Go port and GUI files
     %e<Num>=$npts;
     %e<SymbSize>=$ssz.Rat;
 
@@ -1859,7 +1903,7 @@ MSG
 }
 
 multi MAIN  ('fit',
-     Str  $input-file, # name of the (sav or json) to compile
+     Str  $input-file where { !is-jobs-file($_) }, # name of the (sav or json) to compile; @FILE: parallel fits, below
 	 Str  :a(:da(:define-alias(:$dali))) ="",
 	 Bool :ar(:$archive) = False,
    	 Bool :ax(:auto-x(:$autox)),#= auto scale x
@@ -1894,6 +1938,7 @@ multi MAIN  ('fit',
 	    ){
 	my $no-plot = !$plot || $np;
     %_<plot>:delete;
+	jobs-without-parallel-fits() if %_<jobs>:exists;
 
 	$global = True if $hybrid;
 	if ( !$parallel ) { 
@@ -1946,7 +1991,7 @@ MSG
 	$input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
     my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
 	if $selected-datasets.so {
-	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/);
+	    $engine.h<SelectedDataSet> = $selected-datasets;
 	    $engine.selected-data-set($selected-datasets);
 	}
 
@@ -2063,7 +2108,7 @@ multi MAIN  ('plot',
 	    $input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
 	    $engine.selected-data-set($selected-datasets) if $selected-datasets.so;
-	    $engine.h<SelectedDataSet> = $selected-datasets.split(/\s*','\s*/) if $selected-datasets.so;
+	    $engine.h<SelectedDataSet> = $selected-datasets if $selected-datasets.so;
 	    #	    my $engine = Engine.new.path("$work-folder").read($input-file);
 	    $engine.Num($npts) if $npts.Bool;
 	    $engine.plot(
@@ -2126,6 +2171,39 @@ multi MAIN (Bool :v(:$version))
 	return $txt
 }
 
+
+#| run complete fits (saved .json/.sav, '#alias,data...', @jobs-file) in parallel
+multi MAIN ('fit',
+	*@fits where { is-parallel-fits($_) }, # every argument a complete fit
+	Int :$jobs = 0, #= how many fits run at once (default: the number of CPUs)
+	*%_
+	) {
+	my $code = do {
+		CATCH { default { note "onefite: { .message }"; exit 1 } }
+		my @jobs = parse-fit-jobs(@fits);
+		die "no fits to run: the jobs file has no fit lines" unless @jobs;
+		my %o = batch-options(%_);
+		my $base = ~(%_<work-folder> // %_<wf> // '.');
+		$base = create-RAMDisk() if any(%_<rd ram ramdisk RAMDisk use-ramdisk>.map(*.so));
+		# each fit is this program again: the same raku, the same module
+		# paths (-I / RAKULIB), in this folder (relative inputs and
+		# ./aliases.json resolve as for one fit)
+		my %env = %*ENV;
+		my @inc = $*REPO.repo-chain.grep(CompUnit::Repository::FileSystem).map(*.prefix.absolute);
+		%env<RAKULIB> = @inc.join(',') if @inc;
+		my $meta = "{ ::('OFE-PATH') }/META6.json".IO;
+		run-parallel-fits(@jobs, opts => %o<opts>, save-to => %o<save-to>, zip-to => %o<zip-to>,
+			:$base, :$jobs, explicit-workers => so(%_<workers>:exists || (%_<parallel>:exists && !%_<parallel>)),
+			quiet => so(%_<q> || %_<quiet>), command => ($*EXECUTABLE.absolute, $*PROGRAM-NAME), :%env,
+			engine => 'onefite-raku ' ~ ($meta.e ?? from-json($meta.slurp)<version> !! 'unknown'));
+	};
+	exit $code;
+}
+
+sub jobs-without-parallel-fits() {
+	note "onefite: --jobs is for parallel fits: give two or more complete fits (saved .json/.sav files or '#alias,data...') or an @jobs-file";
+	exit 1;
+}
 
 sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
     my %e = OneFit::Engine::Grammars::Function.parse-me($function);

@@ -168,6 +168,64 @@ Parallel fitting of hybrid/mixed data blocks is enabled by default.
 A positive worker count sets `ONEFITE_WORKERS`; `--no-parallel` sets
 `ONEFITE_NO_PARALLEL=1` for the current process. Both only affect `fit`.
 
+## Parallel fits
+
+Several independent fits run in parallel when every argument of `fit` is a
+complete fit: a saved `.json`/`.sav`, a packed `'#alias,data1.dat[,data2.dat]'`
+(a comma inside a file name is written `\,`), or `@FILE`, a jobs file with one
+fit per line - a saved fit, or a model and its data files, separated by TABs,
+then that fit's own options in further TAB fields, one per field (blank lines
+and `#!` lines are ignored). Relative paths in a jobs file are relative to its
+own folder.
+
+```text
+#2exp	d1.dat	d2.dat	--hybrid
+#2exp	d1.dat	d2.dat	--global
+#2exp	d1.dat	--individual
+#2exp	d2.dat	--individual
+y(x,A:1,k:1)=A*exp(-k*x)	d1.dat	--fit-methods=simp min
+run1.json	--#T11_=1e-5
+```
+
+A line's options replace the same options given for the whole batch, for that
+fit only. A line naming a fit mode (`--hybrid`, `--global`, `--individual`)
+replaces the batch's fit mode, and its fit's name ends in `-hybrid`, `-global`
+or `-individual` - so the example compares a hybrid and a global fit of
+`d1.dat` + `d2.dat` with separate fits of each, in one batch. Where the fits'
+files go (`--work-folder`, `--save-to`, `--zip-to`, `--jobs`) is for the whole
+batch, and a line can't set it.
+
+```bash
+onefite fit run1.json run2.json run3.json --hybrid
+onefite fit '#1exp,d1.dat' '#2exp,d1.dat' '#2exp,d2.dat' --save-to={name}.json
+onefite fit @fits.txt --jobs=2 --wf=results
+```
+
+A single packed argument, `onefite fit '#2exp,d1.dat'`, is the ordinary
+`onefite fit '#2exp' d1.dat`.
+
+- The fits run `--jobs` at a time (default: the number of CPUs), each as its
+  own `onefite fit` in the current folder, so relative paths and
+  `./aliases.json` resolve as for one fit.
+- Each fit's output goes to its own folder `NAME/` of a new
+  `WORK-FOLDER/batch-YYYYmmdd-HHMMSS/`: NAME is the saved fit's name, or the
+  alias and first data file (`2exp-d1`), with `-2`, `-3` for repeats. Its
+  console output is in `NAME/onefite.log`; one line per fit is printed as it
+  finishes.
+- `batch.json` in the batch folder records each fit: its state (queued,
+  running, done, failed, stopped), exit status, chi2, time, its own options
+  and fit mode (`options`, `mode`), and where its
+  `All.pdf`, `All.mp4`, zip, plots and saved result actually are (relative to
+  the batch folder; `null` when missing).
+- Every other option applies to every fit. `--save-to` and `--zip-to` need a
+  `{name}` pattern (`--save-to={name}.json` writes `NAME/NAME.json`);
+  `--export`, `--archive` and `--define-alias` are refused.
+- Unless `--workers` or `--no-parallel` is given, each fit gets
+  `ONEFITE_WORKERS` = CPUs / (fits running at once).
+- A failed fit does not stop the others. Ctrl-C (or SIGTERM) stops the running
+  fits and everything they started, and starts no more. The exit status is 0
+  when every fit succeeded, 1 when any failed, 130 when stopped.
+
 ## RAM-backed work
 
 `--use-ramdisk` stages supported fits in a RAM-backed filesystem (`/dev/shm`

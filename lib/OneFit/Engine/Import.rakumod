@@ -72,8 +72,12 @@ class Import is export {
 					else { @files.push: self.import('ist-ffc', file => $file).Slip }
 				}
 				default {
-		   			@files.push: $file;
-		   			$file.IO.copy("{self.path}/$file");
+					# the file's own name in the work folder: an absolute
+					# or sub/dir/ path used to be joined onto it whole
+					# ("{path}//abs/d.dat"), so the fit found no data
+					my $name = $file.IO.basename;
+		   			@files.push: $name;
+		   			$file.IO.copy("{self.path}/$name");
 				}
 			}
 		}
@@ -98,8 +102,9 @@ class Import is export {
 		my @files;
 		my @blocks = $file.IO.slurp.split(/'#' <ws> DATA <ws>/);
 		for (1 ..^ @blocks.elems) -> $i {
-			my $file-name="{$file.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
-			$file-name = $file unless @blocks.elems > 2;
+			# the file's own name, not its path (as for a plain data file)
+			my $file-name="{$file.IO.basename.IO.extension('').Str}-block{ sprintf('%03d',$i.Int) }.dat";
+			$file-name = $file.IO.basename unless @blocks.elems > 2;
 			@files.push: $file-name; 
 			my @header;
 		    my @data;
@@ -124,7 +129,8 @@ class Import is export {
 		my $path = self.path();
 		my $Re = %!options<Re>;
 		my $Im = %!options<Im>;
-		$stelar-hdf5.IO.copy: "$path/$stelar-hdf5";
+		$stelar-hdf5.IO.copy: "$path/{$stelar-hdf5.IO.basename}";
+		$stelar-hdf5 = $stelar-hdf5.IO.basename; # its own name in the work folder, as for stelar-sef-Mz
 		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @data-files;
 		for ( 1 .. @zones.elems ).race {
@@ -168,7 +174,8 @@ class Import is export {
 		my $stelar-hdf5 = self.filename();
 		$stelar-hdf5 = $file if $file.so;
 		my $path = self.path;
-		$stelar-hdf5.IO.copy: "$path/$stelar-hdf5";
+		$stelar-hdf5.IO.copy: "$path/{$stelar-hdf5.IO.basename}";
+		$stelar-hdf5 = $stelar-hdf5.IO.basename; # its own name in the work folder, as for stelar-sef-Mz
 		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @BR;
 		my @R1;
@@ -194,7 +201,8 @@ class Import is export {
 		my $stelar-sdf = self.filename();
 		$stelar-sdf = $file if $file.so;
 		my $path = self.path();
-		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
+		$stelar-sdf.IO.copy: "$path/{$stelar-sdf.IO.basename}";
+		$stelar-sdf = $stelar-sdf.IO.basename; # its own name in the work folder, as for stelar-sef-Mz
 	    my $buf = $stelar-sdf.IO.slurp(:close);
 		my @tau-zones = $buf.split(/SUMMARY/);
 		my @data-files;
@@ -270,7 +278,8 @@ class Import is export {
 		my $path = self.path();
 		my $err = %!options<err>;
 		$err = $err.contains("%") ?? $err.subst("%","").Num /100 !! "";
-		$stelar-sdf.IO.copy: "$path/$stelar-sdf";
+		$stelar-sdf.IO.copy: "$path/{$stelar-sdf.IO.basename}";
+		$stelar-sdf = $stelar-sdf.IO.basename; # its own name in the work folder, as for stelar-sef-Mz
 		my @R1 = gather for "$path/$stelar-sdf".IO.lines(:close) { take $_.words[0,2] if $_.contains(/^\s*\d+/) } .map({ [ ($_[0] * 1e6).round(0.0001) ,$_[1]] }).Array;
 		"$path/$stelar-sdf".IO.extension('dat').spurt:  (@R1 Z @R1.map({ $_[1].Rat * (($err.Bool) ?? $err !! 0.05) })).join("\n") ~ "\n\n";
 		return $stelar-sdf.IO.extension('dat').Str
@@ -316,7 +325,8 @@ class Import is export {
 		my $ffc = self.filename();
 		$ffc = $file if $file.so;
 		my $path = self.path();
-		$ffc.IO.copy: "$path/$ffc";
+		$ffc.IO.copy: "$path/{$ffc.IO.basename}";
+		$ffc = $ffc.IO.basename; # its own name in the work folder, as for stelar-sef-Mz
 		my @files;
 		my @aux = "$path/$ffc".IO.slurp(:close).split(/endtau\n|dumTau|shiFdt|Parameters/)[0,1];	
 		my @freqs = gather for @aux[1].lines { take $_.split(',')[2] }
@@ -364,7 +374,8 @@ class Import is export {
 		my @err;
 		my $erro = %!options<err>;
 		$erro = $erro.contains("%") ?? $erro.subst("%","").Num /100 !! "";
-		$ist-ffc.IO.copy: "$path/$ist-ffc";
+		$ist-ffc.IO.copy: "$path/{$ist-ffc.IO.basename}";
+		$ist-ffc = $ist-ffc.IO.basename; # its own name in the work folder, as for stelar-sef-Mz
 		for "$ist-ffc".IO.lines.grep(/^<![#]>/) {
 			my @a = $_.split(',')[1,2,3];
 			@f.push: @a[0]*1e3;

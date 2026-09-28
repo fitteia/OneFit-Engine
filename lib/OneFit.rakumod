@@ -9,6 +9,42 @@ use OneFit::Engine::CodeC;
 use OneFit::Engine::Stpfiles;
 use OneFit::SAV;
 
+# tchi2 is the EXACT sum of the blocks' chi2 values, each read as the exact
+# decimal its fit.out text says - scientific notation ("4.8431e-05")
+# included - and printed in full plain decimal. It used to be a float sum
+# passed through .Rat, whose 1e-6 simplification lost accuracy
+# (5.23831e-06 printed as 0.0000052, 4.39105e-12 as 0, 0.0434950601 as
+# 0.043495). The same total as the Go port (onefite-native).
+our sub exact-decimal($v --> FatRat) {
+    # a block with no chi2 recorded (fit.out's "0" is falsy, so it is never
+    # stored) counts 0, as the old .sum did
+    return FatRat.new(0, 1) without $v;
+    my $s = (~$v).trim;
+    if $s ~~ /^ (<[-+]>?) (\d*) ['.' (\d*)]? [<[eE]> (<[-+]>? \d+)]? $/ && ($1.chars || ($2 // '').chars) {
+        my $frac = ~($2 // '');
+        my $r = FatRat.new((~$1 ~ $frac || '0').Int, 10 ** $frac.chars);
+        $r *= FatRat.new(10, 1) ** $3.Int if $3.defined;
+        return $0 eq '-' ?? -$r !! $r;
+    }
+    (try $v.Numeric.FatRat) // FatRat.new(0, 1)
+}
+our sub exact-decimal-str(FatRat $r --> Str) {
+    my ($n, $d) = $r.nude;
+    my ($t, $k) = $d, 0;
+    my ($twos, $fives) = 0, 0;
+    while $t %% 2 { $t div= 2; $twos++ }
+    while $t %% 5 { $t div= 5; $fives++ }
+    return $r.Str unless $t == 1;            # not a terminating decimal
+    $k = max($twos, $fives);
+    my $digits = ($n.abs * 10 ** $k div $d).Str;
+    if $k {
+        $digits = '0' x ($k + 1 - $digits.chars) ~ $digits if $digits.chars <= $k;
+        $digits = $digits.substr(0, *-$k) ~ '.' ~ $digits.substr(*-$k);
+        $digits .= subst(/ '0'+ $ /, '').subst(/ '.' $ /, '');
+    }
+    ($n < 0 ?? '-' !! '') ~ $digits
+}
+
 class Engine is export {
     has %!engine;
     has @!blocks;
@@ -283,7 +319,14 @@ class Engine is export {
 			@!blocks[$i-1].parameters=$parameters;
 			if $fix-all.Bool { $parameters.parfile.write($parameters.a, No => $i, :fix-all, :fit-methods($!fit-methods) ) }
 			else {$parameters.parfile.write($parameters.a, No => $i, :fit-methods($!fit-methods) ) }
-			self!to-engine($parameters) if (any($from-output.Bool,$from-log.Bool) and @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>));
+			# The scalar PvalN take one block's fitted values: with an explicit
+			# selection (--selected-dataset, e.g. #2 or #1-#2, which no Tag
+			# contains) the first selected block, as the Go port does; else the
+			# block whose Tag contains SelectedDataSet.
+			my $representative = $!selected-data-override-set
+			    ?? $i == 1
+			    !! @!blocks[$i-1].Tag.contains(%!engine<SelectedDataSet>);
+			self!to-engine($parameters) if any($from-output.Bool,$from-log.Bool) and $representative;
 			@!blocks[$i-1].chi2=$parameters.output{"chi2\[1\]"} if $parameters.output{"chi2\[1\]"};
 	    }
 	}
@@ -874,7 +917,7 @@ EOT
 	 }
 	 
 	 method chi2-npts-ndf (:$mixed = False, :$removed-outliers=0) {
-		my $chi2 =	(@!blocks>>.chi2).sum.Rat;
+		my $chi2 = exact-decimal-str( [+] (FatRat.new(0, 1), |@!blocks.map({ exact-decimal(.chi2) })) );
 		my $npts = ((@!blocks>>.Data)>>.elems).sum - $removed-outliers;
 		my $ngfp = @!blocks[0].parameters.free;
 		my $ndf = $npts - $ngfp;
