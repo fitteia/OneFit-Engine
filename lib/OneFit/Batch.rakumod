@@ -67,6 +67,8 @@ sub option-key(Str $opt) is export {
 # and how the batch runs belong to the whole batch, and --define-alias,
 # --export and --archive aren't for parallel fits at all.
 my constant %line-refused = set <path work-folder jobs use-ramdisk save-to zip-to define-alias export archive>;
+# Options whose value is a file, resolved like data files.
+my constant %line-file-options = set <aux-code sef-R1-file>;
 # The three fit modes: one choice - a line naming any of them replaces all
 # three of the batch's for that fit.
 my constant %fit-modes = set <global hybrid individual>;
@@ -94,6 +96,15 @@ sub parse-jobs-line(Str $line, Str $dir) is export {
     }
     else {
         %j = kind => 'line', model => $first, data => [@data];
+    }
+    # a file-valued option's file ("FILE" or "FILE, declarations") is
+    # relative to the jobs file's folder, like the data files
+    for @opts <-> $o {
+        my ($key, $val) = $o.subst(/^ '-'+ /, '').split('=', 2);
+        next unless $val.defined && %line-file-options{%canonical{$key} // $key};
+        my ($file, $rest) = $val.split(',', 2);
+        next unless $file.trim;
+        $o = "--$key=" ~ resolve($file.trim) ~ ($rest.defined ?? ",$rest" !! '');
     }
     my %modes;
     for @opts -> $o {
@@ -143,8 +154,12 @@ sub name-fit-jobs(@jobs) {
         $name ~= '-' ~ %j<mode> if %j<mode>;
         $name = $name.subst(/ <-[A..Z a..z 0..9 . _ \-]>+ /, '_', :g).subst(/ ^ '_'+ | '_'+ $ /, '', :g);
         $name = 'fit' unless $name;
-        %used{$name}++;
-        $name ~= "-%used{$name}" if %used{$name} > 1;
+        # every final name reserved, so a suffixed one never collides with a
+        # name already taken (a.json a.json a-2.json: a, a-2, a-2-2)
+        my $base = $name;
+        my $n = 1;
+        $name = "$base-{++$n}" while %used{$name};
+        %used{$name} = True;
         %j<name> = $name;
     }
 }
@@ -329,7 +344,14 @@ sub run-parallel-fits(@jobs, :@opts, :$save-to, :$zip-to, Str :$base = '.', Int 
         my $log = $fit-dir.add('onefite.log');
         my @argv = |@command, 'fit', "--work-folder=$fit-dir.absolute()", |fit-options(@opts, %j);
         @argv.push("--save-to=" ~ $fit-dir.add($save-to.subst('{name}', %j<name>, :g).IO.basename).absolute) if $save-to;
-        @argv.push("--zip-to=" ~ $fit-dir.add($zip-to.subst('{name}', %j<name>, :g).IO.basename).absolute) if $zip-to;
+        if $zip-to {
+            # a resumed fit renames its zip to this path: absolute, in its
+            # folder; a fresh fit names its work subfolder after --zip-to and
+            # zips it to <work-folder>/<name>.zip - a bare name, or a path
+            # would be nested inside its own folder
+            my $zip = $zip-to.subst('{name}', %j<name>, :g).IO.basename;
+            @argv.push("--zip-to=" ~ (%j<kind> eq 'saved' ?? $fit-dir.add($zip).absolute !! $zip));
+        }
         @argv.push(%j<model>) unless %j<kind> eq 'saved';
         @argv.append(|%j<data>);
         my %child-env = %env;
