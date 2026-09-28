@@ -1,0 +1,25 @@
+use Test;
+use OneFit;
+
+plan 2;
+
+# tchi2 is the exact sum of the blocks' chi2 texts (chi2-npts-ndf)
+sub total(*@chi2) { OneFit::exact-decimal-str([+] (FatRat.new(0, 1), |@chi2.map({ OneFit::exact-decimal($_) }))) }
+
+subtest 'exact sums, scientific notation included', {
+    is total('5.23831e-06'), '0.00000523831', 'no 1e-6 rounding (was 0.0000052)';
+    is total('4.39105e-12'), '0.00000000000439105', 'not 0';
+    is total('0.0131754', '0.0109249'), '0.0241003', 'plain decimals';
+    is total(<4.8431e-05 4.61031e-05 0.00115383 0.00213122 0.00269409 0.000548571 0.000782391 0.000652632
+              0.000419858 0.00475902 0.00361283 0.00271101 0.0014404 0.000818813 0.00071009 0.00486463
+              0.00085533 0.00116923 0.00127734 0.00147801 0.00118529 0.00164793 0.000820401 0.00198005
+              0.00179691 0.00203456 0.00185609>), '0.0434950601', 'a 27-block hybrid (was 0.043495)';
+    is total('10405200020381128'), '10405200020381128', 'large: never scientific';
+    is total('14.512985'), '14.512985', 'Florence';
+}
+
+subtest 'blocks without a chi2 count 0', {
+    is total(Any), '0', 'an exact fit: fit.out chi2 "0" is never stored';
+    is total(Any, '1.5'), '1.5', 'mixed';
+    is total('0'), '0', '"0"';
+}
