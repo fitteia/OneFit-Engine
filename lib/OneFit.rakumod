@@ -294,6 +294,40 @@ class Engine is export {
 	@a.head;
      }
      
+     # A resumed individual fit's blocks each start from their own fitted
+     # values, the saved par-tables (one table per block, in block order) -
+     # the PvalN hold only one block's. For each parameter whose PvalN still
+     # is some block's fitted value (to 1e-4, the precision PvalN were
+     # written with); one that is not was set on purpose since the fit (a
+     # --#name=value override, an edit in the GUI's parameter table) and
+     # stays, for every block. Nothing without such tables (an older file,
+     # a global fit's single table, a selection that changed the blocks).
+     # Same as onefite-native fit.go's useSavedBlockValues.
+     method !use-saved-block-values($parameters, Int $i) {
+	 my $tables = %!engine<par-tables>;
+	 return unless $tables ~~ Positional && @!blocks.elems >= 2 && $tables.elems == @!blocks.elems;
+	 my @saved;
+	 for @$tables -> $t {
+	     return unless $t ~~ Positional;
+	     my %h;
+	     for @$t -> $r {
+		 return unless $r ~~ Associative;
+		 my $v = try +$r<value>;
+		 %h{$r<name>.subst(/\s+/,'',:g)} = $v.Num if $r<name> && $v.defined && $v ~~ Numeric;
+	     }
+	     @saved.push: %h;
+	 }
+	 my &close = -> $a, $b { $a == $b || abs($a - $b) <= 1e-4 * max(abs($a), abs($b)) };
+	 for $parameters.a -> %p {
+	     my $name = %p<name>.subst(/\s+/,'',:g);
+	     next unless @saved[$i-1]{$name}:exists;
+	     my $cur = try +%p<value>;
+	     next unless $cur.defined && $cur ~~ Numeric;
+	     next unless @saved.first({ .{$name}:exists && close($cur, .{$name}) });
+	     %p<value> = @saved[$i-1]{$name};
+	 }
+     }
+
      method parameters (Bool :r(:read($r)),
 			Bool :$from-output,
 			Bool :$from-log,
@@ -313,6 +347,7 @@ class Engine is export {
 			else { $parameters = Parameters::Parameters.new.path($!path) }
 
 			$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
+			self!use-saved-block-values($parameters, $i) if none ($from-output.Bool,$from-log.Bool);
 			$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
 			$parameters.from-log(file=>"fit$i.log") if $from-log.Bool;
 			@!par-tables[$i-1]= $parameters;
