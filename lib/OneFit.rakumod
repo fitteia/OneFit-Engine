@@ -479,6 +479,16 @@ class Engine is export {
      # comes back to $!path afterwards, its fit-residues-1.res as
      # fit-residues-N.res.
      my @shared-outputs = <fit-residues-1.res gnu0.dat gnu0.da_ gfitn.ptr>;
+
+     # How many per-block runs go at once: ONEFITE_WORKERS, else the CPUs -
+     # the C engine's rule for its MIXED workers. The per-block loops are
+     # "race for (...).race(:batch(1), :degree(...))": a plain
+     # "for (...).race" iterates serially in 6.d, and .race hands a short
+     # list out as one batch of 64, so the blocks ran one after another.
+     sub block-degree(--> Int) {
+	 my $w = (try +(%*ENV<ONEFITE_WORKERS> // 0)) // 0;
+	 $w ~~ Numeric && $w >= 1 ?? $w.Int !! ($*KERNEL.cpu-cores max 1)
+     }
      method !run-block(Int $i, Str $command) {
 	 my $dir = "$!path/.block$i".IO;
 	 run 'rm', '-rf', ~$dir;
@@ -571,7 +581,7 @@ class Engine is export {
 	 if ($errorbars || @outliers.so || $reduced-chi2) { @!blocks>>.set-errorbars(:on) }
 
 	 if %!engine<FitType> ~~ /Individual/ {
- 	 for (1 .. @!blocks.elems).race {
+ 	 race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) {
 			self!run-block($_, "./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1");
 		}
 		#for (1 .. @!blocks.elems).race {
@@ -629,7 +639,7 @@ EOT
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
 			}
 	
-			for (1 .. @!blocks.elems).race -> $i {
+			race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) -> $i {
 				$npts-removed = @!blocks[$i-1].prune( remove => @outliers );
 				self!run-block($i, "./onefit-user -@fitenv$i.stp -f -pg -ofit{$i}.out data{$i}ro.dat <fit$i.par >fit{$i}.log 2>&1");
 		 	}
@@ -643,7 +653,7 @@ EOT
 	
 			do {
 		 		self.agr;
-				for (1 .. @!blocks.elems).race -> $i {
+				race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) -> $i {
 					@!blocks[$i-1].set-data-err( file => "$!path/data{$i}ro.dat", :removed-outliers );
 					self!run-block($i, "./onefit-user -@fitenv$i.stp -nf -pg -ofit{$i}.out --grbatch=PDF data{$i}ro.dat <fit$i.par >plot{$i}.log 2>&1");
 		 		}
@@ -777,7 +787,7 @@ EOT
 	 self.stp;
 	 self.code(:write,:compile);
 	 if %!engine<FitType> ~~ /Individual/ {
-		for (1 .. @!blocks.elems).race {
+		race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) {
 		 	self!run-block($_, "./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1");
 		}
 		# for (1 .. @!blocks.elems).race {
@@ -787,7 +797,7 @@ EOT
 	   	@!blocks.race.map( { .export(:plot) });
 	    self.parameters(:read, :from-output, :from-log);
 	    self.agr;
-		for (1 .. @!blocks.elems).race {
+		race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) {
 			self!run-block($_, "./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1");
 		}
 	 }
