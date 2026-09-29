@@ -54,6 +54,24 @@ our sub par9($x --> Str) {
     die "par9: one significant digit always fits in 9 characters";
 }
 
+# A fit method with arguments, name(a,b,...), as the MINUIT command line
+# "name a b ..." - --fit-methods splits on blanks, so this is how a command's
+# own arguments get through: scan(tx90,41,1e-10,5e-9) scans one parameter at
+# 41 points over that range, min(20000) gives MIGRAD that call limit. An
+# argument that is a parameter's name becomes its number in this .par
+# (n.tot.par is 1, the first parameter 2). Anything else - no parentheses,
+# a ")" inside - passes through as is. Same as onefite-native parfiles.rs's
+# expand_method.
+our sub expand-method(Str $w, @parameters --> Str) {
+    return $w unless $w ~~ /^ (<-[(]>+) '(' (<-[)]>*) ')' $/;
+    my $name = ~$0;
+    my @args = (~$1).split(",").map(*.trim).grep(*.chars).map(-> $a {
+        my $k = @parameters.first({ .<name> eq $a }, :k);
+        $k.defined ?? ~($k + 2) !! $a
+    });
+    @args ?? "$name @args.join(' ')" !! $name
+}
+
 class Parfile is export {
     has $!table;
     has @!fit-methods = <simp scan min minos exit>;
@@ -81,7 +99,7 @@ class Parfile is export {
 	$table ~=  "\nset       err       1.0\n";
 #	@!fit-methods = gather for @!fit-methods { take $_ unless .contains("minos") } if @parameters[@parameters.elems - 1]<name>  eq "MIXED" and @parameters[@parameters.elems - 1]<value> == 1;
 	if $fit-methods.Bool {
-	    @!fit-methods = gather for $fit-methods.words { take $_ unless .contains("exit") };
+	    @!fit-methods = gather for $fit-methods.words { take expand-method($_, @parameters) unless .contains("exit") };
 	    @!fit-methods.push("exit");
 	}
 	$table ~=  @!fit-methods.join: "\n";
