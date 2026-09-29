@@ -52,6 +52,10 @@ class Engine is export {
     has @!Functions;
     has @!selected-data-override;
     has Bool $!selected-data-override-set = False;
+    # the parameters a --#name=value override set on this run (bin/onefite):
+    # a resumed individual fit gives them to every block, never a block's
+    # own saved value (!use-saved-block-values)
+    has @!overridden-parameters;
     has $!path = '.';
     has $!fit-methods = "simp scan min minos";
     
@@ -100,6 +104,11 @@ class Engine is export {
 	    ?? @!selected-data-override !! %!engine<Tags>;
 	return () unless $raw.defined;
 	$raw ~~ Positional ?? $raw.List !! $raw.Str.split(/\s*','\s*/)
+    }
+
+    method overridden-parameters (*@names) {
+	@!overridden-parameters = @names.map({ .Str.subst(/\s+/, '', :g) });
+	self
     }
 
     method selected-data-set (*@tags) {
@@ -296,13 +305,15 @@ class Engine is export {
      
      # A resumed individual fit's blocks each start from their own fitted
      # values, the saved par-tables (one table per block, in block order) -
-     # the PvalN hold only one block's. For each parameter whose PvalN still
-     # is some block's fitted value (to 1e-4, the precision PvalN were
-     # written with); one that is not was set on purpose since the fit (a
-     # --#name=value override, an edit in the GUI's parameter table) and
-     # stays, for every block. Nothing without such tables (an older file,
-     # a global fit's single table, a selection that changed the blocks).
-     # Same as onefite-native fit.go's useSavedBlockValues.
+     # the PvalN hold only one block's. Not a parameter a --#name=value
+     # override set on this run (overridden-parameters): that value goes to
+     # every block, whatever it equals. Nor one whose PvalN is no block's
+     # fitted value (to 1e-4, the precision PvalN were written with): it was
+     # edited in the file by hand since the fit (the GUI's parameter table
+     # writes an edit into every block's par-tables entry too). Nothing
+     # without such tables (an older file, a global fit's single table, a
+     # selection that changed the blocks). Same as onefite-native fit.go's
+     # useSavedBlockValues.
      method !use-saved-block-values($parameters, Int $i) {
 	 my $tables = %!engine<par-tables>;
 	 return unless $tables ~~ Positional && @!blocks.elems >= 2 && $tables.elems == @!blocks.elems;
@@ -320,6 +331,7 @@ class Engine is export {
 	 my &close = -> $a, $b { $a == $b || abs($a - $b) <= 1e-4 * max(abs($a), abs($b)) };
 	 for $parameters.a -> %p {
 	     my $name = %p<name>.subst(/\s+/,'',:g);
+	     next if $name (elem) @!overridden-parameters;
 	     next unless @saved[$i-1]{$name}:exists;
 	     my $cur = try +%p<value>;
 	     next unless $cur.defined && $cur ~~ Numeric;
@@ -521,6 +533,10 @@ class Engine is export {
      # "for (...).race" iterates serially in 6.d, and .race hands a short
      # list out as one batch of 64, so the blocks ran one after another.
      sub block-degree(--> Int) {
+	 # --no-parallel (ONEFITE_NO_PARALLEL) runs one block at a time, whatever
+	 # the worker budget - read as the C engine's MIXED workers read it,
+	 # atoi(value) != 0
+	 return 1 if (%*ENV<ONEFITE_NO_PARALLEL> // '') ~~ /^ \s* (<[+-]>? \d+)/ and +$0 != 0;
 	 my $w = (try +(%*ENV<ONEFITE_WORKERS> // 0)) // 0;
 	 $w ~~ Numeric && $w >= 1 ?? $w.Int !! ($*KERNEL.cpu-cores max 1)
      }
