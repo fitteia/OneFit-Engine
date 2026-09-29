@@ -2000,7 +2000,9 @@ MSG
 		my $function = define-alias($engine,"_auto_");
 		$function = update-from-input-options( $function, %_, quiet => $quiet );
 		%e = %e, OneFit::Engine::Grammars::Function.parse-me($function);
-		$engine.set(%e)
+		$engine.set(%e);
+		# explicit: a resumed individual fit gives these to every block
+		$engine.overridden-parameters(%_.keys.grep(/'#'/).map({ .subst('#', '').split(/<[:\[]>/)[0] }));
 	}
 
 	if $export {
