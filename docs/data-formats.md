@@ -52,7 +52,9 @@ Relevant controls include:
 
 - `--R1` to import R1 rather than Mz data, where supported;
 - `--sef-R1-file=FILE` to supply frequencies for `.sef` import;
-- `--range=TEXT` to select imported zones;
+- `--zw`/`--zone-window=start,end` to restrict a `.sdf` zone's own
+  per-tau-step averaging window (0-based, `end` means the last point)
+  instead of the full window;
 - `--gfilt=N` to smooth imported data with a Gaussian filter;
 - `--fit-if`/`--plot-if` to select tagged blocks.
 
