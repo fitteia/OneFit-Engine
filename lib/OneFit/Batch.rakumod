@@ -47,7 +47,7 @@ my constant %canonical =
     fm => 'fit-methods', n => 'num', N => 'num', Num => 'num', npts => 'num', SymbSize => 'symbol-size',
     ssz => 'symbol-size', data-label => 'data-labels', fi => 'fit-if', pi => 'plot-if', ac => 'aux-code',
     AC => 'aux-code', AuxCode => 'aux-code', auxcode => 'aux-code', se => 'set-err', err => 'set-err',
-    sf => 'sef-R1-file', r => 'range', e => 'export', i => 'individual', a => 'define-alias',
+    sf => 'sef-R1-file', zw => 'zone-window', e => 'export', i => 'individual', a => 'define-alias',
     da => 'define-alias', alias => 'define-alias', dali => 'define-alias', o => 'save-to', st => 'save-to',
     to => 'save-to', ro => 'remove-outliers', lx => 'logx', log-x => 'logx', xlog => 'logx', loglin => 'logx',
     ly => 'logy', log-y => 'logy', ylog => 'logy', linlog => 'logy', lxy => 'logxy', log-xy => 'logxy',

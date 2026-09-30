@@ -164,7 +164,7 @@ curl http://127.0.0.1:8142/fit \
 | `logx`, `logy`, `logxy` | Logarithmic axes |
 | `R1`, `R2` | Import/quality controls |
 | `err` / `set-err` | Error expression |
-| `range`, `gfilt` | Import controls |
+| `zone-window`, `gfilt` | Import controls |
 | `fit-if`, `plot-if` | Tag conditions |
 | `remove-outliers` | Outlier selection |
 | `reduced-chi2` | Error rescaling when `yes` or `1` |
