@@ -52,6 +52,10 @@ class Engine is export {
     has @!Functions;
     has @!selected-data-override;
     has Bool $!selected-data-override-set = False;
+    # the parameters a --#name=value override set on this run (bin/onefite):
+    # a resumed individual fit gives them to every block, never a block's
+    # own saved value (!use-saved-block-values)
+    has @!overridden-parameters;
     has $!path = '.';
     has $!fit-methods = "simp scan min minos";
     
@@ -100,6 +104,11 @@ class Engine is export {
 	    ?? @!selected-data-override !! %!engine<Tags>;
 	return () unless $raw.defined;
 	$raw ~~ Positional ?? $raw.List !! $raw.Str.split(/\s*','\s*/)
+    }
+
+    method overridden-parameters (*@names) {
+	@!overridden-parameters = @names.map({ .Str.subst(/\s+/, '', :g) });
+	self
     }
 
     method selected-data-set (*@tags) {
@@ -294,6 +303,43 @@ class Engine is export {
 	@a.head;
      }
      
+     # A resumed individual fit's blocks each start from their own fitted
+     # values, the saved par-tables (one table per block, in block order) -
+     # the PvalN hold only one block's. Not a parameter a --#name=value
+     # override set on this run (overridden-parameters): that value goes to
+     # every block, whatever it equals. Nor one whose PvalN is no block's
+     # fitted value (to 1e-4, the precision PvalN were written with): it was
+     # edited in the file by hand since the fit (the GUI's parameter table
+     # writes an edit into every block's par-tables entry too). Nothing
+     # without such tables (an older file, a global fit's single table, a
+     # selection that changed the blocks). Same as onefite-native fit.go's
+     # useSavedBlockValues.
+     method !use-saved-block-values($parameters, Int $i) {
+	 my $tables = %!engine<par-tables>;
+	 return unless $tables ~~ Positional && @!blocks.elems >= 2 && $tables.elems == @!blocks.elems;
+	 my @saved;
+	 for @$tables -> $t {
+	     return unless $t ~~ Positional;
+	     my %h;
+	     for @$t -> $r {
+		 return unless $r ~~ Associative;
+		 my $v = try +$r<value>;
+		 %h{$r<name>.subst(/\s+/,'',:g)} = $v.Num if $r<name> && $v.defined && $v ~~ Numeric;
+	     }
+	     @saved.push: %h;
+	 }
+	 my &close = -> $a, $b { $a == $b || abs($a - $b) <= 1e-4 * max(abs($a), abs($b)) };
+	 for $parameters.a -> %p {
+	     my $name = %p<name>.subst(/\s+/,'',:g);
+	     next if $name (elem) @!overridden-parameters;
+	     next unless @saved[$i-1]{$name}:exists;
+	     my $cur = try +%p<value>;
+	     next unless $cur.defined && $cur ~~ Numeric;
+	     next unless @saved.first({ .{$name}:exists && close($cur, .{$name}) });
+	     %p<value> = @saved[$i-1]{$name};
+	 }
+     }
+
      method parameters (Bool :r(:read($r)),
 			Bool :$from-output,
 			Bool :$from-log,
@@ -313,6 +359,7 @@ class Engine is export {
 			else { $parameters = Parameters::Parameters.new.path($!path) }
 
 			$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
+			self!use-saved-block-values($parameters, $i) if none ($from-output.Bool,$from-log.Bool);
 			$parameters.from-output(file=>"fit$i.out") if $from-output.Bool;
 			$parameters.from-log(file=>"fit$i.log") if $from-log.Bool;
 			@!par-tables[$i-1]= $parameters;
@@ -479,6 +526,20 @@ class Engine is export {
      # comes back to $!path afterwards, its fit-residues-1.res as
      # fit-residues-N.res.
      my @shared-outputs = <fit-residues-1.res gnu0.dat gnu0.da_ gfitn.ptr>;
+
+     # How many per-block runs go at once: ONEFITE_WORKERS, else the CPUs -
+     # the C engine's rule for its MIXED workers. The per-block loops are
+     # "race for (...).race(:batch(1), :degree(...))": a plain
+     # "for (...).race" iterates serially in 6.d, and .race hands a short
+     # list out as one batch of 64, so the blocks ran one after another.
+     sub block-degree(--> Int) {
+	 # --no-parallel (ONEFITE_NO_PARALLEL) runs one block at a time, whatever
+	 # the worker budget - read as the C engine's MIXED workers read it,
+	 # atoi(value) != 0
+	 return 1 if (%*ENV<ONEFITE_NO_PARALLEL> // '') ~~ /^ \s* (<[+-]>? \d+)/ and +$0 != 0;
+	 my $w = (try +(%*ENV<ONEFITE_WORKERS> // 0)) // 0;
+	 $w ~~ Numeric && $w >= 1 ?? $w.Int !! ($*KERNEL.cpu-cores max 1)
+     }
      method !run-block(Int $i, Str $command) {
 	 my $dir = "$!path/.block$i".IO;
 	 run 'rm', '-rf', ~$dir;
@@ -571,7 +632,7 @@ class Engine is export {
 	 if ($errorbars || @outliers.so || $reduced-chi2) { @!blocks>>.set-errorbars(:on) }
 
 	 if %!engine<FitType> ~~ /Individual/ {
- 	 for (1 .. @!blocks.elems).race {
+ 	 race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) {
 			self!run-block($_, "./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1");
 		}
 		#for (1 .. @!blocks.elems).race {
@@ -629,7 +690,7 @@ EOT
 				"$!path/$name".IO.rename("$!path/{$name}-tmp");
 			}
 	
-			for (1 .. @!blocks.elems).race -> $i {
+			race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) -> $i {
 				$npts-removed = @!blocks[$i-1].prune( remove => @outliers );
 				self!run-block($i, "./onefit-user -@fitenv$i.stp -f -pg -ofit{$i}.out data{$i}ro.dat <fit$i.par >fit{$i}.log 2>&1");
 		 	}
@@ -643,7 +704,7 @@ EOT
 	
 			do {
 		 		self.agr;
-				for (1 .. @!blocks.elems).race -> $i {
+				race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) -> $i {
 					@!blocks[$i-1].set-data-err( file => "$!path/data{$i}ro.dat", :removed-outliers );
 					self!run-block($i, "./onefit-user -@fitenv$i.stp -nf -pg -ofit{$i}.out --grbatch=PDF data{$i}ro.dat <fit$i.par >plot{$i}.log 2>&1");
 		 		}
@@ -777,7 +838,7 @@ EOT
 	 self.stp;
 	 self.code(:write,:compile);
 	 if %!engine<FitType> ~~ /Individual/ {
-		for (1 .. @!blocks.elems).race {
+		race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) {
 		 	self!run-block($_, "./onefit-user -@fitenv$_.stp -f -pg data$_.dat <fit$_.par >fit$_.log 2>&1");
 		}
 		# for (1 .. @!blocks.elems).race {
@@ -787,7 +848,7 @@ EOT
 	   	@!blocks.race.map( { .export(:plot) });
 	    self.parameters(:read, :from-output, :from-log);
 	    self.agr;
-		for (1 .. @!blocks.elems).race {
+		race for (1 .. @!blocks.elems).race(:batch(1), :degree(block-degree())) {
 			self!run-block($_, "./onefit-user -@fitenv$_.stp -nf -pg -ofit$_.out --grbatch=PDF data$_.dat <fit$_.par >plot$_.log 2>&1");
 		}
 	 }
