@@ -67,6 +67,8 @@ Continue with the [getting-started tutorial](docs/getting-started.md).
 
 - **[Documentation index](docs/README.md)** - the full set, grouped by
   audience.
+- **[Main features at a glance](docs/oferaku-main-features.svg)** - a
+  one-page diagram of the workflow and commands.
 - **[Getting started](docs/getting-started.md)** - install verification and
   a complete first fit.
 - **[Installation](docs/installation.md)** and
