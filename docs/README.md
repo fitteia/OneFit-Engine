@@ -7,6 +7,8 @@ rather than duplicating it.
 
 ## Start here
 
+- [Main features](oferaku-main-features.md) - every feature on the
+  [one-page diagram](oferaku-main-features.svg), explained.
 - [Getting started](getting-started.md) - install verification and a
   complete first fit.
 - [Installation](installation.md) - installation modes, side effects, and

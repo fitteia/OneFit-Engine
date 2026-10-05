@@ -61,7 +61,10 @@ share are worded identically there, and the differences (this port's HTTP
 service, `./INSTALL` modes, upgrade/uninstall/test, the service commands)
 are shown. onefite-gui embeds a copy in its Help window
 (`cmd/onefite-host-gui/static/docs/`) - update that copy when this one
-changes.
+changes. `docs/oferaku-main-features.md` is its guide (shown under the
+chart in onefite-gui's Help): a `###` section titled exactly like each box
+of the chart, which is how a click on a box finds it - rename both
+together, and recopy both into onefite-gui.
 
 ## The C/ dependency (read this before "fixing" a missing directory)
 
