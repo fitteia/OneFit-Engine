@@ -536,7 +536,7 @@ fit-expr)>
 I<(create, fit-expr)>
 =item C<--fi>, C<--fit-if=CONDITION,STEP> - fit only the data rows for which
 CONDITION holds (C<c1>, C<c2>, C<c3>: the row's x, y and error), every
-STEP-th of them, e.g. C<'c1<0.1,1'>. Stelar HDF5/SDF and IST-FFC imports.
+STEP-th of them, e.g. C«'c1<0.1,1'». Stelar HDF5/SDF and IST-FFC imports.
 I<(create, fit-expr)>
 =item C<--pi>, C<--plot-if=CONDITION,STEP> - the same for the plotted rows.
 I<(create, fit-expr)>
