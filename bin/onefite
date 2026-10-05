@@ -534,10 +534,12 @@ C<end> means the last point) instead of the full window. I<(create,
 fit-expr)>
 =item C<--gfilt=INTEGER> - apply a Gaussian smoothing filter during import.
 I<(create, fit-expr)>
-=item C<--fi>, C<--fit-if=CONDITION> - fit only data blocks whose tags
-satisfy CONDITION. I<(create, fit-expr)>
-=item C<--pi>, C<--plot-if=CONDITION> - plot only data blocks and fitted
-curves whose tags satisfy CONDITION. I<(create, fit-expr)>
+=item C<--fi>, C<--fit-if=CONDITION,STEP> - fit only the data rows for which
+CONDITION holds (C<c1>, C<c2>, C<c3>: the row's x, y and error), every
+STEP-th of them, e.g. C<'c1<0.1,1'>. Stelar HDF5/SDF and IST-FFC imports.
+I<(create, fit-expr)>
+=item C<--pi>, C<--plot-if=CONDITION,STEP> - the same for the plotted rows.
+I<(create, fit-expr)>
 =item C<--se>, C<--set-err>, C<--err=EXPRESSION> - set or derive errors for
 ordinary data files. Supported expressions include a constant, a percentage,
 a multiplier, standard deviation, averaging, and splitting around a value -

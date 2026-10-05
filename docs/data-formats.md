@@ -16,8 +16,7 @@ x y ey
 The third column, when present, is the uncertainty in `y`. Fixtures under
 `t/1/` and `t/3/` demonstrate accepted plain-text input.
 
-Use `--data-labels` when imported blocks need explicit labels, and `--tags`
-to attach data-set tags used by `--fit-if`/`--plot-if`.
+Use `--data-labels` when imported blocks need explicit labels.
 
 ## ZIP archives
 
@@ -56,7 +55,8 @@ Relevant controls include:
   per-tau-step averaging window (0-based, `end` means the last point)
   instead of the full window;
 - `--gfilt=N` to smooth imported data with a Gaussian filter;
-- `--fit-if`/`--plot-if` to select tagged blocks.
+- `--fit-if`/`--plot-if` to keep only the data rows matching a condition
+  (see [Filtering data rows](#filtering-data-rows)).
 
 Instrument formats supply their own errors; `--set-err` does not apply to
 IST-FFC, SEF, or HDF5 imports.
@@ -88,12 +88,23 @@ std split at 5
 
 Verify derived errors on a small data set before relying on them.
 
-## Filtering data blocks
+## Filtering data rows
 
-`--fit-if=CONDITION` controls which tagged blocks are fitted.
-`--plot-if=CONDITION` controls which blocks and curves are plotted. The
-exact tag expressions depend on imported metadata; inspect a generated JSON
-file when building a conditional workflow.
+`--fit-if='CONDITION,STEP'` keeps, in each imported block, only the data rows
+for which CONDITION holds, taking every STEP-th of them; `--plot-if` does the
+same for the plots. CONDITION uses the row's columns `c1` (x), `c2` (y) and
+`c3` (error) with arithmetic, comparisons and `and`/`or`/`not` (or
+`&&`/`||`/`!`):
+
+```bash
+onefite fit MODEL C12-60.zip --fit-if='c1>0.001 and c1<1,1'
+```
+
+The STEP is required - without `,STEP` the condition is ignored. These
+options apply to the Stelar HDF5/SDF and IST-FFC imports, which write the
+condition into each block's header (`# fit if CONDITION, STEP`); a block in
+OneFit's own text format can carry that header line itself. To choose whole
+blocks, use `--selected-dataset` (see [fitting](fitting.md#selecting-data-blocks)).
 
 ## Format safety
 

@@ -156,7 +156,10 @@ onefite fit @fits.txt --jobs=2 --wf=results
 - **Selected data sets**: `--selected-dataset='20kHz_1,#1-#4,#7'` (also
   `--sds`) fits only those blocks. Select by TAG, by `#N` position, or by
   range.
-- `--fit-if` and `--plot-if` choose blocks by a condition on their tags.
+- `--fit-if='c1<0.1,1'` and `--plot-if` keep only the data rows that
+  satisfy a condition on the row's columns (`c1` = x, `c2` = y, `c3` =
+  error), then a step (`,1` every row, `,2` every second). They apply to
+  Stelar and IST-FFC imports; `--selected-dataset` is what selects blocks.
 - **Quality options**:
   - `--remove-outliers` drops points;
   - `--reduced-chi2` rescales the errors;
