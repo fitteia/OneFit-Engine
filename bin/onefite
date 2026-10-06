@@ -609,7 +609,8 @@ alias on these three; C<fit-expr> has the same option but without the
 C<--to> alias; C<plot> has no C<--save-to>)>
 =item C<-z>, C<--zt>, C<--zip-to=FILE> - package the working result
 directory as FILE. I<(random, fit-expr, fit-file - on fit-file it defaults
-to INPUT-FILE's own basename; C<create> never zips)>
+to INPUT-FILE's own basename, and C<--zip-to=> (empty) makes no zip;
+C<create> never zips)>
 =item C<--pc>, C<--prco>, C<--print-cols>, C<--print-columns>, C<--cols=LIST>
 - select fit-results columns by index or parameter name, after fitting. A
 suffix such as C<a+1> or C<a-1> selects a column relative to parameter C<a>.
@@ -2079,15 +2080,19 @@ MSG
    	}
 
 	$engine.save($to) if $to.defined;
-    zip-fit($engine,$work-folder,$name);
-    # zip-fit writes $work-folder/$name.zip, so the rename must look there
-    # too - a bare "$name.zip" failed whenever the shell was not in
-    # --work-folder (e.g. an agent in onefite-gui's terminal). A relative
-    # --zip-to lands next to it; an absolute one is used as given.
-    unless $name eq $zip-to {
-        my $zip-dst = $zip-to.IO.is-absolute ?? $zip-to !! "$work-folder/$zip-to";
-        shell "mv $work-folder/$name.zip $zip-dst"
-            unless "$work-folder/$name.zip".IO.absolute eq $zip-dst.IO.absolute;
+    # --zip-to='' : no zip (a copy of the work folder, to save disk space) -
+    # as OFE-Go, and as a batch already did (Batch.rakumod).
+    if $zip-to ne '' {
+        zip-fit($engine,$work-folder,$name);
+        # zip-fit writes $work-folder/$name.zip, so the rename must look there
+        # too - a bare "$name.zip" failed whenever the shell was not in
+        # --work-folder (e.g. an agent in onefite-gui's terminal). A relative
+        # --zip-to lands next to it; an absolute one is used as given.
+        unless $name eq $zip-to {
+            my $zip-dst = $zip-to.IO.is-absolute ?? $zip-to !! "$work-folder/$zip-to";
+            shell "mv $work-folder/$name.zip $zip-dst"
+                unless "$work-folder/$name.zip".IO.absolute eq $zip-dst.IO.absolute;
+        }
     }
 	
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";

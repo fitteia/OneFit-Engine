@@ -38,7 +38,8 @@ onefite fit MODEL data.dat --save-to=fit.json --zip-to=fit.zip
 again. `--zip-to` packages the broader work environment (data, generated
 code, plots, logs). Fitting an existing JSON/SAV file creates a ZIP by
 default even without `--zip-to`; its default name is derived from the input
-file's basename.
+file's basename. `--zip-to=` (empty) skips it - the ZIP is a copy of the work
+folder, so this saves disk space.
 
 ## Export from a saved description
 
