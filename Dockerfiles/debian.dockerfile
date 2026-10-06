@@ -8,7 +8,7 @@ ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 
 RUN apt-get update && \
-    apt-get -y install --no-install-recommends \
+    apt-get -y install --no-install-recommends --no-install-suggests \
         sudo \
         passwd \
         git \
