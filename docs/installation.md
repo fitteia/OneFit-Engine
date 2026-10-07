@@ -86,7 +86,11 @@ With default options, `./INSTALL` can:
 2. Clone or update the sibling `../minuit` checkout.
 3. On Debian-family systems, run package-manager update/upgrade/autoremove
    and install the packages `./INSTALL` needs directly (independent of any
-   pre-install script - see below).
+   pre-install script - see below). Every `apt`/`apt-get install` here, in
+   the pre-install script and in the Dockerfiles passes
+   `--no-install-suggests`: only the packages asked for and what they
+   depend on or recommend, never the suggested ones, whatever the system's
+   own `APT::Install-Suggests` says.
 4. Install SSH/web-server `tasksel` tasks on Debian-family site installs.
 5. Modify ImageMagick's `policy.xml` (after backing it up) to allow
    PS/EPS/PDF/XPS formats used by the plotting pipeline.

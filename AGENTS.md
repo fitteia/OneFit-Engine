@@ -34,6 +34,38 @@ When changing behavior here (CLI flags, HTTP routes, JSON/SAV schema,
 model-expression syntax), assume at least one sibling repo depends on it
 and check before renaming or removing anything public.
 
+### Parallel fits (batches)
+
+`onefite fit A B ...` where **every** argument is a complete fit - a saved
+`.json`/`.sav`, a packed `'#alias,data1.dat[,data2.dat]'`, or `@FILE`, a
+jobs file (one fit per line, TAB-separated: a model and its data files or a
+saved fit, then that fit's own options; a line's `--hybrid`/`--global`/
+`--individual` replaces the batch's fit mode) - runs them in parallel,
+`--jobs` at a time (default: the number of CPUs), each as its own
+`onefite fit`. Output: a new `WORK-FOLDER/batch-YYYYmmdd-HHMMSS/` with one
+folder per fit (`NAME/`, console output in `NAME/onefite.log`) and
+`batch.json` recording every fit's state, exit, chi2, time, options, mode
+and files. Exit status: 0 all done, 1 any failed, 130 stopped. Code:
+`lib/OneFit/Batch.rakumod` (+ the dispatch in `bin/onefite`); user docs:
+`docs/fitting.md`, "Parallel fits". The Go port (`onefite-native`,
+`cmd/onefite/batch.go`) implements the same rules, and onefite-gui's
+batches are built on it - keep both in step, and treat `batch.json`'s
+fields as a public interface.
+
+### Docs: the main-features diagram
+
+`docs/oferaku-main-features.svg` is a one-page overview of this engine
+(linked from README.md's Documentation list). It mirrors the layout of
+onefite-native's `docs/ofego-main-features.svg`: the parts both engines
+share are worded identically there, and the differences (this port's HTTP
+service, `./INSTALL` modes, upgrade/uninstall/test, the service commands)
+are shown. onefite-gui embeds a copy in its Help window
+(`cmd/onefite-host-gui/static/docs/`) - update that copy when this one
+changes. `docs/oferaku-main-features.md` is its guide (shown under the
+chart in onefite-gui's Help): a `###` section titled exactly like each box
+of the chart, which is how a click on a box finds it - rename both
+together, and recopy both into onefite-gui.
+
 ## The C/ dependency (read this before "fixing" a missing directory)
 
 A fresh clone of this repository has **no `C/` directory** - that's

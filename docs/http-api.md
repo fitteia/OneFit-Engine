@@ -164,7 +164,7 @@ curl http://127.0.0.1:8142/fit \
 | `logx`, `logy`, `logxy` | Logarithmic axes |
 | `R1`, `R2` | Import/quality controls |
 | `err` / `set-err` | Error expression |
-| `range`, `gfilt` | Import controls |
+| `zone-window`, `gfilt` | Import controls |
 | `fit-if`, `plot-if` | Tag conditions |
 | `remove-outliers` | Outlier selection |
 | `reduced-chi2` | Error rescaling when `yes` or `1` |
@@ -186,6 +186,16 @@ with `#` is forwarded as a dynamic model override (see
 - any other non-empty value is treated as a path relative to that same
   per-upload folder, and streamed back verbatim.
 - no `download` field returns a `text/plain` fit log instead.
+
+### Uploaded saved fits
+
+A saved fit (`.json`/`.sav`) uploaded to `/fit`, `/plot` or `/convert` is
+also kept in the service's own folder (`$HOME/public_html` for
+`onefite service start`) under its own name, while the request itself is
+processed in its own folder. The latest upload takes the name; a different
+file already there is first renamed to `NAME.YYYYmmdd-HHMMSS.EXT` (its own
+modification time, local time), so nothing is overwritten; an identical
+upload leaves it as it is. Data files are not kept.
 
 Binary downloads use `application/octet-stream`. The temporary,
 randomly-named work directory for the request is deleted after the

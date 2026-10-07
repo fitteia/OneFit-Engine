@@ -115,7 +115,7 @@ FITTING MODES.
 The input-file form reloads an existing engine description; it understands
 C<--export> and C<--individual>, which the expression form does not, but does
 I<not> understand the data-import options (C<--data-label>, C<--gfilt>,
-C<--fit-if>, C<--plot-if>, C<--range>, C<--R1>, C<--set-err>, C<--SymbSize>,
+C<--fit-if>, C<--plot-if>, C<--zone-window>, C<--R1>, C<--set-err>, C<--SymbSize>,
 C<--sef-R1-file>, C<--tags>, C<--aux-code>) since the definition already has
 them baked in. By default, it also creates a ZIP archive whose name is
 derived from INPUT-FILE. Use C<--zip-to> to select another archive name.
@@ -326,7 +326,7 @@ long names, including C<function>, C<fit-methods>/C<fm>, C<Num>/C<npts>,
 C<SymbSize>/C<ssz>, C<global>/C<g>, C<hybrid>/C<mixed>, C<mpeg4>/C<mp4>,
 C<autox>/C<autoy>/C<autoxy>, C<logx>/C<logy>/C<logxy> (and their aliases),
 C<reduced-chi2>/C<rchi2>, C<R1>, C<R2>/C<pearson-correlation>,
-C<sef-R1-file>, C<print-cols>, C<err>/C<set-err>, C<range>, C<remove-outliers>,
+C<sef-R1-file>, C<print-cols>, C<err>/C<set-err>, C<zone-window>, C<remove-outliers>,
 C<fit-if>, C<plot-if>, C<gfilt>, C<no-plot>/C<np>, C<username> (persistent
 per-user job folder), and any
 C<#...>-prefixed field for a dynamic parameter override. Boolean-style
@@ -340,6 +340,12 @@ when C<download> is absent, the response is the C<text/plain> fit log
 instead. Anonymous requests use a temporary per-request work folder which is
 deleted once the response has been sent. A valid C<username> selects an
 existing directory and retains each request in a unique child directory.
+An uploaded saved fit (C<.json>/C<.sav>, to C</fit>, C</plot> or C</convert>)
+is also kept in the service's own folder (C<$HOME/public_html> for
+C<onefite service start>) under its own name: the latest upload takes the
+name, and a different file already there is first renamed to
+C<NAME.YYYYmmdd-HHMMSS.EXT> (its own modification time); an identical one is
+left as it is.
 =item C<POST /plot> - multipart upload, required field C<file> (a C<.json>
 or C<.sav> engine description). Re-renders its plots without fitting - every
 parameter is evaluated at its saved value, fixed, exactly like C<onefite
@@ -504,7 +510,7 @@ C<--hybrid> with the naming convention above instead.
 =item C<.sav> - fitteia/OneFit-Engine description
 =item C<.json> - OneFit-Engine description
 
-The import options C<--R1>, C<--sef-R1-file>, C<--range>, C<--gfilt>,
+The import options C<--R1>, C<--sef-R1-file>, C<--zone-window>, C<--gfilt>,
 C<--fit-if>, C<--plot-if>, C<--ist-ffc-Mz>, and C<--set-err> customize
 conversion of supported experimental formats; all of them apply only when
 building a definition from raw data (C<create> and C<fit FUNCTION ...>), not
@@ -528,14 +534,18 @@ Stelar files. I<(create, fit-expr)>
 IST-FFC file. I<(create only)>
 =item C<--sf>, C<--sef-R1-file=FILE> - read frequencies from FILE while
 importing Stelar SEF data. I<(create, fit-expr)>
-=item C<-r>, C<--range=TEXT> - select a range when importing Stelar data
-zones. I<(create, fit-expr)>
+=item C<--zw>, C<--zone-window=TEXT> - restrict a Stelar zone's own
+per-tau-step averaging window to points C<start,end> (a zero-based index;
+C<end> means the last point) instead of the full window. I<(create,
+fit-expr)>
 =item C<--gfilt=INTEGER> - apply a Gaussian smoothing filter during import.
 I<(create, fit-expr)>
-=item C<--fi>, C<--fit-if=CONDITION> - fit only data blocks whose tags
-satisfy CONDITION. I<(create, fit-expr)>
-=item C<--pi>, C<--plot-if=CONDITION> - plot only data blocks and fitted
-curves whose tags satisfy CONDITION. I<(create, fit-expr)>
+=item C<--fi>, C<--fit-if=CONDITION,STEP> - fit only the data rows for which
+CONDITION holds (C<c1>, C<c2>, C<c3>: the row's x, y and error), every
+STEP-th of them, e.g. C«'c1<0.1,1'». Stelar HDF5/SDF and IST-FFC imports.
+I<(create, fit-expr)>
+=item C<--pi>, C<--plot-if=CONDITION,STEP> - the same for the plotted rows.
+I<(create, fit-expr)>
 =item C<--se>, C<--set-err>, C<--err=EXPRESSION> - set or derive errors for
 ordinary data files. Supported expressions include a constant, a percentage,
 a multiplier, standard deviation, averaging, and splitting around a value -
@@ -605,7 +615,8 @@ alias on these three; C<fit-expr> has the same option but without the
 C<--to> alias; C<plot> has no C<--save-to>)>
 =item C<-z>, C<--zt>, C<--zip-to=FILE> - package the working result
 directory as FILE. I<(random, fit-expr, fit-file - on fit-file it defaults
-to INPUT-FILE's own basename; C<create> never zips)>
+to INPUT-FILE's own basename, and C<--zip-to=> (empty) makes no zip;
+C<create> never zips)>
 =item C<--pc>, C<--prco>, C<--print-cols>, C<--print-columns>, C<--cols=LIST>
 - select fit-results columns by index or parameter name, after fitting. A
 suffix such as C<a+1> or C<a-1> selects a column relative to parameter C<a>.
@@ -784,6 +795,7 @@ note "===> Compile time: ", now - $time;
 
 our constant OFE-PATH="%OFE-PATH%";
 
+use nqp; # move-aside: a file's exact modification time
 use OneFit;
 use OneFit::Engine::Grammars;
 use OneFit::Engine::Parameters;
@@ -1108,6 +1120,59 @@ sub create-web-request-directory(
 	die "Cannot allocate a unique OneFit web-request directory under $parent after $attempts attempts";
 }
 
+#| The initial saved fit (.json/.sav) uploaded to /fit, /plot or /convert is
+#| kept in the service's own folder (public_html), as it was before
+#| per-request folders (e7b855df) - the request itself is still processed
+#| in its own folder, removed afterwards. The latest upload takes the name,
+#| as before; a different file already there is moved aside first to
+#| NAME.<its date-time>.EXT (so nothing is lost), and an identical one is
+#| left as it is. Hard links, so nothing is half written or replaced when
+#| two uploads of one name come at once. onefite-gui does the same for its
+#| /api/run-upload (keepInputInRoot). Best effort.
+sub keep-input-in-root(IO::Path:D $source, Str:D $filename) {
+	my $name = $filename.IO.basename;
+	return unless $name.IO.extension.lc eq any(<json sav>);
+	my $root = $*CWD;
+	my $tmp = $root.add(".{ $name }.{ (^2**32).rand.Int.base(36) }.part");
+	LEAVE { try $tmp.unlink if $tmp.e }
+	return unless try { $source.copy($tmp); True };
+	my $content = try $tmp.slurp(:bin);
+	return unless $content.defined;
+	my $dest = $root.add($name);
+	for ^100 {
+		return if try { $tmp.link($dest); True };
+		next unless $dest.e;  # moved aside meanwhile: try the name again
+		my $existing = try $dest.slurp(:bin);
+		return if $existing.defined && $existing eq $content;
+		move-aside($dest) if $existing.defined;  # (or another upload just did)
+	}
+}
+
+#| move-aside renames $path to NAME.<its modification date-time>.EXT (then
+#| -2, -3, ... if that is taken), never replacing a file. The file is first
+#| renamed to a private name - one atomic step that moves exactly the file
+#| there, or fails because another upload already moved it - so nothing
+#| another upload has just put in place is ever deleted.
+sub move-aside(IO::Path:D $path) {
+	my $moving = "{ $path }.moving-{ $*PID }-{ (^2**32).rand.Int.base(36) }".IO;
+	return unless try { $path.rename($moving, :createonly); True };
+	# the file's own POSIX time: IO::Path.modified is 37 s early (an
+	# Instant counts leap seconds), as `stat` shows
+	my $posix = try nqp::stat(nqp::unbox_s($moving.absolute), nqp::const::STAT_MODIFYTIME);
+	my $dt = DateTime.new(($posix.defined && $posix > 0) ?? $posix !! time, timezone => $*TZ);
+	my $stamp = sprintf('%04d%02d%02d-%02d%02d%02d', $dt.year, $dt.month, $dt.day, $dt.hour, $dt.minute, $dt.whole-second);
+	my $ext = $path.extension;
+	my $stem = $path.extension('').Str ~ ".$stamp";
+	for 1..9999 -> $n {
+		my $aside = ($n == 1 ?? "$stem.$ext" !! "$stem-$n.$ext").IO;
+		if try { $moving.link($aside); True } {
+			try $moving.unlink;
+			return;
+		}
+	}
+	# left under its private name rather than lost
+}
+
 #|(onefite web engine)
 multi MAIN ('start-web-engine',
 #		:$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
@@ -1158,7 +1223,7 @@ multi MAIN ('start-web-engine',
 		       <tr><td>Pearson Correlation: </td><td><input name="R2" type="radio" value="yes">/<input name="R2" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>R1: </td><td><input name="R1" type="radio" value="yes">/<input name="R1" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>err: </td><td><input name="err" type="text" value="">(number, num%, num%avg, num% avg split xvalue, stdv, stdv split xvalue; ex. 1.0, 10%, 10%avg, 1% avg split at 2e4, stdv, "stdv split at 2e4")</td></tr>
-		       <tr><td>range: </td><td><input name="range" type="text" value="">(window range: i:f)</td></tr>
+		       <tr><td>zone-window: </td><td><input name="zone-window" type="text" value="">(window range: i:f)</td></tr>
 		       <tr><td>remove-outliers: </td><td><input name="remove-outlieres" type="text" value="">(ex: 1 or 1,3,6 or 1:3,5)</td></tr>
 		       <tr><td>plot-if: </td><td><input name="plot-if" type="text" value="">(ex: c1>0.5,1)</td></tr>
 		       <tr><td>fit-if: </td><td><input name="fit-if" type="text" value="">(ex: c1<2,10)</td></tr>
@@ -1262,7 +1327,7 @@ HTML
 		my $fit-if = "";
 		my $plot-if = "";
 		my $gfilt = "";
-		my $range = "";
+		my $zone-window = "";
 		my $remove-outliers="";
 		my $reduced-chi2="";
 		my $no-plot="";
@@ -1299,7 +1364,7 @@ HTML
 		       $sef-R1-file        = "--sef-R1-file={$v.Str}  " if $k eq any(<sef-R1-file sf>) and $v.Bool;
 		       $print-cols         = "--print-cols={$v.Str}  " if $k eq any(<pc prco print-cols cols print-columns>) and $v.Str.Bool;
 		       $err                = "--err={$v.Str}  " if $k eq any(<err set-err se>) and $v.Str.Bool;
-		       $range                = "--range={$v.Str}  " if $k eq any(<range r>) and $v.Str.Bool;
+		       $zone-window          = "--zone-window={$v.Str}  " if $k eq "zone-window" and $v.Str.Bool;
 		       $remove-outliers     = "--remove-outliers={$v.Str}  " if $k eq any(<remove-outliers ro>) and $v.Str.Bool;
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.Str.Bool;
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.Str.Bool;
@@ -1341,6 +1406,7 @@ HTML
 		else {		 
 		    $input-file.IO.spurt: $file-content.decode('UTF-8')
 		}	   
+		keep-input-in-root($input-file, $filename);
 		$file-to-download = $work-folder.add($file-to-download)
 		    if $file-to-download.Bool;
 
@@ -1352,7 +1418,7 @@ HTML
 		    @onefite-args.push($filename);
 		    for $mp4, $global, $hybrid, $autox, $autoy, $autoxy, $logx,
 			    $logy, $R1, $sef-R1-file, $err, $plot-if, $fit-if, $selected-datasets,
-		        $range, $gfilt, $fit-methods, $num, $ssz,
+		        $zone-window, $gfilt, $fit-methods, $num, $ssz,
 		        $remove-outliers, $reduced-chi2, $R2, $print-cols, $no-plot -> $flag {
 		        @onefite-args.push($flag.trim) if $flag.trim.chars;
 		    }
@@ -1402,6 +1468,7 @@ HTML
 		} else {
 		    $input-file.IO.spurt: $content.decode('UTF-8');
 		}
+		keep-input-in-root($input-file, $filename);
 		my @args = 'plot', $filename, "--work-folder={$request-folder.Str}";
 		for %rest.kv -> $k, $v {
 		    @args.push: "--autox" if $k eq any(<autox auto-x ax>) && $v eq any(<yes 1>);
@@ -1432,6 +1499,7 @@ HTML
 		}
 		my $input-file = $request-folder.add($filename);
 		$input-file.IO(:bin).spurt: $file-content;
+		keep-input-in-root($input-file, $filename);
 		my $file-to-download = $filename.IO.extension.Str ~~ /sav/
 		    ?? $request-folder.add($filename.IO.extension('json').Str)
 		    !! $request-folder.add($filename.IO.extension('sav').Str);
@@ -1585,7 +1653,7 @@ multi MAIN  ('create',
 	     Str  :o(:st(:save-to(:$to))), #= write fit settings and results to json or sav file
 		 Str  :pi(:$plot-if) = "", #= include plot if tag condition when plotting data and fitting curves
 		 Bool :q(:$quiet) = False, #= reduce log output
-		 Str  :r(:$range) = "", #= define range when importing data zones form Stelar data
+		 Str  :zw(:$zone-window) = "", #= restrict a Stelar zone's own per-tau-step averaging window to points start,end
 		 Bool :$R1 = False, #= import R1 and not Mz data from ist-ffc and Stelar sdf files
 		 Str  :se(:set-err(:$err))="", #= set err in data files doesn't apply to ist-ffc, sef, hdf5 data files 
 	     Str  :SymbSize(:$ssz) where { $_.Rat >= 0 }= '1.0', #= set size of symbols
@@ -1607,7 +1675,7 @@ multi MAIN  ('create',
 	%options.push('R1' => $R1) if $R1;
 	%options.push('gfilt' => $gfilt) if $gfilt.so;
 	%options.push('err' => $err) if $err.so;
-	%options.push('range' => $range) if $range.so;
+	%options.push('zone-window' => $zone-window) if $zone-window.so;
 
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options, quiet => $quiet);	
 	my %aliases = from-json( "{ ::('OFE-PATH') }/../etc/aliases.json".IO.slurp ) if  "{ ::('OFE-PATH') }/../etc/aliases.json".IO.e;
@@ -1733,7 +1801,7 @@ multi MAIN  ('fit',
 	Str	 :pc(:prco(:print-cols(:print-columns(:$cols)))) ="", #= select fit-results columns by number or name or name+1 or name-1
 	Bool :pco(:peco(:pearson-correlation(:$R2))) = False, #= Pearson correlation coefficient (quality coefficient)
 	Bool :q(:$quiet) = False,
- 	Str  :r(:$range) = "",
+ 	Str  :zw(:$zone-window) = "",
 	Bool :$R1 = False,
 	Bool :rc(:rchi2(:$reduced-chi2)) = False, #= recalculate parameters' errors for a Chi2 ~ Number of Degrees of Freedom 
 	Bool :rd(:ram(:ramdisk(:RAMDisk(:$use-ramdisk)))) = False, #= run service on a RAMDisk
@@ -1778,7 +1846,7 @@ multi MAIN  ('fit',
 	%options.push('R1' => $R1) if $R1;
 	%options.push('gfilt' => $gfilt) if $gfilt.so;
 	%options.push('err' => $err) if $err.so;
-	%options.push('range' => $range) if $range.so;
+	%options.push('zone-window' => $zone-window) if $zone-window.so;
 
 	@data-files = Import.new.path("$work-folder/$name").input-files(@data-files).filter-with(%options, quiet => $quiet);	
     
@@ -2075,15 +2143,19 @@ MSG
    	}
 
 	$engine.save($to) if $to.defined;
-    zip-fit($engine,$work-folder,$name);
-    # zip-fit writes $work-folder/$name.zip, so the rename must look there
-    # too - a bare "$name.zip" failed whenever the shell was not in
-    # --work-folder (e.g. an agent in onefite-gui's terminal). A relative
-    # --zip-to lands next to it; an absolute one is used as given.
-    unless $name eq $zip-to {
-        my $zip-dst = $zip-to.IO.is-absolute ?? $zip-to !! "$work-folder/$zip-to";
-        shell "mv $work-folder/$name.zip $zip-dst"
-            unless "$work-folder/$name.zip".IO.absolute eq $zip-dst.IO.absolute;
+    # --zip-to='' : no zip (a copy of the work folder, to save disk space) -
+    # as OFE-Go, and as a batch already did (Batch.rakumod).
+    if $zip-to ne '' {
+        zip-fit($engine,$work-folder,$name);
+        # zip-fit writes $work-folder/$name.zip, so the rename must look there
+        # too - a bare "$name.zip" failed whenever the shell was not in
+        # --work-folder (e.g. an agent in onefite-gui's terminal). A relative
+        # --zip-to lands next to it; an absolute one is used as given.
+        unless $name eq $zip-to {
+            my $zip-dst = $zip-to.IO.is-absolute ?? $zip-to !! "$work-folder/$zip-to";
+            shell "mv $work-folder/$name.zip $zip-dst"
+                unless "$work-folder/$name.zip".IO.absolute eq $zip-dst.IO.absolute;
+        }
     }
 	
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";

@@ -3,7 +3,7 @@ FROM debian:trixie
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install required packages
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-suggests \
 	vim \
     sudo \
     git \

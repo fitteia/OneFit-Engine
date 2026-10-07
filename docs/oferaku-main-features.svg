@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1250" viewBox="0 0 1440 1250" role="img" aria-labelledby="title desc">
+  <title id="title">OFE-Raku — main features and workflow</title>
+  <desc id="desc">Access through the onefite Raku CLI, OFE-GUI locally or over SSH, the optional HTTP upload-and-fit service, or a VM or container. Prepare raw data (text, ZIP, Stelar SDF/SEF/HDF5) and a model, resume JSON or SAV, or run batches of complete fits. Configure fit modes, parameters and MINUIT methods, run the Raku orchestrator and the native MINUIT engine, inspect results, plot and save. Supporting commands cover installation on Linux, WSL2, macOS and Docker, upgrade, uninstall, tests, the service, conversion and the model catalogue.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#617487"/></marker>
+    <style>
+      text{font-family:Arial,Helvetica,sans-serif;fill:#17324d}
+      .heading{font-size:34px;font-weight:700}.sub{font-size:17px;fill:#607487}
+      .label{font-size:13px;font-weight:700;letter-spacing:2px;fill:#607487}
+      .name{font-size:20px;font-weight:700}.body{font-size:16px;fill:#405973}
+      .small{font-size:14px;fill:#607487}.white{fill:#fff}
+      .edge{fill:none;stroke:#617487;stroke-width:2;marker-end:url(#arrow)}
+      .line{fill:none;stroke:#617487;stroke-width:2}
+      .box{fill:#fff;stroke:#ccdae6;stroke-width:1.5}
+    </style>
+  </defs>
+  <rect width="1440" height="1250" fill="#f4f7fb"/>
+  <text x="64" y="65" class="heading">OFE-Raku</text>
+  <text x="64" y="97" class="sub">Main features · from model and data to fitted results</text>
+  <rect x="1102" y="40" width="274" height="38" rx="19" fill="#e0eaf5"/>
+  <text x="1239" y="64" text-anchor="middle" class="small">Raku CLI + optional HTTP service</text>
+
+  <text x="64" y="143" class="label">01  ACCESS</text>
+  <rect x="64" y="158" width="320" height="105" rx="14" class="box"/>
+  <text x="86" y="192" class="name">Command line</text>
+  <text x="86" y="221" class="body">onefite (optional ofe alias)</text>
+  <text x="86" y="245" class="small">Run engine commands directly</text>
+  <rect x="395" y="158" width="320" height="105" rx="14" class="box"/>
+  <text x="417" y="192" class="name">OFE-GUI</text>
+  <text x="417" y="221" class="body">Local, or server GUI over SSH</text>
+  <text x="417" y="245" class="small">Batches need the engine local to it</text>
+  <rect x="726" y="158" width="320" height="105" rx="14" class="box"/>
+  <text x="748" y="192" class="name">HTTP service</text>
+  <text x="748" y="221" class="body">onefite service start · :8142</text>
+  <text x="748" y="245" class="small">Upload-and-fit API (Cro)</text>
+  <rect x="1057" y="158" width="319" height="105" rx="14" class="box"/>
+  <text x="1079" y="192" class="name">VM or container</text>
+  <text x="1079" y="221" class="body">Docker · remote servers</text>
+  <text x="1079" y="245" class="small">Behind custom front-ends</text>
+  <path d="M224 263V286H1216V263M554 263V286M885 263V286" class="line"/>
+  <path d="M720 286V302" class="edge"/>
+
+  <text x="64" y="327" class="label">02  CHOOSE INPUT</text>
+  <rect x="64" y="342" width="414" height="110" rx="14" fill="#edf5ff" stroke="#c4d9f1"/>
+  <text x="86" y="377" class="name">Fresh model + raw data</text>
+  <text x="86" y="406" class="body">Expression or alias · optional C helper code</text>
+  <text x="86" y="432" class="small">Text · ZIP · Stelar SDF / SEF / HDF5 · IST-FFC files</text>
+  <rect x="513" y="342" width="414" height="110" rx="14" fill="#edf5ff" stroke="#c4d9f1"/>
+  <text x="535" y="377" class="name">Resume a saved fit</text>
+  <text x="535" y="406" class="body">JSON / SAV engine description</text>
+  <text x="535" y="432" class="small">Review parameters · edit · fit again</text>
+  <rect x="962" y="342" width="414" height="110" rx="14" fill="#edf5ff" stroke="#c4d9f1"/>
+  <text x="984" y="377" class="name">Batch of complete fits</text>
+  <text x="984" y="406" class="body">Saved fits · alias,data · @jobs file</text>
+  <text x="984" y="432" class="small">Per-line options and fit modes · --jobs</text>
+  <path d="M271 452V473H1169V452" class="line"/>
+  <path d="M720 452V497" class="edge"/>
+
+  <text x="64" y="518" class="label">03  CONFIGURE</text>
+  <rect x="64" y="532" width="1312" height="126" rx="14" class="box"/>
+  <path d="M501 549V640M939 549V640" stroke="#dbe4ed"/>
+  <text x="86" y="567" class="name">Fit strategy</text>
+  <text x="86" y="597" class="body">Individual · global · hybrid/MIXED</text>
+  <text x="86" y="623" class="small">Per-block or shared parameters</text>
+  <text x="524" y="567" class="name">Parameters and data</text>
+  <text x="524" y="597" class="body">Initial values · fixed/free · bounds</text>
+  <text x="524" y="623" class="small">--selected-dataset · --fit-if · --plot-if</text>
+  <text x="962" y="567" class="name">Methods and parallelism</text>
+  <text x="962" y="597" class="body">simp · scan · min · minos</text>
+  <text x="962" y="623" class="small">--workers · --jobs · optional RAM disk</text>
+  <path d="M720 658V692" class="edge"/>
+
+  <rect x="250" y="694" width="940" height="114" rx="18" fill="#173d61"/>
+  <text x="720" y="734" text-anchor="middle" class="name white">OFE-Raku orchestrates → native OFE / MINUIT executes</text>
+  <text x="720" y="764" text-anchor="middle" class="body white">Raku grammar parses the model · generate and compile C · optimize · collect outputs</text>
+  <text x="720" y="790" text-anchor="middle" class="small white">Single fit, parallel MIXED blocks, or independent batch fits (per-fit folders, batch.json)</text>
+  <path d="M720 808V831M224 831H1216" class="line"/>
+  <path d="M224 831V850" class="edge"/><path d="M554 831V850" class="edge"/><path d="M885 831V850" class="edge"/><path d="M1216 831V850" class="edge"/>
+
+  <rect x="64" y="852" width="320" height="123" rx="14" fill="#eaf6ef" stroke="#c2ddcc"/>
+  <text x="86" y="887" class="name">Fit results</text>
+  <text x="86" y="916" class="body">Values · errors · χ² · status</text>
+  <text x="86" y="943" class="small">fit.log · residuals · results tables</text>
+  <rect x="395" y="852" width="320" height="123" rx="14" fill="#eaf6ef" stroke="#c2ddcc"/>
+  <text x="417" y="887" class="name">Plots and SCAN</text>
+  <text x="417" y="916" class="body">Grace / PDF plots · MPEG4</text>
+  <text x="417" y="943" class="small">χ² scans (SCAN) in fit.log</text>
+  <rect x="726" y="852" width="320" height="123" rx="14" fill="#eaf6ef" stroke="#c2ddcc"/>
+  <text x="748" y="887" class="name">Save and reuse</text>
+  <text x="748" y="916" class="body">Saved JSON / SAV · ZIP</text>
+  <text x="748" y="943" class="small">archive: the log of stored runs</text>
+  <rect x="1057" y="852" width="319" height="123" rx="14" fill="#eaf6ef" stroke="#c2ddcc"/>
+  <text x="1079" y="887" class="name">Service responses</text>
+  <text x="1079" y="916" class="body">Results returned per request</text>
+  <text x="1079" y="943" class="small">Choose which files to download</text>
+  <path d="M886 975V993H1393V315H720V342" class="edge"/>
+  <text x="1250" y="1014" text-anchor="middle" class="small">Saved results can feed another run</text>
+
+  <text x="64" y="1022" class="label">SUPPORTING FEATURES</text>
+  <rect x="64" y="1037" width="1312" height="104" rx="14" class="box"/>
+  <text x="86" y="1067" class="body">list: models and aliases   ·   help / man   ·   path   ·   convert: JSON ↔ SAV   ·   random: synthetic data   ·   --version</text>
+  <text x="86" y="1094" class="body">./INSTALL: site · --to-user · --wsl · --macos · --docker   ·   upgrade · uninstall · test   ·   service start / stop / log / PID</text>
+  <text x="86" y="1121" class="small">Extend: function aliases (aliases.json) · local C model libraries · extensions such as Florence</text>
+  <text x="64" y="1182" class="small">Scope: current OFE-Raku (OneFit-Engine) + separate OFE-GUI. Model syntax, fit modes, files and the native engine are shared with OFE-Go.</text>
+  <text x="64" y="1207" class="small">The HTTP service has no authentication, authorization or sandboxing and compiles client input into native code: trusted networks only (docs/security.md).</text>
+</svg>

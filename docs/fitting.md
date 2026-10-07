@@ -79,7 +79,7 @@ fewer controls than `fit` - notably no `--fit-methods`, `--aux-code`,
 data-scaling and workspace options (`--autox`/`--logx`/etc.,
 `--work-folder`), but diverge in real ways beyond what's listed above - for
 example `create` and the expression form of `fit` share `--SymbSize`,
-`--range`, `--gfilt`, and `--set-err`, none of which apply once you're
+`--zone-window`, `--gfilt`, and `--set-err`, none of which apply once you're
 re-fitting a saved file. Don't assume an option that works on one form
 works on all of them; `onefite man` documents each command's actual
 signature.

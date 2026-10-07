@@ -138,7 +138,7 @@ install_pkg() {
             pacman -S --needed --noconfirm "$pkg" || { warn "could not install package: $pkg"; return 1; }
             ;;
         apt)
-            DEBIAN_FRONTEND=noninteractive apt-get install -y "$pkg" || { warn "could not install package: $pkg"; return 1; }
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-suggests "$pkg" || { warn "could not install package: $pkg"; return 1; }
             ;;
 		dnf)
     		if ! dnf install -y "$pkg"; then
