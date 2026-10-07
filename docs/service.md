@@ -94,6 +94,12 @@ existing persistent directory relative to the service's working directory.
 Each request gets a unique retained child there; it is not a login, and the
 operator must manage retention and disk usage.
 
+Every uploaded saved fit (`.json`/`.sav`) also stays in the service's
+folder (`$HOME/public_html`) under its own name - an older different file of
+that name is renamed to `NAME.YYYYmmdd-HHMMSS.EXT` first (see
+[HTTP API](http-api.md#uploaded-saved-fits)). These accumulate: include
+them in the same retention policy.
+
 ## Health checking
 
 A minimal local check:

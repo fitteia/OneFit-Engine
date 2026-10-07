@@ -239,7 +239,10 @@ keep it free of unrelated files.
   - `json`: the saved description;
   - a file name (for example `All.pdf`): that one file;
   - no `download` field: the fit log, as text.
-- Each request runs in its own retained folder.
+- Each request runs in its own folder, removed afterwards (kept with a
+  `username`). An uploaded `.json`/`.sav` stays in the service's folder
+  (`public_html`): the latest takes the name, an older different one is
+  renamed to `NAME.YYYYmmdd-HHMMSS.json`.
 
 ## Supporting features
 

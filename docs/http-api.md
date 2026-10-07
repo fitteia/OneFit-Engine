@@ -187,6 +187,16 @@ with `#` is forwarded as a dynamic model override (see
   per-upload folder, and streamed back verbatim.
 - no `download` field returns a `text/plain` fit log instead.
 
+### Uploaded saved fits
+
+A saved fit (`.json`/`.sav`) uploaded to `/fit`, `/plot` or `/convert` is
+also kept in the service's own folder (`$HOME/public_html` for
+`onefite service start`) under its own name, while the request itself is
+processed in its own folder. The latest upload takes the name; a different
+file already there is first renamed to `NAME.YYYYmmdd-HHMMSS.EXT` (its own
+modification time, local time), so nothing is overwritten; an identical
+upload leaves it as it is. Data files are not kept.
+
 Binary downloads use `application/octet-stream`. The temporary,
 randomly-named work directory for the request is deleted after the
 response is constructed.

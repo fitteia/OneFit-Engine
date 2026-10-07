@@ -340,6 +340,12 @@ when C<download> is absent, the response is the C<text/plain> fit log
 instead. Anonymous requests use a temporary per-request work folder which is
 deleted once the response has been sent. A valid C<username> selects an
 existing directory and retains each request in a unique child directory.
+An uploaded saved fit (C<.json>/C<.sav>, to C</fit>, C</plot> or C</convert>)
+is also kept in the service's own folder (C<$HOME/public_html> for
+C<onefite service start>) under its own name: the latest upload takes the
+name, and a different file already there is first renamed to
+C<NAME.YYYYmmdd-HHMMSS.EXT> (its own modification time); an identical one is
+left as it is.
 =item C<POST /plot> - multipart upload, required field C<file> (a C<.json>
 or C<.sav> engine description). Re-renders its plots without fitting - every
 parameter is evaluated at its saved value, fixed, exactly like C<onefite
@@ -789,6 +795,7 @@ note "===> Compile time: ", now - $time;
 
 our constant OFE-PATH="%OFE-PATH%";
 
+use nqp; # move-aside: a file's exact modification time
 use OneFit;
 use OneFit::Engine::Grammars;
 use OneFit::Engine::Parameters;
@@ -1113,6 +1120,59 @@ sub create-web-request-directory(
 	die "Cannot allocate a unique OneFit web-request directory under $parent after $attempts attempts";
 }
 
+#| The initial saved fit (.json/.sav) uploaded to /fit, /plot or /convert is
+#| kept in the service's own folder (public_html), as it was before
+#| per-request folders (e7b855df) - the request itself is still processed
+#| in its own folder, removed afterwards. The latest upload takes the name,
+#| as before; a different file already there is moved aside first to
+#| NAME.<its date-time>.EXT (so nothing is lost), and an identical one is
+#| left as it is. Hard links, so nothing is half written or replaced when
+#| two uploads of one name come at once. onefite-gui does the same for its
+#| /api/run-upload (keepInputInRoot). Best effort.
+sub keep-input-in-root(IO::Path:D $source, Str:D $filename) {
+	my $name = $filename.IO.basename;
+	return unless $name.IO.extension.lc eq any(<json sav>);
+	my $root = $*CWD;
+	my $tmp = $root.add(".{ $name }.{ (^2**32).rand.Int.base(36) }.part");
+	LEAVE { try $tmp.unlink if $tmp.e }
+	return unless try { $source.copy($tmp); True };
+	my $content = try $tmp.slurp(:bin);
+	return unless $content.defined;
+	my $dest = $root.add($name);
+	for ^100 {
+		return if try { $tmp.link($dest); True };
+		next unless $dest.e;  # moved aside meanwhile: try the name again
+		my $existing = try $dest.slurp(:bin);
+		return if $existing.defined && $existing eq $content;
+		move-aside($dest) if $existing.defined;  # (or another upload just did)
+	}
+}
+
+#| move-aside renames $path to NAME.<its modification date-time>.EXT (then
+#| -2, -3, ... if that is taken), never replacing a file. The file is first
+#| renamed to a private name - one atomic step that moves exactly the file
+#| there, or fails because another upload already moved it - so nothing
+#| another upload has just put in place is ever deleted.
+sub move-aside(IO::Path:D $path) {
+	my $moving = "{ $path }.moving-{ $*PID }-{ (^2**32).rand.Int.base(36) }".IO;
+	return unless try { $path.rename($moving, :createonly); True };
+	# the file's own POSIX time: IO::Path.modified is 37 s early (an
+	# Instant counts leap seconds), as `stat` shows
+	my $posix = try nqp::stat(nqp::unbox_s($moving.absolute), nqp::const::STAT_MODIFYTIME);
+	my $dt = DateTime.new(($posix.defined && $posix > 0) ?? $posix !! time, timezone => $*TZ);
+	my $stamp = sprintf('%04d%02d%02d-%02d%02d%02d', $dt.year, $dt.month, $dt.day, $dt.hour, $dt.minute, $dt.whole-second);
+	my $ext = $path.extension;
+	my $stem = $path.extension('').Str ~ ".$stamp";
+	for 1..9999 -> $n {
+		my $aside = ($n == 1 ?? "$stem.$ext" !! "$stem-$n.$ext").IO;
+		if try { $moving.link($aside); True } {
+			try $moving.unlink;
+			return;
+		}
+	}
+	# left under its private name rather than lost
+}
+
 #|(onefite web engine)
 multi MAIN ('start-web-engine',
 #		:$ip = from-json(shell("ip -4 -br -j add",:out).out.slurp(:close)).tail<addr_info>.head<local>,
@@ -1346,6 +1406,7 @@ HTML
 		else {		 
 		    $input-file.IO.spurt: $file-content.decode('UTF-8')
 		}	   
+		keep-input-in-root($input-file, $filename);
 		$file-to-download = $work-folder.add($file-to-download)
 		    if $file-to-download.Bool;
 
@@ -1407,6 +1468,7 @@ HTML
 		} else {
 		    $input-file.IO.spurt: $content.decode('UTF-8');
 		}
+		keep-input-in-root($input-file, $filename);
 		my @args = 'plot', $filename, "--work-folder={$request-folder.Str}";
 		for %rest.kv -> $k, $v {
 		    @args.push: "--autox" if $k eq any(<autox auto-x ax>) && $v eq any(<yes 1>);
@@ -1437,6 +1499,7 @@ HTML
 		}
 		my $input-file = $request-folder.add($filename);
 		$input-file.IO(:bin).spurt: $file-content;
+		keep-input-in-root($input-file, $filename);
 		my $file-to-download = $filename.IO.extension.Str ~~ /sav/
 		    ?? $request-folder.add($filename.IO.extension('json').Str)
 		    !! $request-folder.add($filename.IO.extension('sav').Str);
