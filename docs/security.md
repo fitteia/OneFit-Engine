@@ -30,14 +30,26 @@ endpoint to anonymous or mutually untrusted clients.
 
 ## Shell command construction
 
-The current `POST /fit` implementation builds a shell command line by
-interpolating request field values (including the `function` field)
-directly into a string, then runs it. This is a real command-injection
-surface, not a theoretical one - it is not limited to the "native code
-execution" risk above. Requested `download` values are also interpreted as
-filesystem paths. These patterns require strict upstream trust and make
-direct Internet exposure unsafe regardless of any reverse proxy in front of
-it.
+`POST /fit` and `POST /plot` no longer build a shell command line: they
+start `onefite fit`/`onefite plot` with the request values (filename,
+`function`, fit methods, `#name` overrides, and the other fields) as
+literal process arguments, so the HTTP layer itself passes nothing through
+a shell. Two risks remain:
+
+- The `onefite fit` command that runs the request still uses shell
+  commands for its own housekeeping (removing and zipping the work folder,
+  `pdf2mp4`, moving the zip), with the work-folder name - taken from the
+  uploaded file's name - interpolated into them. An upload named, for
+  example, `a$(command).json` therefore still runs `command`. The values
+  are also passed as options, so a field value starting with `--` reaches
+  `onefite` as an option of its own.
+- Requested `download` values are joined to the request's work folder
+  without normalization, so a value with `..` components selects a file
+  outside it.
+
+Neither is limited to the "native code execution" risk above. They
+require strict upstream trust and make direct Internet exposure unsafe
+regardless of any reverse proxy in front of it.
 
 Working operations also remove and recreate target directories. Use a
 dedicated account and filesystem tree with no unrelated data.
@@ -80,8 +92,8 @@ container and front it with a trusted gateway that provides:
 - disposable or per-job workspaces;
 - output allowlisting rather than arbitrary path selection.
 
-A reverse proxy alone does not make generated native code (or shell
-interpolation) safe. Isolation and trusted callers remain necessary.
+A reverse proxy alone does not make generated native code (or the shell
+use described above) safe. Isolation and trusted callers remain necessary.
 
 ## Administrative commands
 

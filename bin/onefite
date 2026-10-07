@@ -1410,8 +1410,9 @@ HTML
 		$file-to-download = $work-folder.add($file-to-download)
 		    if $file-to-download.Bool;
 
-		# Pass request values as literal process arguments.  No shell parses
-		# filenames, model expressions, fit methods, or dynamic overrides.
+		# Pass request values as literal process arguments: no shell parses
+		# them here.  onefite fit itself still interpolates the work-folder
+		# name (from the filename) into shell commands; see docs/security.md.
 		my @onefite-args = 'fit';
 		if so $function {
 		    @onefite-args.push($function);
