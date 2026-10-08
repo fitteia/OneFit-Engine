@@ -1,38 +1,42 @@
 name: CI
 
-# Every pull request and every push to unstable, dev or main: builds the
-# engine (onefite-c-code and minuit, as ./INSTALL places them next to this
-# checkout) and runs the test suite.
+# Every pull request and push to unstable/dev/main, and once a week: the tests
+# inside Debian containers - trixie (stable, must pass) and forky (testing,
+# the next stable: allowed to fail, an early warning of what the next Debian
+# release will change; the weekly run catches it moving between pushes).
 on:
   pull_request:
   push:
     branches: [unstable, dev, main]
+  schedule:
+    - cron: '17 5 * * 1'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: test (debian ${{ matrix.debian }})
+    runs-on: ubuntu-24.04
+    container: debian:${{ matrix.debian }}
+    continue-on-error: ${{ matrix.debian == 'forky' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        debian: [trixie, forky]
     steps:
+      # git first, so actions/checkout makes a real git checkout
+      - name: Debian packages
+        run: |
+          apt-get update -qq
+          apt-get install -y -qq --no-install-recommends git ca-certificates \
+            gcc gfortran make perl libperl-dev swig hdf5-tools pdftk-java \
+            gnuplot-nox grace ghostscript zip unzip ffmpeg poppler-utils procps rakudo raku-json-fast
+
       - uses: actions/checkout@v4
         with:
           path: OneFit-Engine
-
-      - name: System packages (compilers, plotting, file tools)
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq --no-install-recommends \
-            gcc gfortran make perl libperl-dev swig hdf5-tools pdftk-java \
-            gnuplot-nox grace ghostscript zip unzip ffmpeg poppler-utils
-
-      - name: Set up Raku
-        uses: Raku/setup-raku@v1
-        with:
-          raku-version: '2024.09'
-
-      - name: Raku modules the tests use
-        run: zef install --/test JSON::Fast
 
       # Siblings of the checkout, where ./INSTALL puts them (OFE-PATH/../C,
       # OFE-PATH/../minuit; the tests find pdf2mp4 in OFE-PATH/../bin).
