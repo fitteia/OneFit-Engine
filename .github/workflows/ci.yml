@@ -1,0 +1,56 @@
+name: CI
+
+# Every pull request and every push to unstable, dev or main: builds the
+# engine (onefite-c-code and minuit, as ./INSTALL places them next to this
+# checkout) and runs the test suite.
+on:
+  pull_request:
+  push:
+    branches: [unstable, dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: OneFit-Engine
+
+      - name: System packages (compilers, plotting, file tools)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends \
+            gcc gfortran make perl libperl-dev swig hdf5-tools pdftk-java \
+            gnuplot-nox grace ghostscript zip unzip ffmpeg poppler-utils
+
+      - name: Set up Raku
+        uses: Raku/setup-raku@v1
+        with:
+          raku-version: '2024.09'
+
+      - name: Raku modules the tests use
+        run: zef install --/test JSON::Fast
+
+      # Siblings of the checkout, where ./INSTALL puts them (OFE-PATH/../C,
+      # OFE-PATH/../minuit; the tests find pdf2mp4 in OFE-PATH/../bin).
+      - name: The engine's sources
+        run: |
+          git clone --depth 1 https://github.com/fitteia/onefite-c-code.git C
+          git clone --depth 1 https://github.com/fitteia/minuit.git minuit
+
+      - name: Build the engine
+        working-directory: OneFit-Engine
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/bin"
+          perl ../C/tools/engine.pl install --c-root ../C --root "$PWD" \
+            --minuit-dir ../minuit --minuit-max-params 1000 \
+            --bindir "$GITHUB_WORKSPACE/bin" \
+            --perlcore "$(perl -MConfig -e 'print "$Config{archlib}/CORE"')" \
+            --no-default-extensions --no-fetch
+
+      - name: Tests
+        working-directory: OneFit-Engine
+        run: PATH="$GITHUB_WORKSPACE/bin:$PATH" prove -e 'raku -Ilib' --ext .rakutest t/
