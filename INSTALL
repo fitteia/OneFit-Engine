@@ -638,31 +638,47 @@ sub shellinabox(Bool $shell, $shell-port) {
 	}
 }
 
+# The man page: generated from bin/onefite's POD when possible, else the
+# committed onefite.1; built and compressed in a temporary folder, so the
+# checkout's onefite.1 is never changed. Installed in /usr/local/share/man
+# on every system: /usr/share/man belongs to the system's packages (the
+# onefite-go package installs its own onefite.1.gz there, and copying over it
+# made dpkg report that file changed). man searches /usr/local first, as the
+# shell finds /usr/local/bin/onefite first.
 sub install-manpage( :$macos = False ) {
-	#"onefite.1".IO.spurt: shell("raku --doc=Man $*CWD/bin/onefite",:out).out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");
-	my $p;
-	try {
- 		$p = shell("$*CWD/bin/onefite man --man",:out,:err);
+	my $tmp = $*TMPDIR.add("onefite-man-{$*PID}");
+	mkdir $tmp;
+	LEAVE { run 'rm', '-rf', '--', ~$tmp }
+	my $page = $tmp.add('onefite.1');
+	# bin/onefite may not even start here (a missing module, say): then too
+	# the committed page is used.
+	my $text = try {
+		my $p = run "$*CWD/bin/onefite", 'man', '--man', :out, :err;
+		my $out = $p.out.slurp(:close);
+		$p.err.slurp(:close);
+		$p.exitcode == 0 ?? $out !! Nil
+	};
+	if $text and $text.trim {
+		$page.spurt: $text.lines.grep({ !/Total' 'execution/ }).join("\n")
+			~ "\n\n" ~ run("$*CWD/bin/onefite", '-v', :out).out.slurp(:close);
+		say "onefite man page generated";
 	}
-	if $p.exitcode {
-		say "man page couldn't be created on site, using default man page";
+	else {
+		say "man page couldn't be created on site, using the default man page (onefite.1)";
+		"$*CWD/onefite.1".IO.copy: $page;
 	}
-	else {	
-		"onefite.1".IO.spurt: $p.out.lines(:close).grep({ !/Total' 'execution/ }).join("\n");;
-		"onefite.1".IO.spurt: "\n\n" ~ shell("$*CWD/bin/onefite -v",:out).out.lines.join("\n"), :append;
-    	"onefite.1.gz".IO(:e).unlink;
-		say "onefite man page: onefite.1.gz";
+	return unless $SUDO;
+	my $mandir = '/usr/local/share/man/man1';
+	run |$SUDO.words, 'mkdir', '-p', $mandir;
+	if $macos {
+		run |$SUDO.words, 'cp', ~$page, "$mandir/onefite.1";
+		say "onefite.1 man page installed in $mandir/";
 	}
-	if $SUDO {
-   		if $macos {
-   			shell("$SUDO cp onefite.1 /usr/local/share/man/man1/");	
-			say "onefite.1 man page install in /usr/local/share/man/man1/";
-		}
-		else {
-			shell("gzip -9 onefite.1");
-   			shell("$SUDO cp onefite.1.gz /usr/share/man/man1/");	
-			say "onefite.1.gz man page install in /usr/share/man/man1/";
-		}
+	else {
+		my $gz = $tmp.add('onefite.1.gz');
+		$gz.spurt: run('gzip', '-9', '-n', '-c', ~$page, :out, :bin).out.slurp(:close);
+		run |$SUDO.words, 'cp', ~$gz, "$mandir/onefite.1.gz";
+		say "onefite.1.gz man page installed in $mandir/";
 	}
 }
 

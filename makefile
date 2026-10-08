@@ -12,13 +12,14 @@ help:
 	echo "run make ARCH=<x86_64|aarch64> ROOT=<path>  install"
 	echo "Example: make ARCH=aarch64 ROOT=./ install"	
 
+# perl -pi, not sed -i'': macOS's BSD sed reads -i'' as -i and takes the
+# next argument as the backup suffix (and has no \s), so the install path
+# was never filled in there.
 set: 	
-	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(MROOT)@" $(MROOT)/bin/onefite
-	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(MROOT)@" $(MROOT)/t/*.rakutest
-	sed -i'' -e "/constant OFE-PATH\s*=/ s@%OFE-PATH%@$(MROOT)@" $(MROOT)/examples/command-line/*.me
-	sed -i'' -e "/x86_64/ s@x86_64@$(ARCH)@" $(MROOT)/etc/OFE/default/makefile
-	sed -i'' -e "/PERLVERSION=5.36/ s@5.36@$(PERLVERSION)@" $(MROOT)/etc/OFE/default/makefile
-	sed -i'' -e "/PERLCORE=/ s@.*@PERLCORE=$(PERLCORE)@" $(MROOT)/etc/OFE/default/makefile
+	perl -pi -e 's@%OFE-PATH%@$(MROOT)@ if /constant OFE-PATH\s*=/' $(MROOT)/bin/onefite $(MROOT)/t/*.rakutest $(MROOT)/examples/command-line/*.me
+	perl -pi -e 's@x86_64@$(ARCH)@ if /x86_64/' $(MROOT)/etc/OFE/default/makefile
+	perl -pi -e 's@5\.36@$(PERLVERSION)@ if /PERLVERSION=5\.36/' $(MROOT)/etc/OFE/default/makefile
+	perl -pi -e 's@.*@PERLCORE=$(PERLCORE)@ if /PERLCORE=/' $(MROOT)/etc/OFE/default/makefile
 #    sed -i'' -e "/OS=/ s@.*@OS=$(OS)@" $(MROOT)/etc/OFE/default/makefile
 
 install: set

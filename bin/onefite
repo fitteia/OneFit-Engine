@@ -794,7 +794,10 @@ END { note "===> Total execution time (s): " , now - INIT now }
 
 note "===> Compile time: ", now - $time;
 
-our constant OFE-PATH="%OFE-PATH%";
+# INSTALL (makefile "set") puts the install path here; while it still reads
+# %OFE-PATH% (a checkout before or without "set"), the checkout this file is
+# in - as the tests do.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
 
 use nqp; # move-aside: a file's exact modification time
 use OneFit;
