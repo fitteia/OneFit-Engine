@@ -43,7 +43,7 @@ class HistoryLog is export {
 		given @a[0] {
 			when /:i last <ws> '-' <ws> \d+ / { $selected =@keys[@keys.elems - 1 - $s.split('-')[1].trim.Int] }
 			when /^\d+/ { $selected = @keys[@a[0].Int] }
-		   	default { $selected }
+		   	default { }	# the last entry, already in $selected
 		}
 		try { 
 			my $cmd = %!arch{$selected}.subst('#','\#').subst(/ <ws> '--ar' \w* <ws> /,' ');
