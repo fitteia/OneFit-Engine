@@ -40,15 +40,18 @@ and option values from a request are therefore not interpreted as shell
 commands, and `--set-err` values reach `awk` only as data: an expression
 that is not one of the documented forms is refused.
 
-The HTTP service also refuses:
+The HTTP service also refuses, with `400 Bad Request` and the reason as
+plain text:
 
 - an uploaded file name that is empty, `.`/`..`, or starts with `-`
   (it would be read as an option);
 - a `function` value starting with `-`;
-- a `#name` field whose value is not a `#...` dynamic override (it would
-  otherwise become any option);
 - a `download` value that does not name a file inside the request's own
-  work folder (after resolving `..` and links).
+  work folder (after collapsing `..` and resolving links), or names a file
+  the fit did not make.
+
+A `#name` field whose value is not a `#...` dynamic override is ignored (it
+would otherwise become any option).
 
 These checks do not make the service safe for untrusted clients: a fit
 still compiles and runs native code from the request (see above), and the

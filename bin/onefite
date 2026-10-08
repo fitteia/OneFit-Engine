@@ -1109,16 +1109,33 @@ multi MAIN ('stop-web-engine'){
 # An uploaded file's name as the HTTP service uses it: its basename, which
 # becomes onefite's argument and the fit folder's name - so never one an
 # option parser or the file system would take for something else.
+# A request the HTTP service refuses: the handlers answer it with 400 Bad
+# Request and the message, not 500.
+class X::OFE::BadRequest is Exception {
+    has Str $.message is required;
+}
+
 sub upload-name(Str() $name --> Str) {
     my $base = $name.IO.basename;
-    die "upload: '$base' is not a usable file name\n"
+    die X::OFE::BadRequest.new(message => "upload: '$base' is not a usable file name\n")
         if $base eq any('', '.', '..') || $base.starts-with('-');
     $base
 }
 
 # Whether PATH, links resolved, is inside FOLDER.
+# Whether PATH is inside FOLDER: '..' and '.' are collapsed first, without
+# the file system (resolve leaves '..' after a folder that does not exist,
+# which made a/missing/../../x look inside a), then links are resolved for
+# what exists.
 sub inside-folder(IO() $path, IO() $folder --> Bool) {
-    $path.resolve.Str.starts-with($folder.resolve.Str ~ '/')
+    my @parts;
+    for $path.absolute.split('/') {
+        when '' | '.' { }
+        when '..'     { @parts.pop if @parts }
+        default       { @parts.push: $_ }
+    }
+    my $lexical = ('/' ~ @parts.join('/')).IO;
+    ($lexical.e ?? $lexical.resolve !! $lexical).Str.starts-with($folder.resolve.Str ~ '/')
 }
 
 sub create-web-request-directory(
@@ -1321,6 +1338,7 @@ HTML
 	
 	post -> 'fit',*@args {
             request-body -> (:$file,*%rest) {
+		CATCH { when X::OFE::BadRequest { bad-request 'text/plain', .message } }
 	        my $username = "";
 	        my $time = now;
 		my $filename = upload-name($file.filename);
@@ -1405,7 +1423,8 @@ HTML
 		}
 		my $request-folder = create-web-request-directory;
 		LEAVE {
-		    my Bool $request-folder-was-created = $request-folder.e;
+		    # LEAVE runs even when the request was refused before the folder existed
+		    my Bool $request-folder-was-created = $request-folder.defined && $request-folder.e;
 		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder-was-created;
 		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) fit { $file.filename } concluded in { now - $time } s. { 'Temporary folder:' ~ $request-folder.basename ~ ' removed.' if $request-folder-was-created }");
 		    $log-fh.flush;
@@ -1429,7 +1448,7 @@ HTML
 		    if $file-to-download.Bool;
 		# The model expression is onefite's first argument: it must not be
 		# read as an option.
-		die "function: a model expression or alias cannot start with '-'\n"
+		die X::OFE::BadRequest.new(message => "function: a model expression or alias cannot start with '-'\n")
 		    if $function.starts-with('-');
 
 		# Pass request values as literal process arguments: no shell parses
@@ -1468,19 +1487,22 @@ HTML
 		die "onefite fit failed with exit code {$proc.exitcode}\n$txt"
 		    if $proc.exitcode != 0;
 		# download names a file of this request's work folder, nothing else
-		die "download: not a file of this fit's work folder\n"
+		die X::OFE::BadRequest.new(message => "download: not a file of this fit's work folder\n")
 		    if $file-to-download.Bool && !inside-folder($file-to-download, $work-folder);
+		die X::OFE::BadRequest.new(message => "download: this fit made no {$file-to-download.basename}\n")
+		    if $file-to-download.Bool && !$file-to-download.IO.f;
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
 	    }
 	 }
 	post -> 'plot' {
 	    request-body -> (:$file, *%rest) {
+		CATCH { when X::OFE::BadRequest { bad-request 'text/plain', .message } }
 		my $time = now;
 		my $filename = upload-name($file.filename);
 		my $request-folder = create-web-request-directory;
 		LEAVE {
-		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder.e;
+		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder.defined && $request-folder.e;
 		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) plot { $filename } concluded in { now - $time } s.");
 		    $log-fh.flush;
 		}
@@ -1513,12 +1535,13 @@ HTML
 	}
 	 post -> 'convert' {
             request-body -> (:$file, *%rest) {
+		CATCH { when X::OFE::BadRequest { bad-request 'text/plain', .message } }
 		my $filename = upload-name($file.filename);
 		my $file-content = $file.body-blob;
 		my $request-folder = create-web-request-directory;
 		my $work-folder = $request-folder;
 		LEAVE {
-		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder.e;
+		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder.defined && $request-folder.e;
 		    $log-fh.say("{ DateTime.now }: ({ request.connection.peer-host }) convert { $file.filename } concluded in { now - $time } s. { 'Folder:' ~ $work-folder ~ ' removed.' }");
 		    $log-fh.flush;
 		}

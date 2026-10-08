@@ -186,6 +186,10 @@ with `#` is forwarded as a dynamic model override (see
 - any other non-empty value is treated as a path relative to that same
   per-upload folder, and streamed back verbatim.
 - no `download` field returns a `text/plain` fit log instead.
+- a value that is not a file of the fit's own work folder (outside it, or
+  not made by the fit) gets `400 Bad Request` with the reason; so does an
+  upload whose name starts with `-` and, for `/fit`, a `function` starting
+  with `-` (see [security](security.md)).
 
 ### Uploaded saved fits
 
