@@ -30,26 +30,31 @@ endpoint to anonymous or mutually untrusted clients.
 
 ## Shell command construction
 
-`POST /fit` and `POST /plot` no longer build a shell command line: they
-start `onefite fit`/`onefite plot` with the request values (filename,
-`function`, fit methods, `#name` overrides, and the other fields) as
-literal process arguments, so the HTTP layer itself passes nothing through
-a shell. Two risks remain:
+`POST /fit`, `POST /plot` and `POST /convert` start `onefite` with the
+request values (filename, `function`, fit methods, `#name` overrides, and
+the other fields) as literal process arguments, and `onefite` itself runs
+the programs a fit needs (`onefit-user`, `make`, `zip`, `unzip`,
+`h5dump`, `gfilt`, `pdftk`, `pdf2mp4`, `awk` for `--set-err`, `rm`,
+`mv`) the same way, never through a shell. File names, model expressions
+and option values from a request are therefore not interpreted as shell
+commands, and `--set-err` values reach `awk` only as data: an expression
+that is not one of the documented forms is refused.
 
-- The `onefite fit` command that runs the request still uses shell
-  commands for its own housekeeping (removing and zipping the work folder,
-  `pdf2mp4`, moving the zip), with the work-folder name - taken from the
-  uploaded file's name - interpolated into them. An upload named, for
-  example, `a$(command).json` therefore still runs `command`. The values
-  are also passed as options, so a field value starting with `--` reaches
-  `onefite` as an option of its own.
-- Requested `download` values are joined to the request's work folder
-  without normalization, so a value with `..` components selects a file
-  outside it.
+The HTTP service also refuses:
 
-Neither is limited to the "native code execution" risk above. They
-require strict upstream trust and make direct Internet exposure unsafe
-regardless of any reverse proxy in front of it.
+- an uploaded file name that is empty, `.`/`..`, or starts with `-`
+  (it would be read as an option);
+- a `function` value starting with `-`;
+- a `#name` field whose value is not a `#...` dynamic override (it would
+  otherwise become any option);
+- a `download` value that does not name a file inside the request's own
+  work folder (after resolving `..` and links).
+
+These checks do not make the service safe for untrusted clients: a fit
+still compiles and runs native code from the request (see above), and the
+service has no authentication. It needs strict upstream trust, and direct
+Internet exposure stays unsafe regardless of any reverse proxy in front
+of it.
 
 Working operations also remove and recreate target directories. Use a
 dedicated account and filesystem tree with no unrelated data.
@@ -92,8 +97,7 @@ container and front it with a trusted gateway that provides:
 - disposable or per-job workspaces;
 - output allowlisting rather than arbitrary path selection.
 
-A reverse proxy alone does not make generated native code (or the shell
-use described above) safe. Isolation and trusted callers remain necessary.
+A reverse proxy alone does not make generated native code safe. Isolation and trusted callers remain necessary.
 
 ## Administrative commands
 

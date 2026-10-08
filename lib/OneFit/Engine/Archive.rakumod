@@ -2,6 +2,29 @@ unit module OneFit::Engine::Archive;
 
 use JSON::Fast;
 
+# The files a shell would expand PATTERN to, a '*' in its last part matching
+# any characters (not a leading '.'), sorted; () when none match.  Names come
+# from users (uploads, the HTTP service), so they never reach a shell.
+sub shell-glob(Str:D $pattern --> List) is export {
+	return ($pattern.IO.e ?? ($pattern,) !! ()) unless $pattern.contains('*');
+	my $base = $pattern.IO.basename;
+	my $prefix = $pattern.substr(0, $pattern.chars - $base.chars);
+	return () if $prefix.contains('*');
+	my @parts = $base.split('*');
+	my &matches = -> $name {
+		my $pos = @parts.head.chars;
+		my $ok = $name.starts-with(@parts.head)
+			&& ($base.starts-with('.') || !$name.starts-with('.'));
+		for @parts[1 ..^ @parts.end] -> $part {
+			last unless $ok;
+			with $name.index($part, $pos) { $pos = $_ + $part.chars } else { $ok = False }
+		}
+		$ok && $name.chars - @parts.tail.chars >= $pos && $name.ends-with(@parts.tail)
+	};
+	my @names = (try dir($prefix || '.').map(*.basename)) // ();
+	@names.grep(&matches).sort.map({ $prefix ~ $_ }).List
+}
+
 class HistoryLog is export {
 	has $.path is rw;
 	has $.file is rw;
@@ -68,7 +91,7 @@ class HistoryLog is export {
 		my @files;
 		my @aux = gather for $cmd.words[2..*] { take $_ unless /^'-'/ || /','/ };
 		for @aux {
-			@files.push: /'*'/ ?? shell("ls $_",:out).out.slurp.words.Slip !! $_ 	
+			@files.push: /'*'/ ?? shell-glob($_).Slip !! $_
 		}
 		@files .= grep( *.IO.f );
 		"$.path/{$short}.zip".IO.unlink if "$.path/{$short}.zip".IO.e;

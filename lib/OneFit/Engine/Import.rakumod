@@ -52,8 +52,8 @@ class Import is export {
 				}
 				when 'zip' {
 					my $r1 = %!options<sef-R1-file> // '';
-					my @files-in-zip = gather for shell("unzip -Z1 $file",:out).out(:close).lines { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename ne $r1 }
-					shell "unzip -jo $file";
+					my @files-in-zip = gather for run('unzip', '-Z1', arg-path($file), :out).out.lines(:close) { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename ne $r1 }
+					run 'unzip', '-jo', arg-path($file);
 					@files.push: self.import( infiles => @files-in-zip ).Slip
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
@@ -131,13 +131,13 @@ class Import is export {
 		my $Im = %!options<Im>;
 		$stelar-hdf5.IO.copy: "$path/{$stelar-hdf5.IO.basename}";
 		$stelar-hdf5 = $stelar-hdf5.IO.basename; # its own name in the work folder, as for stelar-sef-Mz
-		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
+		my @zones = gather for run('h5dump', '-n', arg-path($stelar-hdf5), :cwd(~$path), :out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @data-files;
 		for ( 1 .. @zones.elems ).race {
 	    	my @x;
 	    	my @Re_;
 	    	my @Im_;
-	    	my $buf = shell("cd $path && h5dump -d /zone{$_}/t1_fit $stelar-hdf5",:out).out.slurp(:close);  
+	    	my $buf = run('h5dump', '-d', "/zone{$_}/t1_fit", arg-path($stelar-hdf5), :cwd(~$path), :out).out.slurp(:close);  
 	    	for $buf.lines {
 				my @c = $_.words;
 				@x.push: @c[1 ..^ @c.elems]>>.subst(',','',:g).Slip if @c.head.contains(/\(0\,\d+\)/);
@@ -176,13 +176,13 @@ class Import is export {
 		my $path = self.path;
 		$stelar-hdf5.IO.copy: "$path/{$stelar-hdf5.IO.basename}";
 		$stelar-hdf5 = $stelar-hdf5.IO.basename; # its own name in the work folder, as for stelar-sef-Mz
-		my @zones = gather for shell("cd $path && h5dump -n $stelar-hdf5",:out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
+		my @zones = gather for run('h5dump', '-n', arg-path($stelar-hdf5), :cwd(~$path), :out).out.slurp(:close).lines { take $_.words.tail if $_.contains(/t1_fit/) }
 		my @BR;
 		my @R1;
 		my $err = %!options<err> if %!options.so;
 		$err = $err.contains("%") ?? $err.subst("%","").Num /100 !! "";
 		for @zones.hyper {
-	    	for shell("cd $path && h5dump -d $_ $stelar-hdf5",:out).out.slurp(:close) {
+	    	for run('h5dump', '-d', $_, arg-path($stelar-hdf5), :cwd(~$path), :out).out.slurp(:close) {
 				my @c = $_.split: "ATTRIBUTE";
 				@c = gather for @c { take $_  if $_.contains(/'"BR"'|'"R1"'/) }
 				@BR.push: @c[0].split('(0):')[1].words.head;
@@ -477,10 +477,14 @@ class Import is export {
 		return @files.sort.reverse;
 	}
 		
+	# A user-supplied file name as one program argument: never read as an
+	# option, even when it starts with '-'.
+	sub arg-path(Str() $file) { $file.starts-with('-') ?? "./$file" !! $file }
+
 	sub gfilt-shell(@a,$npts)  { 
 		"/tmp/lixo.dat".IO.spurt: @a.join("\n"); 
-		my @z =  shell("gfilt { @a.elems }  $npts  /tmp/lixo.dat",:out).out.lines(:close) ; 
-		shell "rm /tmp/lixo.dat";
+		my @z =  run('gfilt', ~@a.elems, ~$npts, '/tmp/lixo.dat', :out).out.lines(:close) ; 
+		unlink "/tmp/lixo.dat";
 		return @z
 	}	
 
@@ -501,9 +505,15 @@ class Import is export {
 		return @z
 	}	
 
+	# --err comes from users (and the HTTP service): awk gets it only as -v
+	# values, never in its program, and runs without a shell.
+	sub awk-rewrite($filename, Str $program, *@vars) {
+		my $out = run('awk', |@vars.map({ |('-v', $_) }), $program, ~$filename,
+			:out, :bin).out.slurp(:close);
+		$filename.IO.spurt: $out;
+	}
+
 	sub set-err-split($filename, $err) {
-		my $tmp="/tmp/{$*PID}-lixo.txt";
-		$filename.IO.copy($tmp);
 		my @errs=(+0,+0);
 		my @Ys;
 		my @means=(+0,+0);
@@ -534,14 +544,12 @@ class Import is export {
 				@errs[$_] = $mean*$err.split("%").head.Num/100;
 			}
 		}
-		$filename.IO.spurt: shell("awk -v err1={@errs[0]} -v err2={@errs[1]} -v splitAt={$split-at} ' \{ if ( !/#/ && NF>2 ) \{ \$3 = ( \$1 <= splitAt ) ?  err1 : err2; print; } else \{ print; \} \}' $tmp", :out).out.slurp;
-	
-   		unlink $tmp;		
+		awk-rewrite($filename,
+			'{ if ( !/#/ && NF>2 ) { $3 = ( $1 <= splitAt ) ?  err1 : err2; print; } else { print; } }',
+			"err1={@errs[0]}", "err2={@errs[1]}", "splitAt=$split-at");
 	}
 
 	sub set-err($filename,$err is copy) {
-		my $tmp = "/tmp/{$*PID}-lixo.txt";	
-		$filename.IO.copy($tmp);
 		if $err.contains(/'std' | 'standard' <ws> 'deviation'/) {
 			note "===> using the standard deviation of your dependent variable to calculate its uncertainty";
 			my @Y;
@@ -568,17 +576,20 @@ class Import is export {
 			my $N=@Y.elems;
 			$err = @Y.sum/$N*$err.split("%").head.Num/100;
 		}
-		elsif $err.contains("%") and 
-			none($err.contains(/ 'avg' | 'average'/), $err.contains(/'std' | 'standard' <ws> 'deviation'/)) 
-			{ $err = '$2*' ~ $err.subst(/<[%averg]>+/,"").Num /100  }
-
-		elsif $err.contains(/:i 'x'/) { $err = '$3*' ~ $err.subst(/:i 'x'/,'').Num  }
-
-		else { $err = $err }
-
-		my $cmd = "awk '\{ if (!/#/ && NF>=2) \{ \$3=$err; print \} else \{ print \}\}' $tmp";
-		$filename.IO.spurt: shell($cmd, :out).out.slurp;
-	   	unlink $tmp;	
+		# $3 becomes a constant (derived above, or given), y times a fraction
+		# (N%), or the error times a factor (Nx, xN/M).  v+0 makes awk write
+		# a constant as the number it is, as when it was part of the program.
+		my ($expr, $v);
+		if $err ~~ Numeric { ($expr, $v) = 'v+0', $err }
+		elsif $err.contains("%") { ($expr, $v) = '$2*v', $err.subst(/<[%averg]>+/,"").Num /100 }
+		elsif $err.contains(/:i 'x'/) { ($expr, $v) = '$3*v', $err.subst(/:i 'x'/,'').Num }
+		elsif $err.trim ~~ / ^ <[+-]>? [ \d+ [ '.' \d* ]? | '.' \d+ ] [ <[eE]> <[+-]>? \d+ ]? $ / {
+			($expr, $v) = 'v+0', $err.trim
+		}
+		else {
+			die "--set-err='$err': not a supported error expression (a constant, N%, Nx, xN/M, std or avg, optionally 'split at X')\n";
+		}
+		awk-rewrite($filename, "\{ if (!/#/ && NF>=2) \{ \$3=$expr; print \} else \{ print \}\}", "v=$v");
 	}
 
 	sub set-errors($path,@files,$err) {

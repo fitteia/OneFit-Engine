@@ -233,7 +233,7 @@ END
 	my $path = ::('OFE-PATH');
 	"$!path/compile.log".IO(:e).unlink;
 	my $fho = open :a, "$!path/compile.log";
-	my $proc = shell "cd $!path; make ROOT=$path -f $path/etc/OFE/default/makefile gfitn", :out($fho), :err($fho);
+	my $proc = run 'make', "ROOT=$path", '-f', "$path/etc/OFE/default/makefile", 'gfitn', :cwd(~$!path), :out($fho), :err($fho);
 	$fho.close;
 	my @log-lines="$!path/compile.log".IO.lines;
 	my @warnings = @log-lines.grep(/'warning:'/);
@@ -250,7 +250,7 @@ END
 	    	note "===> compilation warnings and errors:\n     { @warnings.join("\n     ") if @warnings.so } { @errors.join("\n     ") if @errors.so}" unless $quiet;
 		}
 	}
-	$proc = shell "cd $!path; make ROOT=$path -f $path/etc/OFE/default/makefile clean", :out, :err;
+	$proc = run 'make', "ROOT=$path", '-f', "$path/etc/OFE/default/makefile", 'clean', :cwd(~$!path), :out, :err;
 	self
     }
 
