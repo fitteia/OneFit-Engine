@@ -70,7 +70,7 @@ together, and recopy both into onefite-gui.
 
 A fresh clone of this repository has **no `C/` directory** - that's
 expected, not broken. `./INSTALL` clones
-[`onefite-c-code`](https://github.com/fitteia/onefite-c-code) to `../C`
+[`OneFit-Engine-C`](https://github.com/fitteia/OneFit-Engine-C) to `../C`
 (a sibling of this checkout) on first install and `git pull`s it on later
 ones, then compiles it there. `bin/onefite`'s `c-code-root()` resolves, in
 order: `OFE-PATH/../C`, `OFE-PATH/C`, then a dev-only `OFE-PATH/src/c-code`

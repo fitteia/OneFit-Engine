@@ -316,14 +316,14 @@ sub enable-ghostscript-in-ImageMagick-policy () {
 sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$enable-extensions = '', :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {
 	if $git {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
-   		shell "git clone https://github.com/fitteia/minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
+   		shell "git clone https://github.com/fitteia/OneFit-Engine-minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
 		# A previous install left d506cm.inc patched: reset it so the pull
 		# can't stop on that local change.
 		shell "cd $*CWD/../minuit && git checkout -- minuit/d506cm.inc 2>/dev/null; git pull ";
    		
 		say "download  onefite-C-code $*CWD/../C, compile and install libs in $*CWD/lib";
-   		shell "git clone https://github.com/fitteia/onefite-c-code.git $*CWD/../C" unless "$*CWD/../C/".IO.d(:e);
+   		shell "git clone https://github.com/fitteia/OneFit-Engine-C.git $*CWD/../C" unless "$*CWD/../C/".IO.d(:e);
 		shell "cd $*CWD/../C && git pull ";
 	}
 	# onefite-c-code builds and installs minuit, the core and the extensions
