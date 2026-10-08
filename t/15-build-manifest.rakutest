@@ -2,7 +2,7 @@ use Test;
 
 my $build-type = EVALFILE($*PROGRAM.parent.parent.add('Build.rakumod'));
 
-plan 12;
+plan 14;
 
 my $root = $*TMPDIR.add("onefit-build-manifest-$*PID");
 $root.mkdir;
@@ -46,6 +46,15 @@ ok @site.grep($root.add('site-bin/fft').absolute),
 nok @site.grep('lib/OneFit.rakumod'), 'Raku source files are excluded';
 nok @site.grep('lib/generated.o'), 'intermediate objects are excluded';
 nok @site.grep('lib/header.h-e'), 'sed backup files are excluded';
+
+# zef's build hook rewrites the manifest without a bindir: the tools
+# recorded above stay, a tool removed since is dropped.
+$root.add('site-bin/cop').unlink;
+my @rewritten = $builder.write-site-manifest($root).lines;
+ok @rewritten.grep($root.add('site-bin/fft').absolute),
+    'a rewrite without a bindir keeps the recorded C tools';
+nok @rewritten.grep($root.add('site-bin/cop').absolute),
+    '...but not one that no longer exists';
 
 $root.add('lib/libminuit.a').unlink;
 throws-like {

@@ -57,7 +57,17 @@ class Build {
                     && $_ !~~ / [ '-e' | '.bak' | '~' ] $/
                     && $_ !~~ / [ '.o' | '.obj' ] $/
                 ) )
-        }).unique.sort;
+        });
+        # Without a bindir - zef's build hook, which rewrites this file in the
+        # same checkout after INSTALL wrote it with one - keep the helper
+        # programs that write recorded by absolute path, if they still exist.
+        my $previous = $root.add($output);
+        if !$bin-directory.defined && $previous.f {
+            @site-files.append: $previous.lines.grep({
+                .IO.is-absolute && .IO.basename eq any(@REQUIRED-TOOLS) && (.IO.f || .IO.l)
+            });
+        }
+        @site-files = @site-files.unique.sort;
 
         if $strict {
             my @missing = @REQUIRED-NATIVE.grep({ !$root.add($_).f });
