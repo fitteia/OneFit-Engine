@@ -313,18 +313,47 @@ sub enable-ghostscript-in-ImageMagick-policy () {
    	shell "sudo cp $ImageMagick-policy-folder/policy.xml $ImageMagick-policy-folder/policy.xml-bak; sudo mv /tmp/policy.xml $ImageMagick-policy-folder/policy.xml";
 }
 
+# Clones URL into DIR, or brings an existing checkout up to date: an origin
+# still using a repository's old name (onefite-c-code, minuit - renamed to
+# the OneFit-Engine- prefix in 2026-10; onefite-c-code now leads to the
+# private archive of its old history) is pointed at URL, and a checkout
+# whose history was replaced (OneFit-Engine-C was republished: no commit in
+# common) switches to the new one when no tracked file is modified - git
+# pull cannot merge unrelated histories. :reset files are checked out first
+# (a previous install patches minuit's d506cm.inc).
+sub update-checkout (Str $dir, Str $url, :@reset) {
+	unless "$dir/.git".IO.e {
+		run 'git', 'clone', $url, $dir;
+		return;
+	}
+	my &git = -> *@a { run 'git', '-C', $dir, |@a, :out, :err };
+	my $origin = git(<remote get-url origin>).out.slurp(:close).trim;
+	if $origin ~~ / 'fitteia/' [ 'onefite-c-code' | 'minuit' ] [ '.git' ]? $ / {
+		git(<remote set-url origin>, $url);
+		say "$dir: origin $origin -> $url (repository renamed)";
+	}
+	git('checkout', '--', |@reset) if @reset;
+	git(<fetch -q origin>);
+	my $upstream = git(<rev-parse --abbrev-ref @{u}>).out.slurp(:close).trim;
+	if $upstream and git('merge-base', 'HEAD', $upstream).exitcode == 1 {
+		die "$dir: the repository's history was replaced, but the checkout has local changes - commit them elsewhere or discard them, then run INSTALL again\n"
+			if git(<status --porcelain --untracked-files=no>).out.slurp(:close).trim;
+		my $branch = git(<symbolic-ref -q --short HEAD>).out.slurp(:close).trim || 'main';
+		git('checkout', '-q', '-B', $branch, $upstream);
+		say "$dir: history replaced - now at $upstream";
+		return;
+	}
+	run 'git', '-C', $dir, 'pull';
+}
+
 sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$enable-extensions = '', :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {
 	if $git {
    		say "download  CERNLIB minuit package into $*CWD/../minuit, compile and install libminuit.a in $*CWD/lib";
-   		shell "git clone https://github.com/fitteia/OneFit-Engine-minuit.git $*CWD/../minuit" unless "$*CWD/../minuit/".IO.d(:e);
+   		update-checkout("$*CWD/../minuit", 'https://github.com/fitteia/OneFit-Engine-minuit.git', :reset(['minuit/d506cm.inc']));
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
-		# A previous install left d506cm.inc patched: reset it so the pull
-		# can't stop on that local change.
-		shell "cd $*CWD/../minuit && git checkout -- minuit/d506cm.inc 2>/dev/null; git pull ";
    		
 		say "download  onefite-C-code $*CWD/../C, compile and install libs in $*CWD/lib";
-   		shell "git clone https://github.com/fitteia/OneFit-Engine-C.git $*CWD/../C" unless "$*CWD/../C/".IO.d(:e);
-		shell "cd $*CWD/../C && git pull ";
+   		update-checkout("$*CWD/../C", 'https://github.com/fitteia/OneFit-Engine-C.git');
 	}
 	# onefite-c-code builds and installs minuit, the core and the extensions
 	# itself - safely (a failed build or link test puts the previous engine
