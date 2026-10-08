@@ -42,8 +42,8 @@ jobs:
       # OFE-PATH/../minuit; the tests find pdf2mp4 in OFE-PATH/../bin).
       - name: The engine's sources
         run: |
-          git clone --depth 1 https://github.com/fitteia/onefite-c-code.git C
-          git clone --depth 1 https://github.com/fitteia/minuit.git minuit
+          git clone --depth 1 https://github.com/fitteia/OneFit-Engine-C.git C
+          git clone --depth 1 https://github.com/fitteia/OneFit-Engine-minuit.git minuit
 
       - name: Build the engine
         working-directory: OneFit-Engine

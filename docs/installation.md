@@ -169,7 +169,7 @@ effects" above for `--/git`, `--/dpkg`, `--/web-server`, `--/enable-gs`,
 ## Extensions
 
 Some models, such as Florence, are kept outside the public `onefite-c-code`
-tree in their own repositories (public Florence: `fitteia/onefite-ext-florence`).
+tree in their own repositories (public Florence: `fitteia/OneFit-Engine-ext-florence`).
 The public Florence uses a NAG-free clean-room eigensolver and is licensed
 separately under Artistic 2.0. The original NAG-derived implementation is kept
 only in a private, license-restricted repository for users who already hold the
