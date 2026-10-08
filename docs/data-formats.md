@@ -86,7 +86,8 @@ std split at 5
 10% avg split at 10.5
 ```
 
-Verify derived errors on a small data set before relying on them.
+Any other value is refused. Verify derived errors on a small data set before
+relying on them.
 
 ## Filtering data rows
 

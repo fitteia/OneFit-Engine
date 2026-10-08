@@ -550,8 +550,9 @@ I<(create, fit-expr)>
 ordinary data files. Supported expressions include a constant, a percentage,
 a multiplier, standard deviation, averaging, and splitting around a value -
 for example C<1.0>, C<1%>, C<10x>, C<x10/100>, C<std>, C<std split at 5>, or
-C<10% avg split at 10.5>. Does not apply to IST-FFC, SEF, or HDF5 imports
-(their errors come from the instrument format itself). I<(create, fit-expr)>
+C<10% avg split at 10.5>; any other value is refused. Does not apply to
+IST-FFC, SEF, or HDF5 imports (their errors come from the instrument format
+itself). I<(create, fit-expr)>
 =item C<--ac>, C<--aux-code=SPECIFICATION> - add auxiliary C source and
 declarations. SPECIFICATION is a comma-separated string whose first value is
 the C source filename and whose remaining values are declarations, for
@@ -1105,6 +1106,21 @@ multi MAIN ('stop-web-engine'){
 # Atomically reserve a private directory for one HTTP request.  Retry only
 # when another request won the same candidate name; permissions and other
 # filesystem failures must be reported instead of spinning forever.
+# An uploaded file's name as the HTTP service uses it: its basename, which
+# becomes onefite's argument and the fit folder's name - so never one an
+# option parser or the file system would take for something else.
+sub upload-name(Str() $name --> Str) {
+    my $base = $name.IO.basename;
+    die "upload: '$base' is not a usable file name\n"
+        if $base eq any('', '.', '..') || $base.starts-with('-');
+    $base
+}
+
+# Whether PATH, links resolved, is inside FOLDER.
+sub inside-folder(IO() $path, IO() $folder --> Bool) {
+    $path.resolve.Str.starts-with($folder.resolve.Str ~ '/')
+}
+
 sub create-web-request-directory(
 	IO::Path:D $parent = $*CWD,
 	Int:D :$attempts = 32,
@@ -1307,7 +1323,7 @@ HTML
             request-body -> (:$file,*%rest) {
 	        my $username = "";
 	        my $time = now;
-		my $filename = $file.filename.IO.basename;
+		my $filename = upload-name($file.filename);
 		my $folder = $filename.IO.extension('').Str;
 		my $zip-file = $filename.IO.extension('zip').Str;		
 		my $file-to-download = ""; 
@@ -1369,7 +1385,9 @@ HTML
 		       $fit-if   			= "--fit-if={$v.Str}  " if $k eq any(<fit-if fi>) and $v.Str.Bool;
 		       $plot-if   			= "--plot-if={$v.Str}  " if $k eq any(<plot-if pi>) and $v.Str.Bool;
 		       $gfilt   			= "--gfilt={$v.Str}  " if $k eq "gfilt" and $v.Str.Bool;
-			   @ht-args.push: $k ~~ /^'#'/ ?? "--$v" !! "";
+			   # a '#name' field forwards a dynamic override ('#a=0.0[0<2]'),
+			   # never any other option
+			   @ht-args.push: ($k ~~ /^'#'/ && $v.Str.starts-with('#')) ?? "--$v" !! "";
 
 		       if $k eq "download" {
 		       	  if $v eq "zip" { $file-to-download = $zip-file }
@@ -1409,9 +1427,13 @@ HTML
 		keep-input-in-root($input-file, $filename);
 		$file-to-download = $work-folder.add($file-to-download)
 		    if $file-to-download.Bool;
+		# The model expression is onefite's first argument: it must not be
+		# read as an option.
+		die "function: a model expression or alias cannot start with '-'\n"
+		    if $function.starts-with('-');
 
-		# Pass request values as literal process arguments.  No shell parses
-		# filenames, model expressions, fit methods, or dynamic overrides.
+		# Pass request values as literal process arguments: no shell parses
+		# them, here or in onefite fit (see docs/security.md).
 		my @onefite-args = 'fit';
 		if so $function {
 		    @onefite-args.push($function);
@@ -1445,6 +1467,9 @@ HTML
 		my $txt = $proc.out.slurp(:close);
 		die "onefite fit failed with exit code {$proc.exitcode}\n$txt"
 		    if $proc.exitcode != 0;
+		# download names a file of this request's work folder, nothing else
+		die "download: not a file of this fit's work folder\n"
+		    if $file-to-download.Bool && !inside-folder($file-to-download, $work-folder);
 		if $file-to-download.Bool { content 'application/octet-stream', $file-to-download.IO.slurp(:bin) }
 		else { content 'text/plain', "File '$filename' uploaded and fitted.\n$txt\n" }
 	    }
@@ -1452,7 +1477,7 @@ HTML
 	post -> 'plot' {
 	    request-body -> (:$file, *%rest) {
 		my $time = now;
-		my $filename = $file.filename.IO.basename;
+		my $filename = upload-name($file.filename);
 		my $request-folder = create-web-request-directory;
 		LEAVE {
 		    run 'rm', '-rf', '--', $request-folder.Str if $request-folder.e;
@@ -1488,7 +1513,7 @@ HTML
 	}
 	 post -> 'convert' {
             request-body -> (:$file, *%rest) {
-		my $filename = $file.filename.IO.basename;
+		my $filename = upload-name($file.filename);
 		my $file-content = $file.body-blob;
 		my $request-folder = create-web-request-directory;
 		my $work-folder = $request-folder;
@@ -1596,7 +1621,7 @@ multi MAIN ('start-engine',
 	    	$f ~~ /$<cmd>=(__fit__|__plot__|__fit\-only__)* $<file>=(\S+)/;
 	    	my $file = $<file>;$cmd = $<cmd>.subst('__','',:g);
 	    	my $name = $file.subst(/\.sav|\.json/,'',:g);
-	    	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	    	run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
 	    	"$work-folder/$name".IO.mkdir;
 	    	$f.IO.move("$work-folder/$name/$file");
 	    	my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/$file");
@@ -1665,7 +1690,7 @@ multi MAIN  ('create',
 	    ){
 	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
     my $name = "ofe-tmp";
-    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+    run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 	my %options =();
 
@@ -1754,7 +1779,7 @@ multi MAIN  ('random',
     if $zip-to.Bool {
 	$name = $zip-to.subst(/\.zip/,'',:g);
     }
-    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+    run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir;
     for @data-files { $_.IO.copy("$work-folder/$name/$_") };
     my $engine = Engine.new.path("$work-folder/$name").set(%e);
@@ -1836,7 +1861,7 @@ multi MAIN  ('fit',
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
    	}
-   	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+   	run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 	my %options =();
 
@@ -1959,7 +1984,7 @@ MSG
     
 	if $mpeg4 { 
 		note "===> creating All.mp4 using All.pdf";
-		shell "cd $work-folder/$name && { ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1";
+		run-to-log("$work-folder/$name", 'pdf2mp4.log', "{ ::('OFE-PATH') }/../bin/pdf2mp4", 'All.mp4', 'All.pdf');
    	}
 
 	$engine.save($save-to) if $save-to.defined;
@@ -2027,7 +2052,7 @@ multi MAIN  ('fit',
 	# Base name only: an absolute or ../ INPUT-FILE used to nest the work
 	# folder (and its zip) under --work-folder as <wf>/<full/input/path>.
 	my $name = $input-file.IO.basename.subst(/\.sav|\.json/,'',:g);
-	shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
 	try {
 		"$work-folder/$name".IO.mkdir;
 	}
@@ -2139,7 +2164,7 @@ MSG
     
 	if $mpeg4 { 
 		note "===> creating All.mp4 using All.pdf";
-		shell "cd $work-folder/$name && { ::('OFE-PATH') }/../bin/pdf2mp4 All.mp4 All.pdf > pdf2mp4.log 2>&1";
+		run-to-log("$work-folder/$name", 'pdf2mp4.log', "{ ::('OFE-PATH') }/../bin/pdf2mp4", 'All.mp4', 'All.pdf');
    	}
 
 	$engine.save($to) if $to.defined;
@@ -2153,7 +2178,7 @@ MSG
         # --zip-to lands next to it; an absolute one is used as given.
         unless $name eq $zip-to {
             my $zip-dst = $zip-to.IO.is-absolute ?? $zip-to !! "$work-folder/$zip-to";
-            shell "mv $work-folder/$name.zip $zip-dst"
+            run 'mv', '--', "$work-folder/$name.zip", $zip-dst
                 unless "$work-folder/$name.zip".IO.absolute eq $zip-dst.IO.absolute;
         }
     }
@@ -2177,7 +2202,7 @@ multi MAIN  ('plot',
 	     Str  :wf(:$work-folder) = '.'
 	    ){
 	    my $name = $input-file.IO.basename.subst(/\.sav|\.json/,'',:g);
-	    shell "rm -fr $work-folder/$name" if "$work-folder/$name".IO.d;
+	    run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
 	    my $engine = Engine.new.path("$work-folder/$name").read("$work-folder/$name/{ $input-file.IO.basename }");
@@ -2192,7 +2217,7 @@ multi MAIN  ('plot',
 		:logy($linlog or $loglog)
 	    );
 	    zip-fit($engine,$work-folder,$name);
-	    shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
+	    run 'pdftk', |('fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf'), 'cat', 'output', './All.pdf', :cwd("$work-folder/$name");
 	    exit;
 }
 
@@ -2311,13 +2336,26 @@ sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
     return %e;
 }
 
+# PROGRAM ARGS >LOG 2>&1, run in DIR without a shell (DIR comes from the
+# user's file name); fails as the shell command did when PROGRAM does.
+sub run-to-log(Str $dir, Str $log, *@command) {
+    my $output = open "$dir/$log", :w;
+    LEAVE $output.close;
+    run |@command, :cwd($dir), :out($output), :err($output)
+}
+
 sub zip-fit ($engine,$work-folder,$name) {
-    my $excluded =  { "$work-folder/$name/" <<~<< <AuxCode.* onefit-user *.h *.c *.o *_ gnu* *.stp> }().join(' ') ;
+    # The patterns as the shell used to expand them: the matching files, or
+    # the pattern itself (for zip to match) when none does.
+    my @excluded = <AuxCode.* onefit-user *.h *.c *.o *_ gnu* *.stp>.map({
+        my $pattern = "$work-folder/$name/$_";
+        |(shell-glob($pattern) || $pattern)
+    });
     # Remove the archive about to be (re)written - not a same-named file in
     # the current directory, which is what a bare "$name.zip" used to hit.
     "$work-folder/$name.zip".IO.unlink;
 	#shell "cd $work-folder/$name && pdftk { 'fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf' } cat output ./All.pdf";
-    shell "zip -q -r $work-folder/$name.zip $work-folder/$name -x $excluded";
+    run 'zip', '-q', '-r', "$work-folder/$name.zip", "$work-folder/$name", '-x', |@excluded;
 }
 
 sub run-post-install-tests(Bool :$daemon = True, Bool :$verbose = False) {

@@ -30,14 +30,31 @@ endpoint to anonymous or mutually untrusted clients.
 
 ## Shell command construction
 
-The current `POST /fit` implementation builds a shell command line by
-interpolating request field values (including the `function` field)
-directly into a string, then runs it. This is a real command-injection
-surface, not a theoretical one - it is not limited to the "native code
-execution" risk above. Requested `download` values are also interpreted as
-filesystem paths. These patterns require strict upstream trust and make
-direct Internet exposure unsafe regardless of any reverse proxy in front of
-it.
+`POST /fit`, `POST /plot` and `POST /convert` start `onefite` with the
+request values (filename, `function`, fit methods, `#name` overrides, and
+the other fields) as literal process arguments, and `onefite` itself runs
+the programs a fit needs (`onefit-user`, `make`, `zip`, `unzip`,
+`h5dump`, `gfilt`, `pdftk`, `pdf2mp4`, `awk` for `--set-err`, `rm`,
+`mv`) the same way, never through a shell. File names, model expressions
+and option values from a request are therefore not interpreted as shell
+commands, and `--set-err` values reach `awk` only as data: an expression
+that is not one of the documented forms is refused.
+
+The HTTP service also refuses:
+
+- an uploaded file name that is empty, `.`/`..`, or starts with `-`
+  (it would be read as an option);
+- a `function` value starting with `-`;
+- a `#name` field whose value is not a `#...` dynamic override (it would
+  otherwise become any option);
+- a `download` value that does not name a file inside the request's own
+  work folder (after resolving `..` and links).
+
+These checks do not make the service safe for untrusted clients: a fit
+still compiles and runs native code from the request (see above), and the
+service has no authentication. It needs strict upstream trust, and direct
+Internet exposure stays unsafe regardless of any reverse proxy in front
+of it.
 
 Working operations also remove and recreate target directories. Use a
 dedicated account and filesystem tree with no unrelated data.
@@ -80,8 +97,7 @@ container and front it with a trusted gateway that provides:
 - disposable or per-job workspaces;
 - output allowlisting rather than arbitrary path selection.
 
-A reverse proxy alone does not make generated native code (or shell
-interpolation) safe. Isolation and trusted callers remain necessary.
+A reverse proxy alone does not make generated native code safe. Isolation and trusted callers remain necessary.
 
 ## Administrative commands
 
