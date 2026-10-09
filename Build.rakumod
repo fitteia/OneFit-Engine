@@ -1,8 +1,12 @@
 class Build {
     my constant @SITE-ROOTS = <include lib src>;
     my constant @REQUIRED-TOOLS = <
-        afactors-xyz fft cop gfilt ccat pcop pdf2mp4 epstopdf plot-go
+        afactors-xyz fft cop gfilt ccat pcop pdf2mp4 epstopdf
     >;
+    # INSTALL permits --/plot-go and falls back to Grace if its download
+    # fails. Record plot-go when present without making either path fail
+    # strict validation of the native fitting engine.
+    my constant @KNOWN-TOOLS = (|@REQUIRED-TOOLS, 'plot-go');
     my constant @REQUIRED-NATIVE = (
         'lib/libminuit.a',
         'lib/libuserlib.a',
@@ -38,7 +42,7 @@ class Build {
 
         my $bin-directory = $bindir.defined ?? $bindir.IO.absolute.IO !! Nil;
         if $bin-directory.defined && $bin-directory.d {
-            @site-files.append: @REQUIRED-TOOLS.map({ $bin-directory.add($_) })
+            @site-files.append: @KNOWN-TOOLS.map({ $bin-directory.add($_) })
                 .grep({ .f || .l }).map(*.absolute);
         }
 
@@ -46,7 +50,7 @@ class Build {
             self!is-native-site-file($_, :has-bindir($bin-directory.defined))
                 && $_ ne $output
                 # Externally-installed tool entries are absolute paths of exact,
-                # already-known-good names from @REQUIRED-TOOLS - never a
+                # already-known-good names from @KNOWN-TOOLS - never a
                 # .precomp/backup/object artifact, so these exclusions (aimed at
                 # the relative in-tree walk above) must not run against them. An
                 # unanchored '/.'-anywhere check would otherwise reject any tool
@@ -64,7 +68,7 @@ class Build {
         my $previous = $root.add($output);
         if !$bin-directory.defined && $previous.f {
             @site-files.append: $previous.lines.grep({
-                .IO.is-absolute && .IO.basename eq any(@REQUIRED-TOOLS) && (.IO.f || .IO.l)
+                .IO.is-absolute && .IO.basename eq any(@KNOWN-TOOLS) && (.IO.f || .IO.l)
             });
         }
         @site-files = @site-files.unique.sort;

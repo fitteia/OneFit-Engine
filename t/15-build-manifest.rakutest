@@ -2,7 +2,7 @@ use Test;
 
 my $build-type = EVALFILE($*PROGRAM.parent.parent.add('Build.rakumod'));
 
-plan 14;
+plan 17;
 
 my $root = $*TMPDIR.add("onefit-build-manifest-$*PID");
 $root.mkdir;
@@ -47,6 +47,15 @@ nok @site.grep('lib/OneFit.rakumod'), 'Raku source files are excluded';
 nok @site.grep('lib/generated.o'), 'intermediate objects are excluded';
 nok @site.grep('lib/header.h-e'), 'sed backup files are excluded';
 
+# plot-go is optional: the complete native fixture above intentionally
+# omits it. When installed, it must still travel in the site manifest.
+$root.add('site-bin/plot-go').spurt('optional plotter');
+my @with-plotter = $builder.write-site-manifest(
+    $root, bindir => $root.add('site-bin'), :strict
+).lines;
+ok @with-plotter.grep($root.add('site-bin/plot-go').absolute),
+    'an installed optional plotter is recorded';
+
 # zef's build hook rewrites the manifest without a bindir: the tools
 # recorded above stay, a tool removed since is dropped.
 $root.add('site-bin/cop').unlink;
@@ -55,6 +64,12 @@ ok @rewritten.grep($root.add('site-bin/fft').absolute),
     'a rewrite without a bindir keeps the recorded C tools';
 nok @rewritten.grep($root.add('site-bin/cop').absolute),
     '...but not one that no longer exists';
+ok @rewritten.grep($root.add('site-bin/plot-go').absolute),
+    'zef rewrites keep an installed optional plotter';
+$root.add('site-bin/plot-go').unlink;
+my @without-plotter = $builder.write-site-manifest($root).lines;
+nok @without-plotter.grep($root.add('site-bin/plot-go').absolute),
+    'a removed optional plotter is dropped';
 
 $root.add('lib/libminuit.a').unlink;
 throws-like {
