@@ -27,7 +27,8 @@ under the [Artistic License 2.0](LICENSE).
 - Plain-text, ZIP, Stelar SDF/SEF/HDF5, and OFE JSON/SAV inputs.
 - MINUIT fitting methods, including `simp`, `scan`, `min`, and `minos`.
 - Parallel mixed fits with configurable worker counts, optionally RAM-backed.
-- Grace/PDF plots and optional MPEG4 output.
+- PDF plots (drawn by [plot-go](https://github.com/fitteia/OneFit-Engine-plot),
+  or Grace where plot-go is not installed) and optional MPEG4 output.
 - Function aliases and locally extended C model libraries.
 - A Cro-based HTTP upload-and-fit service (see the warning above).
 - Linux, WSL2, macOS, and container-oriented installation paths.

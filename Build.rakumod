@@ -1,7 +1,7 @@
 class Build {
     my constant @SITE-ROOTS = <include lib src>;
     my constant @REQUIRED-TOOLS = <
-        afactors-xyz fft cop gfilt ccat pcop pdf2mp4 epstopdf
+        afactors-xyz fft cop gfilt ccat pcop pdf2mp4 epstopdf plot-go
     >;
     my constant @REQUIRED-NATIVE = (
         'lib/libminuit.a',

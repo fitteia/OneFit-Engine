@@ -36,6 +36,7 @@ multi MAIN (
    	Bool :$git = True, #= By default it runs git to pull the package for remote repository
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
 	Bool :$man-page = True; #= Install man page
+	Bool :$plot-go = True, #= install plot-go, which draws the fit plots without Grace (Grace stays the fallback)
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Int  :$minuit = 1000, #= Minuit maximum number of parameters: default=1000
 	Str  :$enable-extensions = '', #= older spelling: bare = install florence; =http|ssh also picks how registry repositories are reached; =false = --/default-extensions
@@ -162,6 +163,8 @@ multi MAIN (
    	install-p6-modules($to-site, test => $test) if $p6-modules.Bool;
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
+
+   	install-plot-go( bindir => $bindir ) if $plot-go and $git;
 
    	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit, :$enable-extensions, :$extension, :$default-extensions, :$extensions-ref, :$extensions-transport ) if $compile;
 
@@ -491,7 +494,7 @@ sub uninstall () {
 	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
    	my @binaries = "$*CWD/../C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
-   	for @binaries.splice(1,@binaries.elems-2).push('pcop', 'epstopdf') {
+   	for @binaries.splice(1,@binaries.elems-2).push('pcop', 'epstopdf', 'plot-go') {
 		shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } ";
    	}
    	shell "$SUDO zef uninstall OneFit-Engine";
@@ -560,11 +563,64 @@ sub install (:$test,:$to-site, :$bindir) {
 
     my @binaries = "$*CWD/../C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
     if $to-site {
-		for @binaries.splice(1,@binaries.elems-2).push('pcop','epstopdf') {
+		for @binaries.splice(1,@binaries.elems-2).push('pcop','epstopdf','plot-go') {
 	    	shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
 		}
     }
 
+}
+
+# plot-go (github.com/fitteia/OneFit-Engine-plot) draws OneFit's plots
+# without Grace; the C core uses it when it is on the PATH, and Grace
+# otherwise. Installed into $bindir from the latest release's binary for this
+# platform (checked against the release's SHA256SUMS), or built with Go when
+# there is no binary for it. Never fatal: without plot-go, Grace draws.
+# OFE_PLOT_GO_URL points to another place holding the release's files.
+sub install-plot-go (:$bindir) {
+	my $os = $*KERNEL.name.lc eq 'darwin' ?? 'darwin' !! 'linux';
+	my $machine = run('uname', '-m', :out).out.slurp(:close).trim;
+	my $goarch = do given $machine {
+		when 'x86_64' | 'amd64' { 'amd64' }
+		when 'aarch64' | 'arm64' { 'arm64' }
+		default { '' }
+	};
+	my $target = "$bindir/plot-go";
+	mkdir $bindir unless $bindir.IO.d;
+	# OFE_PLOT_GO_URL: another place holding the release's files (a mirror)
+	my $base = %*ENV<OFE_PLOT_GO_URL> // 'https://github.com/fitteia/OneFit-Engine-plot/releases/latest/download';
+	my $asset = "plot-go_{$os}_{$goarch}";
+	my $tmp = "$target.download";
+	my $ok = False;
+	if $goarch {
+		my $sums = "$target.SHA256SUMS";
+		if run('curl', '-fsSL', '-o', $tmp, "$base/$asset").exitcode == 0
+			&& run('curl', '-fsSL', '-o', $sums, "$base/SHA256SUMS").exitcode == 0 {
+			my $want = $sums.IO.lines.grep(*.ends-with(" $asset")).head // '';
+			my $have = run(|($os eq 'darwin' ?? <shasum -a 256> !! <sha256sum>), $tmp, :out).out.slurp(:close).words.head // '';
+			if $want.words.head && $want.words.head eq $have {
+				$tmp.IO.chmod(0o755);
+				$ok = True;
+			}
+			else {
+				note "===> plot-go: $asset does not match the release's SHA256SUMS; not installed";
+			}
+		}
+		unlink $sums;
+	}
+	if !$ok && run('sh', '-c', 'command -v go >/dev/null').exitcode == 0 {
+		note "===> plot-go: building it with Go";
+		my %env = %*ENV, GOBIN => "$bindir/.plot-go-build";
+		$ok = run('go', 'install', 'github.com/fitteia/OneFit-Engine-plot/cmd/plot-go@latest', :%env).exitcode == 0
+			&& "$bindir/.plot-go-build/plot-go".IO.rename($tmp);
+		run 'rm', '-rf', "$bindir/.plot-go-build";
+	}
+	if $ok && run($tmp, '-version', :out).exitcode == 0 {
+		$tmp.IO.rename($target);
+		say "plot-go installed: { run($target, '-version', :out).out.slurp(:close).trim }";
+		return;
+	}
+	unlink $tmp;
+	note "===> plot-go could not be installed{ " for $machine" unless $goarch }; the plots are drawn with Grace";
 }
 
 sub install-aliases (:$bindir) {

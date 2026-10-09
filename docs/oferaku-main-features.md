@@ -212,8 +212,9 @@ keep it free of unrelated files.
 
 ### Plots and SCAN
 
-- The plots are drawn by Grace: one `fit-curves-N.pdf` per block, combined
-  into `All.pdf`.
+- The plots are drawn by plot-go (Grace's project format without Grace;
+  Grace where plot-go is not installed): one `fit-curves-N.pdf` per block,
+  combined into `All.pdf`.
 - `--mp4` also makes `All.mp4`.
 - `--logx`, `--logy`, `--autox`, `--autoy` and `--Num` control how the plots
   look, and `--no-plot` skips them.

@@ -66,8 +66,14 @@ Scientific convergence problems aren't necessarily software errors.
 ## Plots or PDFs are missing
 
 ```bash
-command -v grace xmgrace gs pdftk ffmpeg pdftoppm
+command -v plot-go grace xmgrace gs pdftk ffmpeg pdftoppm
+plot-go -version
 ```
+
+The plots are drawn by plot-go when it is on the PATH, by Grace otherwise
+(`OFE_PLOTTER=grace` forces Grace, to compare). `./INSTALL` installs plot-go
+(`--/plot-go` skips it); each `plotN.log` shows the command that drew the
+plot.
 
 Inspect the plot/conversion logs in the work directory. ImageMagick's
 Ghostscript policy can block PDF/PS formats - the installer can loosen that
