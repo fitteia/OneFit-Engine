@@ -67,7 +67,7 @@ class Block is export {
 	    }
 	    elsif $line.contains("YAXIS") {
 			$!Graph.Yaxis.read($line).auto(False);
-			$!Graph.Xaxis.grid: set => ($ygrid.defined) ?? "on" !! "off" 
+			$!Graph.Yaxis.grid: set => ($ygrid.defined) ?? "on" !! "off" 
 	    }
 	    elsif $line.contains(/fit <ws> if/) {
 			$line ~~ /'#' <ws> fit <ws> if $<c>=(<-[,]>+) <ws> ',' <ws> $<s>=(\d+)/;

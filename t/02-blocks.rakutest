@@ -23,7 +23,7 @@ my class OutputCapture {
     method captured () { @!lines.join }
 }
 
-plan 4;
+plan 5;
 
 subtest 'check data files', {
     plan 13;
@@ -56,5 +56,13 @@ subtest 'data set ex and ey', {
     is "$workfolder/data3.dat".IO.slurp, "$test-path/3/data3.dat".IO.slurp, "data: e_x propagates to e_y works! ({ now -$time } s)";
 }
 
-
-
+subtest 'grids', {
+    plan 4;
+    # each option turns on its own axis's grid (the y option once set the
+    # x axis's, after the x line had been read)
+    my $txt = "# DATA = x\n# XAXIS t Normal 0 1 0.2 1 decimal 1 time\n# YAXIS M Normal 0 1 0.2 1 decimal 1 signal\n1 2 0.1\n";
+    for (Map.new, "off off"), (%(:xgrid), "on off"), (%(:ygrid), "off on"), (%(:xgrid, :ygrid), "on on") -> (%o, $want) {
+        my $g = OneFit::Engine::Blocks::Block.new.read($txt, |%o, :quiet).Graph;
+        is "{$g.Xaxis.h<grid>} {$g.Yaxis.h<grid>}", $want, "grids with {%o.keys.sort.join(',') || 'no option'}: x and y $want";
+    }
+}
