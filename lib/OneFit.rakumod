@@ -19,6 +19,10 @@ our sub exact-decimal($v --> FatRat) {
     # a block with no chi2 recorded (fit.out's "0" is falsy, so it is never
     # stored) counts 0, as the old .sum did
     return FatRat.new(0, 1) without $v;
+    # a Rat (fit.out's "0.0345875" read as a number) is exact already; its
+    # text is not - Rat.Str gave "0.034588" (2767/80000: as many decimals
+    # as the denominator has digits)
+    return $v.FatRat if $v ~~ Rational;
     my $s = (~$v).trim;
     if $s ~~ /^ (<[-+]>?) (\d*) ['.' (\d*)]? [<[eE]> (<[-+]>? \d+)]? $/ && ($1.chars || ($2 // '').chars) {
         my $frac = ~($2 // '');
@@ -921,7 +925,9 @@ EOT
 	     	@line-fields.push: .Tag;
 	     	@line-fields.push: .X.elems;
 			@line-fields.push: .correlation-coefficient.fmt('%.4f') if $R2;
-	     	@line-fields.push: .chi2;
+	     	# exactly as fit.out wrote it (a Rat printed itself with a digit
+	     	# too few: "0.034588" for 0.0345875); a block without one, as before
+	     	@line-fields.push: .chi2.defined ?? exact-decimal-str(exact-decimal(.chi2)) !! .chi2;
 	     	@line-fields.push: .T.words.join($fmt);
 	     	if "$!path/fit{.No+1}.log".IO.e and $MIXED {
 		 		.parameters.from-output(file => "fit{ .No+1 }.out");
