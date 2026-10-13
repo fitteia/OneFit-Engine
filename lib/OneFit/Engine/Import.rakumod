@@ -31,7 +31,9 @@ class Import is export {
 
 		return @files;
 	}
-	multi method import (:@infiles, Bool :q(:$quiet) = False) {
+	# nested: the zip branch's own import of its contents, whose files the
+	# outer call gives --set-err to - applied once, not twice (Nx doubled)
+	multi method import (:@infiles, Bool :q(:$quiet) = False, Bool :$nested = False) {
 		my @input-files = @infiles.so ?? @infiles !! @!Input-files;
 		my @files=();
 		for @input-files -> $file {
@@ -54,7 +56,7 @@ class Import is export {
 					my $r1 = %!options<sef-R1-file> // '';
 					my @files-in-zip = gather for run('unzip', '-Z1', arg-path($file), :out).out.lines(:close) { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename ne $r1 }
 					run 'unzip', '-jo', arg-path($file);
-					@files.push: self.import( infiles => @files-in-zip ).Slip
+					@files.push: self.import( infiles => @files-in-zip, :nested ).Slip
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
 				when 'stelar-hdf5' 		{ 
@@ -81,7 +83,7 @@ class Import is export {
 				}
 			}
 		}
-		set-errors(self.path,@files,%!options<err>) if %!options<err>.so;
+		set-errors(self.path,@files,%!options<err>) if %!options<err>.so && !$nested;
 		return @files; 
 	}
 
