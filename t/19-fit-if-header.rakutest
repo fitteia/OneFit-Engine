@@ -14,7 +14,7 @@ sub read(Str $text) {
     ($b, $*ERR.lines.join);
 }
 
-plan 6;
+plan 7;
 my ($b, $err) = read(block("# fit if c1<2, 1"));
 is $b.select(:fit).Export-data.elems, 2, 'fit if CONDITION, STEP keeps the matching rows';
 is $err, '', '... without a warning';
@@ -26,3 +26,8 @@ like $err, /'needs CONDITION,STEP'/, '... with a warning';
 ($b, $err) = read(block("# plot if c1<2"));
 is $b.select(:plot).Export-data.elems, 4, 'plot if without a step: ignored, every row kept';
 like $err, /'needs CONDITION,STEP'/, '... with a warning';
+
+# The error column keeps its digits: +"0.0825344" is a Rat whose printout
+# lost the last one ("0.082534") on its way into the fit's data file.
+($b, $err) = read("# DATA N= 300\n# TAG = b1\n1.25 0.825344 0.0825344\n1.5 0.764049 0.0764049\n");
+is-deeply $b.Data.List, ("1.25 0.825344 0.0825344", "1.5 0.764049 0.0764049"), 'errors keep every digit';

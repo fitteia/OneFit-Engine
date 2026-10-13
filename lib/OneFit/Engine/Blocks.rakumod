@@ -326,7 +326,10 @@ class Block is export {
 #	    for (0 ..^ @!X.elems) -> $i { @!Data[$b] = "@!X[$i] @!Y[$i] @!E[$i]" }
 #       @!Data[$b]=([Z] @!X,@!Y,@!E)[$b;*].join: " "  there was a precison bug caused by this (Claude found it)
 		my @orig-xy = @!Data[$b].words[0,1];
-  		@!Data[$b]=(@orig-xy, @!E[$b]).join: " "	
+		# the error as a Num: +"0.0825344" is a Rat, 51584/625000, which
+		# prints with as many decimals as its denominator has digits -
+		# "0.082534" - so some errors lost a digit on the way to the fit
+  		@!Data[$b]=(@orig-xy, @!E[$b].Num).join: " "	
 	}
 #	@!Data>>.say;
 	self;
