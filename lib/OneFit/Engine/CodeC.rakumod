@@ -100,6 +100,20 @@ class Code is export {
 			  !! q:to/EOT/;
 #include <math.h>
 
+/*
+ * Generated parameter counts (available through the included data header):
+ * OFE_USER_NPARS: original user count, excluding par[0] and appended copies.
+ * OFE_HYBRID_NPARS: local parameters per block; 0 without --hybrid.
+ * Named model arguments are mapped automatically. Raw par[] reads are not.
+ * For a hybrid-local parameter, k is its original C index (starting at 1),
+ * j its zero-based ordinal among names ending in '_', and b the one-based
+ * block number (e.g. (int)N_0 when the dataset variable is N).
+ * index = (OFE_HYBRID_NPARS == 0 || b == 1) ? k
+ *       : OFE_USER_NPARS + 1 + (b - 2) * OFE_HYBRID_NPARS + j;
+ * Shared parameters keep their original indices. Your code controls lookup.
+ * These constants require an engine version providing the count header.
+ */
+
 #define pi 3.1415926
 
 double template1(double x, double a)
@@ -181,7 +195,14 @@ EOT
 	my $t = %!engine<T>;
 	my @tpars=@!blocks.head.T.words;
 	
-	my $TXT="";
+	# Parameters-tmp exists only while hybrid expansion is active; count
+	# the original user list, not the appended copies for later blocks.
+	my $original = %!engine<Parameters-tmp> // %!engine<Parameters> // '';
+	my @pars = $original.split(',').map(*.trim).grep(*.chars);
+	my $nhybrid = %!engine<Parameters-tmp>:exists
+	    ?? @pars.grep({ .ends-with('_') }).elems !! 0;
+	my $TXT = "#define OFE_USER_NPARS {@pars.elems}\n"
+	        ~ "#define OFE_HYBRID_NPARS $nhybrid\n\n";
 	for (0 .. @tpars.elems) {
 	    $TXT ~= "#define $t" ~ "_$_ (Matrix_$t\[(int) ($t)\]\[$_\])\n";
 	}

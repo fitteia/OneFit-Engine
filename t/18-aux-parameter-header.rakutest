@@ -1,0 +1,22 @@
+use Test;
+use OneFit::Engine::CodeC;
+class HeaderBlock { method T { '298' } }
+my $dir = $*TMPDIR.add("ofe-aux-header-{$*PID}");
+$dir.mkdir;
+END { if $dir.d { .unlink for $dir.dir; $dir.rmdir } }
+plan 4;
+for (
+    { Parameters => 'a_, b', expected => [2, 0] },
+    { Parameters => 'a_, b, 2_1', 'Parameters-tmp' => 'a_, b', expected => [2, 1] },
+    { Parameters => 'a_, b, c_, 2_1, 4_1, 2_2, 4_2', 'Parameters-tmp' => 'a_, b, c_', expected => [3, 2] },
+    { Parameters => '', expected => [0, 0] }
+) -> %case {
+    my @expected = %case<expected>.List;
+    %case<T> = "N";
+    %case<AuxDeclar> = "double probe()";
+    %case<AuxCode> = 'double probe(double x) { return x; }';
+    Code.new.path($dir.Str).cwrite(%case, [HeaderBlock.new], []);
+    my $head = $dir.add('ndata.h').slurp;
+    ok $head.starts-with("#define OFE_USER_NPARS {@expected[0]}\n#define OFE_HYBRID_NPARS {@expected[1]}\n\n"),
+       "original count {@expected[0]}, hybrid count {@expected[1]}";
+}
