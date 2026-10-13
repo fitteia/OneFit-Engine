@@ -177,12 +177,16 @@ bite an agent:
   happen again). Update `http-api.md`, `service.md`, and `security.md`
   together when a route changes.
 - **`/fit`, `/plot`, and `/convert` build the underlying `onefite`
-  invocation as a fixed argument array** (Raku `run 'onefite', |@args`),
-  not a shell string - this was a deliberate fix for a real
+  invocation as a fixed argument array** (Raku `run |self-command(),
+  |@args` - this onefite itself, not the first `onefite` on PATH, which
+  on a Mac with onefite-go is Go's), not a shell string - this was a deliberate fix for a real
   command-injection bug (see `git log --oneline -S'Pass request values as
   literal process arguments'`). Never reintroduce `shell("onefite $txt")`
-  style construction from request data. The `download` field on `/fit` is
-  still an unsanitized relative path, though - don't assume path handling
+  style construction from request data. The `download` field on `/fit` must
+  name a file inside that fit's own work folder (`inside-folder`), else the
+  request is refused - keep that check. It compares paths, without resolving
+  links: a link in the work folder (an uploaded zip can hold one) is followed.
+  And don't assume path handling
   elsewhere in the file is safe by association.
 - **`onefite archive`/`ar`/`log` replay is CLI-only and still shells out**
   with an interpolated stored command (`OneFit::Engine::Archive`'s

@@ -76,8 +76,13 @@ Git.
 
 With default options, `./INSTALL` can:
 
-1. Run `git stash` and `git pull` in the current checkout - **commit or
-   stash your own local changes first**, or pass `--no-git`. This is easy
+1. Run `git stash` and update the current checkout from GitHub - **commit
+   or stash your own local changes first**, or pass `--no-git`. A failed
+   update stops the installation with git's reason. When the repository's
+   history was replaced (as on 2026-10-08), the checkout - already stashed -
+   moves to the new history, as the `../minuit` and `../C` checkouts do
+   (those stop instead if they have local changes). When the update changed
+   `INSTALL` itself, the new `INSTALL` is run, with the same options. This is easy
    to get bitten by: it silently stashes uncommitted edits (including to
    `bin/onefite` itself) before building, and running `./INSTALL` again
    later stashes *again* on top, so a `git stash list` can quietly
@@ -250,8 +255,8 @@ The installer supports `--Uninstall`/`-U`; the CLI wraps it:
 onefite uninstall
 ```
 
-This stops the running service, updates the source checkout (`git stash &&
-git pull`), and runs `./INSTALL -U`. Review local changes and service state
+This stops the running service, and runs `./INSTALL -U`, which updates the
+source checkout (step 1 above). Review local changes and service state
 first - see [important side effects](#important-side-effects) above.
 
 ## Convenience shell functions

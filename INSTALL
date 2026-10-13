@@ -67,8 +67,18 @@ multi MAIN (
 	my %cpus = ("x86_64"  => "amd64", "aarch64" => "arm64", "arm64" => "arm64");
 
    	if $git {
+		# INSTALL's own substitutions (makefile, %OFE-PATH%) go aside; the
+		# checkout updates as the C and minuit ones do (a replaced history
+		# included), and a failed update stops the installation
 		shell "git stash";
-		shell "git pull";
+		my $before = $*PROGRAM.slurp;
+		update-checkout($*CWD.Str, 'https://github.com/fitteia/OneFit-Engine.git');
+		# this run is the INSTALL it started as: when the update changed it,
+		# the new one does the installation
+		if $*PROGRAM.slurp ne $before {
+			note "===> INSTALL was updated - running the new one";
+			exit run($*EXECUTABLE, $*PROGRAM.absolute, |@*ARGS).exitcode;
+		}
    	}
    	if $merge-site.so {
 		shell "git merge -m '$merge-site' $merge-site" if $merge-site.Bool and shell("git branch",:out).out.slurp(:close).contains($merge-site).Bool;
@@ -352,7 +362,10 @@ sub update-checkout (Str $dir, Str $url, :@reset) {
 		say "$dir: history replaced - now at $upstream";
 		return;
 	}
-	run 'git', '-C', $dir, 'pull';
+	my $pull = git(<pull -q>);
+	$pull.out.slurp(:close);
+	my $err = $pull.err.slurp(:close);
+	die "$dir: git pull failed:\n$err" ~ "fix the checkout (git -C $dir status), then run INSTALL again\n" if $pull.exitcode;
 }
 
 sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :$enable-extensions = '', :$extension = '', :$default-extensions = True, :$extensions-ref = 'main', :$extensions-transport = '') {

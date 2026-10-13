@@ -44,8 +44,8 @@ sudo ./pre-install-OFE-in-Linux.sh
 
 See [Installation](docs/installation.md) for every other platform (WSL2,
 macOS, other Linux distributions, Docker) and for exactly what those steps
-do to your system - `./INSTALL` has real side effects (it runs `git stash &&
-git pull`, can update system packages, and may invoke `sudo` repeatedly).
+do to your system - `./INSTALL` has real side effects (it runs `git stash` and
+updates the checkout, can update system packages, and may invoke `sudo` repeatedly).
 
 Verify it, then run one fit:
 
