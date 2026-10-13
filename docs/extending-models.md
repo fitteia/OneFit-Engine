@@ -105,43 +105,35 @@ input - see [security](security.md).
 
 ## Raw parameter arrays in auxiliary C code
 
-Both Raku and Go generate `ndata.h`, included by `AuxCode.c`, with:
+Named parameters in the model expression always get the current data block's
+value. Auxiliary C code that reads the raw `par` array does not: in a
+`--hybrid` fit, a parameter whose name ends in `_` has its own copy for each
+block, and `par[k]` always reads block 1's. Read it with `HPAR(k)` instead:
+
+```c
+D = HPAR(18);   /* not par[18] */
+```
+
+`HPAR(k)` is `par[k]` for the current block - the block's own copy of a
+hybrid parameter, `par[k]` itself for a shared parameter or outside
+`--hybrid`. `k` is the parameter's index in `par` (its number in a parameter
+file, minus one). It needs `par` and the data-set variable (for example `N`)
+as arguments of the function, as in `double f(double x, double N, double *par)`:
+the block number is `N_0`.
+
+Both Raku and Go generate it in `ndata.h`, included by `AuxCode.c`, with two
+counts:
 
 ```c
 #define OFE_USER_NPARS 21
 #define OFE_HYBRID_NPARS 1
 ```
 
-`OFE_USER_NPARS` counts the original user parameters, excluding the engine's
-`par[0]` bookkeeping entry and the appended hybrid copies. `OFE_HYBRID_NPARS`
-counts parameters whose names end in `_` per block while `--hybrid` is active;
-it is zero outside hybrid mode. This is the count per block, not the total
-number of appended copies. The constants are generated from the current fit.
-
-Named parameters in the model expression already receive hybrid substitution.
-An auxiliary function receiving raw `par` controls its own lookup. For a local
-parameter at original C index `k` (one-based), let `j` be its zero-based position
-among the underscore-suffixed parameters in their original declaration order.
-For one-based block number `b`, use:
-
-```c
-int index = (OFE_HYBRID_NPARS == 0 || b == 1)
-    ? k
-    : OFE_USER_NPARS + 1 + (b - 2) * OFE_HYBRID_NPARS + j;
-double value = par[index];
-```
-
-For the Arrhenius example, `D_` is the only local parameter: `k=18`, `j=0`.
-With `N` as the dataset variable, `N_0` supplies `b`:
-
-```c
-int b = (int)N_0;
-int index = (OFE_HYBRID_NPARS == 0 || b == 1)
-    ? 18
-    : OFE_USER_NPARS + 1 + (b - 2) * OFE_HYBRID_NPARS;
-D = par[index];
-```
-
-Shared parameters keep their original indices in every block. The header
-provides counts; it does not rewrite auxiliary C or remap the array. A parameter
-file's displayed number is one greater than its C array index.
+`OFE_USER_NPARS` counts the user's parameters, excluding the engine's `par[0]`
+bookkeeping entry and the appended hybrid copies. `OFE_HYBRID_NPARS` counts the
+parameters whose names end in `_` while `--hybrid` is active (per block, not in
+total); it is zero outside hybrid mode. Block `b`'s copy of the `j`-th such
+parameter (counting from 0, in declaration order) is
+`par[OFE_USER_NPARS + 1 + (b - 2) * OFE_HYBRID_NPARS + j]` for `b > 1`; block 1
+uses the original `par[k]`. `HPAR` does this lookup. Engines older than these
+definitions do not provide them.

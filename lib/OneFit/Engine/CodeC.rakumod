@@ -101,17 +101,12 @@ class Code is export {
 #include <math.h>
 
 /*
- * Generated parameter counts (available through the included data header):
- * OFE_USER_NPARS: original user count, excluding par[0] and appended copies.
- * OFE_HYBRID_NPARS: local parameters per block; 0 without --hybrid.
- * Named model arguments are mapped automatically. Raw par[] reads are not.
- * For a hybrid-local parameter, k is its original C index (starting at 1),
- * j its zero-based ordinal among names ending in '_', and b the one-based
- * block number (e.g. (int)N_0 when the dataset variable is N).
- * index = (OFE_HYBRID_NPARS == 0 || b == 1) ? k
- *       : OFE_USER_NPARS + 1 + (b - 2) * OFE_HYBRID_NPARS + j;
- * Shared parameters keep their original indices. Your code controls lookup.
- * These constants require an engine version providing the count header.
+ * HPAR(k) is par[k] for the current data block: in a --hybrid fit a
+ * parameter whose name ends in '_' has its own copy for each block, and
+ * HPAR(k) reads this block's (plain par[k] always reads block 1's).
+ * Example: D = HPAR(18);  It needs par and the data-set variable (e.g. N)
+ * as arguments of the function. ndata.h defines it, with the counts
+ * OFE_USER_NPARS and OFE_HYBRID_NPARS; older engines do not.
  */
 
 #define pi 3.1415926
@@ -201,8 +196,17 @@ EOT
 	my @pars = $original.split(',').map(*.trim).grep(*.chars);
 	my $nhybrid = %!engine<Parameters-tmp>:exists
 	    ?? @pars.grep({ .ends-with('_') }).elems !! 0;
+	# HPAR(k): par[k] for the current data block - the block's own copy
+	# when k is a hybrid parameter; @ordinal[k] is its place among them,
+	# -1 for a shared one (and par[0]); $t_0 is the block number
+	my $j = 0;
+	my @ordinal = -1, |@pars.map({ $nhybrid && .ends-with('_') ?? $j++ !! -1 });
+	my $b = "(int) ({$t}_0)";
 	my $TXT = "#define OFE_USER_NPARS {@pars.elems}\n"
-	        ~ "#define OFE_HYBRID_NPARS $nhybrid\n\n";
+	        ~ "#define OFE_HYBRID_NPARS $nhybrid\n\n"
+	        ~ "/* HPAR(k): par[k] for the current data block - the block's own copy of a --hybrid (name_) parameter */\n"
+	        ~ "static const int OFE_HYBRID_J[{@ordinal.elems}] __attribute__((unused)) = \{{@ordinal.join(',')}\};\n"
+	        ~ "#define HPAR(k) (par[(OFE_HYBRID_NPARS == 0 || $b <= 1 || (k) < 1 || (k) > OFE_USER_NPARS || OFE_HYBRID_J[(k)] < 0) ? (k) : OFE_USER_NPARS + 1 + ($b - 2) * OFE_HYBRID_NPARS + OFE_HYBRID_J[(k)]])\n\n";
 	for (0 .. @tpars.elems) {
 	    $TXT ~= "#define $t" ~ "_$_ (Matrix_$t\[(int) ($t)\]\[$_\])\n";
 	}

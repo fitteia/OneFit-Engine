@@ -4,12 +4,15 @@ class HeaderBlock { method T { '298' } }
 my $dir = $*TMPDIR.add("ofe-aux-header-{$*PID}");
 $dir.mkdir;
 END { if $dir.d { .unlink for $dir.dir; $dir.rmdir } }
+# the same header the Go engine writes (cmd/onefite/aux_parameter_header_test.go)
+my $note = "/* HPAR(k): par[k] for the current data block - the block's own copy of a --hybrid (name_) parameter */\n";
+my $hpar = "#define HPAR(k) (par[(OFE_HYBRID_NPARS == 0 || (int) (N_0) <= 1 || (k) < 1 || (k) > OFE_USER_NPARS || OFE_HYBRID_J[(k)] < 0) ? (k) : OFE_USER_NPARS + 1 + ((int) (N_0) - 2) * OFE_HYBRID_NPARS + OFE_HYBRID_J[(k)]])\n\n";
 plan 4;
 for (
-    { Parameters => 'a_, b', expected => [2, 0] },
-    { Parameters => 'a_, b, 2_1', 'Parameters-tmp' => 'a_, b', expected => [2, 1] },
-    { Parameters => 'a_, b, c_, 2_1, 4_1, 2_2, 4_2', 'Parameters-tmp' => 'a_, b, c_', expected => [3, 2] },
-    { Parameters => '', expected => [0, 0] }
+    { Parameters => 'a_, b', expected => [2, 0, '-1,-1,-1'] },
+    { Parameters => 'a_, b, 2_1', 'Parameters-tmp' => 'a_, b', expected => [2, 1, '-1,0,-1'] },
+    { Parameters => 'a_, b, c_, 2_1, 4_1, 2_2, 4_2', 'Parameters-tmp' => 'a_, b, c_', expected => [3, 2, '-1,0,-1,1'] },
+    { Parameters => '', expected => [0, 0, '-1'] }
 ) -> %case {
     my @expected = %case<expected>.List;
     %case<T> = "N";
@@ -17,6 +20,9 @@ for (
     %case<AuxCode> = 'double probe(double x) { return x; }';
     Code.new.path($dir.Str).cwrite(%case, [HeaderBlock.new], []);
     my $head = $dir.add('ndata.h').slurp;
-    ok $head.starts-with("#define OFE_USER_NPARS {@expected[0]}\n#define OFE_HYBRID_NPARS {@expected[1]}\n\n"),
-       "original count {@expected[0]}, hybrid count {@expected[1]}";
+    my $size = @expected[2].split(',').elems;
+    is $head.substr(0, $head.index('#define N_')),
+       "#define OFE_USER_NPARS {@expected[0]}\n#define OFE_HYBRID_NPARS {@expected[1]}\n\n" ~ $note
+         ~ "static const int OFE_HYBRID_J[$size] __attribute__((unused)) = \{{@expected[2]}\};\n" ~ $hpar,
+       "original count {@expected[0]}, hybrid count {@expected[1]}, HPAR table {@expected[2]}";
 }
