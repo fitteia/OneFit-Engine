@@ -356,7 +356,7 @@ class Engine is export {
 	    for (1 .. @!blocks.elems).race -> $i {
 			my $parameters;
 			if @!blocks[$i-1].parameters.defined { $parameters = @!blocks[$i-1].parameters }
-			else { $parameters = Parameters::Parameters.new.path($!path) }
+			else { $parameters = OneFit::Engine::Parameters::Parameters.new.path($!path) }
 
 			$parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 			self!use-saved-block-values($parameters, $i) if none ($from-output.Bool,$from-log.Bool);
@@ -380,7 +380,7 @@ class Engine is export {
 	else {
 	    my $parameters;
 	    if @!blocks.head.parameters.defined { $parameters = @!blocks.head.parameters }
-	    else { $parameters = Parameters::Parameters.new.path($!path) }
+	    else { $parameters = OneFit::Engine::Parameters::Parameters.new.path($!path) }
 
 	    $parameters.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 	    $parameters.from-output(path => $!path) if $from-output.Bool;
@@ -390,7 +390,7 @@ class Engine is export {
 		for @!blocks {
 			my $params;
 			if @!blocks[.No].parameters.defined { $params = @!blocks[.No].parameters }
-			else { $params = Parameters::Parameters.new.path($!path) }
+			else { $params = OneFit::Engine::Parameters::Parameters.new.path($!path) }
 	
 		    $params.from-engine(self) if none ($from-output.Bool,$from-log.Bool);
 	   		$params.from-output(path => $!path) if $from-output.Bool;
