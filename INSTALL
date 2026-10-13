@@ -527,9 +527,16 @@ sub install (:$test,:$to-site, :$bindir) {
    	shell("cd /usr/local/bin && sudo rm onefite-raku") if '/usr/local/bin/onefite-raku'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
 
+    # zef's tests (and Build) run the engine, which calls OneFit's tools -
+    # cop, plot-go, epstopdf, ... - from $bindir, linked in /usr/local/bin.
+    # sudo's secure_path leaves /usr/local/bin out on newer Debian (forky:
+    # "/usr/sbin:/usr/bin:/sbin:/bin"), and as root every plot then fails and
+    # the tests with it; so zef gets them back on its PATH.
+    my $zef = "$SUDO env \"PATH=$bindir:/usr/local/bin:{ %*ENV<PATH> }\" zef";
+
     if $test.Bool {
 		"/tmp/OneFit-Engine-test".IO.mkdir;
-		shell("$SUDO zef -v { '--install-to=site ' if $to-site } install ./");
+		shell("$zef -v { '--install-to=site ' if $to-site } install ./");
 #	my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 		if $to-site {
 	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
@@ -545,7 +552,7 @@ sub install (:$test,:$to-site, :$bindir) {
 		shell "rm -fr /tmp/OneFit-Engine-test" if "/tmp/OneFit-Engine-test".IO.e;
     }
     else {
-		shell("$SUDO zef -v --/test { '--install-to=site ' if $to-site } install ./");
+		shell("$zef -v --/test { '--install-to=site ' if $to-site } install ./");
 		#        my $onefite-bin = "/usr/lib/perl6/site/bin/onefite";
 		my $proc = shell("zef list --installed", :out,:err);
 		my $location = $proc.err.lines(:close).grep(/'site'$/).split('#').tail;
