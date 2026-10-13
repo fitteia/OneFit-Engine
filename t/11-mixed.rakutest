@@ -23,9 +23,19 @@ my class OutputCapture {
     method captured () { @!lines.join }
 }
 
-plan 1;
+plan 2;
 
 $time = now;
 my $eng = Engine.new.path("$workfolder").read("$test-path/9/Master-MIXED.sav").fit.save("$workfolder/Master-MIXED.json");
 is "$workfolder/Master-MIXED.json".IO.e, True, "mixed fit finish ok! ({ now -$time } s)" ;;
+
+# The results saved in the fit file (SimulFitOutput) are the printed ones
+# (fit-results), block by block - not one parameter set repeated (it was:
+# the second pass took the MIXED fit for a plain global one).
+{
+    use JSON::Fast;
+    my %saved = from-json("$workfolder/Master-MIXED.json".IO.slurp);
+    my &rows = { $^t.lines.grep({ .so && !.starts-with('#') }).map({ .split(/<[,\s]>+/).grep(*.chars).join(' ') }).List };
+    is-deeply rows(%saved<SimulFitOutput>), rows(%saved<fit-results>), "saved MIXED results are the printed ones, block by block";
+}
 

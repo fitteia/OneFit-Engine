@@ -880,9 +880,15 @@ EOT
 
     method !results ( :$fmt = ', ',  :$R2 = False, :$hybrid = False) {
 		self!adjust-parameters( :clean ) if $hybrid;
-		my Bool $MIXED=False;
-		my %last = @!par-tables[0].a.tail;
-		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
+		# MIXED: the fit's last parameter is named MIXED with a value above 0 -
+		# read from the fit's own parameters (as the Go engine does), not
+		# from @!par-tables[0], which a MIXED pass below replaces with block
+		# 1's values (MIXED 0 there): a second call - the SimulFitOutput
+		# saved in the fit file - then took the fit for a plain global one
+		# and wrote one parameter set for every block
+		my @names = (%!engine<Parameters> // '').split(',')>>.trim.grep(*.chars);
+		my Bool $MIXED = so @names && @names.tail.contains("MIXED", :i)
+			&& ((try +(%!engine{"Pval{ @names.end }"} // 0)) // 0) > 0;
 		$MIXED = False if $MIXED && $hybrid;
 		#		say %last<name value>;
 	 	my @fields = ("# TAG");
