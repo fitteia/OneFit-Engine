@@ -1700,7 +1700,7 @@ multi MAIN  ('create',
    		 Bool :lx(:logx(:log-x(:xlog(:$loglin)))),  #= logaroithmic x scale
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
-         Int  :n(:num(:N(:Num(:$npts)))) = +100, #= number of points in the theoretical curves
+         Int  :n(:num(:N(:Num(:$npts)))) = 100, #= number of points in the theoretical curves
 	     Str  :o(:st(:save-to(:$to))), #= write fit settings and results to json or sav file
 		 Str  :pi(:$plot-if) = "", #= include plot if tag condition when plotting data and fitting curves
 		 Bool :q(:$quiet) = False, #= reduce log output
@@ -1784,7 +1784,7 @@ multi MAIN  ('random',
 	     Bool :ly(:logy(:log-y(:ylog(:$linlog)))),	#= logarithmic y scale	
    		 Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),      #= log log scale
 	     Str  :o(:st(:to(:$save-to))), # write fit settings to json or sav file 
-	     Int  :n(:num(:N(:Num(:$npts)))) = +100,
+	     Int  :n(:num(:N(:Num(:$npts)))) = 100,
 		 Bool :q(:$quiet) = False,
 	     Str  :t(:$tags),
 	     Str  :wf(:$work-folder) = '.',
@@ -1844,7 +1844,7 @@ multi MAIN  ('fit',
    	Bool :lxy(:logxy(:log-xy(:xylog(:$loglog)))),
 	    Bool :$plot = True, #= plotting is on by default; --no-plot (or --/plot) turns it off
 	    Bool :$np = False, #= --np: no plot, the same as --no-plot
-    Int  :n(:num(:N(:Num(:$npts)))) = +100,
+    Int  :n(:num(:N(:Num(:$npts)))) = 100,
 	Bool :mp4(:$mpeg4) = False, #= create a mpeg4 video with All.pdf
     Str  :o(:st(:$save-to)), # write fit settings to json or sav file 
 	Bool :$parallel = True, #= set Env ONEFITE_NO_PARALLEL (default = 0)
@@ -2409,6 +2409,9 @@ EOT
 
 
     say "Running post-install tests...\n";
+    # this onefite, not the first on PATH (on a Mac with onefite-go that is
+    # Go's, which has no "service" command)
+    my $self = "'{ $*EXECUTABLE.absolute }' '{ $*PROGRAM-NAME.IO.absolute }'";
     "/tmp/zone12.dat".IO.spurt: $data;
 	my $p = shell("systemctl status onefite",:out,:err);
 	my $service = $daemon && !$p.exitcode ?? $p.out.slurp(:close).contains("active (running)") !! False;
@@ -2426,7 +2429,7 @@ EOT
 		else { say "Curl exitcode: { $result.exitcode }. Unsuccessfull test of onefite web service!"; }
 	}
 	else {
-	   	my $pid = shell("onefite service PID",:out).out.slurp(:close);
+	   	my $pid = shell("$self service PID",:out).out.slurp(:close);
 		if $pid.so {
 			say "onefite is running with PID: $pid";
 			my $result = "curl --silent -F \"file=\@zone12.dat\" -F \"autox=yes\" -F \"logx=yes\" -F \"function=Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \\+ (M0-Mi)*exp(-t/T1)\" http://127.0.0.1:8142/fit --output ofe-test.log";
@@ -2447,7 +2450,7 @@ EOT
 	</tmp/ofe-tmp>.map({ $_.IO.e and fileowner($_).contains("root") ?? shell("sudo rm -fr $_") !! shell("rm -fr $_") });
 
 	put "testing command line onefite...";
-	my $result = shell("cd /tmp/ && onefite fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --autox --logx", :out).out.slurp(:close);
+	my $result = shell("cd /tmp/ && $self fit \"Mz[-2<2](t,M0,Mi,T1[0.01<3])=Mi \+ (M0-Mi)*exp(-t/T1)\" zone12.dat --autox --logx", :out).out.slurp(:close);
 	say $result if $verbose;
 	if $result.contains("zone12, 16") {
 	    put "OK\n";
