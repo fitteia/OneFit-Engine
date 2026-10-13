@@ -138,6 +138,12 @@ multi MAIN (
 		for @brew-packages {
 			shell("brew install $_") unless $brew-installed.contains($_);
 		}
+		# the URW base-35 fonts plot-go draws text with, as Ghostscript and
+		# Grace do (without them legends and justified texts sit 1.5-2
+		# points off): Homebrew's cask, unless they are there already - the
+		# onefite-go formula installs them in share/fonts/urw-base35
+		my @urw-dirs = </opt/homebrew/share/fonts/urw-base35 /usr/local/share/fonts/urw-base35 /Library/Fonts>, "$*HOME/Library/Fonts";
+		shell("brew install --cask font-urw-base35") unless @urw-dirs.first({ "$_/NimbusSans-Regular.otf".IO.f });
 		shell "zef install App::Prove6 --install-to=site" if shell("zef locate App::Prove6",:out).out.slurp(:close).contains("Nothing located");
 		shell("sudo ln -s /opt/homebrew/bin/xmgrace /usr/local/bin/grace") unless "/usr/local/bin/grace".IO.e;
 		$DOCKER = True;

@@ -31,7 +31,9 @@ git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
 The macOS installer mode disables Debian package handling, systemd,
 web-server setup, and both the ordinary and post-install test suites. It
 installs required Homebrew tools such as Grace, ImageMagick, HDF5,
-Poppler, FFmpeg, and PDF utilities when missing.
+Poppler, FFmpeg, and PDF utilities when missing. It also installs the URW base-35
+fonts plot-go draws text with (Homebrew's `font-urw-base35` cask) unless
+they are already there - the onefite-go Homebrew formula installs them too.
 
 Verify executable discovery:
 
