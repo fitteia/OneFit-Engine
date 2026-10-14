@@ -70,7 +70,22 @@ multi MAIN (
 		# INSTALL's own substitutions (makefile, %OFE-PATH%) go aside; the
 		# checkout updates as the C and minuit ones do (a replaced history
 		# included), and a failed update stops the installation
+		my &stashes = { shell("git stash list", :out).out.lines(:close).elems };
+		my $stashed = stashes();
 		shell "git stash";
+		# a stash of nothing but those substitutions (make set writes them
+		# again) is dropped, so they do not pile up one per run; one with
+		# other local changes is kept
+		if stashes() > $stashed {
+			my @changes = shell("git stash show -p", :out).out.lines(:close)
+				.grep({ .starts-with('+' | '-') && !.starts-with('+++' | '---') });
+			if @changes.all ~~ / ^ <[+-]> [ 'our constant OFE-PATH' | 'ARCH=' | 'PERLCORE=' ] / {
+				shell "git stash drop -q";
+			}
+			else {
+				note "===> local changes besides INSTALL's are kept in git stash (git stash show -p)";
+			}
+		}
 		my $before = $*PROGRAM.slurp;
 		update-checkout($*CWD.Str, 'https://github.com/fitteia/OneFit-Engine.git');
 		# this run is the INSTALL it started as: when the update changed it,
