@@ -885,7 +885,16 @@ multi MAIN (
 	my $txt = $man
 		?? ((try Pod::To::Man.pod2man($=pod)) // Pod::To::Man.pod2man($=pod.grep({ $_ !~~ Pod::Block::Declarator }).Array))
 		!! pod2text $=pod;
-	$txt = $txt ~ "\n\n\n" ~ MAIN(:v);
+	if $man {
+		# the page's header names it and its version (Pod::To::Man leaves the
+		# name empty and names Rakudo instead), and a comment stamps the
+		# source it came from (OneFit::man-source-digest, t/21-man-page)
+		my $version = from-json("{ ::('OFE-PATH') }/META6.json".IO.slurp)<version>;
+		$txt .= subst(/^^ '.TH' \h+ \S* \h+ '1' \h+ ('"' <-["]>* '"') \N*/,
+			{ ".TH ONEFITE 1 $0 \"OneFit-Engine $version\" \"OneFit-Engine Manual\"\n"
+			  ~ ".\\\" source: { OneFit::man-source-digest($*PROGRAM.slurp) }" });
+	}
+	else { $txt = $txt ~ "\n\n\n" ~ MAIN(:v) }
 	say $txt;
 	$txt
 }

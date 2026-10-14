@@ -1,0 +1,23 @@
+#!/usr/bin/env raku
+
+use OneFit;
+use Test;
+
+# INSTALL (makefile) puts the install path here; run from a checkout, it is the checkout itself.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
+
+# The committed onefite.1 (INSTALL's page where onefite man --man fails) is
+# stamped with a digest of the bin/onefite lines it is rendered from; a
+# change to bin/onefite's POD, #| / #= notes or MAIN signatures makes this
+# fail until the page is regenerated.
+my $page = "{OFE-PATH}/onefite.1".IO;
+my $src = "{OFE-PATH}/bin/onefite".IO;
+
+plan 4;
+
+ok $page.f, 'onefite.1 is there';
+my $stamp = $page.lines.map({ ~$0 if / ^ '.\\" source: ' (<xdigit>+) / }).first;
+ok $stamp.defined, 'onefite.1 has its source stamp';
+is $stamp, OneFit::man-source-digest($src.slurp),
+	'onefite.1 is up to date with bin/onefite (else: bin/onefite man --man > onefite.1)';
+like $page.slurp, / ^^ '.TH ONEFITE 1 ' /, 'onefite.1 is named in its header';

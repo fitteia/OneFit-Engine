@@ -49,6 +49,38 @@ our sub exact-decimal-str(FatRat $r --> Str) {
     ($n < 0 ?? '-' !! '') ~ $digits
 }
 
+# The man page is rendered from bin/onefite's POD block, its #| / #= notes
+# and its MAIN signatures; man-source-digest is a digest of those lines (and
+# of nothing else in the file), stamped in the committed onefite.1 by
+# onefite man --man. t/21-man-page checks the stamp against bin/onefite, so
+# the committed page cannot fall behind unnoticed. A digest of the source,
+# not a comparison of pages: the page itself differs between Rakudo
+# versions.
+our sub man-source-digest(Str $src --> Str) {
+    my @keep;
+    my ($pod, $sig) = False, False;
+    for $src.lines -> $l {
+        $pod = True if $l.starts-with('=begin pod');
+        if $pod {
+            @keep.push: $l;
+            $pod = False if $l.starts-with('=end pod');
+            next;
+        }
+        $sig = True if $l ~~ /^ \s* multi \s+ MAIN >>/;
+        if $sig {
+            @keep.push: $l;
+            # the body's "{" ends the signature (a "where { }" is no body)
+            $sig = False if $l.subst(/ '#' .* /, '') ~~ / ')' \s* '{' | ^ \s* '{' /;
+            next;
+        }
+        @keep.push: $l if $l.contains('#|') || $l.contains('#=');
+    }
+    # 64-bit FNV-1a: the same on every Rakudo, no module needed
+    my $h = 0xcbf29ce484222325;
+    $h = (($h +^ $_) * 0x100000001b3) % 2**64 for @keep.join("\n").encode;
+    $h.fmt('%016x')
+}
+
 class Engine is export {
     has %!engine;
     has @!blocks;
