@@ -1,7 +1,7 @@
 use Test;
 use OneFit;
 
-plan 3;
+plan 4;
 
 # tchi2 is the exact sum of the blocks' chi2 texts (chi2-npts-ndf)
 sub total(*@chi2) { OneFit::exact-decimal-str([+] (FatRat.new(0, 1), |@chi2.map({ OneFit::exact-decimal($_) }))) }
@@ -31,4 +31,14 @@ subtest 'a chi2 read as a Rat keeps its digits', {
     is $rat.Str, '0.034588', 'Rat.Str loses the digit (why this matters)';
     is OneFit::exact-decimal-str(OneFit::exact-decimal($rat)), '0.0345875', 'printed in full';
     is total($rat, +"0.0172937"), '0.0518812', 'summed in full';
+}
+
+subtest "fit.out's chi2 keeps its text, for the results table", {
+    # Output-Actions makes chi2[N] an allomorph: printed as written (as
+    # onefite-go does), summed exactly
+    my %o = OneFit::Engine::Grammars::Output.parse-made("chi2t=6.45987e-08\nT=1 chi2[1]=6.45987e-08 chi2[2]=0.0345875\n").hash;
+    is %o<chi2[1]>.Str, '6.45987e-08', 'scientific notation kept (was 0.0000000645987)';
+    is %o<chi2[2]>.Str, '0.0345875', 'every digit kept';
+    is total(%o<chi2[1]>, %o<chi2[2]>), '0.0345875645987', 'summed exactly';
+    ok %o<chi2t> ~~ Numeric && %o<chi2t> !~~ Str, 'other values stay plain numbers';
 }

@@ -3,7 +3,9 @@ unit module OneFit::Engine::Grammars;
 class Output-Actions {
     method TOP                ($/) { make $<pair>.map({ .made }) }
     method key                ($/) { make $/.Str }
-    method pair               ($/) { make $<key>.made => $<number>.made }
+    # a block's chi2[N] keeps fit.out's text too (an allomorph): the
+    # results print it as written, "6.45987e-08" (as onefite-go does)
+    method pair               ($/) { make $<key>.made => ($<key>.Str.starts-with('chi2[') ?? val(~$<number>) !! $<number>.made) }
     method number             ($/) { make +$/ }
     method comment            ($/) { make $/.Str }
 }

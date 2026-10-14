@@ -927,9 +927,10 @@ EOT
 	     	@line-fields.push: .Tag;
 	     	@line-fields.push: .X.elems;
 			@line-fields.push: .correlation-coefficient.fmt('%.4f') if $R2;
-	     	# exactly as fit.out wrote it (a Rat printed itself with a digit
-	     	# too few: "0.034588" for 0.0345875); a block without one, as before
-	     	@line-fields.push: .chi2.defined ?? exact-decimal-str(exact-decimal(.chi2)) !! .chi2;
+	     	# exactly as fit.out wrote it ("6.45987e-08", "0.0345875" - a Rat
+	     	# printed itself with a digit too few: "0.034588"), as onefite-go;
+	     	# a block without one, as before
+	     	@line-fields.push: .chi2 ~~ Str ?? .chi2.Str !! .chi2.defined ?? exact-decimal-str(exact-decimal(.chi2)) !! .chi2;
 	     	@line-fields.push: .T.words.join($fmt);
 	     	if "$!path/fit{.No+1}.log".IO.e and $MIXED {
 		 		.parameters.from-output(file => "fit{ .No+1 }.out");
