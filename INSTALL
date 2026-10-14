@@ -741,7 +741,11 @@ sub install-manpage( :$macos = False ) {
 		$p.exitcode == 0 ?? $out !! Nil
 	};
 	if $text and $text.trim {
-		$page.spurt: $text.lines.grep({ !/Total' 'execution/ }).join("\n")
+		# the page starts at its first troff line: bin/onefite may print
+		# other lines (its version, a zef note) before it
+		my @lines = $text.lines.grep({ !/Total' 'execution/ });
+		my $start = @lines.first(*.starts-with('.'), :k) // 0;
+		$page.spurt: @lines[$start..*].join("\n")
 			~ "\n\n" ~ run("$*CWD/bin/onefite", '-v', :out).out.slurp(:close);
 		say "onefite man page generated";
 	}
