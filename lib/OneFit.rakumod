@@ -479,11 +479,13 @@ class Engine is export {
 					%!engine{"F$no"} = %!engine{"F$k"};
 				} 
 			}
+			# a hybrid name is replaced only as a whole name: D_ not inside AD_ (as
+			# onefite-go's hybridSubstitute does - the same identifier characters)
 			for 0 ..^ @hybrid-keys.elems -> $i {
 			   my $par = @pars[@hybrid-keys[$i]];	
 				my $T = %!engine<T>;
 				%!engine<Function> = %!engine<Function>.subst(
-					/$par/, '((' ~ 
+					/ <!after <[A..Za..z0..9_]>> $par <!before <[A..Za..z0..9_]>> /, '((' ~ 
 							$T ~ '_0 == 1)' ~ 
 							' ? ' ~ 
 							$par ~ 

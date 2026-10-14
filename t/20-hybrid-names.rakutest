@@ -1,0 +1,26 @@
+#!/usr/bin/env raku
+
+use OneFit;
+use Test;
+
+# INSTALL (makefile) puts the install path here; run from a checkout, it is the checkout itself.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
+
+my $workfolder="/tmp/OneFit-Engine-test";
+$workfolder.IO.mkdir unless $workfolder.IO.d; # INSTALL creates it; so does a run on its own
+
+# --hybrid rewrites each name_ of the function into its block's copy; a
+# name inside another (D_ in AD_) must stay whole, not become A + D_'s
+# branch (the C code then did not compile). Same string as onefite-go's.
+plan 2;
+
+my $eng = OneFit::Engine.new.path($workfolder).read(OFE-PATH ~ "/t/12/p96.json");
+$eng.blocks(:r, :a, :q);
+my %e = $eng.h;
+%e<Parameters> = "D_,AD_";
+%e<Function> = "D_ + AD_*x";
+$eng.h(%e).hybrid(:set);
+my $f = $eng.h<Function>;
+is $f, "((dum_0 == 1) ? D_ : par[3 + ((int) dum_0 - 2) * 2+0]) + ((dum_0 == 1) ? AD_ : par[3 + ((int) dum_0 - 2) * 2+1])*x",
+    'each hybrid name becomes its own block copy';
+ok !$f.contains('A(('), 'AD_ is not cut into A + D_';
