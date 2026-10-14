@@ -690,10 +690,10 @@ class Engine is export {
 		
 	   	if @outliers.so {
 	 		my $TXT = self!results( :R2($R2), :hybrid($hybrid) );
-			$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
+			$TXT = self!reset-parameters-std( $TXT, :R2($R2), :$hybrid );
 			%!engine<fit-results-all> = $TXT; 
 		 	my $msg = "fit of all points with \x[03C7]\x[00B2] ~ Num. degrees freedom";
-			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, :$hybrid, removed-outliers => $npts-removed );
 			my $size = max-line-length($TXT);
 	 		say qq:to/EOT/;
 {'-' x ($size-$msg.chars/2.0).floor} $msg {'-' x ($size-$msg.chars/2.0).ceiling}
@@ -786,9 +786,9 @@ EOT
 					@b.join(', ')
 				}).join("\n")
 			~ "\n";
-		$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
+		$TXT = self!reset-parameters-std( $TXT, :R2($R2), :$hybrid );
 
-		my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed*@!blocks.elems );
+		my $foot = self.chi2-npts-ndf(mixed => $MIXED, :$hybrid, removed-outliers => $npts-removed*@!blocks.elems );
 		my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom and {$npts-removed} points/block removed";
 		my $size = max-line-length($TXT);
  		say qq:to/EOT/;
@@ -800,8 +800,8 @@ EOT
 	 }
 	 else { 
 		if $reduced-chi2 {
-			$TXT = self!reset-parameters-std( $TXT, :R2($R2) );
-			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
+			$TXT = self!reset-parameters-std( $TXT, :R2($R2), :$hybrid );
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, :$hybrid, removed-outliers => $npts-removed );
 		 	my $msg = "fit with \x[03C7]\x[00B2] ~ Num. degrees freedom";
 			my $size = max-line-length($TXT);
  			say qq:to/EOT/;
@@ -814,7 +814,7 @@ EOT
 # {'-' x (41-$msg.chars/2.0).floor}{'-' x $msg.chars}{'-' x (41-$msg.chars/2.0).ceiling}
 		}
 		else {
-			my $foot = self.chi2-npts-ndf(mixed => $MIXED, removed-outliers => $npts-removed );
+			my $foot = self.chi2-npts-ndf(mixed => $MIXED, :$hybrid, removed-outliers => $npts-removed );
 		 	my $msg = "fit results";
 			my $size = max-line-length($TXT);
  			say qq:to/EOT/;
@@ -961,26 +961,18 @@ EOT
 	 	return $TXT;
     }
 
-	method !reset-parameters-std ( $txt, :$R2 = False ) {
+	method !reset-parameters-std ( $txt, :$R2 = False, :$hybrid = False ) {
 		my $chi2 =	(@!blocks>>.chi2).sum;
 		my $npts = ((@!blocks>>.Data)>>.elems).sum;
-		my $ngfp = @!blocks[0].parameters.free;
-		my $ndf = $npts - $ngfp;
-		my $nifp = (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum;
 		my $off-set = $R2 ?? 1 !! 0; # positions change because option R2 is set
 
-#`(		say "chi2 = $chi2";
-		say "npts = $npts";
-		say "ngfp = $ngfp";
-		say "ndf = $ndf";
-		say "nifp= $nifp";
-)	
 		my @a = $txt.lines;
 		my Bool $MIXED=False;
 		my %last = @!par-tables[0].a.tail;
 		$MIXED = %last<name>.contains("MIXED",:i) && %last<value>.Num > 0;
-	
-		$ndf = $npts - $nifp*@!blocks.elems - $ngfp if $MIXED; 
+
+		# an individual fit's lines use their own block's ndf, below
+		my $ndf = $npts - self!nfps(mixed => $MIXED, :$hybrid);
 
 		my $TXT = @a.head 
 				~ 	"\n" 
@@ -1000,15 +992,30 @@ EOT
 		$TXT;
 	 }
 	 
-	 method chi2-npts-ndf (:$mixed = False, :$removed-outliers=0) {
+	 method chi2-npts-ndf (:$mixed = False, :$hybrid = False, :$removed-outliers=0) {
 		my $chi2 = exact-decimal-str( [+] (FatRat.new(0, 1), |@!blocks.map({ exact-decimal(.chi2) })) );
 		my $npts = ((@!blocks>>.Data)>>.elems).sum - $removed-outliers;
-		my $ngfp = @!blocks[0].parameters.free;
-		my $ndf = $npts - $ngfp;
-		my $nifps = $mixed ?? (gather for @!par-tables[0].a { take 1 if $_<name>.contains(/'_'$/) }).sum !! +0;
-		my $nfps = $nifps*@!blocks.elems + $ngfp;
-		$ndf = $npts - $nfps;  
+		my $nfps = self!nfps(:$mixed, :$hybrid);
 		return "tchi2 = $chi2, tnpts = $npts, nfps = $nfps"
+	}
+
+	# The parameters fitted, all blocks together (tchi2 and tnpts are totals
+	# too): a global fit's free ones; an individual fit's free ones of every
+	# block; a --hybrid fit's free shared ones plus every block's free name_
+	# ones (its own copies); a MIXED fit's free ones plus its name_ ones in
+	# every block - the C engine fits them per block, though their tables
+	# mark them fixed.
+	method !nfps (:$mixed = False, :$hybrid = False) {
+		my $ngfp = @!blocks[0].parameters.free;
+		if $hybrid {
+			return +@!blocks[0].parameters.a.grep({ .<free> && !.<name>.ends-with('_') })
+				+ @!blocks.map({ +.parameters.a.grep({ .<free> && .<name>.ends-with('_') }) }).sum;
+		}
+		if $mixed {
+			return $ngfp + @!blocks.elems * @!par-tables[0].a.grep({ .<name>.ends-with('_') }).elems;
+		}
+		return [+] @!blocks.map({ .parameters.free }) if %!engine<FitType> ~~ /Individual/;
+		$ngfp
 	}
 
 	method !adjust-parameters ( Bool :$clean = False ) {
