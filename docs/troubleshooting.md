@@ -71,9 +71,15 @@ plot-go -version
 ```
 
 The plots are drawn by plot-go when it is on the PATH, by Grace otherwise
-(`OFE_PLOTTER=grace` forces Grace, to compare). `./INSTALL` installs plot-go
-(`--/plot-go` skips it); each `plotN.log` shows the command that drew the
-plot.
+(`OFE_PLOTTER=grace` forces Grace, to compare). `./INSTALL` installs its pinned
+plot-go release (`--/plot-go` skips it); the release download and Go fallback
+use the same version. `OFE_PLOT_GO_URL` can point to a mirror containing that
+release's assets. Each `plotN.log` shows the command that drew the plot.
+
+The pin is declared as `PLOT-GO-VERSION` in `INSTALL` and is kept aligned with
+the Go port and GUI. Updating that pin takes effect when the installer is run;
+it does not replace an already installed plot-go automatically. Check
+`command -v plot-go` and `plot-go -version` to confirm which copy is on PATH.
 
 Inspect the plot/conversion logs in the work directory. ImageMagick's
 Ghostscript policy can block PDF/PS formats - the installer can loosen that

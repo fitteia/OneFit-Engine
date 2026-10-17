@@ -10,6 +10,9 @@ our $DOCKER = False;
 
 our $OS = "LINUX";
 
+# Keep plot-go aligned with the version pinned by the Go port and GUI.
+our constant PLOT-GO-VERSION = 'v0.2.20';
+
 #|(onefite INSTALL help)
 multi MAIN ('help') { MAIN :h }
 
@@ -613,10 +616,10 @@ sub install (:$test,:$to-site, :$bindir) {
 
 # plot-go (github.com/fitteia/OneFit-Engine-plot) draws OneFit's plots
 # without Grace; the C core uses it when it is on the PATH, and Grace
-# otherwise. Installed into $bindir from the latest release's binary for this
+# otherwise. Installed into $bindir from the pinned release's binary for this
 # platform (checked against the release's SHA256SUMS), or built with Go when
 # there is no binary for it. Never fatal: without plot-go, Grace draws.
-# OFE_PLOT_GO_URL points to another place holding the release's files.
+# OFE_PLOT_GO_URL points to another place holding this pinned release's files.
 sub install-plot-go (:$bindir) {
 	my $os = $*KERNEL.name.lc eq 'darwin' ?? 'darwin' !! 'linux';
 	my $machine = run('uname', '-m', :out).out.slurp(:close).trim;
@@ -627,8 +630,8 @@ sub install-plot-go (:$bindir) {
 	};
 	my $target = "$bindir/plot-go";
 	mkdir $bindir unless $bindir.IO.d;
-	# OFE_PLOT_GO_URL: another place holding the release's files (a mirror)
-	my $base = %*ENV<OFE_PLOT_GO_URL> // 'https://github.com/fitteia/OneFit-Engine-plot/releases/latest/download';
+	# OFE_PLOT_GO_URL: another place holding the pinned release's files (a mirror)
+	my $base = %*ENV<OFE_PLOT_GO_URL> // 'https://github.com/fitteia/OneFit-Engine-plot/releases/download/' ~ PLOT-GO-VERSION;
 	my $asset = "plot-go_{$os}_{$goarch}";
 	my $tmp = "$target.download";
 	my $ok = False;
@@ -651,7 +654,7 @@ sub install-plot-go (:$bindir) {
 	if !$ok && run('sh', '-c', 'command -v go >/dev/null').exitcode == 0 {
 		note "===> plot-go: building it with Go";
 		my %env = %*ENV, GOBIN => "$bindir/.plot-go-build";
-		$ok = run('go', 'install', 'github.com/fitteia/OneFit-Engine-plot/cmd/plot-go@latest', :%env).exitcode == 0
+		$ok = run('go', 'install', 'github.com/fitteia/OneFit-Engine-plot/cmd/plot-go@' ~ PLOT-GO-VERSION, :%env).exitcode == 0
 			&& "$bindir/.plot-go-build/plot-go".IO.rename($tmp);
 		run 'rm', '-rf', "$bindir/.plot-go-build";
 	}
