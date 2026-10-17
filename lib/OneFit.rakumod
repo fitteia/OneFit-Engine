@@ -605,7 +605,7 @@ class Engine is export {
      }
 
      method fit(
-		Bool :$hybrid = False, 
+		Bool :$hybrid is copy = False,
 		Bool :$no-plot,
 		Bool :$autox,
 		Bool :$autoy,
@@ -617,6 +617,10 @@ class Engine is export {
 		Bool :$R2 = False,
 		Bool :$quiet=False
 	       ) {
+     # Explicit CLI Global/Individual overrides have already updated FitType.
+     # Keep Hybrid in the saved description, and enable expansion on reopen.
+     $hybrid = True if (%!engine<FitType> // '') eq 'Hybrid';
+     %!engine<FitType> = 'Hybrid' if $hybrid;
 	 self.hybrid( :set-dum );
 
 	 dir($!path, :test(/par|\.c|out|agr|agr\-par|log|res|fit/)).race.map({ $_.unlink if $_.IO.f });
@@ -671,7 +675,7 @@ class Engine is export {
 
      my $npts-removed=0;
 
-	 if $remove-outliers.so && any($MIXED, %!engine<FitType> ~~ /Global/) {
+	 if $remove-outliers.so && any($MIXED, %!engine<FitType> ~~ /Global|Hybrid/) {
 		@outliers=();
 		note "===> remove outliers is not yet implemented for mixed and global fits";
 	 }	

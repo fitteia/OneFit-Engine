@@ -95,7 +95,13 @@ than being accepted and ignored.
 ## Individual, global, and mixed parameters
 
 `--global` changes the objective from per-data-set fitting to a shared
-global fit. `--hybrid` enables mixed fitting and implies global mode -
+global fit. `--hybrid` enables mixed fitting and implies global mode.
+
+A saved JSON can also enable this expansion with `"FitType": "Hybrid"`;
+`onefite fit model.json` then needs no `--hybrid`. Explicit `--global` or
+`--individual` overrides the saved choice. Hybrid results saved with
+`--save-to` remember the mode. See [fitting](fitting.md#hybridmixed).
+
 `--hybrid` is only available on `fit` (either form), not on `create` or
 `random`.
 
@@ -105,7 +111,8 @@ whether one varies per data set or stays shared is decided by its
 underscore (`Minf_`, `T11_`, `individual_`, ...) is a per-data-set
 candidate; every other parameter is shared across all data sets.
 
-For that naming convention to actually take effect, pass `--hybrid`:
+For that naming convention to take effect, select hybrid mode with
+`--hybrid` or a saved `"FitType": "Hybrid"`:
 
 ```bash
 onefite fit \
@@ -113,12 +120,12 @@ onefite fit \
   sample-*.dat --hybrid --workers=2
 ```
 
-Without `--hybrid`, underscore-suffixed parameters are fitted as ordinary
+In plain Global mode, underscore-suffixed parameters are fitted as ordinary
 *shared* parameters instead - every data set ends up with the identical
 value. The project's own `t/12/p96.json` test fixture (`Parameters =
 M0_,Mi_,c,T11_,T12_`) demonstrates this directly: `onefite fit p96.json
 --hybrid` fits `M0_`/`Mi_`/`T11_`/`T12_` independently per data set; the
-same file without `--hybrid` gives every data set identical values for
+same file in plain Global mode gives every data set identical values for
 those parameters and a dramatically worse chi-square.
 
 ### Advanced: driving a mixed fit from custom C code

@@ -127,23 +127,41 @@ Available on `create`, `random`, and both forms of `fit`.
 onefite fit MODEL sample-*.dat --hybrid --workers=2 --fit-methods='simp scan min'
 ```
 
-Hybrid/MIXED fits re-run the full method sequence per data set for the
-per-block (trailing-underscore-named) parameters on top of the shared
-global fit, so `minos`'s extra per-parameter re-minimization pass adds up
-fastest here - dropping it (as above) is a reasonable way to keep
-exploratory hybrid runs fast. Add it back (`--fit-methods='simp scan min
-minos'`, the default) once you need real error estimates, e.g. for a final
-result.
+Hybrid mode expands the parameter list and fits all blocks together.
+`minos` re-minimizes for each free parameter to find asymmetric errors, so
+its cost can grow substantially with that expanded list. The separate
+`mixed.h` mechanism can also run fits per block. Dropping `minos` (as
+above) can keep exploratory runs faster; add it back
+(`--fit-methods='simp scan min minos'`, the default) when you need its
+asymmetric error estimates. MIGRAD (`min`) still estimates symmetric errors.
 
 Hybrid mode implies global fitting. Parameters aren't tagged
 global/individual/hybrid individually - which ones vary per data set is
 decided by their **name ending in an underscore** (`Minf_`, `T11_`, ...);
 everything else stays shared. That naming convention only takes effect
-with `--hybrid`, though: the project's own `t/12/p96.json` test fixture
-fits its underscore-named parameters independently per data set with
-`--hybrid`, but gives every data set the identical value (and a much worse
-chi-square) for the same file without it. `--hybrid` is only available on
-`fit` (either form) - `create` and `random` don't support it.
+in hybrid mode. The project's `t/12/p96.json` fixture fits its
+underscore-named parameters independently per data set in hybrid mode,
+but shares them under plain Global fitting. The `--hybrid` flag is only
+available on `fit` (either form), not `create` or `random`.
+
+A saved JSON can select hybrid fitting itself:
+
+```json
+"FitType": "Hybrid"
+```
+
+`onefite fit model.json` then enables hybrid parameter expansion without
+`--hybrid`. Explicit `--hybrid`, `--global` or `--individual` takes priority
+over the saved mode; when flags are combined, the existing priority is
+Hybrid, then Global, then Individual. `--save-to=result.json` records
+`"FitType": "Hybrid"` for hybrid runs, with the original model and parameter
+names restored. Reopening that result keeps hybrid mode. Older files with
+`Global`, `Individual`, or no `FitType` keep their existing behaviour. These
+rules are the same in OFE-Raku and OFE-Go.
+
+If every parameter name ends in `_`, every parameter has its own copy per
+block; no parameters remain shared. With P such parameters and B blocks,
+there are P × B parameter slots (fixed/free status still applies).
 
 Separately, if a model's auxiliary C code (`--aux-code`) includes the
 project's `mixed.h` helper and follows its convention (a parameter

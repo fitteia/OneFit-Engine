@@ -1,0 +1,28 @@
+{
+  "Dados": "\n# DATA dum = 1\n# TAG = first\n0 2.01 0.1\n1 4.98 0.1\n2 8.01 0.1\n3 10.99 0.1\n4 14.02 0.1\n5 16.99 0.1\n\n# DATA dum = 2\n# TAG = second\n0 5.02 0.1\n1 7.99 0.1\n2 11.01 0.1\n3 13.98 0.1\n4 17.01 0.1\n5 19.99 0.1\n",
+  "F0": "Free",
+  "F1": "Free",
+  "FitMethods": "simp min",
+  "FitType": "Hybrid",
+  "Function": "y = a_+b*x",
+  "Num": 25,
+  "Parameters": "a_,b",
+  "Pmax0": "",
+  "Pmax1": "",
+  "Pmin0": "",
+  "Pmin1": "",
+  "Pval0": "0",
+  "Pval1": "1",
+  "SymbSize": 1,
+  "T": "dum",
+  "Tags": [
+    "first",
+    "second"
+  ],
+  "X": "x",
+  "Xmax": 10,
+  "Xmin": 0,
+  "Y": "y",
+  "Ymax": 10,
+  "Ymin": 0
+}

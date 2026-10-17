@@ -33,6 +33,11 @@ under the [Artistic License 2.0](LICENSE).
 - A Cro-based HTTP upload-and-fit service (see the warning above).
 - Linux, WSL2, macOS, and container-oriented installation paths.
 
+Saved JSON fits can select `"FitType": "Hybrid"`: both OFE-Raku and OFE-Go
+then refit them without `--hybrid`. Explicit mode flags override the saved
+choice, and saving a hybrid result remembers it. See
+[hybrid fitting](docs/fitting.md#hybridmixed).
+
 ## Quick start (Debian/Ubuntu)
 
 ```bash

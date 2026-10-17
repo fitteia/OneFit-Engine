@@ -480,12 +480,14 @@ global mode. It is only available on C<fit> (either form); C<create> and
 C<random> do not support it. Parameters are not individually tagged
 global/individual/hybrid - a parameter whose I<name> ends in an underscore
 (C<Minf_>, C<T11_>, ...) is a per-data-set candidate, while every other
-parameter stays shared across all of them. That naming convention only
-takes effect together with C<--hybrid>, though: without it, underscore-named
-parameters are fitted as ordinary I<shared> parameters, ending up with the
-same value for every data set (confirmed against the project's own
-F<t/12/p96.json> test fixture, whose C<Minf_>/C<T11_>/etc. only diverge
-per data set when C<--hybrid> is given). A function expression whose I<last>
+parameter stays shared across all of them. A saved JSON can enable this
+mode with C<"FitType": "Hybrid">, so C<onefite fit model.json> needs no
+C<--hybrid>. Explicit C<--hybrid>, C<--global> or C<--individual> overrides
+the saved mode (combined flags retain Hybrid, Global, Individual priority).
+Hybrid runs saved with C<--save-to> retain C<"FitType": "Hybrid"> with the
+original model and parameter names restored. Older Global/Individual files
+and files without FitType keep their existing behaviour. In plain Global
+mode, underscore-named parameters remain shared. A function expression whose I<last>
 parameter is literally C<MIXED=1> automatically activates global mode too,
 but only when fitting from a function expression directly
 (C<fit FUNCTION ...>), not when re-fitting a saved C<INPUT-FILE>.

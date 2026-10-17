@@ -149,6 +149,11 @@ onefite fit @fits.txt --jobs=2 --wf=results
   behaviour under plain `--global`, through a fixed last parameter named
   `MIXED`.
 
+A saved JSON with `"FitType": "Hybrid"` enables hybrid mode without a flag.
+Explicit `--hybrid`, `--global` or `--individual` overrides the saved mode;
+hybrid results saved with `--save-to` remember it. Older files keep their
+existing default or saved Global/Individual mode.
+
 ### Parameters and data
 
 - **Starting values and bounds** come from the model or the saved fit, and

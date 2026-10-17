@@ -1,0 +1,83 @@
+#!/usr/bin/env raku
+
+use Test;
+use JSON::Fast;
+
+# INSTALL puts the install path here; otherwise use this checkout.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
+
+# Exercise the CLI, the generated C/parameter files and the saved result:
+# a_ is independent per block, while b is shared unless all names end in _.
+my $root = $*TMPDIR.add("ofe-saved-mode-{$*PID}-{now.Int}");
+$root.mkdir;
+LEAVE { run 'rm', '-rf', '--', ~$root if $root.d }
+my %fixture = from-json("{OFE-PATH}/t/22/saved-hybrid.json".IO.slurp);
+my $serial = 0;
+
+sub fit-file(IO::Path $input, *@flags) {
+    my $dir = $root.add("run{++$serial}");
+    $dir.mkdir;
+    my $log = $dir.add('cli.log').open(:w);
+    my $proc = run $*EXECUTABLE, "-I{OFE-PATH}/lib", "{OFE-PATH}/bin/onefite",
+        'fit', ~$input, |@flags, '--no-plot', "--work-folder=$dir",
+        "--save-to={$dir.add('result.json')}", :cwd(~$dir), :out($log), :err($log);
+    $log.close;
+    is $proc.exitcode, 0, "fit finishes: {@flags.join(' ') || 'saved mode'}";
+    diag $dir.add('cli.log').slurp if $proc.exitcode;
+    return {} unless $dir.add('result.json').f;
+    my %result = from-json($dir.add('result.json').slurp);
+    my $hybrid = (%result<FitType> // '') eq 'Hybrid';
+    my $n = $hybrid ?? %result<Parameters>.split(',').grep(*.trim.ends-with('_')).elems !! 0;
+    ok $dir.add($input.basename.subst(/\.json$/, '')).add('ndata.h').slurp.contains(
+        "#define OFE_HYBRID_NPARS $n\n"), 'generated header follows the resolved mode';
+    %result
+}
+
+my $input = $root.add('input.json');
+$input.spurt(to-json(%fixture));
+my %saved = fit-file($input);
+is %saved<FitType>, 'Hybrid', 'saved Hybrid runs without --hybrid';
+is %saved<Parameters>, %fixture<Parameters>, 'parameter list is restored before saving';
+is %saved<Function>, %fixture<Function>, 'function is restored before saving';
+ok !(%saved<Pval2>:exists), 'synthetic copies are not saved as user parameters';
+is %saved<par-tables>.elems, 2, 'hybrid saves both blocks';
+is-approx %saved<par-tables>[0][0]<value>, 2, 'first block has its own offset', :abs-tol(0.02);
+is-approx %saved<par-tables>[1][0]<value>, 5, 'second block has its own offset', :abs-tol(0.02);
+
+my $saved-file = $root.add('saved.json');
+$saved-file.spurt(to-json(%saved));
+my %again = fit-file($saved-file);
+is %again<FitType>, 'Hybrid', 'reopening preserves Hybrid';
+is %again<Parameters>, %fixture<Parameters>, 'reopening does not duplicate user parameters';
+is %again<par-tables>.elems, 2, 'reopened fit still fits both blocks';
+
+for 'global', 'individual' -> $mode {
+    my %r = fit-file($input, "--$mode");
+    is %r<FitType>, $mode.tc, "explicit --$mode overrides saved Hybrid";
+}
+my %priority = fit-file($input, '--individual', '--global', '--hybrid');
+is %priority<FitType>, 'Hybrid', 'existing Hybrid > Global > Individual flag priority';
+
+%fixture<FitType> = 'Global';
+$input.spurt(to-json(%fixture));
+my %legacy = fit-file($input);
+is %legacy<FitType>, 'Global', 'legacy Global does not become Hybrid because of a_';
+my %explicit = fit-file($input, '--hybrid');
+is %explicit<FitType>, 'Hybrid', 'explicit hybrid is remembered in the saved JSON';
+
+%fixture<FitType> = 'Hybrid';
+%fixture<FitMethods> = 'simp scan min minos';
+%fixture<Parameters> = 'a_,b_';
+%fixture<Function> = 'y = a_+b_*x';
+$input.spurt(to-json(%fixture));
+my %all = fit-file($input);
+is %all<FitType>, 'Hybrid', 'all-underscore model finishes in saved Hybrid mode';
+is %all<par-tables>.elems, 2, 'all-underscore model retains both blocks';
+
+# No mode remains compatible with Engine.read's historical Global default.
+%fixture<FitType>:delete;
+$input.spurt(to-json(%fixture));
+my %default = fit-file($input);
+is %default<FitType>, 'Global', 'missing FitType keeps the historical default';
+
+done-testing;
