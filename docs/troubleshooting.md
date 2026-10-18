@@ -92,8 +92,9 @@ Ghostscript policy can block PDF/PS formats - the installer can loosen that
 policy on some site installs; review rather than weakening it globally
 without need (see [security](security.md#administrative-commands)).
 
-The pinned plot-go supports XY points with Z annotations, Hi/Lo/Open/Close
-candles, per-point fill colors, XY vector maps and XY box plots, as well as
+The pinned plot-go supports XY points with Z annotations, Fixed graphs with
+XYR radius sets, Hi/Lo/Open/Close candles, per-point fill colors, XY vector
+maps and XY box plots, as well as
 three drawing-object layers: Grace's normal order,
 behind the data, and on top of text and legends. Figures can move objects
 forward/backward through other shapes and across these layers. The layer and
