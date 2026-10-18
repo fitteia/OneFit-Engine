@@ -92,9 +92,11 @@ Ghostscript policy can block PDF/PS formats - the installer can loosen that
 policy on some site installs; review rather than weakening it globally
 without need (see [security](security.md#administrative-commands)).
 
-Plot-go v0.2.22 also supports an optional per-object On top layer above
-legends and text. This setting is saved as a plot-go comment in the AGR;
-Grace ignores it. Unmarked objects retain the standard Grace drawing order.
+Plot-go v0.2.23 supports three drawing-object layers: Grace's normal order,
+behind the data, and on top of text and legends. Figures can move objects
+forward/backward through other shapes and across these layers. The layer and
+order are saved as plot-go comments in the AGR; Grace ignores these extensions.
+Unmoved objects retain the standard Grace drawing order.
 
 ## HDF5 or Stelar import fails
 
