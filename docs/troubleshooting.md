@@ -88,7 +88,7 @@ on the machine rendering the plot; exported PDF/EPS/SVG carry their glyph
 shapes, while rendering the AGR elsewhere requires the font installed there.
 Since v0.2.32 the list of installed fonts is cached in the user's cache folder
 (`plot-go/fonts.json`) and only new or changed font files are read again;
-`.ttc` collections are included. Deleting the cache file is harmless.
+`.ttc` collections are included. Since v0.2.33, replacing a font file also refreshes its parsed face, text metrics and outlines after discovery. Deleting the cache file is harmless.
 
 Inspect the plot/conversion logs in the work directory. ImageMagick's
 Ghostscript policy can block PDF/PS formats - the installer can loosen that
