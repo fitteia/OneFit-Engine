@@ -86,6 +86,9 @@ Use `plot-go -list-fonts` to find names and `OFE_FONT_PATH` to add font files
 or directories. Font maps and inline `\f{FontName}` select them. Fonts belong
 on the machine rendering the plot; exported PDF/EPS/SVG carry their glyph
 shapes, while rendering the AGR elsewhere requires the font installed there.
+Since v0.2.32 the list of installed fonts is cached in the user's cache folder
+(`plot-go/fonts.json`) and only new or changed font files are read again;
+`.ttc` collections are included. Deleting the cache file is harmless.
 
 Inspect the plot/conversion logs in the work directory. ImageMagick's
 Ghostscript policy can block PDF/PS formats - the installer can loosen that
