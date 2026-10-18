@@ -92,6 +92,10 @@ Ghostscript policy can block PDF/PS formats - the installer can loosen that
 policy on some site installs; review rather than weakening it globally
 without need (see [security](security.md#administrative-commands)).
 
+Plot-go v0.2.22 also supports an optional per-object On top layer above
+legends and text. This setting is saved as a plot-go comment in the AGR;
+Grace ignores it. Unmarked objects retain the standard Grace drawing order.
+
 ## HDF5 or Stelar import fails
 
 ```bash
