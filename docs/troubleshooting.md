@@ -81,6 +81,12 @@ the Go port and GUI. Updating that pin takes effect when the installer is run;
 it does not replace an already installed plot-go automatically. Check
 `command -v plot-go` and `plot-go -version` to confirm which copy is on PATH.
 
+Additional installed TTF/OpenType fonts are supported by plot-go v0.2.21.
+Use `plot-go -list-fonts` to find names and `OFE_FONT_PATH` to add font files
+or directories. Font maps and inline `\f{FontName}` select them. Fonts belong
+on the machine rendering the plot; exported PDF/EPS/SVG carry their glyph
+shapes, while rendering the AGR elsewhere requires the font installed there.
+
 Inspect the plot/conversion logs in the work directory. ImageMagick's
 Ghostscript policy can block PDF/PS formats - the installer can loosen that
 policy on some site installs; review rather than weakening it globally
