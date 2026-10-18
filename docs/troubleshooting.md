@@ -92,8 +92,8 @@ Ghostscript policy can block PDF/PS formats - the installer can loosen that
 policy on some site installs; review rather than weakening it globally
 without need (see [security](security.md#administrative-commands)).
 
-Plot-go v0.2.28 supports XY Hi/Lo/Open/Close candles, per-point fill colors
-and XY vector maps, as well as three drawing-object layers: Grace's normal order,
+Plot-go v0.2.29 supports XY Hi/Lo/Open/Close candles, per-point fill colors,
+XY vector maps, XY box plots, as well as three drawing-object layers: Grace's normal order,
 behind the data, and on top of text and legends. Figures can move objects
 forward/backward through other shapes and across these layers. The layer and
 order are saved as plot-go comments in the AGR; Grace ignores these extensions.
