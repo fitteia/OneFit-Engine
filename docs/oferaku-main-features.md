@@ -278,3 +278,7 @@ keep it free of unrelated files.
   - local C model libraries add model functions;
   - extensions such as Florence add model functions, and `./INSTALL` or
     `upgrade --extension=...` installs them.
+- **Plots** are drawn by plot-go, or by Grace where plot-go is not
+  installed; `OFE_PLOTTER=grace` forces Grace. OFE-GUI's **Figures** opens
+  them for editing: layouts, overlays, and export to PDF, EPS, SVG, PNG and
+  TIFF (see the OFE-GUI guide).

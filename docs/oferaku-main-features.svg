@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1250" viewBox="0 0 1440 1250" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1278" viewBox="0 0 1440 1278" role="img" aria-labelledby="title desc">
   <title id="title">OFE-Raku — main features and workflow</title>
-  <desc id="desc">Access through the onefite Raku CLI, OFE-GUI locally or over SSH, the optional HTTP upload-and-fit service, or a VM or container. Prepare raw data (text, ZIP, Stelar SDF/SEF/HDF5) and a model, resume JSON or SAV, or run batches of complete fits. Configure fit modes, parameters and MINUIT methods, run the Raku orchestrator and the native MINUIT engine, inspect results, plot and save. Supporting commands cover installation on Linux, WSL2, macOS and Docker, upgrade, uninstall, tests, the service, conversion and the model catalogue.</desc>
+  <desc id="desc">Access through the onefite Raku CLI, OFE-GUI locally or over SSH, the optional HTTP upload-and-fit service, or a VM or container. Prepare raw data (text, ZIP, Stelar SDF/SEF/HDF5) and a model, resume JSON or SAV, or run batches of complete fits. Configure fit modes, parameters and MINUIT methods, run the Raku orchestrator and the native MINUIT engine, inspect results, plot and save. Supporting commands cover installation on Linux, WSL2, macOS and Docker, upgrade, uninstall, tests, the service, conversion and the model catalogue. Plots are drawn by plot-go, or Grace where plot-go is not installed; OFE-GUI's Figures edits them.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#617487"/></marker>
     <style>
@@ -14,7 +14,7 @@
       .box{fill:#fff;stroke:#ccdae6;stroke-width:1.5}
     </style>
   </defs>
-  <rect width="1440" height="1250" fill="#f4f7fb"/>
+  <rect width="1440" height="1278" fill="#f4f7fb"/>
   <text x="64" y="65" class="heading">OFE-Raku</text>
   <text x="64" y="97" class="sub">Main features · from model and data to fitted results</text>
   <rect x="1102" y="40" width="274" height="38" rx="19" fill="#e0eaf5"/>
@@ -83,7 +83,7 @@
   <text x="86" y="943" class="small">fit.log · residuals · results tables</text>
   <rect x="395" y="852" width="320" height="123" rx="14" fill="#eaf6ef" stroke="#c2ddcc"/>
   <text x="417" y="887" class="name">Plots and SCAN</text>
-  <text x="417" y="916" class="body">Grace / PDF plots · MPEG4</text>
+  <text x="417" y="916" class="body">plot-go or Grace · PDF · MPEG4</text>
   <text x="417" y="943" class="small">χ² scans (SCAN) in fit.log</text>
   <rect x="726" y="852" width="320" height="123" rx="14" fill="#eaf6ef" stroke="#c2ddcc"/>
   <text x="748" y="887" class="name">Save and reuse</text>
@@ -97,10 +97,11 @@
   <text x="1250" y="1014" text-anchor="middle" class="small">Saved results can feed another run</text>
 
   <text x="64" y="1022" class="label">SUPPORTING FEATURES</text>
-  <rect x="64" y="1037" width="1312" height="104" rx="14" class="box"/>
+  <rect x="64" y="1037" width="1312" height="132" rx="14" class="box"/>
   <text x="86" y="1067" class="body">list: models and aliases   ·   help / man   ·   path   ·   convert: JSON ↔ SAV   ·   random: synthetic data   ·   --version</text>
   <text x="86" y="1094" class="body">./INSTALL: site · --to-user · --wsl · --macos · --docker   ·   upgrade · uninstall · test   ·   service start / stop / log / PID</text>
   <text x="86" y="1121" class="small">Extend: function aliases (aliases.json) · local C model libraries · extensions such as Florence</text>
-  <text x="64" y="1182" class="small">Scope: current OFE-Raku (OneFit-Engine) + separate OFE-GUI. Model syntax, fit modes, files and the native engine are shared with OFE-Go.</text>
-  <text x="64" y="1207" class="small">The HTTP service has no authentication, authorization or sandboxing and compiles client input into native code: trusted networks only (docs/security.md).</text>
+  <text x="86" y="1149" class="small">Plots: plot-go draws them, Grace where it is not installed (OFE_PLOTTER=grace forces Grace) · OFE-GUI Figures edits them: layouts, overlays, export</text>
+  <text x="64" y="1210" class="small">Scope: current OFE-Raku (OneFit-Engine) + separate OFE-GUI. Model syntax, fit modes, files and the native engine are shared with OFE-Go.</text>
+  <text x="64" y="1235" class="small">The HTTP service has no authentication, authorization or sandboxing and compiles client input into native code: trusted networks only (docs/security.md).</text>
 </svg>
