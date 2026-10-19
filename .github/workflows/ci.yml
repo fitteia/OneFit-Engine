@@ -32,9 +32,16 @@ jobs:
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends git ca-certificates \
             gcc gfortran make perl libperl-dev swig hdf5-tools pdftk-java \
-            gnuplot-nox grace ghostscript zip unzip ffmpeg poppler-utils procps rakudo raku-json-fast
+            gnuplot-nox grace ghostscript zip unzip ffmpeg poppler-utils procps rakudo raku-json-fast \
+            raku-zef libssl-dev
 
-      - uses: actions/checkout@v4
+      # the modules bin/onefite loads that Debian does not package, as
+      # INSTALL installs them (install-p6-modules): without them the CLI
+      # does not compile and t/22 (which runs it) fails
+      - name: Raku modules
+        run: zef install --/test Cro::HTTP::Router Pod::To::Man
+
+      - uses: actions/checkout@v5
         with:
           path: OneFit-Engine
 
