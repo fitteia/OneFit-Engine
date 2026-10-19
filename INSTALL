@@ -11,7 +11,7 @@ our $DOCKER = False;
 our $OS = "LINUX";
 
 # Keep plot-go aligned with the version pinned by the Go port and GUI.
-our constant PLOT-GO-VERSION = 'v0.2.37';
+our constant PLOT-GO-VERSION = 'v0.2.38';
 
 #|(onefite INSTALL help)
 multi MAIN ('help') { MAIN :h }
