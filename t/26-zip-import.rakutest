@@ -1,0 +1,45 @@
+#!/usr/bin/env raku
+
+use Test;
+use OneFit::Engine::Import;
+
+# A zip is extracted into a folder of its own, removed after the import:
+# a same-named file in the current folder is not overwritten and nothing
+# is left there; two entries with the same name say only the last is used.
+my $root = $*TMPDIR.add("ofe-zip-test-{$*PID}-{now.Int}");
+$root.add('cwd').mkdir;
+$root.add('src/sub').mkdir;
+LEAVE { run 'rm', '-rf', '--', ~$root if $root.d }
+$root.add('cwd/d.dat').spurt: "mine\n";
+$root.add('src/d.dat').spurt: "1 2 0.5\n2 3 0.5\n";
+$root.add('src/sub/e.dat').spurt: "3 4 0.5\n4 5 0.5\n";
+run 'zip', '-qr', ~$root.add('d.zip'), 'd.dat', 'sub', :cwd(~$root.add('src'));
+$root.add('src/sub/d.dat').spurt: "5 6 0.5\n6 7 0.5\n";
+run 'zip', '-qr', ~$root.add('dup.zip'), 'd.dat', 'sub/d.dat', :cwd(~$root.add('src'));
+
+my @before = $*TMPDIR.dir.grep(*.basename.starts-with('ofe-zip-')).map(~*);
+sub import-zip(Str $zip, Str $out) {
+    my $old = $*CWD;
+    chdir $root.add('cwd');
+    LEAVE chdir $old;
+    $root.add($out).mkdir;
+    my $err = '';
+    my @files = do {
+        my $*ERR = class { method print(*@a) { $err ~= @a.join }; method say(*@a) { $err ~= @a.join ~ "\n" } }.new;
+        Import.new.path(~$root.add($out)).input-files([~$root.add($zip)]).filter-with(%(), :quiet)
+    };
+    (@files, $err)
+}
+
+plan 7;
+
+my ($files, $err) = import-zip('d.zip', 'out');
+is-deeply $files.sort.List, <d.dat e.dat>, 'the entries are imported';
+is $root.add('out/d.dat').slurp, "1 2 0.5\n2 3 0.5\n", "the zip's d.dat is in the work folder";
+is $root.add('cwd/d.dat').slurp, "mine\n", "the current folder's d.dat is not overwritten";
+is-deeply $root.add('cwd').dir.map(*.basename).List, ('d.dat',), 'nothing is left in the current folder';
+is-deeply $*TMPDIR.dir.grep(*.basename.starts-with('ofe-zip-')).map(~*).grep(* ne any(@before, ~$root)).List, (), 'no extraction folder is left';
+
+($files, $err) = import-zip('dup.zip', 'dup');
+ok $err.contains('more than one entry is named d.dat; only the last one is used'), 'two entries named d.dat: a note';
+is $root.add('dup/d.dat').slurp, "5 6 0.5\n6 7 0.5\n", 'the last one is used';

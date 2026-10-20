@@ -20,9 +20,13 @@ Use `--data-labels` when imported blocks need explicit labels.
 
 ## ZIP archives
 
-ZIP files can contain supported raw data files. The import layer expands
-and normalizes their contents into the fit work directory. Keep archive
-member names simple and avoid unrelated files.
+ZIP files can contain supported raw data files. The import layer extracts
+them into a temporary folder of its own (removed afterwards, so nothing in
+the folder you run from is overwritten or left behind) and normalizes their
+contents into the fit work directory. Subfolders inside the archive are
+ignored: two entries with the same name (`a/d.dat`, `b/d.dat`) give a note
+and only the last one is used. A `--sef-R1-file` may be inside the ZIP too.
+Keep archive member names simple and avoid unrelated files.
 
 `--zip-to` is different: it packages fit *output*, not input - see
 [output and archives](output-and-archives.md).

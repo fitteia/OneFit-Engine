@@ -53,10 +53,24 @@ class Import is export {
 					return  self.import( infiles => [$name] );
 				}
 				when 'zip' {
+					# extracted into a folder of its own, removed after the
+					# import - not the current folder, where same-named
+					# files were overwritten and the extracted ones left
+					my %options = %!options;
+					LEAVE %!options = %options;
 					my $r1 = %!options<sef-R1-file> // '';
-					my @files-in-zip = gather for run('unzip', '-Z1', arg-path($file), :out).out.lines(:close) { take $_.IO.basename if $_.split("/").tail.so and $_.IO.basename ne $r1 }
-					run 'unzip', '-jo', arg-path($file);
-					@files.push: self.import( infiles => @files-in-zip, :nested ).Slip
+					my $tmp = $*TMPDIR.add("ofe-zip-{$*PID}-{now.Num}");
+					$tmp.mkdir;
+					LEAVE { run 'rm', '-rf', '--', ~$tmp }
+					my @entries = gather for run('unzip', '-Z1', arg-path($file), :out).out.lines(:close) { take $_ if $_.split("/").tail.so }
+					for @entries.map(*.IO.basename).repeated.unique -> $name {
+						note "===> $file: more than one entry is named $name; only the last one is used";
+					}
+					my @files-in-zip = @entries.map(*.IO.basename).grep(* ne $r1).map({ ~$tmp.add($_) });
+					run 'unzip', '-jo', arg-path($file), '-d', ~$tmp;
+					# a --sef-R1-file in the zip is read from there
+					%!options<sef-R1-file> = ~$tmp.add($r1) if $r1.so and $r1 eq @entries.map(*.IO.basename).any;
+					@files.push: self.import( infiles => @files-in-zip, :nested ).Slip;
 	    		}	
 				when 'fitteia-blocks' 	{ @files.push: self!fitteia-blocks($file).Slip }
 				when 'stelar-hdf5' 		{ 
