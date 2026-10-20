@@ -1,0 +1,43 @@
+#!/usr/bin/env raku
+
+use Test;
+use OneFit::Engine::Import;
+
+# --set-err std/avg forms: the word alone (the value itself), N* (N times
+# it) or N% (N% of it), also with "split at X"; anything else in front of
+# the word stops the import, leaving the files as they were.
+my $root = $*TMPDIR.add("ofe-set-err-{$*PID}-{now.Int}");
+$root.mkdir;
+LEAVE { run 'rm', '-rf', '--', ~$root if $root.d }
+my $data = $root.add('d.dat');
+$data.spurt: (1..8).map({ "$_ {(1.5 * $_ + ($_ %% 2 ?? 0.3 !! -0.2)).fmt('%.2f')} 0.01" }).join("\n") ~ "\n";
+
+# the errors (column 3) --set-err=$spec writes
+sub errs(Str $spec) {
+    my $out = $root.add($spec.subst(/\W/, '_', :g));
+    run 'rm', '-rf', '--', ~$out if $out.d;
+    $out.mkdir;
+    my $f = Import.new.path(~$out).input-files([~$data]).filter-with(%(err => $spec), :quiet).head;
+    $out.add($f).lines.grep({ !.contains('#') && .words >= 3 }).map(*.words[2].Num).List
+}
+# the files hold 6 significant digits (split: all of them)
+sub close-to(@a, @b) { @a.elems == @b.elems && (@a Z @b).map({ abs(.[0] - .[1]) <= 1e-5 * abs(.[1]) }).all.so }
+
+my @avg = errs('avg');
+my @std = errs('std');
+my @ys = $data.lines.map(*.words[1].Num);
+
+plan 12;
+
+ok close-to(@avg, (@ys>>.abs.sum / @ys.elems) xx @ys.elems), 'avg is the average of |y|';
+ok close-to(errs('1*avg'), @avg), '1*avg is avg';
+ok close-to(errs('100% avg'), @avg), '100% avg is avg';
+ok close-to(errs('average'), @avg), 'average is avg';
+ok close-to(errs('0.1*avg'), errs('10% avg')), '0.1*avg is 10% avg';
+ok close-to(errs('2*std'), @std >>*>> 2), '2*std is twice std';
+ok close-to(errs('50%std'), @std >>*>> 0.5), '50%std is half std';
+ok close-to(errs('2*avg split at 4.5'), errs('avg split at 4.5') >>*>> 2), '2*avg split at X is twice avg split at X';
+ok close-to(errs('10% std split at 4.5'), errs('0.1*std split at 4.5')), '10% std split at X is 0.1*std split at X';
+for 'x avg', '2 std', 'abc*avg' -> $spec {
+    throws-like { errs($spec) }, Exception, message => / 'not a supported ' [ 'avg' | 'std' ] ' expression' /, "$spec is refused";
+}

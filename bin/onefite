@@ -551,8 +551,10 @@ I<(create, fit-expr)>
 =item C<--se>, C<--set-err>, C<--err=EXPRESSION> - set or derive errors for
 ordinary data files. Supported expressions include a constant, a percentage,
 a multiplier, standard deviation, averaging, and splitting around a value -
-for example C<1.0>, C<1%>, C<10x>, C<x10/100>, C<std>, C<std split at 5>, or
-C<10% avg split at 10.5>; any other value is refused. Does not apply to
+for example C<1.0>, C<1%>, C<10x>, C<x10/100>, C<std>, C<2*std>, C<avg>,
+C<0.1*avg>, C<std split at 5>, or C<10% avg split at 10.5>. In front of C<std>
+or C<avg>, C<N*> takes N times the value and C<N%> N% of it; any other value
+is refused. Does not apply to
 IST-FFC, SEF, or HDF5 imports (their errors come from the instrument format
 itself). I<(create, fit-expr)>
 =item C<--ac>, C<--aux-code=SPECIFICATION> - add auxiliary C source and
@@ -1276,7 +1278,7 @@ multi MAIN ('start-web-engine',
 		       <tr><td>reduced-chi2: </td><td><input name="reduced-chi2" type="radio" value="yes">/<input name="reduced-chi2" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>Pearson Correlation: </td><td><input name="R2" type="radio" value="yes">/<input name="R2" type="radio" value="no" checked="checked"></td></tr>
 		       <tr><td>R1: </td><td><input name="R1" type="radio" value="yes">/<input name="R1" type="radio" value="no" checked="checked"></td></tr>
-		       <tr><td>err: </td><td><input name="err" type="text" value="">(number, num%, num%avg, num% avg split xvalue, stdv, stdv split xvalue; ex. 1.0, 10%, 10%avg, 1% avg split at 2e4, stdv, "stdv split at 2e4")</td></tr>
+		       <tr><td>err: </td><td><input name="err" type="text" value="">(number, num%, avg, num*avg, num%avg, num% avg split xvalue, std, num*std, num%std, std split xvalue; ex. 1.0, 10%, avg, 0.1*avg, 10%avg, 1% avg split at 2e4, std, 2*std, "std split at 2e4")</td></tr>
 		       <tr><td>zone-window: </td><td><input name="zone-window" type="text" value="">(window range: i:f)</td></tr>
 		       <tr><td>remove-outliers: </td><td><input name="remove-outlieres" type="text" value="">(ex: 1 or 1,3,6 or 1:3,5)</td></tr>
 		       <tr><td>plot-if: </td><td><input name="plot-if" type="text" value="">(ex: c1>0.5,1)</td></tr>

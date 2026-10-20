@@ -97,7 +97,7 @@ onefite fit '#2exp' d1.dat
     smoothed;
   - `--sef-R1-file` gives the frequencies for a SEF file;
   - `--set-err` sets or derives the error column of text data, in forms such
-    as `1%`, `10x`, `std` or `10% avg split at 10.5`.
+    as `1%`, `10x`, `std`, `2*std`, `avg`, `0.1*avg` or `10% avg split at 10.5`.
 
 ### Resume a saved fit
 

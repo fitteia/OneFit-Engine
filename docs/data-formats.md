@@ -82,11 +82,18 @@ For ordinary text inputs, `--set-err`/`--err` accepts several forms:
 10x
 x10/100
 std
+2*std
+50% std
 std split at 5
+avg
+0.1*avg
+10% avg
 10% avg split at 10.5
 ```
 
-Any other value is refused. Verify derived errors on a small data set before
+`std` is the standard deviation of y and `avg` the average of |y|, both used
+as a constant error; in front of them, `N*` takes N times the value and `N%`
+N% of it (`0.1*avg` is `10% avg`). Any other value is refused. Verify derived errors on a small data set before
 relying on them.
 
 ## Filtering data rows

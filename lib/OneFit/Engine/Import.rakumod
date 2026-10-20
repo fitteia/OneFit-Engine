@@ -539,11 +539,11 @@ class Import is export {
 			my $Y2 = @Ys[$_].map({ $_ ** 2 }).sum; 
 			if $err.contains(/ 'std' | 'standard' <ws> 'deviation' /) {
 				my $mean = @Ys[$_].sum/$N;
-				@errs[$_]	= sqrt(abs($Y2 - $N*$mean**2)/($N-1));
+				@errs[$_]	= stat-scale(sqrt(abs($Y2 - $N*$mean**2)/($N-1)), $err, 'std');
 			}
 			else {
 				my $mean = @Ys[$_]>>.abs.sum/$N;
-				@errs[$_] = $mean*$err.split("%").head.Num/100;
+				@errs[$_] = stat-scale($mean, $err, 'avg');
 			}
 		}
 		awk-rewrite($filename,
@@ -564,7 +564,7 @@ class Import is export {
 			my $N=@Y.elems;
 			my $mean=@Y.sum/$N;
 			my $Y2 = @Y.map({ $_ ** 2 }).sum; 
-			$err = sqrt(abs($Y2 - $N*$mean**2)/($N-1));
+			$err = stat-scale(sqrt(abs($Y2 - $N*$mean**2)/($N-1)), $err, 'std');
 		}
 		elsif $err.contains(/'avg' | 'average'/) {
 			note "===> using the average of the absolute value of your dependent variable to calculate its uncertainty";
@@ -576,7 +576,7 @@ class Import is export {
 				}		
 			}
 			my $N=@Y.elems;
-			$err = @Y.sum/$N*$err.split("%").head.Num/100;
+			$err = stat-scale(@Y.sum/$N, $err, 'avg');
 		}
 		# $3 becomes a constant (derived above, or given), y times a fraction
 		# (N%), or the error times a factor (Nx, xN/M).  v+0 makes awk write
@@ -589,9 +589,23 @@ class Import is export {
 			($expr, $v) = 'v+0', $err.trim
 		}
 		else {
-			die "--set-err='$err': not a supported error expression (a constant, N%, Nx, xN/M, std or avg, optionally 'split at X')\n";
+			die "--set-err='$err': not a supported error expression (a constant, N%, Nx, xN/M, [N*|N%] std or avg, optionally 'split at X')\n";
 		}
 		awk-rewrite($filename, "\{ if (!/#/ && NF>=2) \{ \$3=$expr; print \} else \{ print \}\}", "v=$v");
+	}
+
+	# std or avg ($stat) as --set-err asks for it, from what is written in
+	# front of the word: nothing (the value itself), N* (N times it) or N%
+	# (N% of it).
+	sub stat-scale($stat, Str $err, Str $what) {
+		my $before = ($err ~~ / 'std' | 'standard' <ws> 'deviation' | 'avg' | 'average' /).prematch.trim;
+		my token number { <[+-]>? [ \d+ [ '.' \d* ]? | '.' \d+ ] [ <[eE]> <[+-]>? \d+ ]? }
+		given $before {
+			when '' { $stat.Num }
+			when / ^ (<number>) \s* '%' $ / { $stat*$0.Num/100 }
+			when / ^ (<number>) \s* '*' $ / { $stat*$0.Num }
+			default { die "--set-err='$err': not a supported $what expression (use $what, N*$what or N% $what)\n" }
+		}
 	}
 
 	sub set-errors($path,@files,$err) {
