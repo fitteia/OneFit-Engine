@@ -27,7 +27,7 @@ my @avg = errs('avg');
 my @std = errs('std');
 my @ys = $data.lines.map(*.words[1].Num);
 
-plan 12;
+plan 16;
 
 ok close-to(@avg, (@ys>>.abs.sum / @ys.elems) xx @ys.elems), 'avg is the average of |y|';
 ok close-to(errs('1*avg'), @avg), '1*avg is avg';
@@ -40,4 +40,7 @@ ok close-to(errs('2*avg split at 4.5'), errs('avg split at 4.5') >>*>> 2), '2*av
 ok close-to(errs('10% std split at 4.5'), errs('0.1*std split at 4.5')), '10% std split at X is 0.1*std split at X';
 for 'x avg', '2 std', 'abc*avg' -> $spec {
     throws-like { errs($spec) }, Exception, message => / 'not a supported ' [ 'avg' | 'std' ] ' expression' /, "$spec is refused";
+}
+for '1x split at 1', '10% split at 2', '0.5 split at 2', 'split at 2' -> $spec {
+    throws-like { errs($spec) }, Exception, message => / "'split at X' is for std or avg" /, "$spec is refused";
 }

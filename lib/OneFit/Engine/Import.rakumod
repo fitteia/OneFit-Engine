@@ -530,6 +530,8 @@ class Import is export {
 	}
 
 	sub set-err-split($filename, $err) {
+		die "--set-err='$err': 'split at X' is for std or avg (for example std split at X, 0.1*avg split at X)\n"
+			unless $err.contains(/ 'std' | 'standard' <ws> 'deviation' | 'avg' | 'average' /);
 		my @errs=(+0,+0);
 		my @Ys;
 		my @means=(+0,+0);
