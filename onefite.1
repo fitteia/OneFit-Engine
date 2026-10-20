@@ -2,7 +2,7 @@
 .\"
 .pc
 .TH ONEFITE 1 "2026-10-20" "OneFit-Engine 0.9.184" "OneFit-Engine Manual"
-.\" source: 56ce79bf189587c3
+.\" source: 2374d402815d2284
 
 
 
@@ -642,7 +642,7 @@ start\-web\-engine accepts uploaded model and data files and compiles and execut
 
 upgrade, uninstall, and systemd service management invoke git, installation scripts, and other external commands, and in some modes sudo\&. Review their effects before using them on production systems\&.
 
-Fit, plot, service, and RAM\-disk operations remove and recreate working directories (rm \-fr the target folder before writing to it)\&. Do not point \-\-work\-folder at a directory containing unrelated files under a name that a generated result would reuse\&.
+Fit, plot, service, and RAM\-disk operations remove and recreate working directories (rm \-fr the target folder before writing to it)\&. Do not point \-\-work\-folder at a directory containing unrelated files under a name that a generated result would reuse\&. A work name that is empty, \&. or has a \&.\&. part (an input such as \&.json or \&.\&.\&.json, or \-\-zip\-to=\&.\&.) is refused before anything is removed\&.
 .SH "EXAMPLES"
 
 .SS Fit a straight line

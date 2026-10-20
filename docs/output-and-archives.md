@@ -10,6 +10,10 @@ instead.
 `--work-folder=DIR` selects the parent directory. Target directories may be
 removed and recreated by these commands, so use a dedicated work parent
 rather than one holding unrelated files.
+The work name must be a folder inside the work parent: a name that comes out
+empty, `.` or with a `..` part (an input such as `.json` or `...json`, or
+`--zip-to=..`) would be the parent itself or a folder above it, so the command
+stops without removing anything.
 
 ## Common artifacts
 

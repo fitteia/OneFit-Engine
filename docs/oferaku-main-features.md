@@ -204,7 +204,8 @@ A run is one of three kinds: a single fit, a hybrid fit whose blocks run on
 parallel workers, or a batch of independent fits. A batch puts each fit in
 its own folder and records them all in `batch.json`. `--work-folder` chooses
 where the work goes, and the work folder may be deleted and created again, so
-keep it free of unrelated files.
+keep it free of unrelated files. A work name that is empty, `.` or has a `..`
+part (`.json`, `...json`, `--zip-to=..`) is refused before anything is removed.
 
 ## Results
 

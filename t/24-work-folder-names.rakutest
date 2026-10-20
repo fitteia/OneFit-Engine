@@ -1,0 +1,59 @@
+#!/usr/bin/env raku
+
+use Test;
+
+# INSTALL puts the install path here; otherwise use this checkout.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
+
+# fit, plot and random remove "$work-folder/$name" before writing to it:
+# a $name (from the input file or --zip-to) that is empty, "." or has a
+# ".." part would be the work folder itself or a folder above it, so they
+# stop with a message instead - and nothing is removed.
+my $root = $*TMPDIR.add("ofe-wf-names-{$*PID}-{now.Int}");
+LEAVE { run 'rm', '-rf', '--', ~$root if $root.d }
+my $path = $root.add('parent/path');
+my $in = $root.add('in');
+my @marks = $root.add('mark'), $root.add('parent/mark'), $path.add('mark');
+my $function = 'y(x,a:0,b:1)=a+b*x';
+
+sub setup() {
+    run 'rm', '-rf', '--', ~$root if $root.d;
+    $path.mkdir;
+    $in.mkdir;
+    .spurt('') for @marks;
+    $in.add('d.dat').spurt: (1..5).map({ "$_ {2 * $_ + 0.1} 0.2" }).join("\n") ~ "\n";
+    # any readable input: the name is checked before the file is read
+    $in.add($_).spurt('{}') for '.json', '..json', '...json';
+}
+
+sub onefite(*@args) {
+    my $proc = run $*EXECUTABLE, "-I{OFE-PATH}/lib", "{OFE-PATH}/bin/onefite", |@args,
+        :cwd(~$in), :out, :err;
+    my $out = $proc.out.slurp(:close) ~ $proc.err.slurp(:close);
+    ($proc.exitcode, $out)
+}
+
+my @cases =
+    'fit .json'           => ('fit', '.json', "--wf=$path", '--no-plot'),
+    'fit ..json'          => ('fit', '..json', "--wf=$path", '--no-plot'),
+    'fit ...json'         => ('fit', '...json', "--wf=$path", '--no-plot'),
+    'fit --zip-to=..'     => ('fit', $function, 'd.dat', "--wf=$path", '--zip-to=..', '--no-plot'),
+    'fit --zip-to=../..'  => ('fit', $function, 'd.dat', "--wf=$path", '--zip-to=../..', '--no-plot'),
+    'fit --zip-to=.zip'   => ('fit', $function, 'd.dat', "--wf=$path", '--zip-to=.zip', '--no-plot'),
+    'random --zip-to=..'  => ('random', $function, 'd.dat', "--wf=$path", '--zip-to=..'),
+    'plot ...json'        => ('plot', '...json', "--wf=$path"),
+    'plot .json'          => ('plot', '.json', "--wf=$path");
+
+plan @cases.elems * 3 + 1;
+
+for @cases -> $c {
+    setup;
+    my ($rc, $text) = onefite(|$c.value);
+    is $rc, 1, "{$c.key}: stops";
+    ok $text.contains('must name a folder inside'), "{$c.key}: says why";
+    ok @marks.all.e, "{$c.key}: nothing removed";
+}
+
+setup;
+my ($rc, $text) = onefite('fit', $function, 'd.dat', "--wf=$path", '--zip-to=res.zip', '--no-plot');
+nok $text.contains('must name a folder inside'), 'an ordinary --zip-to name is not refused';

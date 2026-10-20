@@ -695,7 +695,9 @@ C<sudo>. Review their effects before using them on production systems.
 Fit, plot, service, and RAM-disk operations remove and recreate working
 directories (C<rm -fr> the target folder before writing to it). Do not point
 C<--work-folder> at a directory containing unrelated files under a name that
-a generated result would reuse.
+a generated result would reuse. A work name that is empty, C<.> or has a C<..>
+part (an input such as C<.json> or C<...json>, or C<--zip-to=..>) is refused
+before anything is removed.
 
 =EXAMPLES
 
@@ -1663,6 +1665,7 @@ multi MAIN ('start-engine',
 	    	$f ~~ /$<cmd>=(__fit__|__plot__|__fit\-only__)* $<file>=(\S+)/;
 	    	my $file = $<file>;$cmd = $<cmd>.subst('__','',:g);
 	    	my $name = $file.subst(/\.sav|\.json/,'',:g);
+	    	die "bad work folder name\n" unless work-name-ok($work-folder, $name);
 	    	run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
 	    	"$work-folder/$name".IO.mkdir;
 	    	$f.IO.move("$work-folder/$name/$file");
@@ -1732,6 +1735,7 @@ multi MAIN  ('create',
 	    ){
 	note "===> onefite options: { %_.keys.map({ "--" ~ $_ }) } not defined...continue..." if %_.keys and !$quiet;
     my $name = "ofe-tmp";
+    exit(1) unless work-name-ok($work-folder, $name);
     run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 	my %options =();
@@ -1821,6 +1825,7 @@ multi MAIN  ('random',
     if $zip-to.Bool {
 	$name = $zip-to.subst(/\.zip/,'',:g);
     }
+    exit(1) unless work-name-ok($work-folder, $name);
     run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir;
     for @data-files { $_.IO.copy("$work-folder/$name/$_") };
@@ -1903,6 +1908,7 @@ multi MAIN  ('fit',
    	if $zip-to.Bool {
 		$name = $zip-to.subst(/\.zip/,'',:g);
    	}
+   	exit(1) unless work-name-ok($work-folder, $name);
    	run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
     "$work-folder/$name".IO.mkdir unless "$work-folder/$name".IO.e;
 	my %options =();
@@ -2098,6 +2104,7 @@ multi MAIN  ('fit',
 	# Base name only: an absolute or ../ INPUT-FILE used to nest the work
 	# folder (and its zip) under --work-folder as <wf>/<full/input/path>.
 	my $name = $input-file.IO.basename.subst(/\.sav|\.json/,'',:g);
+	exit(1) unless work-name-ok($work-folder, $name);
 	run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
 	try {
 		"$work-folder/$name".IO.mkdir;
@@ -2249,6 +2256,7 @@ multi MAIN  ('plot',
 	     Str  :wf(:$work-folder) = '.'
 	    ){
 	    my $name = $input-file.IO.basename.subst(/\.sav|\.json/,'',:g);
+	    exit(1) unless work-name-ok($work-folder, $name);
 	    run 'rm', '-rf', '--', "$work-folder/$name" if "$work-folder/$name".IO.d;
 	    "$work-folder/$name".IO.mkdir;
 	    $input-file.IO.copy("$work-folder/$name/{ $input-file.IO.basename }");
@@ -2385,6 +2393,16 @@ sub parse-function ($function, @data-files, $data-labels, Str :$path = ".") {
 
 # PROGRAM ARGS >LOG 2>&1, run in DIR without a shell (DIR comes from the
 # user's file name); fails as the shell command did when PROGRAM does.
+# The work folder "$work-folder/$name" is removed and remade: $name (from
+# the input file or --zip-to) must name a folder inside $work-folder - not
+# empty or "." (that would be $work-folder itself) and with no ".." part.
+sub work-name-ok(Str $work-folder, Str $name --> Bool) {
+    my @parts = $name.split('/').grep({ $_ ne '' and $_ ne '.' });
+    return True if @parts and not @parts.grep('..');
+    note "===> refusing to use '$work-folder/$name' as the work folder (it is removed first): '$name' must name a folder inside '$work-folder'";
+    False
+}
+
 sub run-to-log(Str $dir, Str $log, *@command) {
     my $output = open "$dir/$log", :w;
     LEAVE $output.close;
