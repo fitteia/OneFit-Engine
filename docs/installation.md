@@ -28,6 +28,18 @@ optionally configures system services.
 Platform guides below give the complete, tested command sequence for each
 environment - this page covers what every mode has in common.
 
+### Where the commands go
+
+A site installation writes OneFit's tools (`cop`, `fft`, `gfilt`, `ccat`,
+`afactors-xyz`, `pcop`, `epstopdf`, `plot-go`) into `/usr/local/bin`, with
+links to them in `--bindir`, so a sandboxed run that sees `/usr/local` but not
+your home directory still finds them. It links `/usr/local/bin/onefite-raku`
+to the engine, and `/usr/local/bin/onefite` too unless another engine has it:
+`onefite` stays with the engine installed first, so with the Go engine
+(onefite-go) installed before, `onefite` is the Go one and this engine is
+`onefite-raku`. A `--to-user` installation writes nothing outside your
+account: the tools stay in `--bindir`, which must be on your `PATH`.
+
 ## Before running `./INSTALL`
 
 Review the live interface (option names and defaults can shift between
@@ -256,7 +268,9 @@ onefite uninstall
 ```
 
 This stops the running service, and runs `./INSTALL -U`, which updates the
-source checkout (step 1 above). Review local changes and service state
+source checkout (step 1 above). It removes this engine's commands from
+`/usr/local/bin` - the tools go back into `--bindir` - and leaves another
+engine's `onefite` there. Review local changes and service state
 first - see [important side effects](#important-side-effects) above.
 
 ## Convenience shell functions

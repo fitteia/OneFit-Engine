@@ -198,11 +198,13 @@ multi MAIN (
 
 	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
 
+   	my %own-tools = $to-site ?? own-local-tools($bindir) !! ();
+
    	install-plot-go( bindir => $bindir ) if $plot-go and $git;
 
    	compile( root => $root, arch => $arch, bindir => $bindir, perlcore => $perlcore, git => $git , minuit => $minuit, :$enable-extensions, :$extension, :$default-extensions, :$extensions-ref, :$extensions-transport ) if $compile;
 
-   	install( :test($test), :to-site($to-site), bindir => $bindir ) if $install;
+   	install( :test($test), :to-site($to-site), bindir => $bindir, :%own-tools ) if $install;
 
    	if "$bindir/../etc/aliases.json".IO.e {
 		say "$bindir/../etc/aliases.json has been changed not updating" if shell("diff $*CWD/etc/OFE/default/aliases.json $bindir/../etc/aliases.json",:out).out.slurp(:close).so; 
@@ -518,28 +520,77 @@ sub install-extensions (:$root, :$git, :$enable-extensions = '', :$extension = '
 	}
 }
 
+# OneFit's tools (cop, fft, ...) that a site install puts in /usr/local/bin
+sub local-tools () {
+	my $makefile = "$*CWD/../C/core/onefit-3.1/makefile".IO;
+	my @binaries = $makefile.e ?? $makefile.lines.grep(/install <ws> cop/).words !! <install fft cop gfilt ccat afactors-xyz $(BINDIR)>;
+	@binaries.splice(1,@binaries.elems-2).push('pcop', 'epstopdf', 'plot-go')
+}
+
+# /usr/local/bin/onefite stays with the engine installed first: it is this
+# one's when it links to the Raku launcher (or to nothing any more), not when
+# it links to the Go one
+sub raku-onefite-link (Str $link --> Bool) {
+	return False unless $link.IO.l;
+	my $target = $link.IO.resolve;
+	return True unless $target.e;
+	my $head = try { my $fh = $target.open(:bin); LEAVE $fh.close; $fh.read(512).decode('latin-1') } // '';
+	so $head ~~ / rakudo | perl6 | 'CompUnit::RepositoryRegistry' /
+}
+
+# the tools a previous site install wrote: $bindir links to the file in
+# /usr/local/bin (noted before the rebuild replaces those links)
+sub own-local-tools ($bindir) {
+	local-tools().grep({
+		"$bindir/$_".IO.l && "/usr/local/bin/$_".IO.f && !"/usr/local/bin/$_".IO.l
+			&& "$bindir/$_".IO.resolve eq "/usr/local/bin/$_".IO.resolve
+	}).map(* => True).Hash
+}
+
+# /usr/local/bin/onefite: linked unless another engine has it already
+sub link-onefite ($onefite-bin) {
+	my $link = '/usr/local/bin/onefite';
+	if $link.IO.l or $link.IO.e {
+		note "===> keeping $link -> { $link.IO.resolve } (installed first); this engine is onefite-raku";
+	}
+	else {
+		shell("cd /usr/local/bin && sudo ln -s $onefite-bin onefite");
+	}
+}
+
 sub uninstall () {
 	my $dir = "/usr/local/bin";
-   	my $target = "$dir/onefite".IO.resolve;
+	# the links to this engine's onefite (onefite-raku, --alias names), not
+	# the Go engine's when /usr/local/bin/onefite is its
+	my @targets = ("$dir/onefite-raku", "$dir/onefite").grep({ raku-onefite-link($_) && .IO.e }).map(*.IO.resolve);
 	for $dir.IO.dir( test => { "$dir/$_".IO.l } ) -> $f {
-    	if $f.resolve eq $target {
+    	if $f.resolve eq any(@targets) {
 			note "===> removing $dir/$f....";
 			shell("$SUDO rm $f", cwd => $dir);
 		}
 	}
 
-	shell "sudo rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
+	shell "sudo rm /usr/local/bin/onefite" if raku-onefite-link('/usr/local/bin/onefite');
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
-   	my @binaries = "$*CWD/../C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
-   	for @binaries.splice(1,@binaries.elems-2).push('pcop', 'epstopdf', 'plot-go') {
-		shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } ";
+	my $bindir = "$*CWD/../bin";
+   	for local-tools() -> $t {
+		my ($src, $dst) = "$bindir/$t", "/usr/local/bin/$t";
+		if $dst.IO.l and $dst.IO.resolve eq $src.IO.resolve {
+			shell "sudo rm $dst";
+		}
+		elsif $dst.IO.f and !$dst.IO.l and $src.IO.l and $src.IO.resolve eq $dst.IO.resolve {
+			# written by a site install: back into $bindir, as a user install has it
+			shell "rm $src && cp -p $dst $src && sudo rm $dst";
+		}
    	}
    	shell "$SUDO zef uninstall OneFit-Engine";
-	shell "$SUDO rm /usr/share/man/man1/onefite.1.gz";
+	# the pages install-manpage wrote (/usr/share/man/man1/onefite.1.gz is the
+	# Go engine's package)
+	shell "$SUDO rm -f " ~ <onefite.1 onefite.1.gz onefite-raku.1 onefite-raku.1.gz>.map({ "/usr/local/share/man/man1/$_" }).join(' ');
    	exit;
 }
 
-sub install (:$test,:$to-site, :$bindir) {
+sub install (:$test,:$to-site, :$bindir, :%own-tools) {
     if $to-site {
 		"Installing to site".say
     }
@@ -554,13 +605,13 @@ sub install (:$test,:$to-site, :$bindir) {
 				my $yesno='y';
 				$yesno = prompt "$_ located, do you wish to remove it [y|n]?";
 				shell "$SUDO zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
-				shell "$SUDO rm /usr/local/bin/onefite" if '/usr/local/bin/onefite'.IO.l;
+				shell "$SUDO rm /usr/local/bin/onefite" if raku-onefite-link('/usr/local/bin/onefite');
 				shell "$SUDO rm /usr/local/bin/onefite-raku" if '/usr/local/bin/onefite-raku'.IO.l;
 	   		} unless $_.contains("Nothing located");
 		}
    	}
 
-   	shell("cd /usr/local/bin && sudo rm onefite") if '/usr/local/bin/onefite'.IO.l;
+   	shell("cd /usr/local/bin && sudo rm onefite") if raku-onefite-link('/usr/local/bin/onefite');
    	shell("cd /usr/local/bin && sudo rm onefite-raku") if '/usr/local/bin/onefite-raku'.IO.l;
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
 
@@ -578,7 +629,7 @@ sub install (:$test,:$to-site, :$bindir) {
 		if $to-site {
 	    	my $onefite-bin = CompUnit::RepositoryRegistry.repository-for-name("site") ~ "/bin/onefite";
 	    	$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
-	    	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
+	    	link-onefite($onefite-bin) if $onefite-bin.IO.e;
 	    	shell("cd /usr/local/bin && sudo ln -s $onefite-bin onefite-raku") if $onefite-bin.IO.e
 		}
 		else {
@@ -597,7 +648,7 @@ sub install (:$test,:$to-site, :$bindir) {
 		$onefite-bin = "$location/bin/onefite" unless $onefite-bin.IO.e;
 		$onefite-bin = "$*HOME/.raku/bin/onefite" if "$*HOME/.raku/bin/onefite".IO.e;
 		if $to-site {
-   		 	shell("cd /usr/local/bin && sudo ln -s  $onefite-bin") if $onefite-bin.IO.e;
+   		 	link-onefite($onefite-bin) if $onefite-bin.IO.e;
    		 	shell("cd /usr/local/bin && sudo ln -s $onefite-bin onefite-raku") if $onefite-bin.IO.e
 		}
 		else {
@@ -605,10 +656,21 @@ sub install (:$test,:$to-site, :$bindir) {
 		}
     }
 
-    my @binaries = "$*CWD/../C/core/onefit-3.1/makefile".IO.lines.grep(/install <ws> cop/).words;
+    # A site install writes the tools themselves into /usr/local/bin and links
+    # them from $bindir: a sandboxed run (the GUI's bwrap) sees /usr/local but
+    # not $HOME, where links in /usr/local/bin pointed before. A file there
+    # that is neither a link nor one this install wrote is left alone.
     if $to-site {
-		for @binaries.splice(1,@binaries.elems-2).push('pcop','epstopdf','plot-go') {
-	    	shell "cd /usr/local/bin { { '&& sudo rm ' ~ $_ } if {'/usr/local/bin/' ~ $_}().IO.l } && sudo ln -s { $bindir ~'/' ~ $_ }" if "$bindir/$_".IO.f;
+		for local-tools() -> $t {
+			my ($src, $dst) = "$bindir/$t", "/usr/local/bin/$t";
+			next unless $src.IO.f;
+			next if $src.IO.l and $src.IO.resolve eq $dst.IO.resolve;
+			if $dst.IO.l or !$dst.IO.e or %own-tools{$t} {
+				shell "sudo rm -f $dst && sudo install -m 0755 $src $dst && ln -sf $dst $src";
+			}
+			else {
+				note "===> $dst is not one of OneFit's - leaving it alone";
+			}
 		}
     }
 
@@ -773,15 +835,21 @@ sub install-manpage( :$macos = False ) {
 	return unless $SUDO;
 	my $mandir = '/usr/local/share/man/man1';
 	run |$SUDO.words, 'mkdir', '-p', $mandir;
-	if $macos {
-		run |$SUDO.words, 'cp', ~$page, "$mandir/onefite.1";
-		say "onefite.1 man page installed in $mandir/";
-	}
-	else {
-		my $gz = $tmp.add('onefite.1.gz');
-		$gz.spurt: run('gzip', '-9', '-n', '-c', ~$page, :out, :bin).out.slurp(:close);
-		run |$SUDO.words, 'cp', ~$gz, "$mandir/onefite.1.gz";
-		say "onefite.1.gz man page installed in $mandir/";
+	# onefite-raku's page, and onefite's while /usr/local/bin/onefite is this
+	# engine (else `man onefite` showed this page for the Go one)
+	my @names = 'onefite-raku', |('onefite' if raku-onefite-link('/usr/local/bin/onefite'));
+	run |$SUDO.words, 'rm', '-f', "$mandir/onefite.1", "$mandir/onefite.1.gz" unless 'onefite' (elem) @names;
+	for @names -> $name {
+		if $macos {
+			run |$SUDO.words, 'cp', ~$page, "$mandir/$name.1";
+			say "$name.1 man page installed in $mandir/";
+		}
+		else {
+			my $gz = $tmp.add("$name.1.gz");
+			$gz.spurt: run('gzip', '-9', '-n', '-c', ~$page, :out, :bin).out.slurp(:close);
+			run |$SUDO.words, 'cp', ~$gz, "$mandir/$name.1.gz";
+			say "$name.1.gz man page installed in $mandir/";
+		}
 	}
 }
 
