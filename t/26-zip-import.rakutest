@@ -5,7 +5,9 @@ use OneFit::Engine::Import;
 
 # A zip is extracted into a folder of its own, removed after the import:
 # a same-named file in the current folder is not overwritten and nothing
-# is left there; two entries with the same name say only the last is used.
+# is left there; two entries with the same name say only the last is used;
+# a --sef-R1-file inside the zip is read from the zip (t/26/: a Stelar SEF
+# file and its R1 file).
 my $root = $*TMPDIR.add("ofe-zip-test-{$*PID}-{now.Int}");
 $root.add('cwd').mkdir;
 $root.add('src/sub').mkdir;
@@ -16,9 +18,11 @@ $root.add('src/sub/e.dat').spurt: "3 4 0.5\n4 5 0.5\n";
 run 'zip', '-qr', ~$root.add('d.zip'), 'd.dat', 'sub', :cwd(~$root.add('src'));
 $root.add('src/sub/d.dat').spurt: "5 6 0.5\n6 7 0.5\n";
 run 'zip', '-qr', ~$root.add('dup.zip'), 'd.dat', 'sub/d.dat', :cwd(~$root.add('src'));
+my $sef = $?FILE.IO.parent.add('26');
+run 'zip', '-qj', ~$root.add('sef.zip'), ~$sef.add('p96.sef'), ~$sef.add('p96p.sef');
 
 my @before = $*TMPDIR.dir.grep(*.basename.starts-with('ofe-zip-')).map(~*);
-sub import-zip(Str $zip, Str $out) {
+sub import-zip(Str $zip, Str $out, *%options) {
     my $old = $*CWD;
     chdir $root.add('cwd');
     LEAVE chdir $old;
@@ -26,12 +30,12 @@ sub import-zip(Str $zip, Str $out) {
     my $err = '';
     my @files = do {
         my $*ERR = class { method print(*@a) { $err ~= @a.join }; method say(*@a) { $err ~= @a.join ~ "\n" } }.new;
-        Import.new.path(~$root.add($out)).input-files([~$root.add($zip)]).filter-with(%(), :quiet)
+        Import.new.path(~$root.add($out)).input-files([$zip.IO.is-absolute ?? $zip !! ~$root.add($zip)]).filter-with(%options, :quiet)
     };
     (@files, $err)
 }
 
-plan 7;
+plan 11;
 
 my ($files, $err) = import-zip('d.zip', 'out');
 is-deeply $files.sort.List, <d.dat e.dat>, 'the entries are imported';
@@ -43,3 +47,10 @@ is-deeply $*TMPDIR.dir.grep(*.basename.starts-with('ofe-zip-')).map(~*).grep(* n
 ($files, $err) = import-zip('dup.zip', 'dup');
 ok $err.contains('more than one entry is named d.dat; only the last one is used'), 'two entries named d.dat: a note';
 is $root.add('dup/d.dat').slurp, "5 6 0.5\n6 7 0.5\n", 'the last one is used';
+
+($files, $err) = import-zip('sef.zip', 'sef-zip', sef-R1-file => 'p96p.sef');
+my ($direct) = import-zip(~$sef.add('p96.sef'), 'sef-direct', sef-R1-file => ~$sef.add('p96p.sef'));
+ok $files.elems > 1, "the zip's SEF file is imported ({$files.elems} files)";
+is-deeply $files.List, $direct.List, 'the same files as the SEF and R1 files given directly';
+ok $files.map({ $root.add("sef-zip/$_").slurp eq $root.add("sef-direct/$_").slurp }).all.so, 'with the same contents (the R1 values merged in)';
+is-deeply $root.add('cwd').dir.map(*.basename).List, ('d.dat',), 'nothing from the zip in the current folder';
