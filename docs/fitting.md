@@ -253,7 +253,9 @@ required output before shutdown.
 
 ## Data and quality controls
 
-- `--remove-outliers=2`, `2..5`, or `1,3,5` removes selected points.
+- `--remove-outliers=2`, `2..5`, or `1,3,5` removes selected points. It
+  requires visual inspection, thus plots: with `--no-plot` the fit stops
+  with a message.
 - `--reduced-chi2` recalculates parameter errors for a reduced chi-square
   close to the number of degrees of freedom.
 - `--error-bars` includes error bars in fit output and plots.

@@ -573,7 +573,8 @@ parsed function/definition already carries)>
 =item C<-g>, C<--global>; C<-i>, C<--individual>; C<--hybrid> - select the
 fitting mode (see FITTING MODES above for exact applicability).
 =item C<--ro>, C<--remove-outliers=SELECTION> - remove selected outliers, for
-example C<2>, C<2..5>, or C<1,3,5>. I<(fit-expr, fit-file)>
+example C<2>, C<2..5>, or C<1,3,5>. It requires visual inspection, thus plots:
+it can't be used with C<--no-plot>. I<(fit-expr, fit-file)>
 =item C<--rc>, C<--rchi2>, C<--reduced-chi2> - recalculate parameter errors
 for a chi-square approximately equal to the number of degrees of freedom.
 I<(fit-expr, fit-file)>
@@ -1974,11 +1975,15 @@ MSG
 		);
 	} 
 	if $! {
-		my @errors = "ofe-tmp/compile.log".IO.lines.grep(/ error ':' /).map({ .split(/error ':'/).tail.split(';').head  });
+		# the compiler's errors, from this fit's own folder (--work-folder);
+		# any other error is shown as it is
+		my $compile-log = "$work-folder/$name/compile.log".IO;
+		my @errors = $compile-log.e ?? $compile-log.lines.grep(/ error ':' /).map({ .split(/error ':'/).tail.split(';').head  }) !! ();
+		do { note "===> { $!.message.trim }"; exit(1) } unless @errors;
 		my $msg;
 		for @errors {
 			if $_.contains('function') {
-				my $undeclared = "ofe-tmp/compile.log".IO.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'',:g) ~ '()' }).join(','); 
+				my $undeclared = $compile-log.lines.grep(/undeclared/).map({ .words[6].subst(/';'|<[']>/,'',:g) ~ '()' }).join(','); 
 				$msg = qq:to/MSG/;
 Consider using --aux-code=\"AuxCode-file.c, double $undeclared, ...\"
 to add the undeclared functions
@@ -2187,6 +2192,7 @@ MSG
 			:R2($R2),
 			:quiet($quiet)
 	);
+	CATCH { when / 'requires visual inspection' / { note "===> { .message.trim }"; exit(1) } }
 	
 	define-alias($engine,$dali) if $dali.so;
 	

@@ -678,7 +678,10 @@ class Engine is export {
 	 if $remove-outliers.so && any($MIXED, %!engine<FitType> ~~ /Global|Hybrid/) {
 		@outliers=();
 		note "===> remove outliers is not yet implemented for mixed and global fits";
-	 }	
+	 }
+	 # the points to remove are chosen looking at the plots (the second
+	 # plot pass below is not gated by --no-plot either)
+	 die "--remove-outliers requires visual inspection, thus --plot: it can't be used with --no-plot\n" if @outliers.so && $no-plot;
 	 
 	 if ($errorbars || @outliers.so || $reduced-chi2) { @!blocks>>.set-errorbars(:on) }
 

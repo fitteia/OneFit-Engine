@@ -1,0 +1,46 @@
+#!/usr/bin/env raku
+
+use Test;
+
+# INSTALL puts the install path here; otherwise use this checkout.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
+
+# --remove-outliers needs the plots (the points to remove are chosen looking
+# at them): with --no-plot the fit stops with that message - in both fit
+# forms - instead of crashing; a global fit, which has no outlier removal,
+# only notes it.
+my $root = $*TMPDIR.add("ofe-ro-no-plot-{$*PID}-{now.Int}");
+$root.mkdir;
+LEAVE { run 'rm', '-rf', '--', ~$root if $root.d }
+$root.add('d.dat').spurt: (1..10).map({ "$_ {2 * $_ + ($_ == 10 ?? 30 !! 0.1)} 0.2" }).join("\n") ~ "\n";
+$root.add('e.dat').spurt: (1..8).map({ "$_ {$_ + 0.05} 0.2" }).join("\n") ~ "\n";
+my $function = 'y(x,a:0,b:1)=a+b*x';
+my $message = '--remove-outliers requires visual inspection, thus --plot';
+
+sub onefite(*@args) {
+    my $proc = run $*EXECUTABLE, "-I{OFE-PATH}/lib", "{OFE-PATH}/bin/onefite", |@args,
+        :cwd(~$root), :out, :err;
+    my $out = $proc.out.slurp(:close);
+    my $err = $proc.err.slurp(:close);
+    ($proc.exitcode, $out ~ $err)
+}
+
+plan 9;
+
+my ($rc, $text) = onefite('fit', $function, 'd.dat', '--ro=1', '--no-plot');
+is $rc, 1, 'function form: --remove-outliers with --no-plot stops';
+ok $text.contains($message), 'function form: says why';
+nok $text.contains('compile.log'), 'function form: no compile.log error in its place';
+
+($rc, $text) = onefite('fit', $function, 'd.dat', '--no-plot', "--save-to={$root.add('d.json')}");
+is $rc, 0, 'the same fit without --remove-outliers runs';
+($rc, $text) = onefite('fit', ~$root.add('d.json'), '--ro=1', '--no-plot');
+is $rc, 1, 'input-file form: --remove-outliers with --no-plot stops';
+ok $text.contains($message), 'input-file form: says why';
+
+($rc, $text) = onefite('fit', $function, 'd.dat', 'e.dat', '--global', '--ro=1', '--no-plot');
+is $rc, 0, 'a global fit runs';
+ok $text.contains('not yet implemented for mixed and global fits'), 'a global fit only notes there is no outlier removal';
+
+($rc, $text) = onefite('fit', 'y(x,a:0,b:1)=a+b*x+nofunction(x)', 'd.dat', '--no-plot');
+ok $rc == 1 && $text.contains('nofunction'), 'a compile error still shows the compiler message';

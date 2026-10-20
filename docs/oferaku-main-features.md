@@ -166,7 +166,8 @@ existing default or saved Global/Individual mode.
   error), then a step (`,1` every row, `,2` every second). They apply to
   Stelar and IST-FFC imports; `--selected-dataset` is what selects blocks.
 - **Quality options**:
-  - `--remove-outliers` drops points;
+  - `--remove-outliers` drops points (it needs the plots to inspect, so not
+    with `--no-plot`);
   - `--reduced-chi2` rescales the errors;
   - `--error-bars` shows the data's errors in the plots;
   - `--R2` adds the Pearson correlation;
