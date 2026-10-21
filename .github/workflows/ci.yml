@@ -1,13 +1,13 @@
 name: CI
 
-# Every pull request and push to unstable/dev/main, and once a week: the tests
+# Every pull request and push to unstable/main, and once a week: the tests
 # inside Debian containers - trixie (stable, must pass) and forky (testing,
 # the next stable: allowed to fail, an early warning of what the next Debian
 # release will change; the weekly run catches it moving between pushes).
 on:
   pull_request:
   push:
-    branches: [unstable, dev, main]
+    branches: [unstable, main]
   schedule:
     - cron: '17 5 * * 1'
   workflow_dispatch:

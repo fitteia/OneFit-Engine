@@ -93,9 +93,17 @@ license text, and README statements consistent.
 
 ## Branches and release workflow
 
-The repository currently has `main`, `dev`, and `unstable` branches -
-confirm current maintainer policy before publishing changes, since which
-branch is "latest" can shift. Use focused branches, preserve other
+Two long-lived branches, as in every OneFit-Engine repository:
+
+- `main` - the current stable release; it moves only when a release is
+  promoted.
+- `unstable` - where every change lands first; it changes often and may
+  break.
+
+Pre-releases and release candidates are tags on `unstable`
+(`v1.1.0-rc1`). When the maintainer accepts one, `unstable` is
+fast-forwarded into `main` (no merge commits) and the final version is
+tagged there. Use focused branches, preserve other
 contributors' uncommitted work (never force-push over it), and don't mix
 generated fit output with source commits.
 

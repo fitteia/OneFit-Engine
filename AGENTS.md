@@ -234,7 +234,7 @@ prove6 --lib t                                 # repository test runner directly
 ```
 
 CI (`.github/workflows/ci.yml`) does the same on every pull request and push
-to `unstable`/`dev`/`main`: it clones `onefite-c-code` and minuit next to
+to `unstable`/`main`: it clones `onefite-c-code` and minuit next to
 the checkout, builds the engine with `onefite-c-code`'s
 `tools/engine.pl install`, and runs `prove -e 'raku -Ilib' --ext .rakutest
 t/` (Perl's `prove`, so no extra Raku module is needed).
