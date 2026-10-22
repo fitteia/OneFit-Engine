@@ -49,7 +49,7 @@ jobs:
       # OFE-PATH/../minuit; the tests find pdf2mp4 in OFE-PATH/../bin).
       - name: The engine's sources
         run: |
-          c=$(sed -n "s/^our constant C-CODE-VERSION = '\(.*\)';/\1/p" INSTALL)
+          c=$(sed -n "s/^our constant C-CODE-VERSION = '\(.*\)';/\1/p" OneFit-Engine/INSTALL)
           git clone --depth 1 --branch "$c" https://github.com/fitteia/OneFit-Engine-C.git C
           git clone --depth 1 https://github.com/fitteia/OneFit-Engine-minuit.git minuit
 
