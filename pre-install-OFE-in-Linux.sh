@@ -11,9 +11,12 @@
 # Run:
 #   ./pre-install-OFE-in-Linux.sh [--grace]
 #
-# plot-go (installed by ./INSTALL) draws every plot, so Grace is not
-# installed unless --grace asks for it: it is only for OFE_PLOTTER=grace and
-# for a plot-go older than v1.2.0-pre3. gnuplot is not needed.
+# plot-go (installed by ./INSTALL) draws every plot and writes its PDFs
+# itself, fonts embedded (the URW base-35 fonts installed here), so Grace and
+# what goes with it - Ghostscript (Grace's PDFs, through OneFit's own
+# epstopdf) and ImageMagick - are not installed unless --grace asks for them: they are only for
+# OFE_PLOTTER=grace and for a plot-go older than v1.2.0-pre3/pre4. gnuplot
+# is not needed.
 #
 # The script may be launched as a normal user. It asks for sudo when
 # administrative privileges are required. It prepares the operating system
@@ -352,13 +355,12 @@ install_packages_arch() {
     pacman -S --needed --noconfirm base-devel || warn "could not install base-devel group"
     local packages=(
         perl git openssh apache swig gcc-fortran make tar wget curl jq zip unzip
-        sudo vim less man-db openssl hdf5 poppler ghostscript imagemagick
+        sudo vim less man-db openssl hdf5 poppler gsfonts
         ffmpeg which
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
     install_first_available_pkg perl-cgi || true
-    install_first_available_pkg texlive-bin texlive-basic texlive || true
     install_first_available_pkg ufw firewalld || true
 }
 
@@ -367,8 +369,8 @@ install_packages_debian() {
     local packages=(
         perl libperl-dev libcgi-pm-perl git openssh-server apache2 swig gcc gfortran
         make tar wget curl jq zip unzip sudo vim man-db libssl-dev
-        hdf5-tools libhdf5-dev poppler-utils texlive-font-utils ghostscript
-        imagemagick rakudo perl6-zef
+        hdf5-tools libhdf5-dev poppler-utils fonts-urw-base35
+        rakudo perl6-zef
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
@@ -440,12 +442,11 @@ install_packages_fedora() {
     local packages=(
         perl perl-devel perl-CGI git openssh-server httpd swig gcc gcc-gfortran
         make tar wget curl jq zip unzip sudo vim-enhanced man-db openssl-devel
-        hdf5 hdf5-devel poppler-utils ghostscript ImageMagick firewalld
+        hdf5 hdf5-devel poppler-utils urw-base35-fonts firewalld
         diffutils
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
-    install_first_available_pkg texlive-epstopdf texlive-epstopdf-bin || true
     install_first_available_pkg ffmpeg ffmpeg-free || true
 
     # Prefer distribution packages when both Rakudo and zef are available.
@@ -458,7 +459,7 @@ install_packages_suse() {
     local packages=(
         perl perl-CGI git openssh apache2 swig gcc gcc-fortran make tar
         wget curl jq zip unzip sudo vim man openssl-devel hdf5 hdf5-devel
-        poppler-tools ghostscript ImageMagick which gzip xz texlive-epstopdf-bin diffutils
+        poppler-tools urw-base35-fonts which gzip xz diffutils
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
@@ -476,11 +477,7 @@ install_packages_suse() {
             fi
         done
     fi
-	
-	curl -L https://ctan.net/support/epstopdf/epstopdf.pl -o /usr/local/bin/epstopdf
-	chmod +x /usr/local/bin/epstopdf
 
-    install_first_available_pkg texlive-epstopdf-bin texlive-epstopdf texlive || true
     install_first_available_pkg firewalld SuSEfirewall2 || true
 
     # Prefer distribution packages when both Rakudo and zef are available.
@@ -839,6 +836,11 @@ is_suse_like_id() {
     # the distribution's package first (grace on Debian, xmgrace elsewhere)
     install_first_available_pkg grace xmgrace || true
 
+    # what makes Grace's PDFs (EPS -> epstopdf -> Ghostscript; ./INSTALL
+    # installs OneFit's own epstopdf) and its legacy image conversions
+    install_pkg ghostscript || true
+    install_first_available_pkg imagemagick ImageMagick || true
+
     # Debian/Fedora/openSUSE usually install xmgrace/grace from packages.
     # If it is already present, just normalize the command links.
     if command -v xmgrace >/dev/null 2>&1; then
@@ -1013,10 +1015,10 @@ final_checks() {
     log "Final checks"
     local cmds=(
         perl git swig gcc gfortran make wget curl jq zip unzip
-        sudo vim man h5dump epstopdf ffmpeg
+        sudo vim man h5dump ffmpeg
         raku rakudo zef prove6
     )
-    [[ "$WITH_GRACE" == 1 ]] && cmds+=(xmgrace gracebat grace)
+    [[ "$WITH_GRACE" == 1 ]] && cmds+=(xmgrace gracebat grace gs)
     [[ -x /opt/rakubrew/bin/rakubrew ]] && cmds+=(rakubrew)
 
     local service_cmds=(sshd "$WEB_SERVER_CMD")
@@ -1079,8 +1081,9 @@ main() {
             echo "Usage: $0 [--grace]"
             echo
             echo "Prepares Linux system dependencies for OneFit-Engine."
-            echo "--grace also installs Grace (only for OFE_PLOTTER=grace and a"
-            echo "plot-go older than v1.2.0-pre3; plot-go draws every plot)."
+            echo "--grace also installs Grace, with Ghostscript and ImageMagick for its"
+            echo "PDFs (only for OFE_PLOTTER=grace and a plot-go older than v1.2.0-pre3;"
+            echo "plot-go draws every plot and writes its PDFs itself)."
             echo "After this finishes, run: ./INSTALL [options]"
             ;;
         *)

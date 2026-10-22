@@ -19,9 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-suggests \
     gcc \
     dpkg-dev \
    	gfortran \
-   	imagemagick \
-   	texlive-font-utils \
-   	ghostscript \
+   	fonts-urw-base35 \
    	libcgi-pm-perl \
    	zip \
     jq \

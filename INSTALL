@@ -11,7 +11,7 @@ our $DOCKER = False;
 our $OS = "LINUX";
 
 # Keep plot-go aligned with the version pinned by the Go port and GUI.
-our constant PLOT-GO-VERSION = 'v1.2.0-pre4';
+our constant PLOT-GO-VERSION = 'v1.2.0-pre5';
 
 #|(onefite INSTALL help)
 multi MAIN ('help') { MAIN :h }
@@ -35,12 +35,12 @@ multi MAIN (
  	Bool :$dpkg is copy = True, #= to install required debian packages
    	Bool :i(:$install) = True, #= to install OneFit-Engine as a raku modules available to all users
    	Str  :$ip is copy = '*', #= accept access from IP
-   	Bool :g(:$enable-gs) is copy = True, #= enable ghostscript in ImageMagick policy.xml
+   	Bool :g(:$enable-gs) is copy = True, #= enable ghostscript in ImageMagick policy.xml (with --grace, which installs them)
    	Bool :$git = True, #= By default it runs git to pull the package for remote repository
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
 	Bool :$man-page = True; #= Install man page
 	Bool :$plot-go = True, #= install plot-go, which draws the fit plots without Grace (Grace stays the fallback)
-	Bool :$grace is copy = False, #= also install Grace: only for OFE_PLOTTER=grace or a plot-go older than v1.2.0-pre3 (implied by --/plot-go)
+	Bool :$grace is copy = False, #= also install Grace, with Ghostscript, ImageMagick and TeX for its PDFs: only for OFE_PLOTTER=grace or a plot-go older than v1.2.0-pre3/pre4 (implied by --/plot-go)
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Int  :$minuit = 1000, #= Minuit maximum number of parameters: default=1000
 	Str  :$enable-extensions = '', #= older spelling: bare = install florence; =http|ssh also picks how registry repositories are reached; =false = --/default-extensions
@@ -153,16 +153,15 @@ multi MAIN (
 			jq
 			swig
 			gcc
-			imagemagick
-			texlive
-			ghostscript
 			zip
 			openssl
 			hdf5
 			poppler
 			ffmpeg
 		>;
-		@brew-packages.push: 'grace' if $grace;
+		# Grace and what makes its PDFs (EPS -> epstopdf -> Ghostscript):
+		# plot-go writes its own PDFs, fonts embedded
+		@brew-packages.push: |<grace ghostscript imagemagick texlive> if $grace;
 		my $brew-installed = shell("brew list --version",:out).out.lines(:close).map({ $_.words.head }).join(" ");
 		for @brew-packages {
 			shell("brew install $_") unless $brew-installed.contains($_);
@@ -197,7 +196,7 @@ multi MAIN (
 
    	install-p6-modules($to-site, test => $test) if $p6-modules.Bool;
 
-	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $to-site;
+	enable-ghostscript-in-ImageMagick-policy() if $enable-gs.Bool and $grace and $to-site;
 
    	my %own-tools = $to-site ?? own-local-tools($bindir) !! ();
 
@@ -239,8 +238,10 @@ sub cernpkgs ($cpu) {
     	@a.map( { .subst("amd64",$cpu) })
 }
 
-# plot-go draws the plots: Grace only when asked for (--grace), and no
-# gnuplot (onefite-c-code's last resort when neither is installed)
+# plot-go draws the plots and writes their PDFs, its fonts embedded from
+# fonts-urw-base35: Grace, with Ghostscript, ImageMagick and TeX's epstopdf
+# for its PDFs, only when asked for (--grace), and no gnuplot
+# (onefite-c-code's last resort when neither is installed)
 sub aptpkgs (Bool :$grace) {
    	|<
 	libperl-dev
@@ -248,9 +249,7 @@ sub aptpkgs (Bool :$grace) {
    	gcc
    	dpkg-dev
    	gfortran
-   	imagemagick
-   	texlive-font-utils
-   	ghostscript
+   	fonts-urw-base35
    	libcgi-pm-perl
    	zip
    	sudo
@@ -264,7 +263,7 @@ sub aptpkgs (Bool :$grace) {
 	poppler-utils
 	ffmpeg
    	tasksel
-	>, |('grace' if $grace)
+	>, |(<grace ghostscript imagemagick texlive-font-utils> if $grace)
 }
 
 #### these packages are required by cernlib #####

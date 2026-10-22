@@ -74,9 +74,12 @@ onefite test --post-install --systemd-daemon
 
 ## Package notes
 
-The installer provisions compilers, ImageMagick, TeX/PDF utilities,
-HDF5 tools, FFmpeg, and other dependencies. Grace is installed only with `--grace` (plot-go draws every plot; Grace
-is for `OFE_PLOTTER=grace` and a plot-go older than v1.2.0-pre3); gnuplot
+The installer provisions compilers, the URW base-35 fonts
+(`fonts-urw-base35`, embedded in the plots' PDFs), Poppler, HDF5 tools,
+FFmpeg, and other dependencies. Grace, with Ghostscript, ImageMagick and
+TeX's font utilities for its PDFs, is installed only with `--grace`
+(plot-go draws every plot and writes its PDFs itself; Grace is for
+`OFE_PLOTTER=grace` and a plot-go older than v1.2.0-pre3/pre4); gnuplot
 is not needed. Exact package availability
 varies by Debian/Ubuntu release. Use the [Docker sandbox](docker.md) as a
 reproducible diagnostic environment when host packages conflict.

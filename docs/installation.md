@@ -58,7 +58,8 @@ The current installer's defaults include:
 - run the Raku test suite and post-install tests;
 - update Debian-family packages when `--dpkg` applies;
 - install/configure an SSH+web-server task on eligible site installs;
-- enable PDF-related ImageMagick policy entries;
+- enable PDF-related ImageMagick policy entries (with `--grace`, which
+  installs ImageMagick and Ghostscript for Grace's PDFs);
 - fetch/update the sibling `../minuit` checkout and build it;
 - install the man page;
 - support up to 1,000 MINUIT internal parameters and 2,000 external slots
@@ -109,8 +110,8 @@ With default options, `./INSTALL` can:
    depend on or recommend, never the suggested ones, whatever the system's
    own `APT::Install-Suggests` says.
 4. Install SSH/web-server `tasksel` tasks on Debian-family site installs.
-5. Modify ImageMagick's `policy.xml` (after backing it up) to allow
-   PS/EPS/PDF/XPS formats used by the plotting pipeline.
+5. With `--grace`, modify ImageMagick's `policy.xml` (after backing it
+   up) to allow PS/EPS/PDF/XPS formats used by Grace's plotting pipeline.
 6. Write under `/usr/local`, Raku's site module repository, and (with
    `--systemd-daemon`) systemd unit locations.
 7. Invoke `sudo` repeatedly.

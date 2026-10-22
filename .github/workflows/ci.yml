@@ -32,7 +32,7 @@ jobs:
           apt-get update -qq
           apt-get install -y -qq --no-install-recommends git ca-certificates curl \
             gcc gfortran make perl libperl-dev swig hdf5-tools \
-            ghostscript zip unzip ffmpeg poppler-utils procps rakudo raku-json-fast \
+            fonts-urw-base35 zip unzip ffmpeg poppler-utils procps rakudo raku-json-fast \
             raku-zef libssl-dev
 
       # the modules bin/onefite loads that Debian does not package, as

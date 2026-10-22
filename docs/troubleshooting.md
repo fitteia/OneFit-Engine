@@ -90,8 +90,9 @@ Since v0.2.32 the list of installed fonts is cached in the user's cache folder
 (`plot-go/fonts.json`) and only new or changed font files are read again;
 `.ttc` collections are included. Since v0.2.33, replacing a font file also refreshes its parsed face, text metrics and outlines after discovery. Deleting the cache file is harmless. Since v0.2.34 plot-go can also write to `/dev/null`, a pipe or an existing file in a read-only folder, and gracebat's `-batch FILE` is skipped with a warning instead of read as data.
 
-Inspect the plot/conversion logs in the work directory. ImageMagick's
-Ghostscript policy can block PDF/PS formats - the installer can loosen that
+Inspect the plot/conversion logs in the work directory. With Grace
+(`OFE_PLOTTER=grace`), ImageMagick's Ghostscript policy can block PDF/PS
+formats - the installer can loosen that
 policy on some site installs; review rather than weakening it globally
 without need (see [security](security.md#administrative-commands)).
 
