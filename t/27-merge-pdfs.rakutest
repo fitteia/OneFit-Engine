@@ -1,0 +1,71 @@
+#!/usr/bin/env raku
+
+use Test;
+
+# INSTALL puts the install path here; otherwise use this checkout.
+our constant OFE-PATH = do { my $p = "%OFE-PATH%"; $p.starts-with("%") ?? $?FILE.IO.absolute.IO.parent.parent.Str !! $p };
+use lib OFE-PATH ~ '/lib';
+use OneFit;
+
+# All.pdf is joined by plot-go -merge; pdftk is only the fallback for a
+# plot-go without -merge (older than v1.2.0) or none. Stand-ins for both
+# record how they were called, on a PATH holding only them and the shell.
+my $root = $*TMPDIR.add("ofe-merge-pdfs-{$*PID}-{now.Int}");
+my $bin = $root.add('bin');
+$bin.mkdir;
+LEAVE { run 'rm', '-rf', '--', ~$root if $root.d }
+'/bin/sh'.IO.symlink(~$bin.add('sh'));
+
+sub stand-in(Str $name, Str $body) {
+    my $f = $bin.add($name);
+    $f.spurt: "#!/bin/sh\n$body\n";
+    $f.chmod(0o755);
+}
+sub reset-path {
+    $bin.add($_).unlink for <plot-go pdftk>;
+    $root.add($_).unlink for <All.pdf calls>;
+}
+
+plan 8;
+
+my $path = %*ENV<PATH>;
+LEAVE { %*ENV<PATH> = $path }
+%*ENV<PATH> = ~$bin;
+
+# a plot-go with -merge: it alone makes All.pdf
+reset-path;
+stand-in('plot-go', 'echo "plot-go $*" >> calls; [ "$1" = -merge ] && [ "$2" = -o ] && echo merged > "$3"');
+stand-in('pdftk', 'echo "pdftk $*" >> calls; exit 1');
+ok OneFit::merge-pdfs('fit-curves-1.pdf', 'fit-curves-2.pdf', :cwd(~$root)), 'plot-go merges';
+is $root.add('calls').slurp, "plot-go -merge -o All.pdf fit-curves-1.pdf fit-curves-2.pdf\n",
+    'plot-go is given the PDFs in order, and pdftk is not run';
+is $root.add('All.pdf').slurp.trim, 'merged', 'All.pdf is what plot-go wrote';
+
+# an older plot-go (no -merge: Go's flag error, exit 2): pdftk, as before
+reset-path;
+stand-in('plot-go', 'echo "plot-go $*" >> calls; echo "flag provided but not defined: -merge" >&2; exit 2');
+stand-in('pdftk', 'echo "pdftk $*" >> calls; echo merged > "$5"');
+ok OneFit::merge-pdfs('a.pdf', 'b.pdf', :cwd(~$root), :out<Out.pdf>), 'an older plot-go: pdftk merges';
+is $root.add('calls').slurp.lines.tail, 'pdftk a.pdf b.pdf cat output Out.pdf', 'pdftk is called as before';
+
+# neither: dies, naming both reasons
+reset-path;
+my $err = (try { OneFit::merge-pdfs('a.pdf', :cwd(~$root)); 'no error' }) // $!.message;
+like $err, /'plot-go not found'/, 'no plot-go: said';
+like $err, /'pdftk not found'/, 'no pdftk: said';
+
+# the real plot-go, when one with -merge is installed: one real merge
+%*ENV<PATH> = $path;
+my $real = run('plot-go', '-merge', :out, :err);
+$real.out.slurp(:close);
+if $real.err.slurp(:close).contains('-merge -o OUT.pdf') {
+    # a one-page PDF, twice
+    my $pdf = "%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 10 10] >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF\n";
+    $root.add('p.pdf').spurt: $pdf;
+    $root.add('All.pdf').unlink;
+    OneFit::merge-pdfs('p.pdf', 'p.pdf', :cwd(~$root));
+    like $root.add('All.pdf').slurp(:bin).decode('latin1'), /'/Count 2'/, 'the real plot-go -merge: two pages';
+}
+else {
+    skip 'no plot-go with -merge (v1.2.0 or later) on PATH', 1;
+}

@@ -30,8 +30,8 @@ jobs:
       - name: Debian packages
         run: |
           apt-get update -qq
-          apt-get install -y -qq --no-install-recommends git ca-certificates \
-            gcc gfortran make perl libperl-dev swig hdf5-tools pdftk-java \
+          apt-get install -y -qq --no-install-recommends git ca-certificates curl \
+            gcc gfortran make perl libperl-dev swig hdf5-tools \
             gnuplot-nox grace ghostscript zip unzip ffmpeg poppler-utils procps rakudo raku-json-fast \
             raku-zef libssl-dev
 
@@ -61,6 +61,21 @@ jobs:
             --bindir "$GITHUB_WORKSPACE/bin" \
             --perlcore "$(perl -MConfig -e 'print "$Config{archlib}/CORE"')" \
             --no-default-extensions --no-fetch
+
+      # plot-go draws the plots and joins All.pdf (plot-go -merge; no pdftk):
+      # the release INSTALL pins (PLOT-GO-VERSION), checked against its
+      # SHA256SUMS as INSTALL checks it
+      - name: plot-go
+        working-directory: OneFit-Engine
+        run: |
+          v=$(sed -n "s/^our constant PLOT-GO-VERSION = '\(.*\)';/\1/p" INSTALL)
+          base="https://github.com/fitteia/OneFit-Engine-plot/releases/download/$v"
+          cd "$GITHUB_WORKSPACE/bin"
+          curl -fsSL -o plot-go_linux_amd64 "$base/plot-go_linux_amd64"
+          curl -fsSL "$base/SHA256SUMS" | grep ' plot-go_linux_amd64$' | sha256sum -c -
+          mv plot-go_linux_amd64 plot-go
+          chmod +x plot-go
+          ./plot-go -version
 
       - name: Tests
         working-directory: OneFit-Engine

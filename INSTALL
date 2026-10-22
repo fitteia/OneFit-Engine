@@ -11,7 +11,7 @@ our $DOCKER = False;
 our $OS = "LINUX";
 
 # Keep plot-go aligned with the version pinned by the Go port and GUI.
-our constant PLOT-GO-VERSION = 'v1.0.0';
+our constant PLOT-GO-VERSION = 'v1.2.0-pre1';
 
 #|(onefite INSTALL help)
 multi MAIN ('help') { MAIN :h }
@@ -154,13 +154,11 @@ multi MAIN (
 			texlive
 			ghostscript
 			zip
-			pdftk-java
 			openssl
 			hdf5
 			gnuplot
 			poppler
 			ffmpeg
-			pdftk-java
 		>;
 		my $brew-installed = shell("brew list --version",:out).out.lines(:close).map({ $_.words.head }).join(" ");
 		for @brew-packages {
@@ -251,7 +249,6 @@ sub aptpkgs () {
    	ghostscript
    	libcgi-pm-perl
    	zip
-   	pdftk-java
    	sudo
    	curl
 	jq

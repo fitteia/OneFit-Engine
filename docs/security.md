@@ -34,7 +34,7 @@ endpoint to anonymous or mutually untrusted clients.
 request values (filename, `function`, fit methods, `#name` overrides, and
 the other fields) as literal process arguments, and `onefite` itself runs
 the programs a fit needs (`onefit-user`, `make`, `zip`, `unzip`,
-`h5dump`, `gfilt`, `pdftk`, `pdf2mp4`, `awk` for `--set-err`, `rm`,
+`h5dump`, `gfilt`, `plot-go` (or `pdftk`), `pdf2mp4`, `awk` for `--set-err`, `rm`,
 `mv`) the same way, never through a shell. File names, model expressions
 and option values from a request are therefore not interpreted as shell
 commands, and `--set-err` values reach `awk` only as data: an expression

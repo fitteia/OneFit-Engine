@@ -2274,7 +2274,7 @@ multi MAIN  ('plot',
 		:logy($linlog or $loglog)
 	    );
 	    zip-fit($engine,$work-folder,$name);
-	    run 'pdftk', |('fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf'), 'cat', 'output', './All.pdf', :cwd("$work-folder/$name");
+	    OneFit::merge-pdfs(|('fit-curves-' <<~<< (1 ... $engine.blocks(:a).elems) >>~>> '.pdf'), :cwd("$work-folder/$name"));
 	    exit;
 }
 

@@ -25,7 +25,6 @@ RUN apt-get update && apt-get install -y --no-install-suggests \
    	ghostscript \
    	libcgi-pm-perl \
    	zip \
-   	pdftk \
     jq \
    	hdf5-tools \
     man-db \

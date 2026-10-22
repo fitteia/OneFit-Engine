@@ -348,13 +348,12 @@ install_packages_arch() {
     local packages=(
         perl git openssh apache swig gcc-fortran make tar wget curl jq zip unzip
         sudo vim less man-db gnuplot openssl hdf5 poppler ghostscript imagemagick
-        jre-openjdk-headless ffmpeg which
+        ffmpeg which
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
     install_first_available_pkg perl-cgi || true
     install_first_available_pkg xmgrace grace || true
-    install_first_available_pkg pdftk pdftk-java || true
     install_first_available_pkg texlive-bin texlive-basic texlive || true
     install_first_available_pkg ufw firewalld || true
 }
@@ -365,11 +364,10 @@ install_packages_debian() {
         perl libperl-dev libcgi-pm-perl git openssh-server apache2 swig gcc gfortran
         make tar wget curl jq zip unzip sudo vim man-db gnuplot libssl-dev
         hdf5-tools libhdf5-dev poppler-utils texlive-font-utils ghostscript
-        imagemagick default-jre-headless rakudo perl6-zef grace
+        imagemagick rakudo perl6-zef grace
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
-    install_first_available_pkg pdftk-java pdftk || true
     install_first_available_pkg ffmpeg || true
     install_first_available_pkg ufw firewalld || true
 }
@@ -444,11 +442,7 @@ install_packages_fedora() {
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
     install_first_available_pkg texlive-epstopdf texlive-epstopdf-bin || true
-    install_first_available_pkg pdftk-java pdftk || true
     install_first_available_pkg ffmpeg ffmpeg-free || true
-    install_first_available_pkg java-21-openjdk-headless java-21-openjdk \
-        java-17-openjdk-headless java-17-openjdk java-11-openjdk-headless \
-        java-11-openjdk || true
 
     # Prefer distribution packages when both Rakudo and zef are available.
     install_first_available_pkg rakudo raku || true
@@ -458,16 +452,15 @@ install_packages_fedora() {
 install_packages_suse() {
     log "openSUSE packages"
     local packages=(
-        perl perl-CGI git openssh apache2 swig gcc gcc-fortran make tar pdftk
+        perl perl-CGI git openssh apache2 swig gcc gcc-fortran make tar
         wget curl jq zip unzip sudo vim man gnuplot openssl-devel hdf5 hdf5-devel
-        poppler-tools ghostscript ImageMagick java-21-openjdk which gzip xz texlive-epstopdf-bin diffutils xmgrace
+        poppler-tools ghostscript ImageMagick which gzip xz texlive-epstopdf-bin diffutils xmgrace
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
 
     # Package names vary between Leap/Tumbleweed and enabled repositories.
     install_first_available_pkg xmgrace grace || true
-    install_first_available_pkg pdftk pdftk-java || true
     install_first_available_pkg ffmpeg ffmpeg-8 ffmpeg-7 ffmpeg-6 || true
 
     # Some openSUSE packages expose a versioned command. Normalize it to ffmpeg.
@@ -1011,7 +1004,7 @@ final_checks() {
     log "Final checks"
     local cmds=(
         perl git swig gcc gfortran make wget curl jq zip unzip
-        sudo vim man gnuplot h5dump pdftk epstopdf ffmpeg
+        sudo vim man gnuplot h5dump epstopdf ffmpeg
         raku rakudo zef prove6 xmgrace gracebat grace
     )
     [[ -x /opt/rakubrew/bin/rakubrew ]] && cmds+=(rakubrew)

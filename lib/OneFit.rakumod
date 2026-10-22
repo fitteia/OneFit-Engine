@@ -49,6 +49,26 @@ our sub exact-decimal-str(FatRat $r --> Str) {
     ($n < 0 ?? '-' !! '') ~ $digits
 }
 
+# All.pdf: the PDFs named, in order, joined into $out in $cwd, as `pdftk
+# PDFS cat output OUT` did - by plot-go -merge (plot-go v1.2.0 and later,
+# Go's standard library, no PDF tool), found on PATH as the C core finds
+# it to draw the plots. pdftk is only the fallback, for a plot-go older
+# than v1.2.0 (no -merge) or none, so an existing install keeps working.
+# Dies, naming both reasons, when neither can.
+our sub merge-pdfs(*@pdfs, :$cwd!, Str :$out = 'All.pdf') {
+    my $plot-go = run 'plot-go', '-merge', '-o', $out, |@pdfs, :$cwd, :out, :err;
+    $plot-go.out.slurp(:close);
+    my $why = $plot-go.err.slurp(:close).trim;
+    return True if $plot-go.exitcode == 0;
+    $why = 'plot-go not found' if $plot-go.exitcode == -1;
+    my $pdftk = run 'pdftk', |@pdfs, 'cat', 'output', $out, :$cwd, :out, :err;
+    $pdftk.out.slurp(:close);
+    my $tk-why = $pdftk.err.slurp(:close).trim;
+    return True if $pdftk.exitcode == 0;
+    $tk-why = 'pdftk not found' if $pdftk.exitcode == -1;
+    die "could not merge the PDFs into $out: $why; $tk-why";
+}
+
 # The man page is rendered from bin/onefite's POD block, its #| / #= notes
 # and its MAIN signatures; man-source-digest is a digest of those lines (and
 # of nothing else in the file), stamped in the committed onefite.1 by
@@ -716,14 +736,7 @@ class Engine is export {
 				#say "b :\n","$!path/data{$_}.dat".IO.slurp;
 				self!run-block($_, "fit$_.par", "plot$_.log", "-@fitenv$_.stp", "-nf", "-pg", "-ofit$_.out", "--grbatch=PDF", "data$_.dat");
 		 	}
-			run 'pdftk',
-    			|@pdfs,          # flatten list of PDFs into args
-    			'cat',
-    			'output',
-    			'All.pdf',
-    			:cwd($!path);
-
-				#shell "cd $!path && pdftk { @pdfs.join(' ') } cat output ./All.pdf";
+			merge-pdfs(|@pdfs, :cwd($!path));
 	    } unless $no-plot.Bool;
 
 		
@@ -768,19 +781,8 @@ EOT
 					"$!path/{@pdfs[$i]}-tmp".IO.rename("$!path/@pdfs[$i]");
 				}
 				my @pdfs-all = flat @pdfs Z @pdfsro;
-				try {
-   					 run 'pdftk',
-       						|@pdfs-all,   # expand list into args
-       						'cat',
-       						'output',
-       						'All.pdf',
-       						:cwd($!path);
-				}
+				try merge-pdfs(|@pdfs-all, :cwd($!path));
 				if $! { say "something went wrong" }
-
-				#my $cmd = "cd $!path; pdftk { @pdfs-all.join(' ') } cat output ./All.pdf";
-				#try { shell $cmd; }
-				#if $! { say "something went wrong" }
 	     	} unless $no-plot.Bool;
 		}
 	 }
@@ -800,17 +802,8 @@ EOT
 			}
 			self.agr;
 			run-onefit-user(~$!path, 'fit.par', 'plot.log', '-@fitenv.stp', '-nf', '-pg', '-ofit.out', '--grbatch=PDF', |@datafiles);
-			try {
-   				 run 'pdftk',
-       					|@pdfs,   # expand list into args
-       					'cat',
-       					'output',
-       					'All.pdf',
-       					:cwd($!path);
-			}
+			try merge-pdfs(|@pdfs, :cwd($!path));
 			if $! { say "something went wrong" }
-
-			#shell "cd $!path; pdftk { @pdfs.join(' ') } cat output ./All.pdf";
 	     }  unless $no-plot;
 	 }
 	 my $TXT = self!results( :R2($R2), :hybrid($hybrid) );

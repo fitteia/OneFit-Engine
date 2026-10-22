@@ -66,7 +66,7 @@ Scientific convergence problems aren't necessarily software errors.
 ## Plots or PDFs are missing
 
 ```bash
-command -v plot-go grace xmgrace gs pdftk ffmpeg pdftoppm
+command -v plot-go grace xmgrace gs ffmpeg pdftoppm
 plot-go -version
 ```
 
