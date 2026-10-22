@@ -49,7 +49,8 @@ jobs:
       # OFE-PATH/../minuit; the tests find pdf2mp4 in OFE-PATH/../bin).
       - name: The engine's sources
         run: |
-          git clone --depth 1 https://github.com/fitteia/OneFit-Engine-C.git C
+          c=$(sed -n "s/^our constant C-CODE-VERSION = '\(.*\)';/\1/p" INSTALL)
+          git clone --depth 1 --branch "$c" https://github.com/fitteia/OneFit-Engine-C.git C
           git clone --depth 1 https://github.com/fitteia/OneFit-Engine-minuit.git minuit
 
       - name: Build the engine
@@ -62,9 +63,9 @@ jobs:
             --perlcore "$(perl -MConfig -e 'print "$Config{archlib}/CORE"')" \
             --no-default-extensions --no-fetch
 
-      # plot-go draws the plots and joins All.pdf (plot-go -merge; no pdftk):
-      # the release INSTALL pins (PLOT-GO-VERSION), checked against its
-      # SHA256SUMS as INSTALL checks it
+      # plot-go draws the plots and joins All.pdf (plot-go -merge; no pdftk).
+      # The release INSTALL pins its version and the C core's version; plot-go
+      # is checked against SHA256SUMS as INSTALL checks it.
       - name: plot-go
         working-directory: OneFit-Engine
         run: |

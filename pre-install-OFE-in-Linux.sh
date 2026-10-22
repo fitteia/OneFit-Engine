@@ -14,9 +14,9 @@
 # plot-go (installed by ./INSTALL) draws every plot and writes its PDFs
 # itself, fonts embedded (the URW base-35 fonts installed here), so Grace and
 # what goes with it - Ghostscript (Grace's PDFs, through OneFit's own
-# epstopdf) and ImageMagick - are not installed unless --grace asks for them: they are only for
-# OFE_PLOTTER=grace and for a plot-go older than v1.2.0-pre3/pre4. gnuplot
-# is not needed.
+# epstopdf) and ImageMagick - are not installed unless --grace asks for them:
+# they are only for OFE_PLOTTER=grace and for a plot-go older than
+# v1.2.0-pre4. gnuplot is not needed.
 #
 # The script may be launched as a normal user. It asks for sudo when
 # administrative privileges are required. It prepares the operating system
@@ -1082,7 +1082,7 @@ main() {
             echo
             echo "Prepares Linux system dependencies for OneFit-Engine."
             echo "--grace also installs Grace, with Ghostscript and ImageMagick for its"
-            echo "PDFs (only for OFE_PLOTTER=grace and a plot-go older than v1.2.0-pre3;"
+            echo "PDFs (only for OFE_PLOTTER=grace and a plot-go older than v1.2.0-pre4;"
             echo "plot-go draws every plot and writes its PDFs itself)."
             echo "After this finishes, run: ./INSTALL [options]"
             ;;

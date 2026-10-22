@@ -79,7 +79,7 @@ The installer provisions compilers, the URW base-35 fonts
 FFmpeg, and other dependencies. Grace, with Ghostscript, ImageMagick and
 TeX's font utilities for its PDFs, is installed only with `--grace`
 (plot-go draws every plot and writes its PDFs itself; Grace is for
-`OFE_PLOTTER=grace` and a plot-go older than v1.2.0-pre3/pre4); gnuplot
+`OFE_PLOTTER=grace` and a plot-go older than v1.2.0-pre4); gnuplot
 is not needed. Exact package availability
 varies by Debian/Ubuntu release. Use the [Docker sandbox](docker.md) as a
 reproducible diagnostic environment when host packages conflict.

@@ -10,8 +10,10 @@ our $DOCKER = False;
 
 our $OS = "LINUX";
 
-# Keep plot-go aligned with the version pinned by the Go port and GUI.
+# Keep plot-go aligned with the versions pinned by OFE-Go and OFE-GUI.
 our constant PLOT-GO-VERSION = 'v1.2.0-pre5';
+# Keep the C core aligned with the release pinned in OFE-Go's engine-sources.txt.
+our constant C-CODE-VERSION = 'v6.0.3';
 
 #|(onefite INSTALL help)
 multi MAIN ('help') { MAIN :h }
@@ -40,7 +42,7 @@ multi MAIN (
    	Str  :m(:merge-with(:merge-from(:$merge-site)))='', #= if merge string then merge site branch (it it exits) into current branch
 	Bool :$man-page = True; #= Install man page
 	Bool :$plot-go = True, #= install plot-go, which draws the fit plots without Grace (Grace stays the fallback)
-	Bool :$grace is copy = False, #= also install Grace, with Ghostscript, ImageMagick and TeX for its PDFs: only for OFE_PLOTTER=grace or a plot-go older than v1.2.0-pre3/pre4 (implied by --/plot-go)
+	Bool :$grace is copy = False, #= also install Grace, with Ghostscript, ImageMagick and TeX for its PDFs: only for OFE_PLOTTER=grace or a plot-go older than v1.2.0-pre4 (implied by --/plot-go)
 	Bool :$macos is copy = False, #= Flag for a MacOS Install ( --/test --/post-test --/web-server --/system-daemon --/dpkg )
 	Int  :$minuit = 1000, #= Minuit maximum number of parameters: default=1000
 	Str  :$enable-extensions = '', #= older spelling: bare = install florence; =http|ssh also picks how registry repositories are reached; =false = --/default-extensions
@@ -357,11 +359,13 @@ sub enable-ghostscript-in-ImageMagick-policy () {
 # private archive of its old history) is pointed at URL, and a checkout
 # whose history was replaced (OneFit-Engine-C was republished: no commit in
 # common) switches to the new one when no tracked file is modified - git
-# pull cannot merge unrelated histories. :reset files are checked out first
+# pull cannot merge unrelated histories. A pinned tag is checked out detached
+# after refusing tracked local changes. :reset files are checked out first
 # (a previous install patches minuit's d506cm.inc).
-sub update-checkout (Str $dir, Str $url, :@reset) {
+sub update-checkout (Str $dir, Str $url, :@reset, Str :$tag = '') {
 	unless "$dir/.git".IO.e {
-		run 'git', 'clone', $url, $dir;
+		my $clone = $tag ?? run('git', 'clone', '--branch', $tag, $url, $dir) !! run('git', 'clone', $url, $dir);
+		die "$dir: git clone failed for $url\n" if $clone.exitcode;
 		return;
 	}
 	my &git = -> *@a { run 'git', '-C', $dir, |@a, :out, :err };
@@ -371,6 +375,25 @@ sub update-checkout (Str $dir, Str $url, :@reset) {
 		say "$dir: origin $origin -> $url (repository renamed)";
 	}
 	git('checkout', '--', |@reset) if @reset;
+	if $tag {
+		my $fetch = git(<fetch --tags -q origin>);
+		my $fetch-err = $fetch.err.slurp(:close);
+		die "$dir: could not fetch tag $tag from origin:\n$fetch-err" if $fetch.exitcode;
+		my $dirty = git(<status --porcelain --untracked-files=no>).out.slurp(:close).trim;
+		die "$dir: tracked changes prevent checkout of $tag - commit or resolve them, then run INSTALL again\n" if $dirty;
+		my $tag-ref = 'refs/tags/' ~ $tag ~ '^{commit}';
+		my $target = git('rev-parse', $tag-ref);
+		my $target-sha = $target.out.slurp(:close).trim;
+		die "$dir: tag $tag is not available from origin\n" if $target.exitcode || !$target-sha;
+		my $head = git('rev-parse', 'HEAD').out.slurp(:close).trim;
+		if $head ne $target-sha {
+			my $checkout = git('checkout', '-q', '--detach', $target-sha);
+			my $err = $checkout.err.slurp(:close);
+			die "$dir: could not check out $tag:\n$err" if $checkout.exitcode;
+		}
+		say "$dir: using pinned $tag ($target-sha)";
+		return;
+	}
 	git(<fetch -q origin>);
 	my $upstream = git(<rev-parse --abbrev-ref @{u}>).out.slurp(:close).trim;
 	if $upstream and git('merge-base', 'HEAD', $upstream).exitcode == 1 {
@@ -394,7 +417,7 @@ sub compile (:$root, :$arch, :$bindir, :$pv = "", :$perlcore, :$git, :$minuit, :
     #shell "cd $*CWD/../minuit && git pull && cd $*CWD/../minuit && patch -p1 < minuit.patch && make install && make clean && patch -R -p1 < minuit.patch";
    		
 		say "download  onefite-C-code $*CWD/../C, compile and install libs in $*CWD/lib";
-   		update-checkout("$*CWD/../C", 'https://github.com/fitteia/OneFit-Engine-C.git');
+		update-checkout("$*CWD/../C", 'https://github.com/fitteia/OneFit-Engine-C.git', :tag(C-CODE-VERSION));
 	}
 	# onefite-c-code builds and installs minuit, the core and the extensions
 	# itself - safely (a failed build or link test puts the previous engine
