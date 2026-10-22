@@ -127,8 +127,8 @@ strictly require `pre-install-OFE-in-Linux.sh` to have run first. That said,
 **running the pre-install script first is the more robust, tested path**:
 it handles cases `./INSTALL`'s own package step doesn't (a `zef` build from
 source when the distro's `perl6-zef` package is missing or too old, a
-Grace/xmgrace build from source when the distro package is unavailable,
-multi-distro dispatch for Fedora/Arch/SUSE, and PATH setup), and it's what
+Grace/xmgrace build from source with `--grace` when the distro package is
+unavailable, multi-distro dispatch for Fedora/Arch/SUSE, and PATH setup), and it's what
 this repository's own `post-install.sh`-based flows assume. Use it unless
 you have a specific reason not to.
 

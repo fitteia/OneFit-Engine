@@ -23,7 +23,6 @@ RUN zypper --non-interactive refresh && \
         make \
         gcc \
         gcc-fortran \
-        gnuplot \
         jq \
         unzip \
         zip \

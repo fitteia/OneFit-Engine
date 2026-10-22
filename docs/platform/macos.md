@@ -2,7 +2,7 @@
 
 OneFit-Engine supports a native Homebrew-oriented path and a container
 path. Native installation may need platform-specific adjustments to
-compilers, Grace, and Raku binary locations.
+compilers and Raku binary locations.
 
 ## Native prerequisites
 
@@ -30,15 +30,16 @@ git clone https://github.com/fitteia/OneFit-Engine.git && cd OneFit-Engine
 
 The macOS installer mode disables Debian package handling, systemd,
 web-server setup, and both the ordinary and post-install test suites. It
-installs required Homebrew tools such as Grace, ImageMagick, HDF5,
-Poppler, FFmpeg, and PDF utilities when missing. It also installs the URW base-35
+installs required Homebrew tools such as ImageMagick, HDF5,
+Poppler, FFmpeg, and PDF utilities when missing, and Grace with `--grace`
+(plot-go draws every plot). It also installs the URW base-35
 fonts plot-go draws text with (Homebrew's `font-urw-base35` cask) unless
 they are already there - the onefite-go Homebrew formula installs them too.
 
 Verify executable discovery:
 
 ```bash
-command -v raku zef prove6 onefite xmgrace
+command -v raku zef prove6 onefite plot-go
 onefite --version
 ```
 

@@ -20,8 +20,8 @@ sudo ./pre-install-OFE-in-Linux.sh
 
 `pre-install-OFE-in-Linux.sh` provisions the full system dependency set
 (including `zef`, built from source if the packaged `perl6-zef` is missing
-or too old, and Grace/xmgrace built from source if unavailable as a
-package) before `./INSTALL` compiles and installs OFE itself. This is the
+or too old, and, with `--grace`, Grace/xmgrace built from source if
+unavailable as a package) before `./INSTALL` compiles and installs OFE itself. This is the
 most robust path and the one this project's own scripts assume.
 
 `./INSTALL` alone (default options, on a plain non-container host) can
@@ -74,7 +74,9 @@ onefite test --post-install --systemd-daemon
 
 ## Package notes
 
-The installer provisions compilers, Grace, ImageMagick, TeX/PDF utilities,
-HDF5 tools, FFmpeg, and other dependencies. Exact package availability
+The installer provisions compilers, ImageMagick, TeX/PDF utilities,
+HDF5 tools, FFmpeg, and other dependencies. Grace is installed only with `--grace` (plot-go draws every plot; Grace
+is for `OFE_PLOTTER=grace` and a plot-go older than v1.2.0-pre3); gnuplot
+is not needed. Exact package availability
 varies by Debian/Ubuntu release. Use the [Docker sandbox](docker.md) as a
 reproducible diagnostic environment when host packages conflict.

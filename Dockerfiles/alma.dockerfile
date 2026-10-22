@@ -28,8 +28,6 @@ RUN dnf -y upgrade && \
         make \
         gcc \
         gcc-gfortran \
-        gnuplot \
-        grace \
         jq \
         unzip \
         zip \

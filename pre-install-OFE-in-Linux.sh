@@ -9,7 +9,11 @@
 #   - openSUSE Leap / Tumbleweed: zypper
 #
 # Run:
-#   ./pre-install-OFE-in-Linux.sh
+#   ./pre-install-OFE-in-Linux.sh [--grace]
+#
+# plot-go (installed by ./INSTALL) draws every plot, so Grace is not
+# installed unless --grace asks for it: it is only for OFE_PLOTTER=grace and
+# for a plot-go older than v1.2.0-pre3. gnuplot is not needed.
 #
 # The script may be launched as a normal user. It asks for sudo when
 # administrative privileges are required. It prepares the operating system
@@ -44,6 +48,7 @@ OS_FAMILY="unknown"
 PM="unknown"
 WEB_SERVER_CMD="unknown"
 RAKU_PROVIDER="unknown"
+WITH_GRACE=0
 
 is_arch_like() {
     [[ "$OS_ID" == "arch" || " $OS_ID_LIKE " == *" arch "* ]]
@@ -347,13 +352,12 @@ install_packages_arch() {
     pacman -S --needed --noconfirm base-devel || warn "could not install base-devel group"
     local packages=(
         perl git openssh apache swig gcc-fortran make tar wget curl jq zip unzip
-        sudo vim less man-db gnuplot openssl hdf5 poppler ghostscript imagemagick
+        sudo vim less man-db openssl hdf5 poppler ghostscript imagemagick
         ffmpeg which
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
     install_first_available_pkg perl-cgi || true
-    install_first_available_pkg xmgrace grace || true
     install_first_available_pkg texlive-bin texlive-basic texlive || true
     install_first_available_pkg ufw firewalld || true
 }
@@ -362,9 +366,9 @@ install_packages_debian() {
     log "Debian packages"
     local packages=(
         perl libperl-dev libcgi-pm-perl git openssh-server apache2 swig gcc gfortran
-        make tar wget curl jq zip unzip sudo vim man-db gnuplot libssl-dev
+        make tar wget curl jq zip unzip sudo vim man-db libssl-dev
         hdf5-tools libhdf5-dev poppler-utils texlive-font-utils ghostscript
-        imagemagick rakudo perl6-zef grace
+        imagemagick rakudo perl6-zef
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
@@ -435,8 +439,8 @@ install_packages_fedora() {
 
     local packages=(
         perl perl-devel perl-CGI git openssh-server httpd swig gcc gcc-gfortran
-        make tar wget curl jq zip unzip sudo vim-enhanced man-db gnuplot openssl-devel
-        hdf5 hdf5-devel poppler-utils ghostscript ImageMagick firewalld xmgrace
+        make tar wget curl jq zip unzip sudo vim-enhanced man-db openssl-devel
+        hdf5 hdf5-devel poppler-utils ghostscript ImageMagick firewalld
         diffutils
     )
     local pkg
@@ -453,14 +457,13 @@ install_packages_suse() {
     log "openSUSE packages"
     local packages=(
         perl perl-CGI git openssh apache2 swig gcc gcc-fortran make tar
-        wget curl jq zip unzip sudo vim man gnuplot openssl-devel hdf5 hdf5-devel
-        poppler-tools ghostscript ImageMagick which gzip xz texlive-epstopdf-bin diffutils xmgrace
+        wget curl jq zip unzip sudo vim man openssl-devel hdf5 hdf5-devel
+        poppler-tools ghostscript ImageMagick which gzip xz texlive-epstopdf-bin diffutils
     )
     local pkg
     for pkg in "${packages[@]}"; do install_pkg "$pkg"; done
 
     # Package names vary between Leap/Tumbleweed and enabled repositories.
-    install_first_available_pkg xmgrace grace || true
     install_first_available_pkg ffmpeg ffmpeg-8 ffmpeg-7 ffmpeg-6 || true
 
     # Some openSUSE packages expose a versioned command. Normalize it to ffmpeg.
@@ -830,7 +833,11 @@ is_suse_like_id() {
 
 	
 	setup_grace() {
+    [[ "$WITH_GRACE" == 1 ]] || return 0
     log "Grace / xmgrace"
+
+    # the distribution's package first (grace on Debian, xmgrace elsewhere)
+    install_first_available_pkg grace xmgrace || true
 
     # Debian/Fedora/openSUSE usually install xmgrace/grace from packages.
     # If it is already present, just normalize the command links.
@@ -885,10 +892,12 @@ create_links() {
             ;;
     esac
 
-    link_cmd xmgrace
-    link_cmd gracebat
-    link_cmd grace
-    link_grace_to_xmgrace
+    if [[ "$WITH_GRACE" == 1 ]]; then
+        link_cmd xmgrace
+        link_cmd gracebat
+        link_cmd grace
+        link_grace_to_xmgrace
+    fi
 }
 
 open_ports() {
@@ -1004,9 +1013,10 @@ final_checks() {
     log "Final checks"
     local cmds=(
         perl git swig gcc gfortran make wget curl jq zip unzip
-        sudo vim man gnuplot h5dump epstopdf ffmpeg
-        raku rakudo zef prove6 xmgrace gracebat grace
+        sudo vim man h5dump epstopdf ffmpeg
+        raku rakudo zef prove6
     )
+    [[ "$WITH_GRACE" == 1 ]] && cmds+=(xmgrace gracebat grace)
     [[ -x /opt/rakubrew/bin/rakubrew ]] && cmds+=(rakubrew)
 
     local service_cmds=(sshd "$WEB_SERVER_CMD")
@@ -1040,6 +1050,12 @@ final_checks() {
 }
 
 main() {
+    local args=()
+    local a
+    for a in "$@"; do
+        if [[ "$a" == --grace ]]; then WITH_GRACE=1; else args+=("$a"); fi
+    done
+    set -- "${args[@]+"${args[@]}"}"
     case "${1:-}" in
         ""|install)
             detect_os
@@ -1060,9 +1076,11 @@ main() {
             echo "  ./INSTALL -d"
             ;;
         -h|--help|help)
-            echo "Usage: $0"
+            echo "Usage: $0 [--grace]"
             echo
             echo "Prepares Linux system dependencies for OneFit-Engine."
+            echo "--grace also installs Grace (only for OFE_PLOTTER=grace and a"
+            echo "plot-go older than v1.2.0-pre3; plot-go draws every plot)."
             echo "After this finishes, run: ./INSTALL [options]"
             ;;
         *)

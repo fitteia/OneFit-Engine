@@ -23,7 +23,6 @@ RUN pacman -Syu --noconfirm && \
         make \
         gcc \
         gcc-fortran \
-        gnuplot \
         jq \
         unzip \
         zip \

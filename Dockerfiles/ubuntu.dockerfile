@@ -25,8 +25,6 @@ RUN apt-get update && \
         gcc \
         gfortran \
         raku \
-        gnuplot \
-        grace \
         jq \
         unzip \
         zip \

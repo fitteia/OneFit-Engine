@@ -40,8 +40,8 @@ Raku availability can differ from Debian-family documentation.
 ### openSUSE
 
 The helper uses Zypper, and disables ImageMagick policy modification in
-the main installer path. Verify Grace, Raku, HDF5, and PDF tool
-availability.
+the main installer path. Verify Raku, HDF5, and PDF tool availability
+(and Grace, if you installed it with `--grace`).
 
 ## Validate incrementally
 

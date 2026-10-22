@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-suggests \
     gcc \
     dpkg-dev \
    	gfortran \
-   	grace \
    	imagemagick \
    	texlive-font-utils \
    	ghostscript \

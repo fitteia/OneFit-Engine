@@ -24,8 +24,6 @@ RUN dnf -y update && \
         make \
         gcc \
         gcc-gfortran \
-        gnuplot \
-        grace \
         jq \
         unzip \
         zip \
