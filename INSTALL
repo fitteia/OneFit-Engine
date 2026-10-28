@@ -560,13 +560,44 @@ sub raku-onefite-link (Str $link --> Bool) {
 	so $head ~~ / rakudo | perl6 | 'CompUnit::RepositoryRegistry' /
 }
 
-# the tools a previous site install wrote: $bindir links to the file in
-# /usr/local/bin (noted before the rebuild replaces those links)
+# The checksums of the tools a site install wrote into /usr/local/bin. The
+# build (make install, the plot-go download) turns $bindir's links into plain
+# files and only a finished install links them again, so a run that stops in
+# between would leave the tools looking like someone else's; the record still
+# names them, and a file replaced since then no longer matches it.
+our constant SITE-TOOLS-RECORD = '/usr/local/share/OneFit-Engine/site-tools.sha256';
+
+sub sha256 ($file --> Str) {
+	run(|($*KERNEL.name.lc eq 'darwin' ?? <shasum -a 256> !! <sha256sum>), $file, :out).out.slurp(:close).words.head // ''
+}
+
+# tool => checksum, from SITE-TOOLS-RECORD ("checksum  tool" lines)
+sub recorded-site-tools (--> Hash) {
+	return {} unless SITE-TOOLS-RECORD.IO.f;
+	SITE-TOOLS-RECORD.IO.lines.map(*.words).grep(*.elems == 2).map({ .[1] => .[0] }).Hash
+}
+
+sub write-site-tools-record (%record) {
+	my $tmp = "$*TMPDIR/site-tools.sha256.$*PID";
+	$tmp.IO.spurt: %record.sort.map({ "{ .value }  { .key }\n" }).join;
+	shell "sudo install -d -m 0755 { SITE-TOOLS-RECORD.IO.parent } && sudo install -m 0644 $tmp { SITE-TOOLS-RECORD }";
+	unlink $tmp;
+}
+
+# /usr/local/bin/$t is a file a site install wrote: $bindir links to it, or
+# it is still the file the record names
+sub own-site-tool ($bindir, $t, %record --> Bool) {
+	my ($src, $dst) = "$bindir/$t", "/usr/local/bin/$t";
+	return False unless $dst.IO.f and !$dst.IO.l;
+	return True if $src.IO.l and $src.IO.resolve eq $dst.IO.resolve;
+	so %record{$t} and sha256($dst) eq %record{$t}
+}
+
+# the tools a previous site install wrote (noted before the rebuild replaces
+# $bindir's links)
 sub own-local-tools ($bindir) {
-	local-tools().grep({
-		"$bindir/$_".IO.l && "/usr/local/bin/$_".IO.f && !"/usr/local/bin/$_".IO.l
-			&& "$bindir/$_".IO.resolve eq "/usr/local/bin/$_".IO.resolve
-	}).map(* => True).Hash
+	my %record = recorded-site-tools();
+	local-tools().grep({ own-site-tool($bindir, $_, %record) }).map(* => True).Hash
 }
 
 # /usr/local/bin/onefite: linked unless another engine has it already
@@ -595,16 +626,19 @@ sub uninstall () {
 	shell "sudo rm /usr/local/bin/onefite" if raku-onefite-link('/usr/local/bin/onefite');
    	shell("cd $*CWD/../bin && rm onefite") if "$*CWD/../bin/onefite".IO.l;
 	my $bindir = "$*CWD/../bin";
+	my %record = recorded-site-tools();
    	for local-tools() -> $t {
 		my ($src, $dst) = "$bindir/$t", "/usr/local/bin/$t";
 		if $dst.IO.l and $dst.IO.resolve eq $src.IO.resolve {
 			shell "sudo rm $dst";
 		}
-		elsif $dst.IO.f and !$dst.IO.l and $src.IO.l and $src.IO.resolve eq $dst.IO.resolve {
-			# written by a site install: back into $bindir, as a user install has it
-			shell "rm $src && cp -p $dst $src && sudo rm $dst";
+		elsif own-site-tool($bindir, $t, %record) {
+			# written by a site install: back into $bindir, as a user install has
+			# it (a build may have put a copy there already)
+			shell($src.IO.f && !$src.IO.l ?? "sudo rm $dst" !! "rm -f $src && cp -p $dst $src && sudo rm $dst");
 		}
    	}
+	shell "sudo rm -f { SITE-TOOLS-RECORD }" if SITE-TOOLS-RECORD.IO.e;
    	shell "$SUDO zef uninstall OneFit-Engine";
 	# the pages install-manpage wrote (/usr/share/man/man1/onefite.1.gz is the
 	# Go engine's package)
@@ -683,17 +717,21 @@ sub install (:$test,:$to-site, :$bindir, :%own-tools) {
     # not $HOME, where links in /usr/local/bin pointed before. A file there
     # that is neither a link nor one this install wrote is left alone.
     if $to-site {
+		my %record = recorded-site-tools();
 		for local-tools() -> $t {
 			my ($src, $dst) = "$bindir/$t", "/usr/local/bin/$t";
 			next unless $src.IO.f;
 			next if $src.IO.l and $src.IO.resolve eq $dst.IO.resolve;
 			if $dst.IO.l or !$dst.IO.e or %own-tools{$t} {
 				shell "sudo rm -f $dst && sudo install -m 0755 $src $dst && ln -sf $dst $src";
+				%record{$t} = sha256($dst);
 			}
 			else {
 				note "===> $dst is not one of OneFit's - leaving it alone";
+				%record{$t}:delete;
 			}
 		}
+		write-site-tools-record(%record);
     }
 
 }
