@@ -11,7 +11,7 @@ our $DOCKER = False;
 our $OS = "LINUX";
 
 # Keep plot-go aligned with the versions pinned by OFE-Go and OFE-GUI.
-our constant PLOT-GO-VERSION = 'v1.2.0-pre5';
+our constant PLOT-GO-VERSION = 'v1.2.0-rc1';
 # Keep the C core aligned with the release pinned in OFE-Go's engine-sources.txt.
 our constant C-CODE-VERSION = 'v6.0.3';
 
