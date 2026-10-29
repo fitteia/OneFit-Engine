@@ -1,6 +1,7 @@
 # OneFit-Engine documentation
 
-This documentation covers OneFit-Engine 0.9.165. The `multi MAIN` command
+This documentation covers the OneFit-Engine release it ships with (its
+version is in `META6.json`; `onefite --version` prints it). The `multi MAIN` command
 signatures and embedded POD in `bin/onefite` remain the authoritative CLI
 reference - these guides explain workflows and link to that reference
 rather than duplicating it.

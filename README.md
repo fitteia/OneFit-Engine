@@ -9,7 +9,7 @@ or container - locally or remotely - so fitteia's fitting core can be
 embedded in user-defined environments and behind custom front-ends.
 
 <!--
-The current project version is **0.9.165**. The repository is distributed
+The project version is in `META6.json` (`onefite --version` prints it). The repository is distributed
 under the [Artistic License 2.0](LICENSE).
 -->
 
