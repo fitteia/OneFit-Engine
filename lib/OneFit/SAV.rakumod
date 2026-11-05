@@ -3,6 +3,11 @@ unit module OneFit::SAV;
 # Native reader/writer for OneFit-Engine's CGI.pm .sav format:
 # percent-encoded name=value records, one value per line, terminated by
 # CGI.pm's bare "=" end marker.  This deliberately has no Perl dependency.
+# SAV is flat: a nested value (a par-tables table, an object such as the
+# GUI's onefite-host-gui settings) is written as JSON text and read back
+# as a table/object, as onefite-native's internal/savfile does.
+
+use JSON::Fast;
 
 sub is-unreserved(UInt:D $byte --> Bool:D) {
     so (0x41 <= $byte <= 0x5A)
@@ -89,11 +94,41 @@ sub from-sav(Str:D $content --> Hash:D) is export {
         }
     }
 
+    decode-par-tables(%values);
+    decode-objects(%values);
     %values;
 }
 
+# par-tables written as JSON text, one record per table: a single table
+# (a global fit) reads back as one string.  Older text is left as it is.
+sub decode-par-tables(%values) {
+    return unless %values<par-tables>:exists;
+    my $v = %values<par-tables>;
+    my @texts = $v ~~ Positional ?? $v.list !! ($v,);
+    my @tables;
+    for @texts -> $t {
+        my $table = try from-json($t.Str);
+        return unless $table ~~ Positional;
+        @tables.push: $table;
+    }
+    %values<par-tables> = @tables;
+}
+
+# A single value that is a JSON object (no engine text field is one).
+sub decode-objects(%values) {
+    for %values.keys -> $k {
+        my $v = %values{$k};
+        next unless $v ~~ Str && $v.starts-with('{') && $v.ends-with('}');
+        my $obj = try from-json($v);
+        %values{$k} = $obj if $obj ~~ Associative;
+    }
+}
+
 sub scalar-to-sav-str($value --> Str:D) {
-    $value.defined ?? $value.Str !! '';
+    return '' unless $value.defined;
+    $value ~~ Positional|Associative
+        ?? to-json($value, :!pretty, :sorted-keys)
+        !! $value.Str;
 }
 
 # Serialize a flat engine hash.  Positional values become repeated records;
@@ -105,7 +140,7 @@ sub to-sav(Associative:D $engine --> Str:D) is export {
         my $escaped-name = sav-escape($name.Str);
         my $value = $engine{$name};
 
-        if $value ~~ Positional {
+        if $value ~~ Positional && $value !~~ Associative {
             for $value.list -> $item {
                 @records.push: $escaped-name ~ '='
                     ~ sav-escape(scalar-to-sav-str($item));

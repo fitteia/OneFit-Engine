@@ -1,7 +1,7 @@
 use Test;
 use OneFit::SAV;
 
-plan 19;
+plan 25;
 
 is sav-escape('abc123_.~-'), 'abc123_.~-', 'CGI unreserved bytes remain literal';
 is sav-escape('a b'), 'a%20b', 'space is %20, not plus';
@@ -52,3 +52,18 @@ my $real-roundtrip = $*TMPDIR.add("onefit-sav-real-roundtrip-$*PID.sav");
 write-sav($real-roundtrip, %real);
 is-deeply read-sav($real-roundtrip), %real, 'complete real SAV file round-trips unchanged';
 $real-roundtrip.unlink;
+
+# Nested values are written as JSON text and read back (as onefite-native's
+# savfile): par-tables per block, a single table (global fit) as a list of
+# one, the GUI's settings object; JSON-looking plain text stays text.
+my @individual = [{name => 'a', value => 1e0, free => True, err => '0.1'},],
+                 [{name => 'a', value => 2e0, free => False, err => 'fixed'},];
+my %nested = from-sav(to-sav(%('par-tables' => @individual,
+    'onefite-host-gui' => %(data => 'x.dat'), Tags => ['[1]', '{2}'], AuxCode => '{ return 0; }')));
+is %nested<par-tables>.elems, 2, 'par-tables: one table per block';
+is %nested<par-tables>[1][0]<err>, 'fixed', 'par-tables entries come back as tables';
+is %nested<onefite-host-gui><data>, 'x.dat', 'a nested object comes back as an object';
+is-deeply [|%nested<Tags>, %nested<AuxCode>], ['[1]', '{2}', '{ return 0; }'], 'JSON-looking text stays text';
+my %global = from-sav(to-sav(%('par-tables' => [@individual[0],])));
+is %global<par-tables>.elems, 1, 'a single table reads back as a list of one';
+is from-sav("par-tables=err%090.1\n=\n")<par-tables>, "err\t0.1", 'older par-tables text is left as it is';
