@@ -658,8 +658,11 @@ sub install (:$test,:$to-site, :$bindir, :%own-tools) {
     for @previous {
 		if $_.Bool {
 	   		do {
+				# without a terminal (over SSH, from a script) nobody can
+				# answer: remove it, as the usual answer does
 				my $yesno='y';
-				$yesno = prompt "$_ located, do you wish to remove it [y|n]?";
+				if $*IN.t { $yesno = prompt "$_ located, do you wish to remove it [y|n]?" }
+				else { note "$_ located: removing it (no terminal to ask)" }
 				shell "$SUDO zef uninstall OneFit-Engine" if $yesno ~~ m:i/y/;
 				shell "$SUDO rm /usr/local/bin/onefite" if raku-onefite-link('/usr/local/bin/onefite');
 				shell "$SUDO rm /usr/local/bin/onefite-raku" if '/usr/local/bin/onefite-raku'.IO.l;
