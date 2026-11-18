@@ -44,16 +44,12 @@ read the installed C catalog. Rebuild the merged catalog with the normal
 extension-install step if `META-CATALOG.json` from an older install is present;
 an old merged catalog can otherwise hide new base metadata.
 
-OFE-Go release packages bundle the C tag in `engine-sources.txt`. Packages
-pinned to C v6.0.4 do not contain this addition; a C release and a pin update
-are required before a Go release can bundle it. Do not invent or move a tag.
-The catalog/alias changes alone do not update an already installed C library.
-
-OFE-Raku also pins the C core: `C-CODE-VERSION` in `INSTALL` currently
-selects `v6.0.3`. `onefite upgrade` updates the Raku checkout, selects that
-pinned C tag, and rebuilds it. Publish the new C model in a release tag and
-update this installer pin before expecting a normal Raku upgrade to provide
-the registered model. The standalone auxiliary JSON can be used meanwhile.
+OFE-Go v0.5.15 and OFE-Raku 1.1.3 pin C v6.1.0, the first release
+containing these models. Go packages carry the pin from `engine-sources.txt`;
+Raku's `INSTALL` selects `C-CODE-VERSION`. Upgrade the engine package or
+Raku installation to obtain the registered models and alias. Older packages
+and libraries do not acquire new models from catalog/alias updates alone.
+The standalone auxiliary JSON can also be used with older installations.
 
 ## Example: fit a synthetic reference
 

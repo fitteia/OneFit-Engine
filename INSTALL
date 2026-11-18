@@ -13,7 +13,7 @@ our $OS = "LINUX";
 # Keep plot-go aligned with the versions pinned by OFE-Go and OFE-GUI.
 our constant PLOT-GO-VERSION = 'v1.2.0';
 # Keep the C core aligned with the release pinned in OFE-Go's engine-sources.txt.
-our constant C-CODE-VERSION = 'v6.0.3';
+our constant C-CODE-VERSION = 'v6.1.0';
 
 #|(onefite INSTALL help)
 multi MAIN ('help') { MAIN :h }
