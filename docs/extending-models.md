@@ -137,3 +137,8 @@ parameter (counting from 0, in declaration order) is
 `par[OFE_USER_NPARS + 1 + (b - 2) * OFE_HYBRID_NPARS + j]` for `b > 1`; block 1
 uses the original `par[k]`. `HPAR` does this lookup. Engines older than these
 definitions do not provide them.
+
+## Corrected Carver-Richards CPMG model
+
+The base library now registers `R2_CR`, `T2_CR` and `R2_CR_pb` for both
+engines. See [units, physical constraints and the synthetic example](carver-richards.md).

@@ -140,3 +140,8 @@ docs/                        this documentation
 [Artistic License 2.0](LICENSE). The license declared in `META6.json` and
 provided in `LICENSE` applies to this repository. Third-party components,
 including Minuit and optional model extensions, retain their own licenses.
+
+### Corrected Carver-Richards CPMG model
+
+The shared C library provides `R2_CR`, `T2_CR` and `R2_CR_pb`. See the
+[model parameters, units and runnable example](docs/carver-richards.md).

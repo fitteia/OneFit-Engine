@@ -1,4 +1,5 @@
 {
+  "CPMG-CR": "R2(tcp[1e-6<1],T2A=2,T2B=0.0038,pB:0.01[1e-6<0.1],kB:10000[1<1e7],dw=2000)=R2_CR_pb(tcp,T2A,T2B,pB,kB,dw)",
 	"|1exp|": "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=(dum_1<2) ? Mi : (Mi > -(M0-Mi)*exp(-t/T1)) ? Mi : -Mi  \\+ (dum_1<2) ?  (M0-Mi)*exp(-t/T1) : (Mi > -(M0-Mi)*exp(-t/T1)) ? (M0-Mi)*exp(-t/T1) : -(M0-Mi)*exp(-t/T1",
 	"1exp": "Mz(t[1e-3<20],M0,Mi,T1[1e-3<10])=Mi\\+(M0-Mi)*exp(-t/T1)",
 	"2exp": "Mz(t[1e-3<20],M0_,Mi_,c[0.5<1],T11_:0.01[1e-3<3],T12_:0.1[1e-3<3])=Mi_\\+(M0_-Mi_)*c*exp(-t/T11_)\\+(M0_-Mi_)*(1-c)*exp(-t/T12_)",
