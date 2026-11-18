@@ -49,6 +49,12 @@ pinned to C v6.0.4 do not contain this addition; a C release and a pin update
 are required before a Go release can bundle it. Do not invent or move a tag.
 The catalog/alias changes alone do not update an already installed C library.
 
+OFE-Raku also pins the C core: `C-CODE-VERSION` in `INSTALL` currently
+selects `v6.0.3`. `onefite upgrade` updates the Raku checkout, selects that
+pinned C tag, and rebuilds it. Publish the new C model in a release tag and
+update this installer pin before expecting a normal Raku upgrade to provide
+the registered model. The standalone auxiliary JSON can be used meanwhile.
+
 ## Example: fit a synthetic reference
 
 From this repository's `examples/carver-richards` directory:
