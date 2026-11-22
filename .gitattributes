@@ -1,0 +1,2 @@
+# Captured native MINUIT output retains its original trailing spaces and bytes.
+t/minuit-status/*.log -text -whitespace

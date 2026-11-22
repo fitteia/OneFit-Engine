@@ -1,0 +1,42 @@
+use Test;
+use OneFit::Engine::MinuitStatus;
+
+my $fixtures = $?FILE.IO.parent.add('minuit-status');
+for ('converged.log', 'CONVERGED', 'accurate'), ('call-limit.log', 'CALL LIMIT', 'approximate') -> @case {
+    my %status = minuit-status($fixtures.add(@case[0]).slurp);
+    is %status<migrad>, @case[1], "{@case[0]} last MIGRAD";
+    is %status<migradErrorMatrix>, @case[2], "{@case[0]} MIGRAD matrix snapshot";
+    like %status<migradLine>, /'FROM MIGRAD'/, 'source report retained';
+}
+my $migrad = " FCN= 1 FROM MIGRAD STATUS=CONVERGED 20 CALLS 20 TOTAL\nERROR MATRIX ACCURATE\nEXT PARAMETER ERROR\n ** 3 **MINOS\n";
+for ('SUCCESSFUL', 'ERROR MATRIX ACCURATE', 'accurate'),
+    ('PROBLEMS', 'ERROR MATRIX NOT POSITIVE DEFINITE', 'not-positive-definite'),
+    ('FAILURE', 'NO ERROR MATRIX', 'none') -> @case {
+    my %status = minuit-status($migrad ~ " FCN= 1 FROM MINOS STATUS={@case[0]} 40 CALLS 60 TOTAL\n{@case[1]}\nEXT PARAMETER PARABOLIC MINOS ERRORS\n");
+    is %status<migradErrorMatrix>, 'accurate', 'historical MIGRAD snapshot kept';
+    is %status<errorMatrix>, @case[2], 'later MINOS can change final matrix';
+    is %status<minos>, @case[0], 'MINOS outcome retained';
+}
+my %missing = minuit-status('no MIGRAD');
+is %missing<migrad>, 'unknown', 'missing evidence not fabricated';
+is %missing<errorMatrix>, 'unknown', 'missing final matrix unknown';
+my %uncertainty = minuit-status(" FCN= 1 FROM MIGRAD STATUS=CALL LIMIT 20 CALLS 20 TOTAL\nERROR MATRIX UNCERTAINTY= 7.5%\nEXT PARAMETER APPROXIMATE ERROR\n ** 3 **MINOS\n FCN= 1 FROM MINOS STATUS=SUCCESSFUL 20 CALLS 40 TOTAL\nERROR MATRIX ACCURATE\n");
+is %uncertainty<migradErrorMatrix>, 'approximate', 'UNCERTAINTY plus approximate MIGRAD header';
+is %uncertainty<errorMatrix>, 'accurate', 'later MINOS matrix kept separately';
+class FakeBlock { has $.No; has $.Tag }
+my $dir = "$*TMPDIR/ofe-minuit-status-{$*PID}-{now.Int}".IO;
+$dir.mkdir;
+LEAVE { .unlink for $dir.dir; $dir.rmdir }
+$dir.add('fit1.log').spurt($migrad);
+$dir.add('fit2.log').spurt(" FCN= 2 FROM MIGRAD STATUS=FAILED 20 CALLS 20 TOTAL\nNO ERROR MATRIX\n");
+$dir.add('fit.log').spurt($migrad);
+my @blocks = FakeBlock.new(No => 0, Tag => 'good'), FakeBlock.new(No => 1, Tag => 'bad');
+my %individual = collect-fit-status({ FitType => 'Individual' }, $dir.Str, @blocks);
+is %individual<blocks>[0]<tag>, 'good', 'exact tag recorded';
+is %individual<blocks>[1]<migrad>, 'FAILED', 'per-block failure isolated';
+for 'Global', 'Hybrid' -> $kind {
+    my %global = collect-fit-status({ FitType => $kind }, $dir.Str, @blocks, :mixed($kind eq 'Hybrid'), :hybrid($kind eq 'Hybrid'));
+    is %global<blocks>[1]<scope>, 'global', 'shared minimization scope';
+    is %global<blocks>[1]<migrad>, 'CONVERGED', 'stale per-block log not used';
+}
+done-testing;

@@ -145,3 +145,7 @@ including Minuit and optional model extensions, retain their own licenses.
 
 The shared C library provides `R2_CR`, `T2_CR` and `R2_CR_pb`. See the
 [model parameters, units and runnable example](docs/carver-richards.md).
+
+Saved fits include [per-block MINUIT diagnostics](docs/fit-status.md), using
+the same versioned schema as OFE-Go. MIGRAD snapshots, later MINOS outcomes
+and final matrix state are recorded without changing the fit calculations.

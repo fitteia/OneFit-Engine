@@ -24,6 +24,7 @@
     "OneFit::Engine::Grammars": "lib/OneFit/Engine/Grammars.rakumod",
     "OneFit::Engine::Graphs": "lib/OneFit/Engine/Graphs.rakumod",
     "OneFit::Engine::Parameters": "lib/OneFit/Engine/Parameters.rakumod",
+    "OneFit::Engine::MinuitStatus": "lib/OneFit/Engine/MinuitStatus.rakumod",
     "OneFit::Engine::Parfiles": "lib/OneFit/Engine/Parfiles.rakumod",
     "OneFit::Engine::Stpfiles": "lib/OneFit/Engine/Stpfiles.rakumod",
     "OneFit::Engine::Import": "lib/OneFit/Engine/Import.rakumod",

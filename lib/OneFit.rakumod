@@ -7,6 +7,7 @@ use OneFit::Engine::Blocks;
 use OneFit::Engine::Functions;
 use OneFit::Engine::CodeC;
 use OneFit::Engine::Stpfiles;
+use OneFit::Engine::MinuitStatus;
 use OneFit::SAV;
 
 # tchi2 is the EXACT sum of the blocks' chi2 values, each read as the exact
@@ -869,6 +870,7 @@ EOT
 	     @fit-residues.push: "$!path/fit-residues-$_.res".IO.slurp
 	 }
 	 %!engine<fit-residues> = @fit-residues;
+	 %!engine<fit-status> = collect-fit-status(%!engine, $!path, @!blocks, :mixed($MIXED), :hybrid($hybrid));
 	 self.hybrid(:reset) if $hybrid;
 	 self
      }
